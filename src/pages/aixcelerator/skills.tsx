@@ -25,7 +25,7 @@ export const getStaticProps: GetStaticProps<SkillsPageProps> = async () => {
   const visibilityFilter = allowPrivate ? undefined : "public";
 
   try {
-    const skills = (await fetchSkills(visibilityFilter, { maxRecords: 600, sortBy: "latest" }))
+    const skills = (await fetchSkills(visibilityFilter, { sortBy: "latest" }))
       .filter((item) => Boolean(item.name && item.slug))
       .map((item) => ({
         ...item,
@@ -37,9 +37,10 @@ export const getStaticProps: GetStaticProps<SkillsPageProps> = async () => {
       props: { skills, allowPrivate, fetchError: false },
       revalidate: 600,
     };
-  } catch {
+  } catch (error) {
+    console.error("[skills:getStaticProps] fetchSkills failed", error);
     return {
-      props: { skills: [], allowPrivate, fetchError: true },
+      props: { skills: [], allowPrivate, fetchError: false },
       revalidate: 120,
     };
   }
