@@ -90,9 +90,9 @@ export default function RequestDemo() {
             className="mb-6"
           />
           <div className="detail-section">
-            <div className="text-base font-semibold text-zinc-900">Suggested demo flow</div>
-            <div className="mt-1 text-sm text-zinc-600">A clean, consistent walkthrough for stakeholders.</div>
-            <div className="mt-5 grid gap-3 text-sm text-zinc-700">
+            <div className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Suggested demo flow</div>
+            <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">A clean, consistent walkthrough for stakeholders.</div>
+            <div className="mt-5 grid gap-3 text-sm text-zinc-700 dark:text-zinc-300">
               <Step n="1" title="Core platform" body="AIXcelerator + Agents + MCP" />
               <Step n="2" title="Industry workspace" body="Case studies and domain context" />
               <Step n="3" title="Modular layers" body="Resources, playbooks, news/product" />
@@ -121,8 +121,8 @@ function Step({ n, title, body }: { n: string; title: string; body: string }) {
         {n}
       </div>
       <div>
-        <div className="text-sm font-semibold text-zinc-900">{title}</div>
-        <div className="mt-0.5 text-sm text-zinc-600">{body}</div>
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</div>
+        <div className="mt-0.5 text-sm text-zinc-600 dark:text-zinc-400">{body}</div>
       </div>
     </div>
   );

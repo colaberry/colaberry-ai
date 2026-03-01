@@ -339,16 +339,16 @@ export default function Podcasts({
                           </span>
                         ) : null}
                         {formatShortDate(hero.publishedDate) ? (
-                          <span className="font-medium text-zinc-400 dark:text-zinc-500">{formatShortDate(hero.publishedDate)}</span>
+                          <span className="font-medium text-zinc-400 dark:text-zinc-400">{formatShortDate(hero.publishedDate)}</span>
                         ) : null}
                         {hero.duration ? (
                           <>
                             <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
-                            <span className="font-medium text-zinc-400 dark:text-zinc-500">{hero.duration}</span>
+                            <span className="font-medium text-zinc-400 dark:text-zinc-400">{hero.duration}</span>
                           </>
                         ) : null}
                         <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
-                        <span className="font-medium text-zinc-400 dark:text-zinc-500">{heroIsExternal ? "External" : "Colaberry AI"}</span>
+                        <span className="font-medium text-zinc-400 dark:text-zinc-400">{heroIsExternal ? "External" : "Colaberry AI"}</span>
                       </div>
 
                       {/* Hero share row */}
@@ -362,7 +362,7 @@ export default function Podcasts({
                             setTimeout(() => setCopiedSlug(null), 2000);
                             logPodcastEvent("share", "hero-copy", { slug: hero.slug });
                           }}
-                          className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${copiedSlug === hero.slug ? "text-emerald-500" : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"}`}
+                          className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${copiedSlug === hero.slug ? "text-emerald-500" : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"}`}
                           title={copiedSlug === hero.slug ? "Copied!" : "Copy link"}
                         >
                           {copiedSlug === hero.slug ? (
@@ -382,7 +382,7 @@ export default function Podcasts({
                           rel="noopener noreferrer"
                           aria-label="Share on LinkedIn"
                           onClick={() => logPodcastEvent("share", "hero-linkedin", { slug: hero.slug })}
-                          className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
                           title="Share on LinkedIn"
                         >
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -395,7 +395,7 @@ export default function Podcasts({
                           rel="noopener noreferrer"
                           aria-label="Share on X"
                           onClick={() => logPodcastEvent("share", "hero-x", { slug: hero.slug })}
-                          className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
                           title="Share on X"
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -449,15 +449,15 @@ export default function Podcasts({
                               Ep. {episode.episodeNumber}
                             </span>
                           ) : null}
-                          {shortDate ? <span className="font-medium text-zinc-400 dark:text-zinc-500">{shortDate}</span> : null}
+                          {shortDate ? <span className="font-medium text-zinc-400 dark:text-zinc-400">{shortDate}</span> : null}
                           {episode.duration ? (
                             <>
                               <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
-                              <span className="font-medium text-zinc-400 dark:text-zinc-500">{episode.duration}</span>
+                              <span className="font-medium text-zinc-400 dark:text-zinc-400">{episode.duration}</span>
                             </>
                           ) : null}
                           <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
-                          <span className="font-medium text-zinc-400 dark:text-zinc-500">{isExternal ? "External" : "Colaberry AI"}</span>
+                          <span className="font-medium text-zinc-400 dark:text-zinc-400">{isExternal ? "External" : "Colaberry AI"}</span>
                         </div>
 
                         {/* Share / action row */}
@@ -471,7 +471,7 @@ export default function Podcasts({
                               setTimeout(() => setCopiedSlug(null), 2000);
                               logPodcastEvent("share", "list-copy", { slug: episode.slug });
                             }}
-                            className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${copiedSlug === episode.slug ? "text-emerald-500" : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"}`}
+                            className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${copiedSlug === episode.slug ? "text-emerald-500" : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"}`}
                             title={copiedSlug === episode.slug ? "Copied!" : "Copy link"}
                           >
                             {copiedSlug === episode.slug ? (
@@ -491,7 +491,7 @@ export default function Podcasts({
                             rel="noopener noreferrer"
                             aria-label="Share on LinkedIn"
                             onClick={() => logPodcastEvent("share", "list-linkedin", { slug: episode.slug })}
-                            className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+                            className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
                             title="Share on LinkedIn"
                           >
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -504,7 +504,7 @@ export default function Podcasts({
                             rel="noopener noreferrer"
                             aria-label="Share on X"
                             onClick={() => logPodcastEvent("share", "list-x", { slug: episode.slug })}
-                            className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+                            className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
                             title="Share on X"
                           >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

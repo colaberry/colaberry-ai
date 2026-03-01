@@ -746,7 +746,7 @@ function PodcastRail({
                       </span>
                     </div>
                   </div>
-                  <span className="ml-1 shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep dark:text-zinc-500">
+                  <span className="ml-1 shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep dark:text-zinc-400">
                     →
                   </span>
                 </Link>
@@ -957,7 +957,7 @@ function QuickLink({
         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</div>
         <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{description}</div>
       </div>
-      <div className="mt-0.5 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep dark:text-zinc-500">
+      <div className="mt-0.5 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep dark:text-zinc-400">
         <span aria-hidden="true">→</span>
       </div>
     </div>
