@@ -1232,7 +1232,7 @@ function IndustryTile({
       <div className="absolute right-4 top-4 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep">
         <span aria-hidden="true">→</span>
       </div>
-      <div className="flex h-14 w-14 items-center justify-center rounded-lg border border-zinc-200/40 bg-zinc-50 text-zinc-600 dark:border-zinc-700/20 dark:bg-zinc-800/40 dark:text-zinc-300">
+      <div className="flex h-14 w-14 items-center justify-center rounded-lg border border-[#DC2626]/10 bg-[#DC2626]/5 text-zinc-800 dark:border-[#DC2626]/15 dark:bg-[#DC2626]/10 dark:text-zinc-200">
         <IndustryIconSvg icon={icon} />
       </div>
       <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</div>
@@ -1392,7 +1392,7 @@ function AnimatedMetric({
         className={visible ? "counter-animate" : "opacity-0"}
         style={{ animationDelay: `${delay}ms` }}
       >
-        <div className="font-sans text-display-sm font-bold bg-gradient-to-r from-[#DC2626] to-[#18181B] bg-clip-text text-transparent">
+        <div className="font-sans text-display-sm font-bold bg-gradient-to-r from-[#B91C1C] to-[#DC2626] bg-clip-text text-transparent dark:from-[#F87171] dark:to-[#FCA5A5]">
           {value}
         </div>
         <div className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{label}</div>
@@ -1410,8 +1410,9 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <article className="card-glass card-shimmer gradient-border p-6">
-      <h3 className="text-[0.9375rem] font-semibold text-zinc-900 dark:text-zinc-100">
+    <article className="card-glass card-shimmer gradient-border relative overflow-hidden p-6 pl-7">
+      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#DC2626]/60 to-[#DC2626]/10 dark:from-[#F87171]/50 dark:to-[#F87171]/5" />
+      <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
         {title}
       </h3>
       <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
