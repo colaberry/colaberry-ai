@@ -39,7 +39,7 @@ export default function MCPCard({ mcp }: { mcp: MCP }) {
 
   return (
     <Link href={href} className="group block" aria-label={`View MCP server ${mcp.name} details`}>
-      <div className="catalog-card p-5">
+      <div className="catalog-card p-6">
         <div className="flex items-center justify-between gap-3">
           <span className="chip chip-neutral rounded-full px-2.5 py-1 text-label font-semibold uppercase tracking-[0.12em]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />

@@ -218,7 +218,7 @@ export default function Home({
         <div className="hero-vignette" aria-hidden="true" />
 
         {/* Content — centered layout */}
-        <div className="relative z-10 mx-auto max-w-4xl px-8 py-24 text-center sm:py-32 lg:py-40">
+        <div className="relative z-10 mx-auto max-w-4xl px-8 py-28 text-center sm:py-36 lg:py-44">
           <div
             className="rise-in rise-delay-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 tracking-[0.2em]"
             style={{ borderColor: "rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.06)", color: "#FAFAFA" }}
@@ -227,7 +227,7 @@ export default function Home({
             Enterprise AI Platform
           </div>
 
-          <h1 className="rise-in rise-delay-2 mt-6 font-sans text-display-lg font-bold text-white sm:text-display-xl lg:text-display-2xl">
+          <h1 className="rise-in rise-delay-2 mt-6 font-sans text-display-md font-bold text-white sm:text-display-xl lg:text-display-hero">
             Discover, govern, and scale{" "}
             <span className="text-gradient">enterprise AI</span>
           </h1>
