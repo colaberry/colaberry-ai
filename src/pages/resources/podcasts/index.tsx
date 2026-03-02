@@ -337,9 +337,9 @@ export default function Podcasts({
                           type="button"
                           aria-label={heroIsPlaying ? `Pause ${hero.title}` : `Play ${hero.title}`}
                           onClick={() => handlePlay(hero, "hero-inline")}
-                          className="absolute inset-0 flex items-center justify-center bg-zinc-900/40 transition-colors hover:bg-zinc-900/55"
+                          className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors hover:bg-black/50"
                         >
-                          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-zinc-900 shadow-lg backdrop-blur-sm">
+                          <span className="flex h-14 w-14 items-center justify-center rounded-full shadow-xl" style={{ backgroundColor: '#fff', color: '#18181B' }}>
                             {heroIsPlaying ? <PauseIcon size={22} /> : <PlayIcon size={22} />}
                           </span>
                         </button>
@@ -569,9 +569,9 @@ export default function Podcasts({
                             type="button"
                             aria-label={isPlaying ? `Pause ${episode.title}` : `Play ${episode.title}`}
                             onClick={() => handlePlay(episode, "list-inline")}
-                            className="absolute inset-0 hidden items-center justify-center bg-zinc-900/40 transition-colors hover:bg-zinc-900/55 sm:flex"
+                            className="absolute inset-0 hidden items-center justify-center bg-black/30 transition-colors hover:bg-black/50 sm:flex"
                           >
-                            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-zinc-900 shadow-lg backdrop-blur-sm">
+                            <span className="flex h-11 w-11 items-center justify-center rounded-full shadow-xl" style={{ backgroundColor: '#fff', color: '#18181B' }}>
                               {isPlaying ? <PauseIcon /> : <PlayIcon />}
                             </span>
                           </button>
