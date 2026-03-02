@@ -63,7 +63,7 @@ export default function EnterprisePageHero({
 }: EnterprisePageHeroProps) {
   return (
     <section className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#09090B]">
-      <div className={`relative z-10 grid gap-10 px-6 py-20 sm:px-10 sm:py-24 lg:items-start lg:px-14 lg:py-32${image ? " lg:grid-cols-[1.08fr_0.92fr]" : ""}`}>
+      <div className={`relative z-10 grid gap-6 px-6 py-12 sm:px-10 sm:py-16 lg:items-start lg:px-14 lg:py-20${image ? " lg:grid-cols-[1.08fr_0.92fr]" : ""}`}>
         <div className="flex flex-col gap-4">
           <div className="rise-in rise-delay-1 inline-flex w-fit items-center gap-2.5 rounded-full border border-zinc-200 bg-zinc-100 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
             <span className="relative flex h-1.5 w-1.5 shrink-0">

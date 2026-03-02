@@ -33,7 +33,7 @@ export default function RequestDemo() {
           }}
         />
       </Head>
-      <div className="reveal grid gap-8 lg:grid-cols-12 lg:items-start lg:gap-10">
+      <div className="reveal grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
         <div className="lg:col-span-7">
         <div className="chip chip-brand inline-flex w-fit items-center gap-2 rounded-md border border-[#4F2AA3]/15 bg-[#F3EEFF] py-1 pl-2 pr-3 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[#2B0F63] dark:border-[#7B5CE0]/20 dark:bg-[#18233A] dark:text-[#C4B3FF]">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#008EA8]" />

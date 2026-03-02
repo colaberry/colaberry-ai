@@ -291,7 +291,7 @@ export default function Home({
         <div className="hero-vignette" aria-hidden="true" />
 
         {/* Content — centered layout */}
-        <div className="relative z-10 mx-auto max-w-4xl px-8 py-28 text-center sm:py-36 lg:py-44">
+        <div className="relative z-10 mx-auto max-w-4xl px-8 py-16 text-center sm:py-20 lg:py-24">
           <div
             className="rise-in rise-delay-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 tracking-[0.2em]"
             style={{ borderColor: "rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.06)", color: "#FAFAFA" }}
@@ -1486,7 +1486,7 @@ function PlatformTabsSection({ tabs }: { tabs: PlatformTab[] }) {
       />
 
       {/* Tab bar */}
-      <div className="mt-8 flex flex-wrap gap-1 border-b border-[var(--stroke)]" role="tablist" aria-label="Platform capability tabs">
+      <div className="mt-6 flex flex-wrap gap-1 border-b border-[var(--stroke)]" role="tablist" aria-label="Platform capability tabs">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -1514,7 +1514,7 @@ function PlatformTabsSection({ tabs }: { tabs: PlatformTab[] }) {
         key={active.id}
         role="tabpanel"
         id={`platform-panel-${active.id}`}
-        className="mt-8 grid gap-8 lg:grid-cols-2"
+        className="mt-6 grid gap-6 lg:grid-cols-2"
       >
         <div className="flex flex-col justify-center">
           <h3 className="text-display-xs font-bold text-[var(--text-primary)] sm:text-display-sm">

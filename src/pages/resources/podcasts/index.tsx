@@ -191,7 +191,7 @@ export default function Podcasts({
       ) : null}
 
       {/* ── Clean header with pill tabs + search ── */}
-      <section className="reveal section-shell px-4 pt-12 pb-6 sm:px-6 sm:pt-16">
+      <section className="reveal section-shell px-4 pt-6 pb-4 sm:px-6 sm:pt-8">
         <h1 className="font-display text-display-md font-bold text-zinc-900 dark:text-zinc-100 sm:text-display-lg lg:text-display-xl">
           Podcasts
         </h1>
@@ -253,7 +253,7 @@ export default function Podcasts({
       </section>
 
       {/* ── Content area: hero + list | sidebar ── */}
-      <section className="reveal section-shell px-4 pt-6 pb-12 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-8 lg:items-start">
+      <section className="reveal section-shell px-4 pt-4 pb-6 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-8 lg:items-start">
         {/* Left column */}
         <div>
           {episodes.length === 0 ? (

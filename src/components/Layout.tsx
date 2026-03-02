@@ -1437,9 +1437,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       ) : null}
 
-      <footer role="contentinfo" className="footer-surface mt-10">
+      <footer role="contentinfo" className="footer-surface mt-6">
         {/* ── Main 3-column grid ── */}
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 pt-20 pb-14 lg:grid-cols-[1fr_auto_auto] lg:gap-16 lg:pt-28 lg:pb-16">
+        <div className="mx-auto grid max-w-7xl gap-8 px-6 pt-12 pb-8 lg:grid-cols-[1fr_auto_auto] lg:gap-10 lg:pt-16 lg:pb-10">
           {/* LEFT — Newsletter */}
           <div className="max-w-md">
             <h2 className="text-xl font-semibold text-[#18181B] dark:text-[#FAFAFA]">

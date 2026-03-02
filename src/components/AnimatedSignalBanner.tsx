@@ -25,7 +25,7 @@ export default function AnimatedSignalBanner({
 }: AnimatedSignalBannerProps) {
   return (
     <section
-      className={`animated-signal-banner animated-signal-${variant} mt-12 overflow-hidden rounded-2xl border border-white/10`}
+      className={`animated-signal-banner animated-signal-${variant} mt-8 overflow-hidden rounded-2xl border border-white/10`}
       aria-label="Colaberry platform signal banner"
     >
       <div className="animated-signal-grid" />

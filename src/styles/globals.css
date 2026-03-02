@@ -117,9 +117,9 @@
   --surface-lavender: #FAFAFA;
   --backdrop-blur: 16px;
   /* Spacing rhythm */
-  --section-gap-sm: 6rem;
-  --section-gap-md: 10rem;
-  --section-gap-lg: 14rem;
+  --section-gap-sm: 3rem;
+  --section-gap-md: 5rem;
+  --section-gap-lg: 7rem;
   /* Animation timing */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
@@ -252,13 +252,13 @@ select:disabled {
 
 .main-offset {
   padding-top: calc(var(--site-header-height) + 1rem);
-  padding-bottom: 2.75rem;
+  padding-bottom: 1.5rem;
 }
 
 @media (max-width: 767px) {
   .main-offset {
     padding-top: calc(var(--site-header-height) + 0.75rem);
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
   }
 }
 
@@ -1116,18 +1116,18 @@ button:focus-visible {
 }
 
 .section-spacing {
-  margin-top: 6rem;
+  margin-top: 3rem;
 }
 
 @media (min-width: 640px) {
   .section-spacing {
-    margin-top: 8rem;
+    margin-top: 4rem;
   }
 }
 
 @media (min-width: 1024px) {
   .section-spacing {
-    margin-top: 12rem;
+    margin-top: 6rem;
   }
 }
 
