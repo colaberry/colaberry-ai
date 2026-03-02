@@ -1244,7 +1244,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={closeMobileMenu}
-                className="btn btn-ghost btn-icon"
+                className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                 aria-label="Close navigation menu"
               >
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
@@ -1359,7 +1359,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={() => setWorkspaceMobileRailOpen(false)}
-                className="btn btn-ghost btn-icon"
+                className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                 aria-label="Close catalog sidebar"
               >
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
@@ -1627,7 +1627,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={closeSearch}
-                className="btn btn-ghost btn-icon"
+                className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                 aria-label="Close search"
               >
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
@@ -1716,10 +1716,10 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={dismissDiscovery}
-                className="btn btn-ghost btn-icon"
+                className="focus-ring inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                 aria-label="Dismiss"
               >
-                <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none">
+                <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none">
                   <path
                     d="M6 6 18 18M18 6 6 18"
                     stroke="currentColor"
