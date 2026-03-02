@@ -141,7 +141,7 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
         ]}
       />
 
-      <section className="mt-6 grid gap-3 sm:grid-cols-2">
+      <section className="reveal section-spacing grid gap-3 sm:grid-cols-2">
         {updateHighlights.map((item) => (
           <PremiumMediaCard
             key={item.title}
@@ -176,7 +176,7 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
         </div>
       )}
 
-      <div className="mt-6 grid gap-4 sm:mt-8 lg:grid-cols-[1.2fr_0.8fr]">
+      <div className="reveal section-spacing grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
         <section className="surface-panel border border-zinc-200/80 bg-white/90 p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <SectionHeader
@@ -296,7 +296,7 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
         </section>
       </div>
 
-      <section className="surface-panel mt-6 border border-zinc-200/80 bg-white/90 p-6">
+      <section className="reveal surface-panel section-spacing border border-zinc-200/80 bg-white/90 p-6">
         <SectionHeader
           kicker="Subscription"
           title="Newsletter and release alerts"

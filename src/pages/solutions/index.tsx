@@ -98,14 +98,14 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
         alt="Solutions overview"
       />
 
-      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="reveal section-spacing grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {solutionHighlights.map((item) => (
           <div
             key={item.title}
             className="card-elevated p-4"
           >
-            <div className="text-sm font-semibold text-zinc-900">{item.title}</div>
-            <div className="mt-1 text-xs text-zinc-600">{item.description}</div>
+            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{item.title}</div>
+            <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">{item.description}</div>
           </div>
         ))}
       </div>
@@ -115,11 +115,11 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
         </p>
       ) : null}
 
-      <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="reveal section-spacing grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {solutions.map((item) => (
           <div key={item.title} className="card-feature p-5">
-            <div className="text-[0.9375rem] font-semibold text-zinc-900">{item.title}</div>
-            <div className="mt-1 text-sm text-zinc-600">{item.description}</div>
+            <div className="text-[0.9375rem] font-semibold text-zinc-900 dark:text-zinc-100">{item.title}</div>
+            <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{item.description}</div>
             <div className="chip chip-muted mt-4 inline-flex items-center rounded-md border border-zinc-200/80 bg-white px-2.5 py-1 text-xs font-semibold text-zinc-700">
               Planned
             </div>
@@ -127,7 +127,7 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
         ))}
       </div>
 
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+      <div className="reveal section-spacing flex flex-col gap-3 sm:flex-row">
         <Link
           href="/use-cases"
           className="btn btn-primary"

@@ -190,11 +190,8 @@ const SOCIAL_ICON_PATHS: Record<string, ReactNode> = {
   ),
   youtube: (
     <>
-      <path
-        d="M23 12s0-4.3-.6-5.7c-.4-1-1.2-1.8-2.2-2.2C18.8 3.5 12 3.5 12 3.5s-6.8 0-8.2.6c-1 .4-1.8 1.2-2.2 2.2C1 7.7 1 12 1 12s0 4.3.6 5.7c.4 1 1.2 1.8 2.2 2.2 1.4.6 8.2.6 8.2.6s6.8 0 8.2-.6c1-.4 1.8-1.2 2.2-2.2.6-1.4.6-5.7.6-5.7Z"
-        fill="currentColor"
-      />
-      <polygon points="10 8.5 16 12 10 15.5" fill="#ffffff" />
+      <rect x="2" y="4.5" width="20" height="15" rx="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <polygon points="10 8.5 16 12 10 15.5" fill="currentColor" />
     </>
   ),
 };
@@ -474,15 +471,10 @@ function buildWorkspaceSections(nav: GlobalNavigation): WorkspaceSection[] {
 }
 
 function isCatalogWorkspacePath(path: string) {
-  return (
-    path === "/assistant" ||
-    path.startsWith("/assistant/") ||
-    path === "/aixcelerator" ||
-    path.startsWith("/aixcelerator/") ||
-    path === "/use-cases" ||
-    path.startsWith("/use-cases/") ||
-    path === "/search"
-  );
+  // Show sidebar on all inner pages except homepage and static legal pages
+  const noSidebarPaths = ["/", "/cookie-policy", "/privacy-policy", "/unsubscribe"];
+  if (noSidebarPaths.includes(path)) return false;
+  return true;
 }
 
 function getSignalBannerConfig(path: string) {
@@ -815,7 +807,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           }
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0.08, rootMargin: "0px 0px -60px 0px" },
     );
     const targets = document.querySelectorAll(".reveal:not(.revealed)");
     targets.forEach((el) => observer.observe(el));
@@ -1023,7 +1015,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <link rel="dns-prefetch" href="https://www.buzzsprout.com" />
       </Head>
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-deep focus:shadow-lg focus:ring-2 focus:ring-[#DC2626]/40">Skip to content</a>
-      <header role="banner" className={`site-header sticky top-0 z-40 border-b border-[var(--stroke)] bg-white dark:bg-[#18181B] ${headerCompact ? "site-header--compact bg-white/85 dark:bg-[#18181B]/90" : "shadow-sm"}`}>
+      <header role="banner" className={`site-header sticky top-0 z-40 border-b transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${headerCompact ? "site-header--compact border-[var(--stroke)]/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] backdrop-blur-xl dark:bg-[#18181B]/80" : "border-[var(--stroke)] bg-white shadow-sm dark:bg-[#18181B]"}`}>
         <div className={`flex w-full items-center justify-between gap-3 px-4 transition-[padding] duration-200 sm:px-6 lg:px-8 ${headerCompact ? "py-1.5" : "py-3"}`}>
           <div className="flex items-center gap-3">
             <Link href="/" className="flex min-w-0 items-center gap-2">
@@ -1447,7 +1439,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       <footer role="contentinfo" className="footer-surface mt-10">
         {/* ── Main 3-column grid ── */}
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 pt-16 pb-10 lg:grid-cols-[1fr_auto_auto] lg:gap-16">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 pt-20 pb-14 lg:grid-cols-[1fr_auto_auto] lg:gap-16 lg:pt-28 lg:pb-16">
           {/* LEFT — Newsletter */}
           <div className="max-w-md">
             <h2 className="text-xl font-semibold text-[#18181B] dark:text-[#FAFAFA]">

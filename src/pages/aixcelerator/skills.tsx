@@ -188,7 +188,7 @@ export default function SkillsPage({ skills, allowPrivate, fetchError }: SkillsP
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+      <div className="reveal grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
         <div className="flex flex-col gap-3">
           <SectionHeader
             as="h1"
@@ -200,7 +200,7 @@ export default function SkillsPage({ skills, allowPrivate, fetchError }: SkillsP
         </div>
       </div>
 
-      <section className="surface-panel mt-6 p-5 sm:mt-8">
+      <section className="reveal surface-panel mt-8 p-5 sm:mt-10">
         <SectionHeader
           kicker="Catalog snapshot"
           title="Coverage and operational readiness"
@@ -218,7 +218,7 @@ export default function SkillsPage({ skills, allowPrivate, fetchError }: SkillsP
         </div>
       </section>
 
-      <section className="surface-panel mt-6 p-5">
+      <section className="reveal surface-panel mt-6 p-5 sm:mt-8">
         <div className="grid gap-3 md:grid-cols-[1.45fr_1fr_1fr_auto]">
           <input
             type="search"
@@ -228,7 +228,7 @@ export default function SkillsPage({ skills, allowPrivate, fetchError }: SkillsP
               setVisibleCount(PAGE_SIZE);
             }}
             placeholder="Search skills, models, tools, or linked assets..."
-            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 dark:placeholder:text-zinc-500"
+            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 dark:placeholder:text-zinc-500"
             aria-label="Search skills"
           />
           <select
@@ -237,7 +237,7 @@ export default function SkillsPage({ skills, allowPrivate, fetchError }: SkillsP
               setCategoryFilter(event.target.value);
               setVisibleCount(PAGE_SIZE);
             }}
-            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             aria-label="Filter by category"
           >
             <option value="all">All categories</option>
@@ -253,7 +253,7 @@ export default function SkillsPage({ skills, allowPrivate, fetchError }: SkillsP
               setProviderFilter(event.target.value);
               setVisibleCount(PAGE_SIZE);
             }}
-            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             aria-label="Filter by provider"
           >
             <option value="all">All providers</option>
@@ -269,7 +269,7 @@ export default function SkillsPage({ skills, allowPrivate, fetchError }: SkillsP
               setSortMode(event.target.value as SkillSortMode);
               setVisibleCount(PAGE_SIZE);
             }}
-            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             aria-label="Sort skills"
           >
             <option value="trending">Trending</option>
@@ -304,7 +304,7 @@ export default function SkillsPage({ skills, allowPrivate, fetchError }: SkillsP
         ) : null}
       </section>
 
-      <section className="mt-6 grid gap-4 sm:grid-cols-2">
+      <section className="reveal mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2">
         {visibleSkills.length > 0 ? (
           visibleSkills.map((skill) => <SkillCard key={skill.slug || skill.id} skill={skill} />)
         ) : (
@@ -345,7 +345,7 @@ function SkillCard({ skill }: { skill: Skill }) {
         <div>
           <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">Skill</div>
           <h2 className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-            <Link href={`/aixcelerator/skills/${skill.slug || skill.id}`} className="hover:text-[#4F2AA3]">
+            <Link href={`/aixcelerator/skills/${skill.slug || skill.id}`} className="hover:text-red-600 dark:hover:text-red-400">
               {skill.name}
             </Link>
           </h2>

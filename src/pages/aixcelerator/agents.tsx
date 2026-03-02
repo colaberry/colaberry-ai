@@ -193,7 +193,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+      <div className="reveal grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
         <div className="flex flex-col gap-3">
           <SectionHeader
             as="h1"
@@ -205,7 +205,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
         </div>
       </div>
 
-      <section className="surface-panel mt-6 p-5">
+      <section className="reveal surface-panel mt-8 p-5 sm:mt-10">
         <SectionHeader
           kicker="Catalog snapshot"
           title="Coverage and readiness"
@@ -227,7 +227,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
         </div>
       </section>
 
-      <section className="surface-panel mt-6 p-6">
+      <section className="reveal surface-panel mt-6 p-6 sm:mt-8">
         <SectionHeader
           kicker="Filters"
           title="Search and filter"
@@ -250,12 +250,12 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
                   setSearch(event.target.value);
                   setVisibleCount(pageSize);
                 }}
-                className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2 pr-11 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 dark:placeholder:text-zinc-500"
+                className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2 pr-11 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 dark:placeholder:text-zinc-500"
               />
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
-                className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -tranzinc-y-1/2 text-brand-teal opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100"
+                className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-400 opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 dark:text-zinc-500"
                 fill="none"
               >
                 <path
@@ -283,7 +283,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
                 setIndustryFilter(event.target.value);
                 setVisibleCount(pageSize);
               }}
-              className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+              className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             >
               <option value="all">All industries</option>
               {industries.map((industry) => (
@@ -304,7 +304,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
                 setStatusFilter(event.target.value);
                 setVisibleCount(pageSize);
               }}
-              className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+              className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             >
               <option value="all">All statuses</option>
               {statuses.map((status) => (
@@ -325,7 +325,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
                 setSourceFilter(event.target.value);
                 setVisibleCount(pageSize);
               }}
-              className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+              className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             >
               <option value="all">All sources</option>
               {sources.map((source) => (
@@ -347,7 +347,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
                   setTagFilter(event.target.value);
                   setVisibleCount(pageSize);
                 }}
-                className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+                className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
               >
                 <option value="all">All tags</option>
                 {tagOptions.map((tag) => (
@@ -417,7 +417,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
         </div>
       </section>
 
-      <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="reveal mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
         {visibleAgents.map((a) => (
           <AgentCard key={a.slug || String(a.id)} agent={a} />
         ))}

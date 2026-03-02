@@ -65,10 +65,10 @@ export default function AIXcelerator({ latestUseCases, fetchError }: AIXcelerato
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+      <div className="reveal grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
         <div className="flex flex-col gap-3">
-          <div className="inline-flex w-fit items-center gap-2 rounded-md border border-[#4F2AA3]/15 bg-[#F3EEFF] py-1 pl-2 pr-3 text-xs text-[#2B0F63] dark:border-[#7B5CE0]/20 dark:bg-[#18233A] dark:text-[#C4B3FF]">
-            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#008EA8]" />
+          <div className="inline-flex w-fit items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50 py-1 pl-2 pr-3 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-red-600 dark:bg-red-400" />
             Core platform + modular layers
           </div>
           <SectionHeader
@@ -80,7 +80,7 @@ export default function AIXcelerator({ latestUseCases, fetchError }: AIXcelerato
         </div>
       </div>
 
-      <section className="mt-8">
+      <section className="reveal section-spacing">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeader
             kicker="Core"
@@ -88,7 +88,7 @@ export default function AIXcelerator({ latestUseCases, fetchError }: AIXcelerato
             description="The trusted foundation for agent delivery, governance, and observability."
             size="md"
           />
-          <div className="hidden rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700 sm:inline-flex">
+          <div className="hidden rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 sm:inline-flex">
             Stable foundation
           </div>
         </div>
@@ -107,7 +107,7 @@ export default function AIXcelerator({ latestUseCases, fetchError }: AIXcelerato
         </div>
       </section>
 
-      <section className="mt-10 surface-panel p-6 sm:mt-12">
+      <section className="reveal section-spacing surface-panel p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeader
             kicker="Layers"
@@ -136,7 +136,7 @@ export default function AIXcelerator({ latestUseCases, fetchError }: AIXcelerato
         </div>
       </section>
 
-      <section className="mt-10 surface-panel p-6 sm:mt-12">
+      <section className="reveal section-spacing surface-panel p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeader
             kicker="Signals"
@@ -163,12 +163,12 @@ export default function AIXcelerator({ latestUseCases, fetchError }: AIXcelerato
               <Link
                 key={item.slug || item.id}
                 href={`/use-cases/${item.slug}`}
-                className="surface-panel surface-hover surface-interactive border border-zinc-200/80 bg-white/90 p-4"
+                className="surface-panel surface-hover surface-interactive border border-zinc-200/80 bg-white/90 p-4 dark:border-zinc-700 dark:bg-zinc-900/90"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="line-clamp-2 text-sm font-semibold text-zinc-900">{item.title}</div>
-                  <span className="text-zinc-400 transition-transform group-hover:tranzinc-x-0.5 group-hover:text-brand-deep">
-                    →
+                  <div className="line-clamp-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{item.title}</div>
+                  <span className="text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-red-600 dark:group-hover:text-red-400">
+                    &rarr;
                   </span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -179,7 +179,7 @@ export default function AIXcelerator({ latestUseCases, fetchError }: AIXcelerato
                     {(item.status || "live").toUpperCase()}
                   </span>
                 </div>
-                <div className="mt-3 text-xs text-zinc-500">
+                <div className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
                   {item.lastUpdated ? `Updated ${formatDate(item.lastUpdated)}` : "Update date pending"}
                 </div>
               </Link>
@@ -188,7 +188,7 @@ export default function AIXcelerator({ latestUseCases, fetchError }: AIXcelerato
         )}
       </section>
 
-      <section className="mt-10 surface-panel p-6 sm:mt-12">
+      <section className="reveal section-spacing surface-panel p-6">
         <SectionHeader
           kicker="Roadmap"
           title="Discovery layer next steps"

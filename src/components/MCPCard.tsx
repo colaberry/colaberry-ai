@@ -39,13 +39,13 @@ export default function MCPCard({ mcp }: { mcp: MCP }) {
 
   return (
     <Link href={href} className="group block" aria-label={`View MCP server ${mcp.name} details`}>
-      <div className="catalog-card p-5">
+      <div className="catalog-card p-6">
         <div className="flex items-center justify-between gap-3">
           <span className="chip chip-neutral rounded-full px-2.5 py-1 text-label font-semibold uppercase tracking-[0.12em]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
             MCP
           </span>
-          <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500 transition-colors group-hover:text-zinc-600 dark:group-hover:text-zinc-300">
+          <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-400 transition-colors group-hover:text-zinc-600 dark:group-hover:text-zinc-300">
             <path d="M6.5 3.5 11 8l-4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
           </svg>
         </div>
@@ -81,7 +81,7 @@ export default function MCPCard({ mcp }: { mcp: MCP }) {
           <div className="text-label font-semibold uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400">
             {metaParts.length > 0 ? metaParts.join(" \u00b7 ") : "Quality monitored"}
           </div>
-          <span className="text-label font-semibold text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-300">View →</span>
+          <span className="text-label font-semibold text-zinc-400 dark:text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300">View →</span>
         </div>
       </div>
     </Link>

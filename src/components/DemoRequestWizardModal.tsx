@@ -182,7 +182,7 @@ export default function DemoRequestWizardModal({
               </div>
               <div className="mt-1.5 flex items-center gap-2">
                 {["Contact", "Company", "Details"].map((label, i) => (
-                  <span key={label} className={`flex-1 text-center text-[10px] font-semibold uppercase tracking-[0.12em] ${i + 1 <= step ? "text-[#4F2AA3] dark:text-[#C4B3FF]" : "text-zinc-400 dark:text-zinc-500"}`}>
+                  <span key={label} className={`flex-1 text-center text-[10px] font-semibold uppercase tracking-[0.12em] ${i + 1 <= step ? "text-[#4F2AA3] dark:text-[#C4B3FF]" : "text-zinc-400 dark:text-zinc-400"}`}>
                     {label}
                   </span>
                 ))}

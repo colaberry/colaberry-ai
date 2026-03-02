@@ -125,7 +125,7 @@ export default function Resources({ counts }: ResourcesProps) {
         ]}
       />
 
-      <section className="section-spacing grid gap-3 sm:grid-cols-2">
+      <section className="reveal section-spacing grid gap-3 sm:grid-cols-2">
         {resourceHighlights.map((item) => (
           <PremiumMediaCard
             key={item.title}
@@ -139,7 +139,7 @@ export default function Resources({ counts }: ResourcesProps) {
         ))}
       </section>
 
-      <div className="surface-panel section-shell section-spacing p-5 sm:p-6">
+      <div className="reveal surface-panel section-shell section-spacing p-5 sm:p-6">
         <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-600 dark:text-zinc-300">
           Search resources
         </div>
@@ -174,13 +174,13 @@ export default function Resources({ counts }: ResourcesProps) {
         </div>
       </div>
 
-      <div className="section-spacing grid gap-3 sm:grid-cols-3">
+      <div className="reveal section-spacing grid gap-3 sm:grid-cols-3">
         <ResourceQuickLink href="/solutions" title="Solutions" description="Reusable solution patterns and packaged offerings." />
         <ResourceQuickLink href="/updates" title="News & product" description="Product updates, announcements, and relevant news." />
         <ResourceQuickLink href="/search" title="Search catalog" description="Full-text search across all content types." />
       </div>
 
-      <div className="surface-panel section-shell section-spacing p-6">
+      <div className="reveal surface-panel section-shell section-spacing p-6">
         <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
           How this evolves
         </div>

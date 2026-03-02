@@ -71,8 +71,8 @@ export default function CaseStudiesHub() {
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <div className="text-sm font-semibold text-zinc-900">{item.name}</div>
-                <div className="mt-1 text-sm text-zinc-600">View case studies and outcomes.</div>
+                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{item.name}</div>
+                <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">View case studies and outcomes.</div>
               </div>
               <div className="mt-0.5 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep">
                 <span aria-hidden="true">→</span>
