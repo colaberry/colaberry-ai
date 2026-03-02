@@ -67,7 +67,7 @@ export default function RequestDemo() {
               description="Key topics we can tailor to your workflows and stakeholders."
               size="md"
             />
-            <div className="mt-4 grid gap-2 text-sm text-zinc-700 sm:grid-cols-2">
+            <div className="mt-4 grid gap-2 text-sm text-zinc-700 dark:text-zinc-300 sm:grid-cols-2">
               <Bullet>Agent catalog + rollout readiness</Bullet>
               <Bullet>MCP server library + integrations</Bullet>
               <Bullet>Industry workspaces + case studies</Bullet>
