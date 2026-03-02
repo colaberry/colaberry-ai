@@ -130,7 +130,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
         ]}
       />
 
-      <section className="mt-6 grid gap-3 sm:grid-cols-2">
+      <section className="reveal section-spacing grid gap-3 sm:grid-cols-2">
         {industryHighlights.map((item) => (
           <PremiumMediaCard
             key={item.title}
@@ -144,7 +144,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
         ))}
       </section>
 
-      <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="reveal section-spacing grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {industries.map((item) => (
           <PremiumMediaCard
             key={item.slug}

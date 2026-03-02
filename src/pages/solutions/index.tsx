@@ -98,7 +98,7 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
         alt="Solutions overview"
       />
 
-      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="reveal section-spacing grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {solutionHighlights.map((item) => (
           <div
             key={item.title}
@@ -115,7 +115,7 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
         </p>
       ) : null}
 
-      <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="reveal section-spacing grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {solutions.map((item) => (
           <div key={item.title} className="card-feature p-5">
             <div className="text-[0.9375rem] font-semibold text-zinc-900 dark:text-zinc-100">{item.title}</div>
@@ -127,7 +127,7 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
         ))}
       </div>
 
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+      <div className="reveal section-spacing flex flex-col gap-3 sm:flex-row">
         <Link
           href="/use-cases"
           className="btn btn-primary"

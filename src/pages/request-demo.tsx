@@ -33,7 +33,7 @@ export default function RequestDemo() {
           }}
         />
       </Head>
-      <div className="grid gap-8 lg:grid-cols-12 lg:items-start lg:gap-10">
+      <div className="reveal grid gap-8 lg:grid-cols-12 lg:items-start lg:gap-10">
         <div className="lg:col-span-7">
         <div className="chip chip-brand inline-flex w-fit items-center gap-2 rounded-md border border-[#4F2AA3]/15 bg-[#F3EEFF] py-1 pl-2 pr-3 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[#2B0F63] dark:border-[#7B5CE0]/20 dark:bg-[#18233A] dark:text-[#C4B3FF]">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#008EA8]" />
@@ -60,7 +60,7 @@ export default function RequestDemo() {
 
           <DemoRequestForm sourcePage="request-demo" sourcePath="/request-demo" />
 
-          <div className="detail-section mt-8">
+          <div className="reveal detail-section mt-8">
             <SectionHeader
               kicker="What we can cover"
               title="Demo agenda highlights"
@@ -78,7 +78,7 @@ export default function RequestDemo() {
           </div>
         </div>
 
-        <div className="lg:col-span-5">
+        <div className="reveal lg:col-span-5">
           <MediaPanel
             kicker="Demo preview"
             title="Walkthrough highlights"

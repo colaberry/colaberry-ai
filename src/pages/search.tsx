@@ -451,7 +451,7 @@ export default function SearchPage({ query, results, fetchError }: SearchPagePro
           />
         </div>
       ) : null}
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+      <div className="reveal grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
         <div className="flex flex-col gap-3">
           <SectionHeader
             as="h1"
@@ -509,7 +509,7 @@ export default function SearchPage({ query, results, fetchError }: SearchPagePro
       ) : null}
 
       {hasResults ? (
-        <div className="mt-8 grid gap-6">
+        <div className="reveal section-spacing grid gap-6">
           {grouped.map((group) => (
             <section key={group.type} className="detail-section">
               <div className="flex items-center justify-between">

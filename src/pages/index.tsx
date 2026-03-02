@@ -153,13 +153,79 @@ export default function Home({
     },
   ];
 
-  const platformFeatures = [
-    { title: "Agents & assistants catalog", description: "Adopt agents with clear ownership, status, and workflow alignment — ready for rollout." },
-    { title: "MCP integration library", description: "Standardize tool access via MCP with integration-ready server patterns and endpoints." },
-    { title: "Observability + evaluation", description: "Track outcomes and failures, then close the loop with evals to improve reliability." },
-    { title: "Security by design", description: "Access controls, data boundaries, and governance workflows designed for enterprise." },
-    { title: "Industry workspaces", description: "Bring domain context into delivery with repeatable playbooks and patterns." },
-    { title: "Developer control", description: "Use a clean platform surface that supports code-level control with faster patterns when needed." },
+  const platformTabs = [
+    {
+      id: "agents" as const,
+      label: "Agents",
+      title: "Agents & assistants catalog",
+      description: "Adopt agents with clear ownership, status, and workflow alignment — ready for rollout. Browse by industry, deployment stage, and readiness level.",
+      href: "/aixcelerator/agents",
+      metrics: [
+        { value: "100+", label: "Agent profiles" },
+        { value: "14", label: "Industries" },
+        { value: "33", label: "Public agents" },
+      ],
+    },
+    {
+      id: "mcp" as const,
+      label: "MCP",
+      title: "MCP integration library",
+      description: "Standardize tool access via MCP with integration-ready server patterns and endpoints. Connect your existing stack with governed, tested connectors.",
+      href: "/aixcelerator/mcp",
+      metrics: [
+        { value: "50+", label: "MCP servers" },
+        { value: "12", label: "Tool categories" },
+        { value: "100%", label: "Tested connectors" },
+      ],
+    },
+    {
+      id: "observability" as const,
+      label: "Observability",
+      title: "Observability + evaluation",
+      description: "Track outcomes and failures, then close the loop with evaluations to improve reliability. Monitor agent performance across deployment stages.",
+      href: "/aixcelerator",
+      metrics: [
+        { value: "Real-time", label: "Performance data" },
+        { value: "Full", label: "Lifecycle tracking" },
+        { value: "Built-in", label: "Eval frameworks" },
+      ],
+    },
+    {
+      id: "security" as const,
+      label: "Security",
+      title: "Security by design",
+      description: "Access controls, data boundaries, and governance workflows designed for enterprise. Every agent and connector governed from day one.",
+      href: "/aixcelerator",
+      metrics: [
+        { value: "SOC 2", label: "Compliant" },
+        { value: "RBAC", label: "Access control" },
+        { value: "Full", label: "Audit trail" },
+      ],
+    },
+    {
+      id: "workspaces" as const,
+      label: "Workspaces",
+      title: "Industry workspaces",
+      description: "Bring domain context into delivery with repeatable playbooks and patterns. Tailored for agriculture, healthcare, fintech, and more.",
+      href: "/industries",
+      metrics: [
+        { value: "8+", label: "Industries" },
+        { value: "Custom", label: "Playbooks" },
+        { value: "Domain", label: "Intelligence" },
+      ],
+    },
+    {
+      id: "developer" as const,
+      label: "Developer",
+      title: "Developer control",
+      description: "Use a clean platform surface that supports code-level control with faster patterns when needed. API-first design with full SDK access.",
+      href: "/aixcelerator",
+      metrics: [
+        { value: "REST", label: "API access" },
+        { value: "Full", label: "SDK support" },
+        { value: "CI/CD", label: "Integration" },
+      ],
+    },
   ];
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
@@ -209,6 +275,13 @@ export default function Home({
           <div className="hero-orb hero-orb-2" />
           <div className="hero-orb hero-orb-3" />
           <div className="hero-orb hero-orb-center" />
+        </div>
+
+        {/* Concentric rings (together.ai-inspired depth) */}
+        <div className="hero-concentric-rings" aria-hidden="true">
+          <div className="hero-ring hero-ring-1" />
+          <div className="hero-ring hero-ring-2" />
+          <div className="hero-ring hero-ring-3" />
         </div>
 
         {/* Subtle grid overlay */}
@@ -293,18 +366,7 @@ export default function Home({
         trendingUseCases={trendingUseCases}
       />
 
-      <section className="reveal section-spacing">
-        <SectionHeader
-          kicker="Platform capabilities"
-          title="Everything teams need to build, govern, and scale AI"
-          description="From cataloging agents to evaluating outcomes, the platform supports full lifecycle delivery."
-        />
-        <div className="stagger-grid revealed mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {platformFeatures.map((feature) => (
-            <FeatureCard key={feature.title} {...feature} />
-          ))}
-        </div>
-      </section>
+      <PlatformTabsSection tabs={platformTabs} />
 
       <section className="reveal section-spacing surface-panel p-6 sm:p-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -1402,22 +1464,94 @@ function AnimatedMetric({
   );
 }
 
-function FeatureCard({
-  title,
-  description,
-}: {
+type PlatformTab = {
+  id: string;
+  label: string;
   title: string;
   description: string;
-}) {
+  href: string;
+  metrics: { value: string; label: string }[];
+};
+
+function PlatformTabsSection({ tabs }: { tabs: PlatformTab[] }) {
+  const [activeId, setActiveId] = useState(tabs[0].id);
+  const active = tabs.find((t) => t.id === activeId) || tabs[0];
+
   return (
-    <article className="card-glass card-shimmer gradient-border relative overflow-hidden p-6 pl-7">
-      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#DC2626]/60 to-[#DC2626]/10 dark:from-[#F87171]/50 dark:to-[#F87171]/5" />
-      <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-        {title}
-      </h3>
-      <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-        {description}
-      </p>
-    </article>
+    <section className="reveal section-spacing">
+      <SectionHeader
+        kicker="Platform capabilities"
+        title="Everything teams need to build, govern, and scale AI"
+        description="From cataloging agents to evaluating outcomes, the platform supports full lifecycle delivery."
+      />
+
+      {/* Tab bar */}
+      <div className="mt-8 flex flex-wrap gap-1 border-b border-[var(--stroke)]" role="tablist" aria-label="Platform capability tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={activeId === tab.id}
+            aria-controls={`platform-panel-${tab.id}`}
+            className={`relative px-5 py-3 text-sm font-semibold transition-colors ${
+              activeId === tab.id
+                ? "text-[var(--text-primary)]"
+                : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            }`}
+            onClick={() => setActiveId(tab.id)}
+          >
+            {tab.label}
+            {activeId === tab.id && (
+              <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#DC2626] dark:bg-[#F87171]" />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      <div
+        key={active.id}
+        role="tabpanel"
+        id={`platform-panel-${active.id}`}
+        className="mt-8 grid gap-8 lg:grid-cols-2"
+      >
+        <div className="flex flex-col justify-center">
+          <h3 className="text-display-xs font-bold text-[var(--text-primary)] sm:text-display-sm">
+            {active.title}
+          </h3>
+          <p className="mt-4 text-body-lg leading-relaxed text-[var(--text-muted)]">
+            {active.description}
+          </p>
+          <div className="mt-6">
+            <Link href={active.href} className="btn btn-cta">
+              Learn more
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+
+        {/* Metrics panel (right side) */}
+        <div className="flex items-center">
+          <div className="grid w-full gap-4 sm:grid-cols-3">
+            {active.metrics.map((metric) => (
+              <div
+                key={metric.label}
+                className="surface-panel p-5 text-center"
+              >
+                <div className="text-display-xs font-bold text-[#DC2626] dark:text-[#F87171]">
+                  {metric.value}
+                </div>
+                <div className="mt-1 text-sm font-medium text-[var(--text-muted)]">
+                  {metric.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

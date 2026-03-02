@@ -189,7 +189,7 @@ export default function UseCasesPage({ useCases, allowPrivate, fetchError }: Use
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+      <div className="reveal grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
         <div className="flex flex-col gap-3">
           <SectionHeader
             as="h1"
@@ -201,7 +201,7 @@ export default function UseCasesPage({ useCases, allowPrivate, fetchError }: Use
         </div>
       </div>
 
-      <section className="surface-panel mt-6 p-5 sm:mt-8">
+      <section className="reveal surface-panel section-spacing p-5">
         <SectionHeader
           kicker="Catalog snapshot"
           title="Coverage and deployment readiness"
@@ -223,7 +223,7 @@ export default function UseCasesPage({ useCases, allowPrivate, fetchError }: Use
         </div>
       </section>
 
-      <section className="surface-panel mt-6 p-5">
+      <section className="reveal surface-panel section-spacing p-5">
         <div className="grid gap-3 md:grid-cols-[1.4fr_1fr_1fr_auto]">
           <input
             type="search"
@@ -328,7 +328,7 @@ export default function UseCasesPage({ useCases, allowPrivate, fetchError }: Use
           />
         </div>
       ) : (
-        <div className="mt-6 grid gap-4 sm:mt-8">
+        <div className="reveal section-spacing grid gap-4">
           {visibleUseCases.map((item) => {
             const statusLabel = (item.status || "live").toLowerCase();
             const visibilityLabel = (item.visibility || "public").toLowerCase();
