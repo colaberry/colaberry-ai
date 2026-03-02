@@ -1146,7 +1146,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             ) : null}
           </nav>
 
-          <div className="flex items-center gap-1.5 min-[1240px]:hidden">
+          <div className="flex items-center gap-2 min-[1240px]:hidden">
             {isCatalogWorkspace ? (
               <button
                 type="button"
@@ -1161,13 +1161,13 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none">
                   <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                 </svg>
-                <span>Catalog</span>
+                <span className="hidden min-[420px]:inline">Catalog</span>
               </button>
             ) : null}
             <button
               type="button"
               onClick={openSearch}
-              className="btn btn-ghost btn-icon"
+              className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:border-[#DC2626]/35 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
               aria-expanded={searchOpen}
               aria-label="Open global search"
             >
@@ -1188,7 +1188,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={toggleTheme}
-              className="btn btn-ghost btn-icon"
+              className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:border-[#DC2626]/35 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
               aria-label={themeToggleLabel}
             >
               <span className="sr-only">{themeToggleLabel}</span>
@@ -1204,7 +1204,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none">
                 <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
-              <span>Menu</span>
+              <span className="hidden min-[420px]:inline">Menu</span>
             </button>
           </div>
         </div>
@@ -1884,7 +1884,7 @@ function FooterLink({
 function ThemeIcon({ isDark }: { isDark: boolean }) {
   if (isDark) {
     return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="none">
+      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none">
         <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.6" />
         <path
           d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"
@@ -1897,7 +1897,7 @@ function ThemeIcon({ isDark }: { isDark: boolean }) {
   }
 
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="currentColor">
       <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5Z" />
     </svg>
   );
