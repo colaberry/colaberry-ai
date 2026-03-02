@@ -409,6 +409,30 @@ type WorkspaceSection = {
   links: WorkspaceLink[];
 };
 
+const sidebarIconProps = { width: 16, height: 16, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.75, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+
+function getSidebarIcon(href: string): ReactNode {
+  const p = normalizePath(href);
+  if (p === "/aixcelerator") return <svg {...sidebarIconProps}><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>;
+  if (p.startsWith("/aixcelerator/agents") || p === "/aixcelerator/agents") return <svg {...sidebarIconProps}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="3" /><line x1="8" y1="16" x2="8" y2="16.01" /><line x1="16" y1="16" x2="16" y2="16.01" /><line x1="12" y1="16" x2="12" y2="18" /></svg>;
+  if (p.startsWith("/aixcelerator/mcp")) return <svg {...sidebarIconProps}><rect x="2" y="2" width="20" height="8" rx="2" /><rect x="2" y="14" width="20" height="8" rx="2" /><circle cx="6" cy="6" r="1" /><circle cx="6" cy="18" r="1" /></svg>;
+  if (p.startsWith("/aixcelerator/skills")) return <svg {...sidebarIconProps}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>;
+  if (p.startsWith("/use-cases")) return <svg {...sidebarIconProps}><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a4 4 0 0 0-8 0v2" /></svg>;
+  if (p === "/search") return <svg {...sidebarIconProps}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>;
+  if (p === "/assistant") return <svg {...sidebarIconProps}><path d="M12 3l1.912 5.813L20 12l-6.088 3.187L12 21l-1.912-5.813L4 12l6.088-3.187z" /><path d="M20 3l.75 2.25L23 6l-2.25.75L20 9l-.75-2.25L17 6l2.25-.75z" /></svg>;
+  if (p.startsWith("/resources/podcasts")) return <svg {...sidebarIconProps}><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /><line x1="8" y1="23" x2="16" y2="23" /></svg>;
+  if (p.startsWith("/resources/articles")) return <svg {...sidebarIconProps}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><line x1="10" y1="9" x2="8" y2="9" /></svg>;
+  if (p.startsWith("/resources/case-studies")) return <svg {...sidebarIconProps}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>;
+  if (p.startsWith("/resources/white-papers")) return <svg {...sidebarIconProps}><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>;
+  if (p.startsWith("/resources/books")) return <svg {...sidebarIconProps}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" /><line x1="10" y1="2" x2="10" y2="10" /><path d="M10 6l3-2 3 2" /></svg>;
+  if (p === "/resources") return <svg {...sidebarIconProps}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>;
+  if (p.startsWith("/updates")) return <svg {...sidebarIconProps}><path d="M4 22V4c0-.5.2-1 .6-1.4C5 2.2 5.5 2 6 2h8.5L20 7.5V22z" /><polyline points="14 2 14 8 20 8" /><path d="M8 12h8" /><path d="M8 16h5" /></svg>;
+  if (p.startsWith("/industries")) return <svg {...sidebarIconProps}><rect x="4" y="2" width="16" height="20" rx="2" /><line x1="9" y1="22" x2="9" y2="12" /><line x1="15" y1="22" x2="15" y2="12" /><line x1="4" y1="12" x2="20" y2="12" /></svg>;
+  if (p.startsWith("/solutions")) return <svg {...sidebarIconProps}><line x1="12" y1="2" x2="12" y2="6" /><circle cx="12" cy="14" r="8" /><path d="M12 6a6 6 0 0 0-4.24 10.24" /><path d="M12 6a6 6 0 0 1 4.24 10.24" /><line x1="12" y1="18" x2="12" y2="22" /></svg>;
+  // fallback: use first letters
+  return null;
+}
+
 function dedupeWorkspaceLinks(links: WorkspaceLink[]) {
   const seen = new Set<string>();
   return links.filter((link) => {
@@ -1407,13 +1431,8 @@ export default function Layout({ children }: { children: ReactNode }) {
                                 : "border-zinc-200/70 bg-white/80 text-zinc-700 hover:border-[#DC2626]/35 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/75 dark:text-zinc-200 dark:hover:border-[#F87171]/45 dark:hover:text-[#FAFAFA]"
                             } ${workspaceRailCollapsed ? "justify-center" : ""}`}
                           >
-                            <span className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-label font-semibold ${isActive ? "border-[#DC2626]/45 bg-white/90 text-[#18181B] dark:border-[#F87171]/60 dark:bg-[#3F3F46]/85 dark:text-[#FAFAFA]" : "border-zinc-200/80 bg-white/90 text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-300"}`}>
-                              {link.label
-                                .split(" ")
-                                .map((token) => token[0])
-                                .join("")
-                                .slice(0, 2)
-                                .toUpperCase()}
+                            <span className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border ${isActive ? "border-[#DC2626]/45 bg-white/90 text-[#18181B] dark:border-[#F87171]/60 dark:bg-[#3F3F46]/85 dark:text-[#FAFAFA]" : "border-zinc-200/80 bg-white/90 text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-300"}`}>
+                              {getSidebarIcon(link.href) ?? <span className="text-label font-semibold">{link.label.split(" ").map((t) => t[0]).join("").slice(0, 2).toUpperCase()}</span>}
                             </span>
                             {!workspaceRailCollapsed ? <span className="line-clamp-1">{link.label}</span> : null}
                           </Link>
