@@ -1082,7 +1082,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             </Link>
           </div>
 
-          <nav role="navigation" aria-label="Main navigation" className="hidden min-w-0 items-center gap-1.5 text-sm min-[1240px]:flex">
+          <nav role="navigation" aria-label="Main navigation" className="hidden min-w-0 items-center gap-1.5 text-sm lg:flex">
             {isCatalogWorkspace ? (
               <>
                 <button
@@ -1160,7 +1160,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             ) : null}
           </nav>
 
-          <div className="flex items-center gap-2 min-[1240px]:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             {isCatalogWorkspace ? (
               <button
                 type="button"
@@ -1228,7 +1228,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       </header>
       {mobileMenuOpen ? (
         <div
-          className="fixed inset-0 z-[55] bg-zinc-950/45 backdrop-blur-sm min-[1240px]:hidden animate-fade-in"
+          className="fixed inset-0 z-[55] bg-zinc-950/45 backdrop-blur-sm lg:hidden animate-fade-in"
           onClick={closeMobileMenu}
         >
           <aside
@@ -1357,7 +1357,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {isCatalogWorkspace && workspaceMobileRailOpen ? (
         <div
-          className="fixed inset-0 z-[58] bg-zinc-950/45 backdrop-blur-sm min-[1240px]:hidden"
+          className="fixed inset-0 z-[58] bg-zinc-950/45 backdrop-blur-sm lg:hidden"
           onClick={() => setWorkspaceMobileRailOpen(false)}
         >
           <aside
@@ -1423,8 +1423,8 @@ export default function Layout({ children }: { children: ReactNode }) {
       ) : null}
 
       {isCatalogWorkspace ? (
-        <div className="w-full flex-1 min-[1240px]:grid min-[1240px]:grid-cols-[var(--workspace-rail-width)_minmax(0,1fr)] min-[1240px]:gap-6 min-[1240px]:px-8" style={workspaceGridStyle}>
-          <aside className="hidden min-[1240px]:block" aria-label="Catalog navigation">
+        <div className="w-full flex-1 lg:grid lg:grid-cols-[var(--workspace-rail-width)_minmax(0,1fr)] lg:gap-6 lg:px-8" style={workspaceGridStyle}>
+          <aside className="hidden lg:block" aria-label="Catalog navigation">
             <div className="sticky pb-6" style={{ top: "var(--site-header-height)", height: "calc(100dvh - var(--site-header-height))" }}>
               <div className="surface-panel h-full overflow-y-auto p-3" style={{ maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)" }}>
                 {workspaceSections.map((section) => (
@@ -1461,7 +1461,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               </div>
             </div>
           </aside>
-          <main id="main-content" className="main-offset relative min-w-0 px-4 sm:px-6 min-[1240px]:px-0">
+          <main id="main-content" className="main-offset relative min-w-0 px-4 sm:px-6 lg:px-0">
             {children}
           </main>
         </div>
@@ -1805,7 +1805,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       ) : null}
       {isCatalogWorkspace && !mobileMenuOpen && !workspaceMobileRailOpen && !searchOpen ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center px-4 min-[1240px]:inset-x-auto min-[1240px]:right-8 min-[1240px]:px-0">
+        <div className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center px-4 lg:inset-x-auto lg:right-8 lg:px-0">
           <form
             action="/search"
             method="get"

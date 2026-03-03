@@ -352,8 +352,8 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
           description="Find MCP servers by industry, status, tags, and visibility."
           size="md"
         />
-        <div className="mt-4 grid gap-3 lg:grid-cols-12">
-          <div className="lg:col-span-4">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12">
+          <div className="sm:col-span-2 md:col-span-3 lg:col-span-4">
             <label htmlFor="mcp-search" className="sr-only">
               Search MCP servers
             </label>
