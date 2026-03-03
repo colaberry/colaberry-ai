@@ -305,8 +305,8 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
         </div>
       </header>
 
-      <div className="section-shell overflow-hidden px-4 pt-4 pb-8 sm:px-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-        <div className="flex min-w-0 flex-col gap-6">
+      <div className="section-shell overflow-hidden px-4 pt-4 pb-8 sm:px-6">
+        <div className="flex flex-col gap-6">
           <div id="player" ref={playerRef}>
             <div className="text-label font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
               Player
@@ -412,6 +412,58 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
               </div>
             </div>
 
+            {subscribeLinks.length > 0 && (
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <span className="text-label font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                  Listen on
+                </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  {subscribeLinks.map((link, index) => {
+                    const platform = String(link.platform || "platform");
+                    const platformKey = platform.toLowerCase();
+                    const label = platformLabels[platformKey] || platform;
+                    return (
+                      <a
+                        key={`${platformKey}-${index}`}
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() =>
+                          logPodcastEvent("subscribe", platformKey, {
+                            slug: episode.slug,
+                            title: episode.title,
+                          })
+                        }
+                        className="focus-ring chip chip-muted inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold"
+                      >
+                        <span>{label}</span>
+                        <span aria-hidden="true">&rarr;</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {episode.companies?.length > 0 && (
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <span className="text-label font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                  Company tags
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {episode.companies.map((company) => (
+                    <Link
+                      key={company.slug}
+                      href={`/resources/podcasts/company?slug=${encodeURIComponent(company.slug)}`}
+                      className="chip chip-neutral rounded-md px-3 py-1 text-xs font-semibold"
+                    >
+                      {company.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
           </div>
 
           {/* ── Description / Transcript tabs ── */}
@@ -480,59 +532,6 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
           </div>
         </div>
 
-        <aside className="flex flex-col gap-4 lg:sticky lg:top-20 lg:self-start">
-          {subscribeLinks.length > 0 ? (
-            <div className="detail-section">
-              <div className="text-label font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-                Listen on
-              </div>
-              <div className="mt-4 grid gap-2">
-                {subscribeLinks.map((link, index) => {
-                  const platform = String(link.platform || "platform");
-                  const platformKey = platform.toLowerCase();
-                  const label = platformLabels[platformKey] || platform;
-                  return (
-                    <a
-                      key={`${platformKey}-${index}`}
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() =>
-                        logPodcastEvent("subscribe", platformKey, {
-                          slug: episode.slug,
-                          title: episode.title,
-                        })
-                      }
-                      className="focus-ring chip chip-muted inline-flex items-center justify-between rounded-md px-4 py-2 text-xs font-semibold"
-                    >
-                      <span>{label}</span>
-                      <span aria-hidden="true">&rarr;</span>
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-
-          {episode.companies?.length > 0 && (
-            <div className="detail-section">
-              <div className="text-label font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-                Company tags
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {episode.companies.map((company) => (
-                  <Link
-                    key={company.slug}
-                    href={`/resources/podcasts/company?slug=${encodeURIComponent(company.slug)}`}
-                    className="chip chip-neutral rounded-md px-3 py-1 text-xs font-semibold"
-                  >
-                    {company.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </aside>
       </div>
 
       {relatedEpisodes.length > 0 ? (
