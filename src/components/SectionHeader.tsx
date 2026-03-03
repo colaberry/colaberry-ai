@@ -24,9 +24,9 @@ export default function SectionHeader({
   const HeadingTag = as;
   const titleClass =
     size === "xl"
-      ? "text-display-lg sm:text-display-xl lg:text-display-2xl"
+      ? "text-display-md sm:text-display-lg md:text-display-xl lg:text-display-2xl"
       : size === "lg"
-        ? "text-display-sm sm:text-display-md lg:text-display-lg"
+        ? "text-display-xs sm:text-display-sm md:text-display-md lg:text-display-lg"
         : "text-lg sm:text-xl font-semibold";
   const alignClass = align === "center" ? "items-center text-center" : "items-start text-left";
   const spacingClass = size === "xl" ? "gap-5" : "gap-3";
