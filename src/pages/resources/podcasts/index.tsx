@@ -251,7 +251,7 @@ export default function Podcasts({
 
       {/* ── Clean header with pill tabs + search ── */}
       <section className="reveal section-shell px-4 pt-6 pb-4 sm:px-6 sm:pt-8">
-        <h1 className="font-display text-display-md font-bold text-zinc-900 dark:text-zinc-100 sm:text-display-lg lg:text-display-xl">
+        <h1 className="font-display text-display-sm font-bold text-zinc-900 dark:text-zinc-100 sm:text-display-md md:text-display-lg lg:text-display-xl">
           Podcasts
         </h1>
 
@@ -357,7 +357,7 @@ export default function Podcasts({
                 return (
                   <div className="group/hero flex flex-col gap-5 rounded-2xl bg-[#F5F3EE] p-6 dark:bg-[#1E1D1A] sm:flex-row sm:items-start sm:gap-8 sm:p-8">
                     {/* Artwork */}
-                    <div className="relative w-full shrink-0 overflow-hidden rounded-2xl shadow-lg sm:w-72 lg:w-80">
+                    <div className="relative w-full shrink-0 overflow-hidden rounded-2xl shadow-lg sm:w-56 md:w-72 lg:w-80">
                       <Link href={heroUrl} tabIndex={-1} aria-hidden="true">
                         <PodcastArtwork
                           src={heroArtwork}
@@ -589,7 +589,7 @@ export default function Podcasts({
                       </div>
 
                       {/* Right: Artwork with play overlay */}
-                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg sm:h-36 sm:w-36 sm:rounded-xl lg:h-40 lg:w-40">
+                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg sm:h-24 sm:w-24 sm:rounded-xl md:h-36 md:w-36 lg:h-40 lg:w-40">
                         <Link href={episodeUrl} tabIndex={-1} aria-hidden="true">
                           <PodcastArtwork
                             src={cardArtwork}
