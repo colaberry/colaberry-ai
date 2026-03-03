@@ -8,6 +8,7 @@ import type { GetServerSideProps } from "next";
 import RichText from "../../../components/RichText";
 import SectionHeader from "../../../components/SectionHeader";
 import PodcastPlayer from "../../../components/PodcastPlayer";
+import AudioPlayerUI from "../../../components/AudioPlayerUI";
 import TranscriptTimeline from "../../../components/TranscriptTimeline";
 import {
   fetchPodcastBySlug,
@@ -308,14 +309,27 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
       <div className="section-shell px-4 pt-4 pb-8 sm:px-6">
         <div className="flex flex-col gap-6">
           <div id="player" ref={playerRef} className="sticky top-16 z-30 -mx-4 border-b border-zinc-200/60 bg-white/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800/60 dark:bg-zinc-950/95 dark:supports-[backdrop-filter]:bg-zinc-950/80 sm:-mx-6 sm:px-6">
-            <PodcastPlayer
-              embedCode={shouldForceNative ? null : embedCode}
-              audioUrl={audioUrl}
-              audioRef={audioRef}
-              onPlay={() => logPodcastEvent("play", undefined, { slug: episode.slug, title: episode.title })}
-            />
+            {usesNativePlayer && audioUrl ? (
+              <AudioPlayerUI
+                src={audioUrl}
+                audioRef={audioRef}
+                forwardSkipSeconds={30}
+                className=""
+                onPlay={() => logPodcastEvent("play", undefined, { slug: episode.slug, title: episode.title })}
+              />
+            ) : (
+              <PodcastPlayer
+                embedCode={embedCode}
+                audioUrl={audioUrl}
+                audioRef={audioRef}
+                onPlay={() => logPodcastEvent("play", undefined, { slug: episode.slug, title: episode.title })}
+              />
+            )}
           </div>
 
+          {/* Two-column layout: main content + Playing Next sidebar */}
+          <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
+          <div className="min-w-0">
           <div>
             <div className="flex flex-wrap items-center gap-2">
                 <a
@@ -453,7 +467,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
 
           </div>
 
-          {/* ── Description / Transcript tabs ── */}
+          {/* ── Episode Notes / Transcript tabs ── */}
           <div id="transcript" className="mt-8">
             <div role="tablist" className="flex items-center gap-1 rounded-lg border border-zinc-200/80 p-1 w-fit dark:border-zinc-700">
               <button
@@ -467,7 +481,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
                     : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                 }`}
               >
-                Description
+                Episode Notes
               </button>
               {hasTranscriptContent ? (
                 <button
@@ -517,6 +531,53 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
               </div>
             ) : null}
           </div>
+          </div>{/* end left column */}
+
+          {/* RIGHT: Playing Next sidebar (desktop only) */}
+          {relatedEpisodes.length > 0 && (
+            <aside className="hidden lg:block">
+              <div className="sticky top-32">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                  Playing Next
+                </h3>
+                <ul className="mt-3 space-y-2">
+                  {relatedEpisodes.slice(0, 4).map((ep) => {
+                    const epType = (ep.podcastType || "internal").toLowerCase();
+                    const epArt = epType === "external" && ep.coverImageUrl
+                      ? ep.coverImageUrl
+                      : PODCAST_BRAND_IMAGE;
+                    return (
+                      <li key={ep.slug}>
+                        <Link
+                          href={`/resources/podcasts/${ep.slug}`}
+                          className="group flex gap-3 rounded-lg p-2 transition hover:bg-zinc-50 dark:hover:bg-zinc-800/60"
+                        >
+                          <Image
+                            src={epArt}
+                            alt={ep.coverImageAlt || ep.title}
+                            width={48}
+                            height={48}
+                            className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                            sizes="48px"
+                            loading="lazy"
+                          />
+                          <div className="min-w-0">
+                            <span className="line-clamp-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                              {ep.title}
+                            </span>
+                            <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">
+                              Colaberry AI Podcast
+                            </span>
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </aside>
+          )}
+          </div>{/* end grid */}
         </div>
 
       </div>
