@@ -67,7 +67,7 @@ export default function Podcasts({
   // Sidebar newsletter state
   const [sidebarEmail, setSidebarEmail] = useState("");
   const [sidebarHoneypot, setSidebarHoneypot] = useState("");
-  const [sidebarConsent, setSidebarConsent] = useState(false);
+
   const [sidebarSubState, setSidebarSubState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [sidebarSubMessage, setSidebarSubMessage] = useState<string | null>(null);
   const sidebarTracking = useMemo(() => getTrackingContext(), []);
@@ -84,7 +84,7 @@ export default function Podcasts({
         body: JSON.stringify({
           email: sidebarEmail,
           website: sidebarHoneypot,
-          consent: sidebarConsent,
+          consent: true,
           sourcePath: canonicalPath,
           sourcePage: "podcast-listing-sidebar",
           utmSource: sidebarTracking.utmSource,
@@ -105,7 +105,6 @@ export default function Podcasts({
       setSidebarSubMessage(payload?.message || "Subscription confirmed.");
       setSidebarEmail("");
       setSidebarHoneypot("");
-      setSidebarConsent(false);
     } catch {
       setSidebarSubState("error");
       setSidebarSubMessage("Unable to subscribe right now.");
@@ -309,6 +308,21 @@ export default function Podcasts({
             />
             {activeSort !== "latest" ? <input type="hidden" name="sort" value={activeSort} /> : null}
           </form>
+        ) : null}
+
+        {/* Example search tags — visible when search is closed */}
+        {!searchOpen && companies.length > 0 ? (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {companies.slice(0, 5).map((c) => (
+              <Link
+                key={c.slug}
+                href={`/resources/podcasts?q=${encodeURIComponent(c.name)}`}
+                className="rounded-full border border-zinc-200/80 px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+              >
+                {c.name}
+              </Link>
+            ))}
+          </div>
         ) : null}
       </section>
 
@@ -686,15 +700,9 @@ export default function Podcasts({
                     </svg>
                   </button>
                 </div>
-                <label className="mt-3 flex cursor-pointer items-start gap-2 text-xs leading-relaxed text-[#71717A] dark:text-[#A1A1AA]">
-                  <input
-                    type="checkbox"
-                    checked={sidebarConsent}
-                    onChange={(e) => setSidebarConsent(e.target.checked)}
-                    className="mt-0.5 h-3.5 w-3.5 rounded border-[#A1A1AA] accent-[#DC2626] dark:border-[#71717A]"
-                  />
-                  <span>I agree to receive marketing communications from Colaberry AI</span>
-                </label>
+                <p className="mt-3 text-xs leading-relaxed text-[#71717A] dark:text-[#A1A1AA]">
+                  By subscribing you agree to receive podcast notifications from Colaberry AI.
+                </p>
                 {sidebarSubMessage ? (
                   <p className={`mt-2 text-xs ${sidebarSubState === "error" ? "text-red-600" : "text-emerald-600"}`}>
                     {sidebarSubMessage}
@@ -705,7 +713,7 @@ export default function Podcasts({
 
             {/* Company tags */}
             {companies.length > 0 ? (
-              <div className="mt-6">
+              <div className="mt-6 border-t border-[#D4D1CA] pt-6 dark:border-[#4A473F]">
                 <h4 className="text-xs font-semibold uppercase tracking-[0.14em] text-[#71717A] dark:text-[#A1A1AA]">
                   Browse by company
                 </h4>
