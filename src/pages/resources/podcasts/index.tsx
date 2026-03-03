@@ -55,7 +55,6 @@ export default function Podcasts({
   const [searchOpen, setSearchOpen] = useState(Boolean(searchQuery.trim()));
   const [allEpisodes, setAllEpisodes] = useState<PodcastEpisode[]>(initialEpisodes);
   const [hasMore, setHasMore] = useState(initialHasMore);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [displayTotal, setDisplayTotal] = useState(totalEpisodes);
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
@@ -75,7 +74,7 @@ export default function Podcasts({
 
   async function handleSidebarSubscribe(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (sidebarSubState === "submitting" || !sidebarConsent) return;
+    if (sidebarSubState === "submitting") return;
     setSidebarSubState("submitting");
     setSidebarSubMessage(null);
     try {
@@ -113,13 +112,33 @@ export default function Podcasts({
     }
   }
 
-  // Handle audio ended → reset icon
+  // Handle audio ended → reset icon + persist playback position for resume
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const onEnded = () => setPlayingSlug(null);
+    const onEnded = () => {
+      setPlayingSlug(null);
+      localStorage.removeItem("podcast-playing-slug");
+    };
+    const onPause = () => {
+      localStorage.removeItem("podcast-playing-slug");
+    };
+    let lastSaved = 0;
+    const onTimeUpdate = () => {
+      const now = audio.currentTime;
+      if (now - lastSaved >= 2) {
+        lastSaved = now;
+        localStorage.setItem("podcast-playing-time", String(now));
+      }
+    };
     audio.addEventListener("ended", onEnded);
-    return () => audio.removeEventListener("ended", onEnded);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    return () => {
+      audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+    };
   }, []);
 
   const handlePlay = (episode: PodcastEpisode, source: string) => {
@@ -137,6 +156,8 @@ export default function Podcasts({
     audio.src = episode.audioUrl;
     audio.play();
     setPlayingSlug(episode.slug);
+    localStorage.setItem("podcast-playing-slug", episode.slug);
+    localStorage.setItem("podcast-playing-time", "0");
     logPodcastEvent("play", source, { slug: episode.slug, title: episode.title });
   };
 
@@ -153,7 +174,6 @@ export default function Podcasts({
   const fetchNextPage = async () => {
     if (loadingRef.current) return;
     loadingRef.current = true;
-    setLoadingMore(true);
     const nextPage = pageRef.current + 1;
     const params = new URLSearchParams({ page: String(nextPage), sort: activeSort });
     if (activeType !== "all") params.set("type", activeType);
@@ -170,7 +190,6 @@ export default function Podcasts({
       }
     } catch { /* silently fail, user can scroll again */ }
     loadingRef.current = false;
-    setLoadingMore(false);
   };
 
   useEffect(() => {
@@ -658,7 +677,7 @@ export default function Podcasts({
                   />
                   <button
                     type="submit"
-                    disabled={sidebarSubState === "submitting" || !sidebarConsent}
+                    disabled={sidebarSubState === "submitting"}
                     aria-label="Subscribe"
                     className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#18181B] text-white transition-transform hover:scale-105 disabled:opacity-40 dark:bg-[#FAFAFA] dark:text-[#18181B]"
                   >
@@ -682,16 +701,6 @@ export default function Podcasts({
                   </p>
                 ) : null}
               </form>
-            </div>
-
-            {/* CTA */}
-            <div className="mt-6">
-              <Link
-                href="/request-demo"
-                className="flex h-11 w-full items-center justify-center rounded-full bg-[#18181B] text-sm font-semibold text-white transition-transform hover:scale-[1.02] dark:bg-[#FAFAFA] dark:text-[#18181B]"
-              >
-                Let&apos;s Talk
-              </Link>
             </div>
 
             {/* Company tags */}
@@ -784,14 +793,15 @@ function formatShortDate(value?: string | null) {
 }
 
 /** Extract plain text from Strapi rich-text (block array or string). */
-function extractPlainText(description: any, maxLen = 140): string {
+type RichTextBlock = { type?: string; children?: { text?: string }[] };
+function extractPlainText(description: string | RichTextBlock[] | null | undefined, maxLen = 140): string {
   if (!description) return "";
   if (typeof description === "string") return description.slice(0, maxLen);
   if (Array.isArray(description)) {
     const text = description
-      .filter((block: any) => block?.type === "paragraph")
-      .flatMap((block: any) =>
-        (block.children || []).map((child: any) => child?.text || "")
+      .filter((block: RichTextBlock) => block?.type === "paragraph")
+      .flatMap((block: RichTextBlock) =>
+        (block.children || []).map((child) => child?.text || "")
       )
       .join(" ")
       .trim();

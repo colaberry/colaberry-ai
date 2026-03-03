@@ -15,7 +15,6 @@ import {
 import { useRouter } from "next/router";
 import { fetchGlobalNavigation, GlobalNavigation } from "../lib/cms";
 import { captureUtmContextFromLocation, getTrackingContext } from "../lib/tracking";
-import NewsletterSignup from "./NewsletterSignup";
 import AnimatedSignalBanner from "./AnimatedSignalBanner";
 
 const CookieConsentBanner = dynamic(() => import("./CookieConsentBanner"), {
@@ -1219,14 +1218,14 @@ export default function Layout({ children }: { children: ReactNode }) {
         >
           <aside
             data-mobile-menu
-            className="absolute right-0 top-0 flex h-full w-[min(92vw,380px)] flex-col border-l border-zinc-200/70 bg-white/95 p-4 shadow-2xl dark:border-[#3F3F46] dark:bg-[#18181B]/95 animate-slide-in-right"
+            className="absolute left-0 top-0 flex h-full w-[min(92vw,380px)] flex-col border-r border-zinc-200/70 bg-white/95 p-4 shadow-2xl dark:border-[#3F3F46] dark:bg-[#18181B]/95 animate-slide-in-left"
             onClick={(event) => event.stopPropagation()}
             onTouchStart={(e) => {
               const startX = e.touches[0].clientX;
               const aside = e.currentTarget;
               const onMove = (ev: TouchEvent) => {
                 const dx = ev.touches[0].clientX - startX;
-                if (dx > 80) {
+                if (dx < -80) {
                   closeMobileMenu();
                   aside.removeEventListener("touchmove", onMove);
                 }
@@ -1906,31 +1905,3 @@ function ThemeIcon({ isDark }: { isDark: boolean }) {
   );
 }
 
-function SocialIcon({
-  href,
-  label,
-  icon,
-  target,
-}: {
-  href: string;
-  label: string;
-  icon?: string | null;
-  target?: string | null;
-}) {
-  const iconMarkup = resolveSocialIcon(icon, label);
-  const linkTarget = target ?? "_blank";
-  return (
-    <a
-      href={href}
-      target={linkTarget}
-      rel={getLinkRel(linkTarget)}
-      className="social-button focus-ring inline-flex h-11 w-11 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/80 text-zinc-500 transition hover:border-zinc-300 hover:text-zinc-700 hover:shadow-sm dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-white"
-      aria-label={label}
-    >
-      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-        {iconMarkup}
-      </svg>
-      <span className="sr-only">{label}</span>
-    </a>
-  );
-}

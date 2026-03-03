@@ -8,6 +8,7 @@ import type { GetServerSideProps } from "next";
 import RichText from "../../../components/RichText";
 import SectionHeader from "../../../components/SectionHeader";
 import PodcastPlayer from "../../../components/PodcastPlayer";
+import AudioPlayerUI from "../../../components/AudioPlayerUI";
 import TranscriptTimeline from "../../../components/TranscriptTimeline";
 import {
   fetchPodcastBySlug,
@@ -129,6 +130,25 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
     syncDuration();
     setIsPlaying(!audio.paused);
 
+    // Resume playback from listing page if this episode was playing
+    const savedSlug = localStorage.getItem("podcast-playing-slug");
+    const savedTime = parseFloat(localStorage.getItem("podcast-playing-time") || "0");
+    if (savedSlug === episode.slug && savedTime > 0) {
+      const resumeOnReady = () => {
+        audio.currentTime = savedTime;
+        audio.play().catch(() => undefined);
+        audio.removeEventListener("loadedmetadata", resumeOnReady);
+      };
+      if (audio.readyState >= 1) {
+        audio.currentTime = savedTime;
+        audio.play().catch(() => undefined);
+      } else {
+        audio.addEventListener("loadedmetadata", resumeOnReady);
+      }
+      localStorage.removeItem("podcast-playing-slug");
+      localStorage.removeItem("podcast-playing-time");
+    }
+
     audio.addEventListener("play", handlePlay);
     audio.addEventListener("pause", handlePause);
     audio.addEventListener("ended", handleEnded);
@@ -144,7 +164,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
       audio.removeEventListener("loadedmetadata", syncDuration);
       audio.removeEventListener("durationchange", syncDuration);
     };
-  }, [audioUrl]);
+  }, [audioUrl, episode.slug]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -255,86 +275,87 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
         { label: episode.title },
       ]} />
 
-      {/* ── Compact episode header ── */}
-      <header className="section-shell overflow-hidden px-4 pt-4 pb-2 sm:px-6">
-        <div className="mb-4 flex items-center gap-4">
-          <Image
-            src={episode.coverImageUrl || PODCAST_BRAND_IMAGE}
-            alt={episode.coverImageAlt || episode.title}
-            width={80}
-            height={80}
-            className="h-16 w-16 rounded-xl shadow-sm sm:h-20 sm:w-20"
-            sizes="80px"
-          />
-          <div>
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Colaberry AI Podcast</h3>
-            {episode.episodeNumber ? (
-              <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">Episode {episode.episodeNumber}</p>
-            ) : null}
+      {/* ── Apple Podcasts–style episode header ── */}
+      <header className="section-shell overflow-hidden px-4 pt-4 pb-4 sm:px-6">
+        <div className="flex gap-5 sm:gap-6">
+          {/* Left: Cover art */}
+          <div className="shrink-0">
+            <Image
+              src={episode.coverImageUrl || PODCAST_BRAND_IMAGE}
+              alt={episode.coverImageAlt || episode.title}
+              width={180}
+              height={180}
+              className="h-32 w-32 rounded-2xl shadow-md sm:h-44 sm:w-44"
+              sizes="(min-width:640px) 176px, 128px"
+            />
           </div>
-        </div>
-        <Link
-          href="/resources/podcasts"
-          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M19 12H5" />
-            <path d="M12 19l-7-7 7-7" />
-          </svg>
-          All Episodes
-        </Link>
-        <h1 className="font-display text-xl font-bold text-zinc-900 break-words dark:text-zinc-100 sm:text-2xl lg:text-display-sm">
-          {episode.title}
-        </h1>
-        <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
-          {publishedLabel ? <span>{publishedLabel}</span> : null}
-          {episode.duration ? <><span aria-hidden="true">&middot;</span><span>{episode.duration}</span></> : null}
-          {episode.episodeNumber ? <><span aria-hidden="true">&middot;</span><span>Episode {episode.episodeNumber}</span></> : null}
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {(episode.tags || []).slice(0, 5).map((tag) => (
-            <Link key={tag.slug} href={`/resources/podcasts/tag/${tag.slug}`} className="chip chip-muted rounded-md px-2.5 py-1 text-xs font-semibold">
-              #{tag.name}
+
+          {/* Right: Metadata + Title + Show name */}
+          <div className="flex min-w-0 flex-col justify-center">
+            <p className="flex flex-wrap items-center gap-x-2 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+              {publishedLabel ? <span>{publishedLabel}</span> : null}
+              {episode.duration ? <><span aria-hidden="true">·</span><span>{episode.duration}</span></> : null}
+              {episode.episodeNumber ? <><span aria-hidden="true">·</span><span>Ep {episode.episodeNumber}</span></> : null}
+            </p>
+
+            <h1 className="mt-1.5 font-display text-lg font-bold leading-snug text-zinc-900 break-words dark:text-zinc-100 sm:text-xl lg:text-2xl">
+              {episode.title}
+            </h1>
+
+            <Link
+              href="/resources/podcasts"
+              className="mt-1.5 text-sm font-semibold text-[#DC2626] hover:underline dark:text-[#F87171]"
+            >
+              Colaberry AI Podcast
             </Link>
-          ))}
-          {hasTranscriptContent ? (
-            <span className="inline-flex items-center gap-1 rounded-md bg-[var(--trusted-surface)] px-2.5 py-1 text-xs font-semibold text-[var(--trusted-text)] ring-1 ring-inset ring-[var(--trusted-stroke)]">
-              Transcript
-            </span>
-          ) : null}
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(episode.tags || []).slice(0, 5).map((tag) => (
+                <Link key={tag.slug} href={`/resources/podcasts/tag/${tag.slug}`} className="chip chip-muted rounded-md px-2.5 py-1 text-xs font-semibold">
+                  #{tag.name}
+                </Link>
+              ))}
+              {hasTranscriptContent ? (
+                <span className="inline-flex items-center gap-1 rounded-md bg-[var(--trusted-surface)] px-2.5 py-1 text-xs font-semibold text-[var(--trusted-text)] ring-1 ring-inset ring-[var(--trusted-stroke)]">
+                  Transcript
+                </span>
+              ) : null}
+            </div>
+          </div>
         </div>
       </header>
 
-      <div className="section-shell overflow-hidden px-4 pt-4 pb-8 sm:px-6">
+      <div className="section-shell px-4 pt-4 pb-8 sm:px-6">
         <div className="flex flex-col gap-6">
-          <div id="player" ref={playerRef}>
-            <div className="text-label font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-              Player
-            </div>
-            <div className="mt-3">
+          <div id="player" ref={playerRef} className="sticky top-16 z-30 -mx-4 border-b border-zinc-200/60 bg-white/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800/60 dark:bg-zinc-950/95 dark:supports-[backdrop-filter]:bg-zinc-950/80 sm:-mx-6 sm:px-6">
+            {usesNativePlayer && audioUrl ? (
+              <AudioPlayerUI
+                src={audioUrl}
+                audioRef={audioRef}
+                forwardSkipSeconds={30}
+                className=""
+                onPlay={() => logPodcastEvent("play", undefined, { slug: episode.slug, title: episode.title })}
+              />
+            ) : (
               <PodcastPlayer
-                embedCode={shouldForceNative ? null : embedCode}
+                embedCode={embedCode}
                 audioUrl={audioUrl}
                 audioRef={audioRef}
                 onPlay={() => logPodcastEvent("play", undefined, { slug: episode.slug, title: episode.title })}
               />
-              {hasTimedTranscript ? (
-                <p className="mt-2 text-xs text-zinc-500">
-                  Transcript is synchronized with the audio player.
-                </p>
-              ) : null}
-            </div>
+            )}
+          </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <span className="text-label font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-                Share
-              </span>
-              <div className="flex flex-wrap items-center gap-2">
+          {/* Two-column layout: main content + Playing Next sidebar */}
+          <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
+          <div className="min-w-0">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
                 <a
                   href={shareLinks.linkedin}
                   target="_blank"
                   rel="noreferrer"
-                  className="btn btn-ghost btn-icon"
+                  className="btn btn-secondary btn-icon"
                   aria-label="Share on LinkedIn"
                   onClick={() => logPodcastEvent("share", "linkedin", { slug: episode.slug, title: episode.title })}
                 >
@@ -351,7 +372,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
                   href={shareLinks.x}
                   target="_blank"
                   rel="noreferrer"
-                  className="btn btn-ghost btn-icon"
+                  className="btn btn-secondary btn-icon"
                   aria-label="Share on X"
                   onClick={() => logPodcastEvent("share", "x", { slug: episode.slug, title: episode.title })}
                 >
@@ -366,7 +387,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
                   href={shareLinks.facebook}
                   target="_blank"
                   rel="noreferrer"
-                  className="btn btn-ghost btn-icon"
+                  className="btn btn-secondary btn-icon"
                   aria-label="Share on Facebook"
                   onClick={() => logPodcastEvent("share", "facebook", { slug: episode.slug, title: episode.title })}
                 >
@@ -387,7 +408,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
                       logPodcastEvent("share", "copy", { slug: episode.slug, title: episode.title });
                     }
                   }}
-                  className={`btn btn-compact ${copiedLink ? "text-emerald-600 dark:text-emerald-400" : "btn-ghost"}`}
+                  className={`btn btn-compact ${copiedLink ? "text-emerald-600 dark:text-emerald-400" : "btn-secondary"}`}
                 >
                   {copiedLink ? (
                     <>
@@ -404,13 +425,12 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
                   <button
                     type="button"
                     onClick={() => setContentTab("transcript")}
-                    className="btn btn-ghost btn-compact"
+                    className="btn btn-secondary btn-compact"
                   >
                     Transcript
                   </button>
                 )}
               </div>
-            </div>
 
             {subscribeLinks.length > 0 && (
               <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -466,7 +486,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
 
           </div>
 
-          {/* ── Description / Transcript tabs ── */}
+          {/* ── Episode Notes / Transcript tabs ── */}
           <div id="transcript" className="mt-8">
             <div role="tablist" className="flex items-center gap-1 rounded-lg border border-zinc-200/80 p-1 w-fit dark:border-zinc-700">
               <button
@@ -480,7 +500,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
                     : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                 }`}
               >
-                Description
+                Episode Notes
               </button>
               {hasTranscriptContent ? (
                 <button
@@ -530,6 +550,53 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
               </div>
             ) : null}
           </div>
+          </div>{/* end left column */}
+
+          {/* RIGHT: Playing Next sidebar (desktop only) */}
+          {relatedEpisodes.length > 0 && (
+            <aside className="hidden lg:block">
+              <div className="sticky top-32">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                  Playing Next
+                </h3>
+                <ul className="mt-3 space-y-2">
+                  {relatedEpisodes.slice(0, 4).map((ep) => {
+                    const epType = (ep.podcastType || "internal").toLowerCase();
+                    const epArt = epType === "external" && ep.coverImageUrl
+                      ? ep.coverImageUrl
+                      : PODCAST_BRAND_IMAGE;
+                    return (
+                      <li key={ep.slug}>
+                        <Link
+                          href={`/resources/podcasts/${ep.slug}`}
+                          className="group flex gap-3 rounded-lg p-2 transition hover:bg-zinc-50 dark:hover:bg-zinc-800/60"
+                        >
+                          <Image
+                            src={epArt}
+                            alt={ep.coverImageAlt || ep.title}
+                            width={48}
+                            height={48}
+                            className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                            sizes="48px"
+                            loading="lazy"
+                          />
+                          <div className="min-w-0">
+                            <span className="line-clamp-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                              {ep.title}
+                            </span>
+                            <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">
+                              Colaberry AI Podcast
+                            </span>
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </aside>
+          )}
+          </div>{/* end grid */}
         </div>
 
       </div>
@@ -636,7 +703,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
                 <button
                   type="button"
                   onClick={handleStopPlayback}
-                  className="btn btn-ghost btn-icon"
+                  className="btn btn-secondary btn-icon"
                   aria-label="Stop audio"
                 >
                   <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
