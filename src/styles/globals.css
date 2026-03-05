@@ -1571,57 +1571,52 @@ footer .footer-link:focus-visible {
 .reveal {
   opacity: 0;
   transform: translateY(32px);
-  will-change: opacity, transform;
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal.revealed {
-  animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.reveal-delay-1.revealed { animation-delay: 0.08s; }
-.reveal-delay-2.revealed { animation-delay: 0.16s; }
-.reveal-delay-3.revealed { animation-delay: 0.24s; }
-.reveal-delay-4.revealed { animation-delay: 0.32s; }
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
 
 /* Directional reveal variants */
-@keyframes reveal-left {
-  from { opacity: 0; transform: translateX(-12px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes reveal-right {
-  from { opacity: 0; transform: translateX(12px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes reveal-scale {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
-}
-
 .reveal-left {
   opacity: 0;
   transform: translateX(-12px);
-  will-change: opacity, transform;
+  transition: opacity 0.4s var(--ease-expo-out),
+              transform 0.4s var(--ease-expo-out);
 }
 .reveal-left.revealed {
-  animation: reveal-left 0.4s var(--ease-expo-out) both;
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .reveal-right {
   opacity: 0;
   transform: translateX(12px);
-  will-change: opacity, transform;
+  transition: opacity 0.4s var(--ease-expo-out),
+              transform 0.4s var(--ease-expo-out);
 }
 .reveal-right.revealed {
-  animation: reveal-right 0.4s var(--ease-expo-out) both;
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .reveal-scale {
   opacity: 0;
   transform: scale(0.97);
-  will-change: opacity, transform;
+  transition: opacity 0.4s var(--ease-expo-out),
+              transform 0.4s var(--ease-expo-out);
 }
 .reveal-scale.revealed {
-  animation: reveal-scale 0.4s var(--ease-expo-out) both;
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* ---------------------------------------------------------------------------
@@ -2119,6 +2114,7 @@ footer .footer-link:focus-visible {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
+    transition: none !important;
   }
 
   .hero-gradient-overlay,
@@ -2269,18 +2265,20 @@ footer .footer-link:focus-visible {
 .stagger-grid > * {
   opacity: 0;
   transform: translateY(32px);
+  transition: opacity 0.7s var(--ease-smooth),
+              transform 0.7s var(--ease-smooth);
 }
 .stagger-grid.revealed > * {
-  animation: reveal-up 0.7s var(--ease-smooth) both;
+  opacity: 1;
+  transform: translateY(0);
 }
-.stagger-grid.revealed > *:nth-child(1) { animation-delay: 0s; }
-.stagger-grid.revealed > *:nth-child(2) { animation-delay: 0.06s; }
-.stagger-grid.revealed > *:nth-child(3) { animation-delay: 0.12s; }
-.stagger-grid.revealed > *:nth-child(4) { animation-delay: 0.18s; }
-.stagger-grid.revealed > *:nth-child(5) { animation-delay: 0.24s; }
-.stagger-grid.revealed > *:nth-child(6) { animation-delay: 0.30s; }
-.stagger-grid.revealed > *:nth-child(7) { animation-delay: 0.36s; }
-.stagger-grid.revealed > *:nth-child(8) { animation-delay: 0.42s; }
+.stagger-grid > *:nth-child(2) { transition-delay: 0.06s; }
+.stagger-grid > *:nth-child(3) { transition-delay: 0.12s; }
+.stagger-grid > *:nth-child(4) { transition-delay: 0.18s; }
+.stagger-grid > *:nth-child(5) { transition-delay: 0.24s; }
+.stagger-grid > *:nth-child(6) { transition-delay: 0.30s; }
+.stagger-grid > *:nth-child(7) { transition-delay: 0.36s; }
+.stagger-grid > *:nth-child(8) { transition-delay: 0.42s; }
 
 /* Scroll-linked reading progress bar (detail pages) */
 .scroll-progress {
@@ -2580,6 +2578,7 @@ footer .footer-link:focus-visible {
   .stagger-grid > *,
   .stagger-grid.revealed > * {
     animation: none !important;
+    transition: none !important;
     opacity: 1 !important;
     transform: none !important;
   }
