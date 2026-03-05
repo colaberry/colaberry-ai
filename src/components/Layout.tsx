@@ -849,7 +849,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           }
         });
       },
-      { threshold: 0.08, rootMargin: "0px 0px -60px 0px" },
+      { threshold: 0, rootMargin: "0px 0px -60px 0px" },
     );
     const targets = document.querySelectorAll(".reveal:not(.revealed)");
     targets.forEach((el) => observer.observe(el));
