@@ -268,6 +268,10 @@ export type MCPServer = {
   industry?: string | null;
   category?: string | null;
   docsUrl?: string | null;
+  installCommand?: string | null;
+  configSnippet?: string | null;
+  githubStars?: number | null;
+  githubForks?: number | null;
   tags?: Tag[];
   companies?: Company[];
   coverImageUrl?: string | null;
@@ -1052,6 +1056,10 @@ function mapMCPServer(item: any): MCPServer {
     industry: attrs?.industry ?? null,
     category: attrs?.category ?? null,
     docsUrl: attrs?.docsUrl ?? null,
+    installCommand: attrs?.installCommand ?? null,
+    configSnippet: attrs?.configSnippet ?? null,
+    githubStars: typeof attrs?.githubStars === "number" ? attrs.githubStars : null,
+    githubForks: typeof attrs?.githubForks === "number" ? attrs.githubForks : null,
     tags,
     companies,
     coverImageUrl,
