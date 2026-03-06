@@ -840,21 +840,43 @@ export default function Layout({ children }: { children: ReactNode }) {
   /* Scroll-triggered reveal: observe `.reveal` elements and add `.revealed` */
   useEffect(() => {
     if (typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("revealed");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0, rootMargin: "0px 0px -60px 0px" },
-    );
-    const targets = document.querySelectorAll(".reveal:not(.revealed)");
-    targets.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  });
+
+    let observer: IntersectionObserver;
+    let rafId: number;
+
+    const observeAll = () => {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("revealed");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0, rootMargin: "0px 0px -60px 0px" },
+      );
+      document
+        .querySelectorAll(".reveal:not(.revealed)")
+        .forEach((el) => observer.observe(el));
+    };
+
+    // Delay until browser finishes layout after hydration/navigation
+    rafId = requestAnimationFrame(observeAll);
+
+    const handleRouteChange = () => {
+      observer?.disconnect();
+      rafId = requestAnimationFrame(observeAll);
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChange);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      observer?.disconnect();
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
 
   const toggleTheme = () => {
     setTheme((previous) => (previous === "dark" ? "light" : "dark"));
