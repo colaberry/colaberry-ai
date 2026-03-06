@@ -26,6 +26,7 @@
 
 # local scratch
 .tmp_case_studies/
+.enrich-progress.json
 
 # debug
 npm-debug.log*
