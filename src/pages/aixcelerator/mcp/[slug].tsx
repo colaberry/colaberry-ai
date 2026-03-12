@@ -89,6 +89,7 @@ function NumberedStep({ step, title, children }: { step: number; title: string; 
 export default function MCPDetail({ mcp, relatedServers }: MCPDetailProps) {
   const [apiMethod, setApiMethod] = useState<"cli" | "sdk" | "typescript">("cli");
   const [showOptional, setShowOptional] = useState(false);
+  const [repoExists, setRepoExists] = useState(true);
 
   const isPrivate = (mcp.visibility || "public").toLowerCase() === "private";
   const status = mcp.status || "Unknown";
@@ -143,13 +144,14 @@ export default function MCPDetail({ mcp, relatedServers }: MCPDetailProps) {
   const hasEnrichedTools = enrichedTools.length > 0;
 
   const primaryFunctionUnique = mcp.primaryFunction && mcp.primaryFunction !== mcp.description;
-  const hasAboutSection = Boolean(primaryFunctionUnique || mcp.longDescription || capabilities.length);
+  const descriptionFallback = !primaryFunctionUnique && !mcp.longDescription ? mcp.description : null;
+  const hasAboutSection = Boolean(primaryFunctionUnique || mcp.longDescription || mcp.description || capabilities.length);
   const hasUseCases = useCases.length > 0;
   const hasHowItWorks = hasEnrichedTools || tools.length > 0 || Boolean(mcp.exampleWorkflow);
   const hasBenefits = keyBenefits.length > 0;
   const hasLimitations = limitations.length > 0;
   const hasInstallSection = Boolean(mcp.installCommand || mcp.configSnippet || mcp.installCli || mcp.installSdk || mcp.configSnippetClaude || mcp.installAiSdk || mcp.installTypescript);
-  const hasTechSpecs = authMethods.length > 0 || compatibilityItems.length > 0 || requirements.length > 0 || typeof mcp.usageCount === "number" || typeof mcp.rating === "number";
+  const hasTechSpecs = true; // Always show — status, industry, category available for all servers
   const hasHostingSection = hostingOptions.length > 0 || pricingNotes.length > 0;
 
   // Collect required and optional config parameters from enriched tools
@@ -275,10 +277,10 @@ export default function MCPDetail({ mcp, relatedServers }: MCPDetailProps) {
             external: Boolean(mcp.tryItNowUrl),
           }}
           secondaryAction={{
-            href: mcp.sourceUrl || "/aixcelerator/mcp",
-            label: mcp.sourceUrl ? "View source" : "View all MCPs",
+            href: mcp.sourceUrl && repoExists ? mcp.sourceUrl : "/aixcelerator/mcp",
+            label: mcp.sourceUrl && repoExists ? "View source" : "View all MCPs",
             variant: "secondary",
-            external: Boolean(mcp.sourceUrl),
+            external: Boolean(mcp.sourceUrl && repoExists),
           }}
           metrics={[
             lastUpdatedLabel && { label: "Last updated", value: lastUpdatedLabel },
@@ -307,7 +309,7 @@ export default function MCPDetail({ mcp, relatedServers }: MCPDetailProps) {
               <span>installs</span>
             </span>
           )}
-          <GitHubStats sourceUrl={mcp.sourceUrl} />
+          <GitHubStats sourceUrl={mcp.sourceUrl} onRepoNotFound={() => setRepoExists(false)} />
         </div>
       )}
 
@@ -330,6 +332,10 @@ export default function MCPDetail({ mcp, relatedServers }: MCPDetailProps) {
                 <div className="mt-6 space-y-4 text-[0.9375rem] leading-relaxed text-zinc-700 dark:text-zinc-300">
                   {primaryFunctionUnique && <p className="font-medium text-zinc-900 dark:text-zinc-100">{mcp.primaryFunction}</p>}
                   {mcp.longDescription && renderRichText(mcp.longDescription)}
+                  {descriptionFallback && <p>{descriptionFallback}</p>}
+                  {!primaryFunctionUnique && !mcp.longDescription && !descriptionFallback && mcp.description && (
+                    <p>{mcp.description}</p>
+                  )}
                 </div>
                 {capabilities.length > 0 && (
                   <div className="mt-6">

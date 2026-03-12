@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { isRateLimited, getClientIp } from "../../lib/rate-limit";
 
 type GitHubStatsResponse = {
   stars: number;
@@ -12,6 +13,10 @@ const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  if (isRateLimited("github-stats", getClientIp(req), 60, 60_000)) {
+    return res.status(429).json({ error: "Too many requests" });
   }
 
   const owner = String(req.query.owner || "");
@@ -39,7 +44,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers });
     if (!response.ok) {
-      return res.status(response.status === 404 ? 404 : 502).json({ error: "GitHub API error" });
+      const notFound = response.status === 404 || response.status === 403 || response.status === 451;
+      return res.status(notFound ? 404 : 502).json({ error: "GitHub API error" });
     }
 
     const data = await response.json();

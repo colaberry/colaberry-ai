@@ -2081,7 +2081,65 @@ export async function fetchMCPServers(
     page += 1;
   }
 
-  return results;
+  // Deduplicate by name — prefer entries with richer content, then shortest slug
+  const seen = new Map<string, MCPServer>();
+  const seenBySlugBase = new Map<string, MCPServer>();
+  const seenByRegistry = new Map<string, MCPServer>();
+
+  function mcpContentScore(m: MCPServer): number {
+    let s = 0;
+    if (m.longDescription) s += 10;
+    if (m.capabilities) s += 5;
+    if (m.keyBenefits) s += 5;
+    if (m.useCases) s += 4;
+    if (m.tools) s += 4;
+    if (m.installCommand) s += 3;
+    if (m.sourceUrl) s += 3;
+    // Prefer shorter slugs (original imports)
+    s += Math.max(0, 50 - (m.slug || "").length);
+    return s;
+  }
+
+  function isBetter(candidate: MCPServer, existing: MCPServer): boolean {
+    return mcpContentScore(candidate) > mcpContentScore(existing);
+  }
+
+  for (const mcp of results) {
+    // Primary key: normalized name
+    const nameKey = (mcp.name || "").trim().toLowerCase();
+    if (nameKey) {
+      const existing = seen.get(nameKey);
+      if (!existing || isBetter(mcp, existing)) {
+        seen.set(nameKey, mcp);
+      }
+    }
+
+    // Secondary key: slug base (strip trailing -\d+ suffixes)
+    const slugBase = (mcp.slug || "").replace(/-\d+$/, "").toLowerCase();
+    if (slugBase) {
+      const existing = seenBySlugBase.get(slugBase);
+      if (!existing || isBetter(mcp, existing)) {
+        seenBySlugBase.set(slugBase, mcp);
+      }
+    }
+
+    // Tertiary key: registryName
+    const regKey = (mcp.registryName || "").trim().toLowerCase();
+    if (regKey) {
+      const existing = seenByRegistry.get(regKey);
+      if (!existing || isBetter(mcp, existing)) {
+        seenByRegistry.set(regKey, mcp);
+      }
+    }
+  }
+
+  // Merge: name-deduped is primary, then filter out any remaining slug-base or registry dupes
+  const finalMap = new Map<number, MCPServer>();
+  for (const mcp of seen.values()) {
+    finalMap.set(mcp.id, mcp);
+  }
+
+  return Array.from(finalMap.values());
 }
 
 export async function fetchAgentBySlug(slug: string) {
@@ -2335,7 +2393,13 @@ export async function fetchRelatedMCPServers(
     merged.set(candidate.id, candidate)
   );
 
-  return rankRelatedMCPServers(mcp, Array.from(merged.values()), limit);
+  // Deduplicate by name to avoid showing same-named servers
+  const nameDeduped = new Map<string, MCPServer>();
+  for (const c of merged.values()) {
+    const key = (c.name || "").trim().toLowerCase();
+    if (!nameDeduped.has(key)) nameDeduped.set(key, c);
+  }
+  return rankRelatedMCPServers(mcp, Array.from(nameDeduped.values()), limit);
 }
 
 // ── Tool fetch functions ──
