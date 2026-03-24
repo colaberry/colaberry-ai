@@ -18,7 +18,8 @@ if [[ ! "$FILE_PATH" =~ /src/ ]] && [[ ! "$FILE_PATH" =~ globals\.css$ ]]; then
 fi
 
 # Check for forbidden colors
-VIOLATIONS=$(grep -nE "(emerald-|green-[0-9]|blue-[0-9]|amber-|slate-)" "$FILE_PATH" 2>/dev/null | head -5)
+# Word-boundary aware: match Tailwind color classes, not substrings like "translate-y"
+VIOLATIONS=$(grep -nE "\b(emerald-[0-9]|green-[0-9]|blue-[0-9]|amber-[0-9]|slate-[0-9])" "$FILE_PATH" 2>/dev/null | head -5)
 
 if [[ -n "$VIOLATIONS" ]]; then
   echo "FORBIDDEN COLORS DETECTED in $FILE_PATH:" >&2
