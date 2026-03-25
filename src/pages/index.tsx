@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
 import type { GetStaticProps } from "next";
+import type { ContentTypeName } from "../lib/ontologyTypes";
 import { useCallback, useEffect, useRef, useState } from "react";
 import SectionHeader from "../components/SectionHeader";
 import {
@@ -113,35 +114,43 @@ export default function Home({
     { name: "Supply Chain", slug: "supply-chain", icon: "truck" as const },
   ];
 
-  const catalogs = [
+  const catalogs: CatalogItem[] = [
     {
       href: "/aixcelerator/agents",
       title: "AI Agents",
       description: "29 enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.",
       meta: "29 agents",
-      image: heroImage("hero-agents-cinematic.webp"),
+      iconType: "agent",
+      gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
+      accentColor: "#DC2626",
     },
     {
       href: "/aixcelerator/mcp",
       title: "MCP Servers",
       description: "1,500+ Model Context Protocol servers with tool access, connectors, and integration templates.",
       meta: "1.5k+ servers",
-      image: heroImage("hero-mcp-cinematic.webp"),
+      iconType: "mcp",
+      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
+      accentColor: "#a1a1aa",
     },
     {
       href: "/aixcelerator/skills",
       title: "AI Skills",
       description: "16,900+ reusable capability units across workflow, domain, and orchestration categories.",
       meta: "16.9k+ skills",
-      image: heroImage("hero-platform-cinematic.webp"),
+      iconType: "skill",
+      gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
+      accentColor: "#f59e0b",
     },
-    /* Use cases hidden for Release-1.0 — re-enable when content is ready
+    /* Use cases hidden for Release-1.0
     {
       href: "/solutions",
       title: "Use Cases",
       description: "Solution blueprints mapped to outcomes and operating models.",
       meta: "Solutions",
-      image: heroImage("hero-solutions-cinematic.webp"),
+      iconType: "tool",
+      gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
+      accentColor: "#10b981",
     },
     */
     {
@@ -149,21 +158,27 @@ export default function Home({
       title: "AI Podcasts",
       description: "246 episodes with full transcripts, timestamps, and linked artifacts from Colaberry AI.",
       meta: "246 episodes",
-      image: heroImage("hero-resources-cinematic.webp"),
+      iconType: "podcast",
+      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
+      accentColor: "#8b5cf6",
     },
     {
       href: "/resources/books",
       title: "Books & Research",
       description: "Enterprise reference material, delivery frameworks, and responsible AI research.",
       meta: "Research",
-      image: heroImage("hero-industries-cinematic.webp"),
+      iconType: "skill",
+      gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
+      accentColor: "#06b6d4",
     },
     {
       href: "/aixcelerator/ontology",
       title: "Knowledge Graph",
       description: "SkillNet-powered ontology mapping agents, skills, MCPs, and tools into a structured intelligence layer.",
       meta: "Ontology",
-      image: heroImage("hero-solutions-cinematic.webp"),
+      iconType: "mcp",
+      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
+      accentColor: "#DC2626",
     },
   ];
 
@@ -662,50 +677,56 @@ function SignalDashboard({
   );
 }
 
-function CatalogCard({
-  href,
-  title,
-  description,
-  meta,
-  image,
-}: {
+type CatalogItem = {
   href: string;
   title: string;
   description: string;
   meta: string;
-  image: string;
-}) {
+  iconType: ContentTypeName;
+  gradient: string;
+  accentColor: string;
+};
+
+const CATALOG_ICON_PATHS: Record<string, { d: string; viewBox: string }> = {
+  agent: { viewBox: "0 0 24 24", d: "M9 2v2H7a2 2 0 00-2 2v2H3v4h2v2a2 2 0 002 2h2v2h2v-2h2v2h2v-2h2a2 2 0 002-2v-2h2V8h-2V6a2 2 0 00-2-2h-2V2h-2v2h-2V2H9zm-2 6h10v8H7V8zm3 2v1h1v-1h-1zm3 0v1h1v-1h-1zm-4 3v1h4v-1H9z" },
+  mcp: { viewBox: "0 0 24 24", d: "M4 6a2 2 0 012-2h12a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm14 1.5a1 1 0 10-2 0 1 1 0 002 0zM4 15a2 2 0 012-2h12a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2v-3zm14 1.5a1 1 0 10-2 0 1 1 0 002 0z" },
+  skill: { viewBox: "0 0 24 24", d: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" },
+  tool: { viewBox: "0 0 24 24", d: "M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" },
+  podcast: { viewBox: "0 0 24 24", d: "M12 1a4 4 0 00-4 4v7a4 4 0 008 0V5a4 4 0 00-4-4zM6 11a1 1 0 10-2 0 8 8 0 0016 0 1 1 0 10-2 0 6 6 0 01-12 0zm5 10.93A8 8 0 014.07 14H6.1a6 6 0 0011.8 0h2.03A8 8 0 0113 21.93V24h-2v-2.07z" },
+};
+
+function CatalogCard({ href, title, description, meta, iconType, gradient, accentColor }: CatalogItem) {
+  const icon = CATALOG_ICON_PATHS[iconType] || CATALOG_ICON_PATHS.skill;
   return (
     <Link
       href={href}
-      className="card-glass card-shimmer gradient-border group flex h-full min-h-[268px] flex-col overflow-hidden p-0"
+      className="group flex h-full min-h-[268px] flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition-all hover:border-zinc-300 hover:shadow-lg dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-600"
       aria-label={`Open ${title}`}
     >
-      <div className="media-premium-frame border-0 border-b border-zinc-200/80 rounded-none">
-        <div className="relative aspect-[16/10] w-full">
-          <Image
-            src={image}
-            alt={title}
-            fill
-            sizes="(min-width: 1536px) 28vw, (min-width: 1024px) 32vw, (min-width: 640px) 44vw, 95vw"
-            quality={90}
-            className="media-premium-image object-cover object-center"
-          />
-          <div className="media-premium-overlay" />
-          <div className="absolute left-3 top-3">
-            <div className="chip chip-muted rounded-md border border-zinc-200/80 bg-white/90 px-2.5 py-1 text-xs font-semibold text-zinc-700 dark:border-zinc-600 dark:bg-zinc-900/90 dark:text-zinc-200">
-              {meta}
-            </div>
+      <div className={`relative flex items-center justify-center bg-gradient-to-br ${gradient} px-6 py-10`}>
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+        {/* Glow behind icon */}
+        <div className="absolute rounded-full blur-2xl" style={{ width: 80, height: 80, backgroundColor: accentColor, opacity: 0.15 }} />
+        {/* Icon */}
+        <svg viewBox={icon.viewBox} className="relative h-12 w-12 transition-transform group-hover:scale-110" fill="none" stroke={accentColor} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+          <path d={icon.d} fill={accentColor} fillOpacity={0.15} />
+        </svg>
+        {/* Badge */}
+        <div className="absolute left-3 top-3">
+          <div className="rounded-md border border-white/10 bg-white/10 px-2.5 py-1 text-xs font-semibold text-white/90 backdrop-blur-sm">
+            {meta}
           </div>
         </div>
-      </div>
-      <div className="flex flex-1 items-start justify-between gap-4 p-5">
-        <div>
-          <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</div>
-          <div className="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{description}</div>
+        {/* Arrow */}
+        <div className="absolute right-3 top-3 rounded-full border border-white/10 bg-white/10 p-1.5 text-white/60 transition-all group-hover:bg-white/20 group-hover:text-white">
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M7 17L17 7M17 7H7M17 7v10" /></svg>
         </div>
-        <div className="mt-0.5 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep">
-          <span aria-hidden="true">→</span>
+      </div>
+      <div className="flex flex-1 flex-col justify-between p-5">
+        <div>
+          <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
+          <p className="mt-1.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</p>
         </div>
       </div>
     </Link>
