@@ -122,7 +122,7 @@ export default function Home({
       meta: "29 agents",
       iconType: "agent",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
-      accentColor: "#DC2626",
+      accentColor: "#ef4444",
     },
     {
       href: "/aixcelerator/mcp",
@@ -131,7 +131,7 @@ export default function Home({
       meta: "1.5k+ servers",
       iconType: "mcp",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
-      accentColor: "#a1a1aa",
+      accentColor: "#3b82f6",
     },
     {
       href: "/aixcelerator/skills",
@@ -160,25 +160,25 @@ export default function Home({
       meta: "246 episodes",
       iconType: "podcast",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
-      accentColor: "#8b5cf6",
+      accentColor: "#a78bfa",
     },
     {
       href: "/resources/books",
       title: "Books & Research",
       description: "Enterprise reference material, delivery frameworks, and responsible AI research.",
       meta: "Research",
-      iconType: "book" as ContentTypeName,
+      iconType: "skill",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
-      accentColor: "#06b6d4",
+      accentColor: "#22d3ee",
     },
     {
       href: "/aixcelerator/ontology",
       title: "Knowledge Graph",
       description: "SkillNet-powered ontology mapping agents, skills, MCPs, and tools into a structured intelligence layer.",
       meta: "Ontology",
-      iconType: "graph" as ContentTypeName,
+      iconType: "mcp",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
-      accentColor: "#DC2626",
+      accentColor: "#f87171",
     },
   ];
 
@@ -693,47 +693,40 @@ const CATALOG_ICON_PATHS: Record<string, { d: string; viewBox: string }> = {
   skill: { viewBox: "0 0 24 24", d: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" },
   tool: { viewBox: "0 0 24 24", d: "M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" },
   podcast: { viewBox: "0 0 24 24", d: "M12 1a4 4 0 00-4 4v7a4 4 0 008 0V5a4 4 0 00-4-4zM6 11a1 1 0 10-2 0 8 8 0 0016 0 1 1 0 10-2 0 6 6 0 01-12 0zm5 10.93A8 8 0 014.07 14H6.1a6 6 0 0011.8 0h2.03A8 8 0 0113 21.93V24h-2v-2.07z" },
-  book: { viewBox: "0 0 24 24", d: "M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5v14zm0 0A2.5 2.5 0 016.5 17H20v4H6.5A2.5 2.5 0 014 19.5zM8 7h8M8 11h6" },
-  graph: { viewBox: "0 0 24 24", d: "M12 2a3 3 0 00-3 3c0 .9.4 1.7 1 2.2L7.5 12H5a3 3 0 100 6h.5l2 3.3A3 3 0 1012 22a3 3 0 004.5-.7l2-3.3h.5a3 3 0 100-6h-2.5L14 7.2c.6-.5 1-1.3 1-2.2a3 3 0 00-3-3zm0 2a1 1 0 110 2 1 1 0 010-2zM5 14a1 1 0 110 2 1 1 0 010-2zm14 0a1 1 0 110 2 1 1 0 010-2zm-7 5a1 1 0 110 2 1 1 0 010-2z" },
 };
 
-function CatalogCard({ href, title, description, meta, iconType, accentColor }: CatalogItem) {
+function CatalogCard({ href, title, description, meta, iconType, gradient, accentColor }: CatalogItem) {
   const icon = CATALOG_ICON_PATHS[iconType] || CATALOG_ICON_PATHS.skill;
   return (
     <Link
       href={href}
-      className="group relative flex h-full min-h-[280px] flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-xl hover:-translate-y-0.5 dark:border-zinc-700/80 dark:bg-zinc-900 dark:hover:border-zinc-600"
+      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-zinc-900 dark:hover:border-zinc-600"
       aria-label={`Open ${title}`}
     >
-      {/* Accent top bar */}
-      <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${accentColor}, ${accentColor}88, transparent)` }} />
-
-      {/* Icon area */}
-      <div className="relative flex items-center justify-center px-6 pt-8 pb-6">
+      <div className={`relative flex items-center justify-center bg-gradient-to-br ${gradient} px-6 py-12`}>
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
         {/* Large soft glow */}
-        <div className="absolute rounded-full blur-3xl" style={{ width: 120, height: 120, backgroundColor: accentColor, opacity: 0.08 }} />
-        {/* Ring behind icon */}
-        <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-105" style={{ backgroundColor: `${accentColor}0a`, border: `1.5px solid ${accentColor}20` }}>
-          <svg viewBox={icon.viewBox} className="h-9 w-9" fill="none" strokeLinecap="round" strokeLinejoin="round">
-            <path d={icon.d} fill={accentColor} fillOpacity={0.9} stroke={accentColor} strokeWidth={0.5} />
-          </svg>
-        </div>
+        <div className="absolute rounded-full blur-3xl transition-opacity duration-300 group-hover:opacity-30" style={{ width: 140, height: 140, backgroundColor: accentColor, opacity: 0.2 }} />
+        {/* Icon — larger, bolder */}
+        <svg viewBox={icon.viewBox} className="relative h-16 w-16 drop-shadow-lg transition-transform duration-300 group-hover:scale-110" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d={icon.d} fill={accentColor} fillOpacity={0.85} stroke={accentColor} strokeWidth={0.3} />
+        </svg>
         {/* Badge */}
-        <div className="absolute right-4 top-4">
-          <div className="rounded-full px-3 py-1 text-xs font-bold tracking-wide" style={{ backgroundColor: `${accentColor}12`, color: accentColor, border: `1px solid ${accentColor}25` }}>
+        <div className="absolute left-3.5 top-3.5">
+          <div className="rounded-full border border-white/15 bg-black/30 px-3 py-1 text-xs font-bold tracking-wide text-white/95 backdrop-blur-md">
             {meta}
           </div>
         </div>
+        {/* Arrow */}
+        <div className="absolute right-3.5 top-3.5 rounded-full border border-white/10 bg-white/5 p-2 text-white/50 transition-all duration-300 group-hover:bg-white/15 group-hover:text-white">
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M7 17L17 7M17 7H7M17 7v10" /></svg>
+        </div>
       </div>
-
-      {/* Content */}
-      <div className="flex flex-1 flex-col px-6 pb-6">
-        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">{title}</h3>
-        <p className="mt-2 flex-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</p>
-        {/* Bottom action */}
-        <div className="mt-4 flex items-center gap-1.5 text-sm font-semibold transition-colors" style={{ color: accentColor }}>
-          <span>Explore</span>
-          <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+      <div className="flex flex-1 flex-col justify-between p-5">
+        <div>
+          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50">{title}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</p>
         </div>
       </div>
     </Link>
