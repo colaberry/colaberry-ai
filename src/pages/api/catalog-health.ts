@@ -92,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       rows,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return res.status(500).json({ ok: false, message: `Failed to build catalog health report: ${message}` });
+    console.error("[catalog-health]", error instanceof Error ? error.message : error);
+    return res.status(500).json({ ok: false, message: "Failed to build catalog health report" });
   }
 }

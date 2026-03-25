@@ -1,23 +1,33 @@
-# Use official Node image
-FROM node:20-alpine
+# ── Stage 1: Build ──────────────────────────────────────────────
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies (all, including dev for build tooling)
+COPY package*.json ./
+RUN npm ci
+
+# Copy source and build
+COPY . .
+RUN npm run build
+
+# ── Stage 2: Production runtime ────────────────────────────────
+FROM node:20-alpine AS runner
 
 # Create non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy only production dependencies
 COPY package*.json ./
+RUN npm ci --omit=dev
 
-# Install dependencies deterministically
-RUN npm ci
-
-# Copy rest of the app
-COPY . .
-
-# Build Next.js app
-RUN npm run build
+# Copy built output from builder
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/tsconfig.json ./
 
 # Give non-root user write access to .next for ISR page regeneration
 RUN chown -R appuser:appgroup /app/.next

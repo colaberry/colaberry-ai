@@ -246,7 +246,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       syncedAt: new Date().toISOString(),
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Sync failed";
-    return res.status(500).json({ error: message });
+    console.error("[sync-mcp-registry]", err instanceof Error ? err.message : err);
+    return res.status(500).json({ error: "Sync failed" });
   }
 }

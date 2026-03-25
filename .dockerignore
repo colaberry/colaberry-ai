@@ -1,7 +1,15 @@
 node_modules
-.env.local
+.env
+.env.*
 .git
 .claude
 .next
 *.md
 .DS_Store
+specs/
+docs/
+scripts/
+tools/
+.classify-industry-progress.json
+.clawhub-import-progress.json
+.github-bulk-import-progress.json

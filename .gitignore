@@ -27,6 +27,9 @@
 # local scratch
 .tmp_case_studies/
 .enrich-progress.json
+.classify-industry-progress.json
+.clawhub-import-progress.json
+.github-bulk-import-progress.json
 
 # claude code worktrees
 .claude/worktrees/

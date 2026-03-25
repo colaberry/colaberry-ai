@@ -39,7 +39,21 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    return getMcpRedirects();
+    const mcpRedirects = getMcpRedirects();
+    return [
+      ...mcpRedirects,
+      // Legacy colaberry.ai/episodes → new podcast URLs (301 permanent)
+      {
+        source: "/episodes",
+        destination: "/resources/podcasts",
+        permanent: true,
+      },
+      {
+        source: "/episodes/:slug",
+        destination: "/resources/podcasts/:slug",
+        permanent: true,
+      },
+    ];
   },
   async rewrites() {
     return [

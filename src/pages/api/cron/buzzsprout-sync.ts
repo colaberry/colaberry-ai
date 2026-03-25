@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { syncBuzzsproutToStrapi, type SyncResult } from "../../../lib/buzzsproutSync";
+import { isBearerAuthorized } from "../../../lib/api-auth";
 
 const SYNC_SECRET = (process.env.PODCAST_SYNC_SECRET || "").trim();
 
@@ -15,16 +16,9 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // Verify shared secret
-  if (SYNC_SECRET) {
-    const authHeader = req.headers.authorization || "";
-    const token = authHeader.startsWith("Bearer ")
-      ? authHeader.slice(7).trim()
-      : "";
-
-    if (token !== SYNC_SECRET) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  // Verify shared secret — timing-safe comparison, rejects when secret is unset
+  if (!isBearerAuthorized(req, SYNC_SECRET)) {
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   try {
@@ -34,8 +28,7 @@ export default async function handler(
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json(result);
   } catch (error) {
-    const reason =
-      error instanceof Error ? error.message : "Unknown sync error";
-    return res.status(500).json({ error: reason });
+    console.error("[buzzsprout-sync]", error instanceof Error ? error.message : error);
+    return res.status(500).json({ error: "Sync failed" });
   }
 }
