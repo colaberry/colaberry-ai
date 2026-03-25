@@ -19,15 +19,16 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-# Copy only production dependencies
+# Copy dependencies (include dev for next.config.ts transpilation)
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
-# Copy built output from builder
+# Copy built output and config from builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/tsconfig.json ./
+COPY --from=builder /app/src/lib/mcp-slug-aliases.ts ./src/lib/
 
 # Give non-root user write access to .next for ISR page regeneration
 RUN chown -R appuser:appgroup /app/.next
