@@ -116,29 +116,29 @@ export default function Home({
   const catalogs = [
     {
       href: "/aixcelerator/agents",
-      title: "Agents catalog",
-      description: "Ownership, runbooks, evaluations, and deployment readiness.",
-      meta: "Agents",
+      title: "AI Agents",
+      description: "29 enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.",
+      meta: "29 agents",
       image: heroImage("hero-agents-cinematic.webp"),
     },
     {
       href: "/aixcelerator/mcp",
-      title: "MCP integration library",
-      description: "Standardized tool access, connectors, and server templates.",
-      meta: "MCP",
+      title: "MCP Servers",
+      description: "1,500+ Model Context Protocol servers with tool access, connectors, and integration templates.",
+      meta: "1.5k+ servers",
       image: heroImage("hero-mcp-cinematic.webp"),
     },
     {
       href: "/aixcelerator/skills",
-      title: "Skills catalog",
-      description: "Reusable capability units for official, workflow, domain, and orchestration tasks.",
-      meta: "Skills",
+      title: "AI Skills",
+      description: "16,900+ reusable capability units across workflow, domain, and orchestration categories.",
+      meta: "16.9k+ skills",
       image: heroImage("hero-platform-cinematic.webp"),
     },
     /* Use cases hidden for Release-1.0 — re-enable when content is ready
     {
       href: "/solutions",
-      title: "Use cases + playbooks",
+      title: "Use Cases",
       description: "Solution blueprints mapped to outcomes and operating models.",
       meta: "Solutions",
       image: heroImage("hero-solutions-cinematic.webp"),
@@ -146,16 +146,16 @@ export default function Home({
     */
     {
       href: "/resources/podcasts",
-      title: "Podcasts + narratives",
-      description: "Audio insights, transcripts, and linked artifacts.",
-      meta: "Resources",
+      title: "AI Podcasts",
+      description: "246 episodes with full transcripts, timestamps, and linked artifacts from Colaberry AI.",
+      meta: "246 episodes",
       image: heroImage("hero-resources-cinematic.webp"),
     },
     {
       href: "/resources/books",
-      title: "Books + artifacts",
-      description: "Reference material, templates, and delivery assets.",
-      meta: "Books",
+      title: "Books & Research",
+      description: "Enterprise reference material, delivery frameworks, and responsible AI research.",
+      meta: "Research",
       image: heroImage("hero-industries-cinematic.webp"),
     },
   ];
