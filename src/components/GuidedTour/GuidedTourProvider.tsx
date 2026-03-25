@@ -46,6 +46,8 @@ export default function GuidedTourProvider({ children }: { children: ReactNode }
   // Auto-start on homepage for first-time human visitors
   useEffect(() => {
     if (router.pathname !== "/") return;
+    // Disable tour on production Cloud Run URLs (enable on custom domain)
+    if (typeof window !== "undefined" && window.location.hostname.includes(".run.app")) return;
     // Skip for bots, crawlers, and headless browsers
     if (isBot()) return;
     // Allow ?notour=1 query param to suppress (useful for LLM agents & testing)
