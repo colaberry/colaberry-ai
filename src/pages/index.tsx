@@ -158,6 +158,13 @@ export default function Home({
       meta: "Research",
       image: heroImage("hero-industries-cinematic.webp"),
     },
+    {
+      href: "/aixcelerator/ontology",
+      title: "Knowledge Graph",
+      description: "SkillNet-powered ontology mapping agents, skills, MCPs, and tools into a structured intelligence layer.",
+      meta: "Ontology",
+      image: heroImage("hero-solutions-cinematic.webp"),
+    },
   ];
 
   const platformTabs = [
