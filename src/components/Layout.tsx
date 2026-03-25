@@ -274,6 +274,25 @@ function isActiveNavPath(currentPath: string, href: string, navPaths: string[]) 
   return !hasMoreSpecific;
 }
 
+/* ── Release feature flags ─────────────────────────────────────────
+ * Paths listed here are HIDDEN from all navigation (header, sidebar,
+ * footer) until their content is production-ready and Ram-approved.
+ * To re-enable a section, either:
+ *   1. Remove its path from this set, OR
+ *   2. Set env var NEXT_PUBLIC_SHOW_ALL_NAV=true to show everything
+ */
+const SHOW_ALL_NAV = process.env.NEXT_PUBLIC_SHOW_ALL_NAV === "true";
+const RELEASE_HIDDEN_PATHS = SHOW_ALL_NAV ? new Set<string>() : new Set([
+  "/aixcelerator/tools",
+  "/use-cases",
+  "/industries",
+  "/solutions",
+  "/updates",
+  "/resources/articles",
+  "/resources/case-studies",
+  "/resources/white-papers",
+]);
+
 const PLATFORM_CHILD_BLUEPRINT = [
   { label: "Overview", href: "/aixcelerator" },
   { label: "Agents", href: "/aixcelerator/agents" },
@@ -297,6 +316,17 @@ const PLATFORM_CHILD_ALIASES: Record<string, string> = {
   "use case": "/use-cases",
   "discovery assistant": "/assistant",
 };
+
+/** Filter out paths hidden for this release from any nav link. */
+function isReleasePath(href: string): boolean {
+  const normalized = normalizePath(href);
+  if (RELEASE_HIDDEN_PATHS.has(normalized)) return false;
+  // Also hide children whose parent is hidden (e.g. /industries/*)
+  for (const hidden of RELEASE_HIDDEN_PATHS) {
+    if (normalized.startsWith(hidden + "/")) return false;
+  }
+  return true;
+}
 
 function findPlatformChildBlueprint(link: GlobalNavigation["headerLinks"][number]) {
   const normalizedPath = normalizePath(link.href);
@@ -411,9 +441,26 @@ function mergeGlobalNavigation(primary: GlobalNavigation | null, fallback: Globa
     : fallback.headerLinks;
   const normalizedHeaderLinks = normalizeHeaderNavigation(headerLinks);
 
+  /* ── Apply Release-1.0 visibility gate ────────────────────────── */
+  const gatedHeaderLinks = normalizedHeaderLinks
+    .filter((link) => isReleasePath(link.href))
+    .map((link) => link.children
+      ? { ...link, children: link.children.filter((c) => isReleasePath(c.href)) }
+      : link
+    )
+    .filter((link) => !link.children || link.children.length > 0);
+
+  const rawFooter = primary.footerColumns.length ? primary.footerColumns : fallback.footerColumns;
+  const gatedFooterColumns = rawFooter
+    .map((col) => ({
+      ...col,
+      links: col.links.filter((l) => isReleasePath(l.href)),
+    }))
+    .filter((col) => col.links.length > 0);
+
   return {
-    headerLinks: normalizedHeaderLinks,
-    footerColumns: primary.footerColumns.length ? primary.footerColumns : fallback.footerColumns,
+    headerLinks: gatedHeaderLinks,
+    footerColumns: gatedFooterColumns,
     cta: primary.cta?.label && primary.cta?.href ? primary.cta : fallback.cta,
     socialLinks: primary.socialLinks.length ? primary.socialLinks : fallback.socialLinks,
     legalLinks: primary.legalLinks.length ? primary.legalLinks : fallback.legalLinks,
