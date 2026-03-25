@@ -135,6 +135,7 @@ export default function Home({
       meta: "Skills",
       image: heroImage("hero-platform-cinematic.webp"),
     },
+    /* Use cases hidden for Release-1.0 — re-enable when content is ready
     {
       href: "/solutions",
       title: "Use cases + playbooks",
@@ -142,6 +143,7 @@ export default function Home({
       meta: "Solutions",
       image: heroImage("hero-solutions-cinematic.webp"),
     },
+    */
     {
       href: "/resources/podcasts",
       title: "Podcasts + narratives",
@@ -393,6 +395,7 @@ export default function Home({
         </div>
       </section>
 
+      {/* Industries section hidden for Release-1.0 — re-enable when industry pages have content
       <section className="reveal section-spacing">
         <SectionHeader
           kicker="Industry expertise"
@@ -405,6 +408,7 @@ export default function Home({
           ))}
         </div>
       </section>
+      */}
 
       <section className="reveal section-spacing surface-panel p-6 sm:p-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -424,14 +428,13 @@ export default function Home({
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <QuickLink href="/solutions" title="Solutions" description="Packaged offerings and playbooks." />
-          <QuickLink href="/resources/case-studies" title="Case studies" description="Outcomes and delivery stories." />
           <QuickLink
             href="/resources/books#trust-before-intelligence"
             title="Trust Before Intelligence"
             description="Foundational research on responsible AI."
           />
-          <QuickLink href="/updates" title="News & product" description="Updates, announcements, and signals." />
+          <QuickLink href="/resources/podcasts" title="Podcasts" description="Audio insights, transcripts, and AI narratives." />
+          {/* Hidden for Release-1.0: Solutions, Case Studies, News & product */}
         </div>
       </section>
     </Layout>
@@ -534,7 +537,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   };
 };
 
-const SIGNAL_TABS = ["Agents", "Skills", "MCP", "Podcasts", "Use Cases"] as const;
+const SIGNAL_TABS = ["Agents", "Skills", "MCP", "Podcasts"] as const; // Use Cases hidden for Release-1.0
 type SignalTab = (typeof SIGNAL_TABS)[number];
 
 function SignalDashboard({
@@ -646,14 +649,7 @@ function SignalDashboard({
             </div>
           </div>
         )}
-        {activeTab === "Use Cases" && (
-          <div role="tabpanel" id="signal-panel-Use Cases" aria-labelledby="signal-tab-Use Cases" className="grid gap-4 lg:grid-cols-2">
-            <UseCaseRail title="Latest use cases" description="Most recently updated." items={latestUseCases} detailType="latest" />
-            {trendingUseCases.length > 0 && (
-              <UseCaseRail title="Trending use cases" description="Most referenced and linked." items={trendingUseCases} detailType="trending" />
-            )}
-          </div>
-        )}
+        {/* Use Cases tab hidden for Release-1.0 */}
       </div>
     </section>
   );
