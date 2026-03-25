@@ -223,8 +223,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       page += 1;
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "unknown";
-    return res.status(500).json({ ok: false, message: `Failed to build report: ${message}` });
+    console.error("[newsletter-report]", error instanceof Error ? error.message : error);
+    return res.status(500).json({ ok: false, message: "Failed to build report" });
   }
 
   if (format === "csv") {
