@@ -400,13 +400,13 @@ export default function Home({
       <PlatformTabsSection tabs={platformTabs} />
 
       <section className="reveal section-spacing surface-panel p-6 sm:p-8">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
             kicker="Connect your stack"
             title="Integrations-ready from day one"
             description="Build assistants that can act across your tools — using a standardized MCP surface."
           />
-          <Link href="/aixcelerator/mcp" className="btn btn-secondary mt-3 sm:mt-0">
+          <Link href="/aixcelerator/mcp" className="btn btn-secondary shrink-0">
             Explore MCP servers
           </Link>
         </div>
@@ -435,7 +435,7 @@ export default function Home({
       */}
 
       <section className="reveal section-spacing surface-panel p-6 sm:p-8">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <SectionHeader
               kicker="Explore next"
@@ -445,7 +445,7 @@ export default function Home({
           </div>
           <Link
             href="/resources"
-            className="btn btn-primary mt-3 sm:mt-0"
+            className="btn btn-primary shrink-0"
           >
             Explore resources
           </Link>
