@@ -321,6 +321,30 @@ export default function Home({
         {/* Radial vignette for depth */}
         <div className="hero-vignette" aria-hidden="true" />
 
+        {/* Floating content-type icon nodes (vizuara-inspired constellation) */}
+        <div className="hero-floating-nodes" aria-hidden="true">
+          {/* Agents node */}
+          <div className="hero-node hero-node-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.3 24.3 0 0 1 4.5 0m0 0v5.714a2.25 2.25 0 0 0 .659 1.591L19 14.5m-4.75-11.396c.251.023.501.05.75.082M12 21a9 9 0 0 0 9-9m-9 9a9 9 0 0 1-9-9" /></svg>
+          </div>
+          {/* MCP node */}
+          <div className="hero-node hero-node-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-13.5-3a3 3 0 0 1 0-6h13.5a3 3 0 1 1 0 6M6 6.75h.008v.008H6V6.75Zm0 7.5h.008v.008H6v-.008Zm0 7.5h.008v.008H6v-.008Z" /></svg>
+          </div>
+          {/* Skills node */}
+          <div className="hero-node hero-node-3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg>
+          </div>
+          {/* Podcasts node */}
+          <div className="hero-node hero-node-4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
+          </div>
+          {/* Knowledge Graph node */}
+          <div className="hero-node hero-node-5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
+          </div>
+        </div>
+
         {/* Content — centered layout */}
         <div className="relative z-10 mx-auto max-w-4xl px-5 py-16 text-center sm:px-8 sm:py-20 md:px-10 lg:py-24">
           <div
