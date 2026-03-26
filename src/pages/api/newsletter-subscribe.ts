@@ -59,10 +59,15 @@ function normalizeText(value: unknown, maxLength = 200) {
 }
 
 function getClientIp(req: NextApiRequest) {
+  const cfIp = req.headers["cf-connecting-ip"];
+  if (cfIp) return (Array.isArray(cfIp) ? cfIp[0] : cfIp).trim();
+  const realIp = req.headers["x-real-ip"];
+  if (realIp) return (Array.isArray(realIp) ? realIp[0] : realIp).trim();
   const forwarded = req.headers["x-forwarded-for"];
   const fromHeader = Array.isArray(forwarded) ? forwarded[0] : forwarded;
   if (fromHeader) {
-    return fromHeader.split(",")[0]?.trim() || "unknown";
+    const ips = fromHeader.split(",").map((s) => s.trim()).filter(Boolean);
+    return ips[ips.length - 1] || "unknown";
   }
   return req.socket.remoteAddress || "unknown";
 }
