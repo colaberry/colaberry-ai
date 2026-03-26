@@ -90,13 +90,15 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
     return acc;
   }, {});
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
-  const metaTitle = "AI Skills Catalog | Colaberry AI";
+  const metaTitle = "16,900+ AI Skills — Reusable Capability Library | Colaberry AI";
   const metaDescription =
-    "Explore a governed catalog of AI skills with structured metadata, lifecycle status, and enterprise-grade discovery for agents and workflows.";
+    "Explore 16,900+ reusable AI skills across workflow, domain, and orchestration categories. Enterprise-grade discovery with structured metadata for agents and LLMs.";
   const seoMeta: SeoMeta = {
     title: metaTitle,
     description: metaDescription,
     canonical: buildCanonical("/aixcelerator/skills"),
+    ogImage: "/og/skills.png",
+    ogImageAlt: "Colaberry AI — 16,900+ reusable AI skills library",
   };
   const canonicalUrl = seoMeta.canonical!;
   const jsonLd = {

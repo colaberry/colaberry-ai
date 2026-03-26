@@ -1,0 +1,18 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#09090B"/>
+  <!-- Branding -->
+  <text x="60" y="56" fill="#A1A1AA" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="500">Colaberry.ai</text>
+  <!-- Lightning bolt icon -->
+  <g transform="translate(60, 150)">
+    <rect x="0" y="0" width="80" height="80" rx="16" fill="#18181B" stroke="#3F3F46" stroke-width="2"/>
+    <path d="M46 12L28 44h12l-4 24 20-32H44l2-24z" fill="#DC2626"/>
+  </g>
+  <!-- Coral accent line -->
+  <rect x="60" y="290" width="80" height="4" rx="2" fill="#DC2626"/>
+  <!-- Title -->
+  <text x="60" y="350" fill="#FAFAFA" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">AI Skills</text>
+  <!-- Subtitle -->
+  <text x="60" y="405" fill="#A1A1AA" font-family="Inter, system-ui, sans-serif" font-size="26" font-weight="400">16,900+ reusable capability units</text>
+  <!-- Bottom border accent -->
+  <rect x="0" y="622" width="1200" height="8" fill="#DC2626"/>
+</svg>

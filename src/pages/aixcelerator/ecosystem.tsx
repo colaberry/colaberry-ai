@@ -188,9 +188,11 @@ export default function EcosystemPage({ nodes, links, typeBreakdown }: InferGetS
   );
 
   const seoMeta: SeoMeta = {
-    title: "Ecosystem Graph | Colaberry AI",
-    description: "Interactive force-graph showing all content types — Agents, Skills, MCPs, Tools, Podcasts — with cross-type relationships.",
+    title: "AI Ecosystem Graph — Cross-Type Relationships | Colaberry AI",
+    description: "Interactive force-graph visualization showing how AI agents, skills, MCP servers, tools, and podcasts connect with cross-type relationships.",
     canonical: buildCanonical("/aixcelerator/ecosystem"),
+    ogImage: "/og/ecosystem.png",
+    ogImageAlt: "Colaberry AI — Interactive ecosystem graph showing cross-type AI relationships",
   };
 
   const handleNodeClick = useCallback((node: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any

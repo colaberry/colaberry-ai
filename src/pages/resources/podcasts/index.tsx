@@ -210,9 +210,11 @@ export default function Podcasts({
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai").replace(/\/$/, "");
   const canonicalUrl = `${siteUrl}${canonicalPath}`;
   const seoMeta: SeoMeta = {
-    title: "Podcasts | Colaberry AI",
-    description: "Explore the Colaberry AI podcast library with chronological episodes, trending signals, inline playback, and detailed episode pages.",
+    title: "260+ AI Podcasts with Full Transcripts | Colaberry AI",
+    description: "Listen to 260+ AI podcast episodes with full transcripts, timestamps, and linked artifacts. Enterprise AI insights from industry leaders.",
     canonical: canonicalUrl,
+    ogImage: "/og/podcasts.png",
+    ogImageAlt: "Colaberry AI — 260+ AI podcast episodes with full transcripts",
   };
   const itemListSchema = {
     "@context": "https://schema.org",

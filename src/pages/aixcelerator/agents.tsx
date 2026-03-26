@@ -91,13 +91,15 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
     return acc;
   }, {});
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
-  const metaTitle = "AI Agents Catalog | Colaberry AI";
+  const metaTitle = "29 AI Agents Across 13 Industries | Colaberry AI";
   const metaDescription =
-    "Explore a governed marketplace of AI agents with ownership, lifecycle status, and LLM-ready metadata for enterprise discovery.";
+    "Discover 29 enterprise AI agents with ownership, runbooks, evaluations, and deployment readiness across 13 industries. LLM-indexed for AI search discovery.";
   const seoMeta: SeoMeta = {
     title: metaTitle,
     description: metaDescription,
     canonical: buildCanonical("/aixcelerator/agents"),
+    ogImage: "/og/agents.png",
+    ogImageAlt: "Colaberry AI — 29 enterprise AI agents across 13 industries",
   };
   const canonicalUrl = seoMeta.canonical!;
   const jsonLd = {

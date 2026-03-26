@@ -12,9 +12,11 @@ import { SOLUTION_STACKS } from "../../../data/solution-stacks";
 
 export default function SolutionStacksPage() {
   const seoMeta: SeoMeta = {
-    title: "Solution Stacks | Colaberry AI",
-    description: "Cross-type curated bundles — Agents + Skills + MCPs + Tools working together for real-world solutions.",
+    title: "AI Solution Stacks — Curated Cross-Type Bundles | Colaberry AI",
+    description: "Pre-built AI solution stacks combining agents, skills, MCP servers, and tools for real-world enterprise use cases. Deploy complete AI workflows.",
     canonical: buildCanonical("/aixcelerator/solution-stacks"),
+    ogImage: "/og/solution-stacks.png",
+    ogImageAlt: "Colaberry AI — Curated AI solution stacks combining agents, skills, MCPs, and tools",
   };
 
   return (

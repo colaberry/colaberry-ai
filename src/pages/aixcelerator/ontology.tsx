@@ -171,9 +171,11 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
 
 export default function PlatformOntologyPage({ typeCounts }: InferGetStaticPropsType<typeof getStaticProps>) {
   const seoMeta: SeoMeta = {
-    title: "Platform Ontology | Colaberry AI Knowledge Graph",
-    description: "How Agents, Skills, MCP Servers, Tools, and Podcasts connect in the Colaberry AI knowledge graph.",
+    title: "AI Knowledge Graph — Platform Ontology | Colaberry AI",
+    description: "SkillNet-powered knowledge graph mapping how AI agents, skills, MCP servers, tools, and podcasts connect across the Colaberry AI platform.",
     canonical: buildCanonical("/aixcelerator/ontology"),
+    ogImage: "/og/ontology.png",
+    ogImageAlt: "Colaberry AI — SkillNet-powered AI knowledge graph and platform ontology",
   };
 
   const totalItems = Object.values(typeCounts).reduce((s, c) => s + c, 0);

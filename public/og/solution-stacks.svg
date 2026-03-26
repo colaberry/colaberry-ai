@@ -1,0 +1,23 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#09090B"/>
+  <!-- Branding -->
+  <text x="60" y="56" fill="#A1A1AA" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="500">Colaberry.ai</text>
+  <!-- Stacked layers icon -->
+  <g transform="translate(60, 150)">
+    <rect x="0" y="0" width="80" height="80" rx="16" fill="#18181B" stroke="#3F3F46" stroke-width="2"/>
+    <!-- Layer 1 (top) -->
+    <path d="M16 28l24-12 24 12-24 12z" fill="#DC2626" opacity="0.9"/>
+    <!-- Layer 2 (middle) -->
+    <path d="M16 40l24-12 24 12-24 12z" fill="#A1A1AA" opacity="0.5"/>
+    <!-- Layer 3 (bottom) -->
+    <path d="M16 52l24-12 24 12-24 12z" fill="#71717A" opacity="0.4"/>
+  </g>
+  <!-- Coral accent line -->
+  <rect x="60" y="290" width="80" height="4" rx="2" fill="#DC2626"/>
+  <!-- Title -->
+  <text x="60" y="350" fill="#FAFAFA" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">Solution Stacks</text>
+  <!-- Subtitle -->
+  <text x="60" y="405" fill="#A1A1AA" font-family="Inter, system-ui, sans-serif" font-size="26" font-weight="400">Curated cross-type AI bundles</text>
+  <!-- Bottom border accent -->
+  <rect x="0" y="622" width="1200" height="8" fill="#DC2626"/>
+</svg>
