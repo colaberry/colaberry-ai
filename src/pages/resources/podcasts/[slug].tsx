@@ -577,7 +577,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
             ) : hasTranscriptText ? (
               <div className="prose mt-4 max-h-[60vh] max-w-none overflow-y-auto overflow-x-hidden rounded-lg border border-zinc-200/60 p-4 text-sm [overflow-wrap:break-word] dark:border-zinc-700/50">
                 {transcriptIsHtml ? (
-                  <div dangerouslySetInnerHTML={{ __html: episode.transcript as string }} />
+                  <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(episode.transcript as string, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "span"]) }) }} />
                 ) : (
                   <RichText blocks={episode.transcript} />
                 )}
