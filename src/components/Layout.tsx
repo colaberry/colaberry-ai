@@ -1630,7 +1630,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     className="mt-0.5 h-4 w-4 min-h-[24px] min-w-[24px] rounded border-zinc-300 accent-[#DC2626] dark:border-zinc-600"
                   />
                   <span>
-                    By subscribing you agree to with our{" "}
+                    By subscribing you agree to our{" "}
                     <Link href="/privacy-policy" className="underline hover:text-[#18181B] dark:hover:text-white">
                       Privacy Policy
                     </Link>
