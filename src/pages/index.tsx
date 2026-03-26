@@ -264,6 +264,8 @@ export default function Home({
     title: "Colaberry AI | The go-to destination for agents, MCPs, and AI knowledge",
     description: metaDescription,
     canonical: siteUrl,
+    ogImage: "/og/homepage.png",
+    ogImageAlt: "Colaberry AI — The go-to destination for AI agents, MCP servers, skills, and podcasts",
   };
   const jsonLd = [
     {

@@ -78,6 +78,9 @@ export function seoTags(meta: SeoMeta) {
     { key: "og:type", property: "og:type", content: ogType },
     { key: "og:url", property: "og:url", content: canonical },
     { key: "og:image", property: "og:image", content: ogImage },
+    { key: "og:image:width", property: "og:image:width", content: "1200" },
+    { key: "og:image:height", property: "og:image:height", content: "630" },
+    { key: "og:image:type", property: "og:image:type", content: "image/png" },
     { key: "og:site", property: "og:site_name", content: "Colaberry AI" },
 
     // Twitter Card

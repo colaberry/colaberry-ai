@@ -132,13 +132,15 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
   }, [allMCPs]);
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
-  const metaTitle = "MCP Servers Catalog | Colaberry AI";
+  const metaTitle = "1,500+ MCP Servers — Model Context Protocol Directory | Colaberry AI";
   const metaDescription =
-    "Browse MCP servers with connector patterns, auth readiness, and industry alignment-structured for SEO and LLM discovery.";
+    "Browse 1,500+ Model Context Protocol servers with tool access, connectors, auth readiness, and integration templates. The largest MCP directory for enterprise AI.";
   const seoMeta: SeoMeta = {
     title: metaTitle,
     description: metaDescription,
     canonical: buildCanonical("/aixcelerator/mcp"),
+    ogImage: "/og/mcp.png",
+    ogImageAlt: "Colaberry AI — 1,500+ MCP servers directory",
   };
   const canonicalUrl = seoMeta.canonical!;
   const jsonLd = {
