@@ -4,8 +4,11 @@ const themeInitScript = `
 (() => {
   try {
     const storedTheme = window.localStorage.getItem("theme");
-    const isDark = storedTheme === "dark";
+    // Default to dark mode for premium AI platform feel (like Vizuara, Linear, Vercel)
+    // User can toggle to light via the theme switcher — their preference is persisted
+    const isDark = storedTheme ? storedTheme === "dark" : true;
     document.documentElement.classList.toggle("dark", isDark);
+    if (!storedTheme) window.localStorage.setItem("theme", "dark");
   } catch (_) {}
 })();
 `;
