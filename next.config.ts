@@ -18,6 +18,7 @@ const cmsRemotePattern = (() => {
 })();
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false, // Remove X-Powered-By: Next.js (OWASP A05 info disclosure)
   images: {
     qualities: [75, 90],
     remotePatterns: cmsRemotePattern ? [cmsRemotePattern] : [],
