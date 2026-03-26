@@ -1597,7 +1597,9 @@ export default function Layout({ children }: { children: ReactNode }) {
                   aria-hidden="true"
                 />
                 <div className="flex items-center gap-3">
+                  <label htmlFor="footer-newsletter-email" className="sr-only">Email address</label>
                   <input
+                    id="footer-newsletter-email"
                     type="email"
                     required
                     placeholder="Email address"
@@ -1622,7 +1624,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     type="checkbox"
                     checked={footerConsent}
                     onChange={(e) => setFooterConsent(e.target.checked)}
-                    className="mt-0.5 h-3.5 w-3.5 rounded border-zinc-300 accent-[#DC2626] dark:border-zinc-600"
+                    className="mt-0.5 h-4 w-4 min-h-[24px] min-w-[24px] rounded border-zinc-300 accent-[#DC2626] dark:border-zinc-600"
                   />
                   <span>
                     By subscribing you agree to with our{" "}
@@ -1632,7 +1634,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </span>
                 </label>
                 {footerSubMessage ? (
-                  <p className={`mt-3 text-xs ${footerSubState === "error" ? "text-red-600" : "text-zinc-600 dark:text-zinc-400"}`}>
+                  <p role="status" aria-live="polite" className={`mt-3 text-xs ${footerSubState === "error" ? "text-red-600" : "text-zinc-600 dark:text-zinc-400"}`}>
                     {footerSubMessage}
                   </p>
                 ) : null}

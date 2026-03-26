@@ -70,7 +70,7 @@
   /* Typography */
   --text-primary: #18181B;
   --text-secondary: #18181B;
-  --text-muted: #71717A;
+  --text-muted: #52525B; /* zinc-600: 7.0:1 contrast on white (WCAG AA) */
   --text-inverse: #FAFAFA;
   /* Borders */
   --stroke: #E4E4E7;
@@ -2154,6 +2154,12 @@ footer .footer-link:focus-visible {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
+    transition: none !important;
+  }
+
+  .stagger-grid > * {
+    opacity: 1 !important;
+    transform: none !important;
     transition: none !important;
   }
 
