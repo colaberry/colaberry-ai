@@ -646,6 +646,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [footerConsent, setFooterConsent] = useState(false);
   const [footerSubState, setFooterSubState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [footerSubMessage, setFooterSubMessage] = useState<string | null>(null);
+  const [footerUnsubUrl, setFooterUnsubUrl] = useState<string | null>(null);
   const footerTrackingContext = useMemo(() => getTrackingContext(), []);
   const lastScrollY = useRef(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -996,6 +997,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         return;
       }
       setFooterSubState("success");
+      setFooterUnsubUrl((payload as { unsubscribeUrl?: string }).unsubscribeUrl || null);
       setFooterSubMessage(payload?.message || "Subscription confirmed.");
       setFooterEmail("");
       setFooterHoneypot("");
@@ -1637,9 +1639,20 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </span>
                 </label>
                 {footerSubMessage ? (
-                  <p role="status" aria-live="polite" className={`mt-3 text-xs ${footerSubState === "error" ? "text-red-600" : "text-zinc-600 dark:text-zinc-400"}`}>
-                    {footerSubMessage}
-                  </p>
+                  <div role="status" aria-live="polite" className={`mt-3 text-xs ${footerSubState === "error" ? "text-red-600" : "text-zinc-600 dark:text-zinc-400"}`}>
+                    <p>{footerSubMessage}</p>
+                    {footerSubState === "success" && footerUnsubUrl && (
+                      <p className="mt-1.5">
+                        Changed your mind?{" "}
+                        <Link
+                          href={footerUnsubUrl}
+                          className="underline hover:text-zinc-900 dark:hover:text-white"
+                        >
+                          Unsubscribe
+                        </Link>
+                      </p>
+                    )}
+                  </div>
                 ) : null}
               </form>
             </div>
