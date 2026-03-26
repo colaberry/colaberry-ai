@@ -412,9 +412,13 @@ export default function Home({
         </div>
         <div className="mt-5 flex flex-wrap gap-2">
           {["Slack", "Microsoft Teams", "Google Drive", "Salesforce", "ServiceNow", "Workday", "Jira", "Okta", "Zendesk", "Snowflake", "AWS", "GitHub"].map((name) => (
-            <span key={name} className="chip chip-muted rounded-md px-3 py-1.5 text-xs font-medium">
+            <Link
+              key={name}
+              href={`/aixcelerator/mcp?q=${encodeURIComponent(name.toLowerCase())}`}
+              className="chip chip-muted rounded-md px-3 py-1.5 text-xs font-medium transition-colors hover:bg-zinc-200 hover:text-zinc-900 dark:hover:bg-zinc-700 dark:hover:text-white"
+            >
               {name}
-            </span>
+            </Link>
           ))}
         </div>
       </section>
