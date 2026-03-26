@@ -112,13 +112,10 @@ async function cmsFetch<T>(path: string, init: RequestInit = {}) {
 }
 
 async function resolveEmail(req: NextApiRequest): Promise<string | null> {
+  // SECURITY: Only accept signed tokens — raw email bypass removed (OWASP A01 fix)
   const queryToken = normalizeText(req.query.token, 1000);
-  const queryEmail = normalizeText(req.query.email, 180).toLowerCase();
   if (queryToken) {
     return verifyUnsubscribeToken(queryToken);
-  }
-  if (EMAIL_PATTERN.test(queryEmail)) {
-    return queryEmail;
   }
 
   const payload = parsePayload(req);
@@ -126,10 +123,6 @@ async function resolveEmail(req: NextApiRequest): Promise<string | null> {
   const token = normalizeText(payload.token, 1000);
   if (token) {
     return verifyUnsubscribeToken(token);
-  }
-  const email = normalizeText(payload.email, 180).toLowerCase();
-  if (EMAIL_PATTERN.test(email)) {
-    return email;
   }
   return null;
 }

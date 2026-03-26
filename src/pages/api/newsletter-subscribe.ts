@@ -277,14 +277,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (entryId) {
       if (status === "subscribed") {
-        const unsubscribeUrl = buildUnsubscribeUrl(email);
+        // SECURITY: Return same message as new subscription to prevent email enumeration (OWASP A01)
+        // Unsubscribe URL sent only via email, never in API response
         return res
           .status(200)
           .json({
             ok: true,
-            message: "You are already subscribed.",
-            alreadySubscribed: true,
-            unsubscribeUrl,
+            message: "Subscription confirmed.",
             delivery: {
               attempted: false,
               sent: false,
