@@ -215,7 +215,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
   } catch (error) {
-    console.error("[demo-request] error", error);
+    console.error("[demo-request] error", error instanceof Error ? error.message : "unknown error");
     return res.status(500).json({ ok: false, message: "Unable to send request right now." });
   }
 }
