@@ -370,13 +370,15 @@ export default function Home({
 
       <hr className="section-divider" />
 
-      <section className="reveal section-spacing">
-        <SectionHeader
-          kicker="Explore the catalog"
-          title="A structured destination for agents, MCPs, podcasts, and research"
-          description="Give teams and LLMs a single place to discover, compare, and deploy intelligence."
-        />
-        <div className="stagger-grid revealed mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tour="catalog-grid">
+      <section className="section-spacing">
+        <div className="reveal">
+          <SectionHeader
+            kicker="Explore the catalog"
+            title="A structured destination for agents, MCPs, podcasts, and research"
+            description="Give teams and LLMs a single place to discover, compare, and deploy intelligence."
+          />
+        </div>
+        <div className="stagger-grid mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tour="catalog-grid">
           {catalogs.map((catalog) => (
             <CatalogCard key={catalog.title} {...catalog} />
           ))}
@@ -684,10 +686,21 @@ function CatalogCard({ href, title, description, meta, iconType, gradient, accen
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
         {/* Large soft glow */}
         <div className="absolute rounded-full blur-3xl transition-opacity duration-300 group-hover:opacity-30" style={{ width: 140, height: 140, backgroundColor: accentColor, opacity: 0.2 }} />
-        {/* Icon — larger, bolder */}
-        <svg viewBox={icon.viewBox} className="relative h-16 w-16 drop-shadow-lg transition-transform duration-300 group-hover:scale-110" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d={icon.d} fill={accentColor} fillOpacity={0.85} stroke={accentColor} strokeWidth={0.3} />
-        </svg>
+        {/* Floating particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+          <div className="catalog-particle" style={{ left: "20%", top: "30%", animationDelay: "0s", animationDuration: "4s" }} />
+          <div className="catalog-particle" style={{ left: "65%", top: "55%", animationDelay: "1.3s", animationDuration: "5s" }} />
+          <div className="catalog-particle" style={{ left: "80%", top: "25%", animationDelay: "2.6s", animationDuration: "3.5s" }} />
+        </div>
+        {/* Icon with orbit ring */}
+        <div className="relative flex items-center justify-center">
+          <div className="catalog-orbit-ring" style={{ color: accentColor }} aria-hidden="true">
+            <div className="catalog-orbit-dot" />
+          </div>
+          <svg viewBox={icon.viewBox} className="relative h-16 w-16 drop-shadow-lg transition-transform duration-300 group-hover:scale-110" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d={icon.d} fill={accentColor} fillOpacity={0.85} stroke={accentColor} strokeWidth={0.3} />
+          </svg>
+        </div>
         {/* Badge */}
         <div className="absolute left-3.5 top-3.5">
           <div className="rounded-full border border-white/15 bg-black/30 px-3 py-1 text-xs font-bold tracking-wide text-white/95 backdrop-blur-md">
@@ -1426,6 +1439,56 @@ function IndustryIconSvg({ icon }: { icon: IndustryIcon }) {
   }
 }
 
+/** Parse a display value like "1.5k+" into { num: 1500, decimals: 0, suffix: "+" } */
+function parseMetricValue(value: string): { target: number; decimals: number; suffix: string; prefix: string } {
+  const match = value.match(/^([^0-9]*)(\d+(?:\.\d+)?)(k\+?|\+|%?)(.*)$/i);
+  if (!match) return { target: 0, decimals: 0, suffix: value, prefix: "" };
+  const [, prefix, numStr, unit, rest] = match;
+  const num = parseFloat(numStr);
+  const hasK = unit.toLowerCase().startsWith("k");
+  const suffix = unit + rest;
+  const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
+  return { target: hasK ? num * 1000 : num, decimals: hasK ? 0 : decimals, suffix: hasK ? suffix : suffix, prefix: prefix || "" };
+}
+
+function formatCountedValue(current: number, original: string): string {
+  // Match the original formatting: "1.5k+", "29", "16.9k+", "260"
+  const match = original.match(/^([^0-9]*)(\d+(?:\.\d+)?)(k\+?|\+|%?)(.*)$/i);
+  if (!match) return original;
+  const [, prefix, , unit, rest] = match;
+  const hasK = unit.toLowerCase().startsWith("k");
+  if (hasK) {
+    const kVal = current / 1000;
+    const decimals = original.includes(".") ? original.split(".")[1]?.match(/\d+/)?.[0]?.length || 1 : 0;
+    return `${prefix}${kVal.toFixed(decimals)}${unit}${rest}`;
+  }
+  return `${prefix}${Math.round(current)}${unit}${rest}`;
+}
+
+function useCountUp(target: number, duration: number, started: boolean): number {
+  const [current, setCurrent] = useState(0);
+  useEffect(() => {
+    if (!started || target === 0) return;
+    // Respect prefers-reduced-motion
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setCurrent(target);
+      return;
+    }
+    const start = performance.now();
+    let raf: number;
+    const tick = (now: number) => {
+      const elapsed = Math.min((now - start) / duration, 1);
+      // Ease-out expo: fast start, smooth deceleration
+      const progress = elapsed === 1 ? 1 : 1 - Math.pow(2, -10 * elapsed);
+      setCurrent(target * progress);
+      if (elapsed < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [started, target, duration]);
+  return current;
+}
+
 function AnimatedMetric({
   value,
   label,
@@ -1439,6 +1502,8 @@ function AnimatedMetric({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [counting, setCounting] = useState(false);
+  const { target } = parseMetricValue(value);
 
   useEffect(() => {
     const el = ref.current;
@@ -1456,6 +1521,16 @@ function AnimatedMetric({
     return () => observer.disconnect();
   }, []);
 
+  // Start counting after the delay
+  useEffect(() => {
+    if (!visible) return;
+    const timer = setTimeout(() => setCounting(true), delay);
+    return () => clearTimeout(timer);
+  }, [visible, delay]);
+
+  const counted = useCountUp(target, 1500, counting);
+  const displayValue = counting ? formatCountedValue(counted, value) : "0";
+
   return (
     <div
       ref={ref}
@@ -1466,7 +1541,7 @@ function AnimatedMetric({
         style={{ animationDelay: `${delay}ms` }}
       >
         <div className="font-sans text-display-sm font-bold bg-gradient-to-r from-[#B91C1C] to-[#DC2626] bg-clip-text text-transparent dark:from-[#F87171] dark:to-[#FCA5A5]">
-          {value}
+          {displayValue}
         </div>
         <div className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{label}</div>
         <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{note}</p>
