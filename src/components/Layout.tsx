@@ -1585,76 +1585,24 @@ export default function Layout({ children }: { children: ReactNode }) {
                 />
               </span>
 
-              {/* Newsletter */}
+              {/* Newsletter — Substack embed (like Vizuara) */}
               <h2 className="mt-8 text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">
-                Subscribe to newsletter
+                Subscribe to our AI Newsletter
               </h2>
-              <form onSubmit={handleFooterNewsletterSubmit} className="mt-4">
-                {/* Honeypot */}
-                <input
-                  type="text"
-                  name="website"
-                  value={footerHoneypot}
-                  onChange={(e) => setFooterHoneypot(e.target.value)}
-                  autoComplete="off"
-                  tabIndex={-1}
-                  className="absolute -left-[9999px] h-0 w-0 opacity-0"
-                  aria-hidden="true"
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                Get the latest AI insights, platform updates, and enterprise AI signals directly in your inbox.
+              </p>
+              <div className="mt-4 overflow-hidden rounded-lg">
+                <iframe
+                  src="https://colaberryaipodcast.substack.com/embed"
+                  width="100%"
+                  height="150"
+                  style={{ border: "none", background: "transparent" }}
+                  frameBorder="0"
+                  scrolling="no"
+                  title="Subscribe to Colaberry AI Newsletter"
                 />
-                <div className="flex items-center gap-3">
-                  <label htmlFor="footer-newsletter-email" className="sr-only">Email address</label>
-                  <input
-                    id="footer-newsletter-email"
-                    type="email"
-                    required
-                    placeholder="Email address"
-                    value={footerEmail}
-                    onChange={(e) => setFooterEmail(e.target.value)}
-                    disabled={footerSubState === "submitting"}
-                    className="footer-input-underline flex-1 text-sm"
-                  />
-                  <button
-                    type="submit"
-                    disabled={footerSubState === "submitting" || !footerConsent}
-                    aria-label="Subscribe"
-                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#18181B] text-white transition-transform hover:scale-105 disabled:opacity-40 dark:bg-[#FAFAFA] dark:text-[#18181B]"
-                  >
-                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-                <label className="mt-3 flex cursor-pointer items-start gap-2 text-xs leading-relaxed text-[#71717A] dark:text-[#A1A1AA]">
-                  <input
-                    type="checkbox"
-                    checked={footerConsent}
-                    onChange={(e) => setFooterConsent(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 min-h-[24px] min-w-[24px] rounded border-zinc-300 accent-[#DC2626] dark:border-zinc-600"
-                  />
-                  <span>
-                    By subscribing you agree to our{" "}
-                    <Link href="/privacy-policy" className="underline hover:text-[#18181B] dark:hover:text-white">
-                      Privacy Policy
-                    </Link>
-                  </span>
-                </label>
-                {footerSubMessage ? (
-                  <div role="status" aria-live="polite" className={`mt-3 text-xs ${footerSubState === "error" ? "text-red-600" : "text-zinc-600 dark:text-zinc-400"}`}>
-                    <p>{footerSubMessage}</p>
-                    {footerSubState === "success" && footerUnsubUrl && (
-                      <p className="mt-1.5">
-                        Changed your mind?{" "}
-                        <Link
-                          href={footerUnsubUrl}
-                          className="underline hover:text-zinc-900 dark:hover:text-white"
-                        >
-                          Unsubscribe
-                        </Link>
-                      </p>
-                    )}
-                  </div>
-                ) : null}
-              </form>
+              </div>
             </div>
 
             {/* RIGHT — Link columns + Watermark */}
