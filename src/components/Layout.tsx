@@ -1590,7 +1590,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 Subscribe to newsletter
               </h2>
               <form
-                action="https://colaberryaipodcast.substack.com/api/v1/free?nojs=true"
+                action="https://www.colaberry.online/api/v1/free?nojs=true"
                 method="POST"
                 target="_blank"
                 className="mt-4"
