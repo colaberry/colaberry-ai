@@ -1,4 +1,5 @@
 import Layout from "../../../components/Layout";
+import AeoQuickAnswer from "../../../components/AeoQuickAnswer";
 import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
 import Link from "next/link";
 import Head from "next/head";
@@ -251,6 +252,13 @@ export default function Podcasts({
           />
         </div>
       ) : null}
+
+      {/* ── AEO Quick Answer ── */}
+      <AeoQuickAnswer
+        question="What AI podcasts does Colaberry AI offer with full transcripts?"
+        answer={`Colaberry AI hosts a library of ${displayTotal}+ AI podcast episodes with full searchable transcripts, timestamps, and linked artifacts. Episodes cover enterprise AI strategy, agent development, MCP server integrations, and responsible AI governance. Each episode includes connections to related agents, skills, and MCP servers in the Colaberry AI knowledge graph. Transcripts are generated via Deepgram for maximum accuracy.`}
+        facts={[`${displayTotal}+ episodes`, "Full transcripts", "Searchable", "Knowledge graph linked"]}
+      />
 
       {/* ── Clean header with pill tabs + search ── */}
       <section className="reveal section-shell px-4 pt-6 pb-4 sm:px-6 sm:pt-8">

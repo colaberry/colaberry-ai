@@ -287,6 +287,36 @@ export default function Home({
         "query-input": "required name=search_term_string",
       },
     },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "What is Colaberry AI?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `Colaberry AI is an enterprise platform for discovering, evaluating, and deploying AI agents, MCP servers, skills, and research. It catalogs ${catalogCounts.agents}+ AI agents, ${catalogCounts.mcpServers.toLocaleString()}+ MCP servers, and ${catalogCounts.skills.toLocaleString()}+ reusable AI skills — all structured for both human teams and LLM-based discovery.`,
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What are MCP servers and why do enterprises need them?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `Model Context Protocol (MCP) servers provide standardized tool access and integration templates for AI agents. Colaberry AI catalogs ${catalogCounts.mcpServers.toLocaleString()}+ MCP servers across categories like Slack, Salesforce, GitHub, and AWS — enabling enterprises to connect AI agents to their existing tool stack through a unified protocol.`,
+          },
+        },
+        {
+          "@type": "Question",
+          name: "How is Colaberry AI optimized for Answer Engine Optimization (AEO)?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Colaberry AI is built for AEO — Answer Engine Optimization. Every page includes JSON-LD structured data, the site provides /llms.txt for AI crawlers (GPTBot, ClaudeBot, PerplexityBot), and all 260+ podcast episodes include full searchable transcripts. The SkillNet Knowledge Graph maps relationships between agents, skills, MCP servers, and tools — making the content natively accessible to AI answer engines like ChatGPT, Perplexity, and Claude.",
+          },
+        },
+      ],
+    },
   ];
 
   return (
