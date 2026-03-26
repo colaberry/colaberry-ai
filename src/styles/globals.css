@@ -296,7 +296,17 @@ select:disabled {
   color: var(--text-primary);
   font-size: 0.75rem;
   font-weight: 500;
-  transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+  transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease,
+              transform 150ms var(--ease-smooth), box-shadow 150ms var(--ease-smooth);
+}
+
+.chip:hover {
+  transform: scale(1.03);
+}
+
+.chip-brand:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
 }
 
 .chip-brand {
@@ -514,17 +524,26 @@ h6 {
 
 /* Gradient text utility — simplified to solid color */
 .text-gradient {
-  background: linear-gradient(135deg, #DC2626 0%, #F87171 50%, #FCA5A5 100%);
+  background: linear-gradient(135deg, #DC2626 0%, #F87171 25%, #FCA5A5 50%, #F87171 75%, #DC2626 100%);
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: gradient-shimmer 6s ease-in-out infinite;
 }
 
 .dark .text-gradient {
-  background: linear-gradient(135deg, #F87171 0%, #FCA5A5 50%, #FECACA 100%);
+  background: linear-gradient(135deg, #F87171 0%, #FCA5A5 25%, #FECACA 50%, #FCA5A5 75%, #F87171 100%);
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: gradient-shimmer 6s ease-in-out infinite;
+}
+
+@keyframes gradient-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 ::selection {
@@ -1854,6 +1873,68 @@ footer .footer-link:focus-visible {
 }
 .catalog-card:hover .card-arrow {
   transform: translateX(2px);
+}
+
+/* ── Card Hover Orbit Animation ──────────────────────────────────── */
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.catalog-orbit-ring {
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-smooth);
+  pointer-events: none;
+}
+
+.group:hover .catalog-orbit-ring {
+  opacity: 1;
+  animation: orbit-spin 8s linear infinite;
+}
+
+.catalog-orbit-dot {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.9;
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* ── Floating Particles on Catalog Cards ─────────────────────────── */
+@keyframes float-particle {
+  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+  25% { transform: translateY(-10px) translateX(4px); opacity: 0.6; }
+  50% { transform: translateY(-6px) translateX(-3px); opacity: 0.4; }
+  75% { transform: translateY(-14px) translateX(2px); opacity: 0.55; }
+}
+
+.catalog-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  animation: float-particle 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Section Card Hover Micro-Interaction ────────────────────────── */
+.section-card {
+  transition: border-color 200ms var(--ease-smooth),
+              background-color 200ms var(--ease-smooth),
+              transform 200ms var(--ease-smooth);
+}
+.section-card:hover {
+  transform: scale(1.01);
 }
 
 /* Trending indicator pulse */
