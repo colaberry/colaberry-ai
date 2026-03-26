@@ -1,6 +1,7 @@
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 import Head from "next/head";
+import sanitizeHtml from "sanitize-html";
 import Layout from "../../../components/Layout";
 import EnterprisePageHero from "../../../components/EnterprisePageHero";
 import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
@@ -157,7 +158,7 @@ export default function ToolDetail({ tool, mcpServers, platforms }: ToolDetailPr
             <hr className="mt-3 border-zinc-200 dark:border-zinc-700" />
             <div className="mt-6 prose prose-zinc dark:prose-invert max-w-none text-[0.9375rem] leading-relaxed">
               {tool.longDescription ? (
-                <div dangerouslySetInnerHTML={{ __html: tool.longDescription }} />
+                <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(tool.longDescription, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]) }) }} />
               ) : (
                 <p className="text-zinc-600 dark:text-zinc-300">{tool.description}</p>
               )}

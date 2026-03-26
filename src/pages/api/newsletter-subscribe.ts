@@ -227,7 +227,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ ok: true, message: "Subscribed." });
   }
 
-  if (!EMAIL_PATTERN.test(email)) {
+  if (!EMAIL_PATTERN.test(email) || /[\r\n]/.test(email)) {
     return res.status(400).json({ ok: false, message: "Enter a valid email address." });
   }
 
