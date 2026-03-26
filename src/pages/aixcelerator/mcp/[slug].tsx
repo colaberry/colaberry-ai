@@ -18,8 +18,9 @@ import CopyButton from "../../../components/mcp/CopyButton";
 import EnrichedToolCard from "../../../components/mcp/EnrichedToolCard";
 import MCPToolCard from "../../../components/mcp/ToolCard";
 import ConnectSidebar from "../../../components/mcp/ConnectSidebar";
-import PerformanceTab from "../../../components/mcp/PerformanceTab";
-import UsageTab from "../../../components/mcp/UsageTab";
+import dynamic from "next/dynamic";
+const PerformanceTab = dynamic(() => import("../../../components/mcp/PerformanceTab"), { ssr: false });
+const UsageTab = dynamic(() => import("../../../components/mcp/UsageTab"), { ssr: false });
 
 import { useState, type ReactNode } from "react";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../../lib/seo";
