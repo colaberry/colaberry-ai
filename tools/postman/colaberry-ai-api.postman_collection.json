@@ -1,0 +1,310 @@
+{
+  "info": {
+    "name": "Colaberry AI — API Collection",
+    "description": "Complete API test collection for colaberry.ai Release-1.0\n\nBase URL: {{baseUrl}}\nAdmin Key: {{adminKey}}\nSync Secret: {{syncSecret}}",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://colaberry-ai-prod-956818257204.us-east1.run.app" },
+    { "key": "adminKey", "value": "your-admin-api-key-here" },
+    { "key": "syncSecret", "value": "your-sync-secret-here" }
+  ],
+  "item": [
+    {
+      "name": "Public GET Endpoints",
+      "item": [
+        {
+          "name": "GET /api/mcps — MCP Servers List",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/mcps?pagination[pageSize]=24&pagination[page]=1",
+            "description": "Fetch paginated MCP servers. Target: <500ms warm."
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+            "pm.test('Has Cache-Control', () => pm.response.to.have.header('Cache-Control'));",
+            "pm.test('Content-Type is JSON', () => pm.response.to.have.header('Content-Type', /json/));",
+            "pm.test('Body has data array', () => { const json = pm.response.json(); pm.expect(json.data).to.be.an('array'); });"
+          ]}}]
+        },
+        {
+          "name": "GET /api/tools — Tools List",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/tools?pagination[pageSize]=24&pagination[page]=1"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+            "pm.test('Has Cache-Control', () => pm.response.to.have.header('Cache-Control'));",
+            "pm.test('Body has data array', () => { const json = pm.response.json(); pm.expect(json.data).to.be.an('array'); });"
+          ]}}]
+        },
+        {
+          "name": "GET /api/podcasts — Podcasts List",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/podcasts?pagination[pageSize]=24&pagination[page]=1"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+            "pm.test('Has Cache-Control', () => pm.response.to.have.header('Cache-Control'));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/github-stats — GitHub Repo Stats",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/github-stats?owner=anthropics&repo=claude-code"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+            "pm.test('Has stars field', () => { const json = pm.response.json(); pm.expect(json.stars).to.be.a('number'); });"
+          ]}}]
+        },
+        {
+          "name": "GET /api/mcp-telemetry — MCP Telemetry",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/mcp-telemetry?slug=slack-mcp"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        }
+      ]
+    },
+    {
+      "name": "Public POST Endpoints",
+      "item": [
+        {
+          "name": "POST /api/demo-request — Valid Demo Request",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo-request",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"name\":\"Test User\",\"email\":\"test@example.com\",\"company\":\"Test Corp\",\"role\":\"Engineer\",\"message\":\"API test - please ignore\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200 or 400', () => pm.expect([200,400]).to.include(pm.response.code));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+            "pm.test('Has ok field', () => { const json = pm.response.json(); pm.expect(json).to.have.property('ok'); });"
+          ]}}]
+        },
+        {
+          "name": "POST /api/newsletter-subscribe — Valid Subscribe",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/newsletter-subscribe",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"email\":\"apitest@example.com\",\"consent\":true}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200 or 400', () => pm.expect([200,400]).to.include(pm.response.code));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+            "pm.test('Has ok field', () => { const json = pm.response.json(); pm.expect(json).to.have.property('ok'); });"
+          ]}}]
+        },
+        {
+          "name": "POST /api/newsletter-subscribe — Missing Email (400)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/newsletter-subscribe",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 400', () => pm.response.to.have.status(400));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+            "pm.test('Has error message', () => { const json = pm.response.json(); pm.expect(json.ok).to.equal(false); });"
+          ]}}]
+        },
+        {
+          "name": "POST /api/newsletter-subscribe — Invalid Email (400)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/newsletter-subscribe",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"email\":\"not-an-email\",\"consent\":true}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 400', () => pm.response.to.have.status(400));",
+            "pm.test('Rejects invalid email', () => { const json = pm.response.json(); pm.expect(json.ok).to.equal(false); });"
+          ]}}]
+        },
+        {
+          "name": "POST /api/newsletter-subscribe — Header Injection (400)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/newsletter-subscribe",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"email\":\"test@example.com\\r\\nBcc:attacker@evil.com\",\"consent\":true}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 400', () => pm.response.to.have.status(400));",
+            "pm.test('Rejects injection', () => { const json = pm.response.json(); pm.expect(json.ok).to.equal(false); });"
+          ]}}]
+        },
+        {
+          "name": "POST /api/newsletter-unsubscribe — Missing Token (400)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/newsletter-unsubscribe",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 400', () => pm.response.to.have.status(400));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "POST /api/podcast-log — Valid Log Event",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/podcast-log",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"slug\":\"test-episode\",\"event\":\"play\",\"position\":0}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200 or 400', () => pm.expect([200,400]).to.include(pm.response.code));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        }
+      ]
+    },
+    {
+      "name": "Auth Protected Endpoints",
+      "item": [
+        {
+          "name": "GET /api/catalog-health — No Auth (401)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/catalog-health"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 401 without auth', () => pm.response.to.have.status(401));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/newsletter-report — No Auth (401)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/newsletter-report"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 401 without auth', () => pm.response.to.have.status(401));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "POST /api/newsletter-send — No Auth (401)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/newsletter-send",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 401 without auth', () => pm.response.to.have.status(401));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "POST /api/sync-mcp-registry — No Auth (401)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/sync-mcp-registry",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 401 without auth', () => pm.response.to.have.status(401));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        }
+      ]
+    },
+    {
+      "name": "Method Enforcement (405)",
+      "item": [
+        {
+          "name": "DELETE /api/mcps — Should 405",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/mcps" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 405', () => pm.response.to.have.status(405));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "PUT /api/tools — Should 405",
+          "request": { "method": "PUT", "url": "{{baseUrl}}/api/tools" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 405', () => pm.response.to.have.status(405));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "PATCH /api/podcasts — Should 405",
+          "request": { "method": "PATCH", "url": "{{baseUrl}}/api/podcasts" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 405', () => pm.response.to.have.status(405));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        }
+      ]
+    },
+    {
+      "name": "SEO & Static Endpoints",
+      "item": [
+        {
+          "name": "GET /sitemap.xml",
+          "request": { "method": "GET", "url": "{{baseUrl}}/sitemap.xml" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+            "pm.test('Content-Type is XML', () => pm.response.to.have.header('Content-Type', /xml/));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "GET /robots.txt",
+          "request": { "method": "GET", "url": "{{baseUrl}}/robots.txt" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+            "pm.test('Contains Sitemap', () => pm.expect(pm.response.text()).to.include('Sitemap'));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "GET /llms.txt",
+          "request": { "method": "GET", "url": "{{baseUrl}}/llms.txt" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "GET /og/homepage.png — OG Image",
+          "request": { "method": "GET", "url": "{{baseUrl}}/og/homepage.png" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+            "pm.test('Content-Type is image', () => pm.response.to.have.header('Content-Type', /image/));",
+            "pm.test('Response time < 2000ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+          ]}}]
+        },
+        {
+          "name": "GET /episodes — Redirect to /resources/podcasts",
+          "request": { "method": "GET", "url": "{{baseUrl}}/episodes" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status is 301 or 308', () => pm.expect([301,307,308]).to.include(pm.response.code));"
+          ]}}]
+        }
+      ]
+    }
+  ]
+}
