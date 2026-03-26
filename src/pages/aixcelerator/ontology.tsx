@@ -206,7 +206,7 @@ export default function PlatformOntologyPage({ typeCounts }: InferGetStaticProps
           </div>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-zinc-50 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="reveal rounded-xl border border-zinc-200 bg-zinc-50 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
           <PlatformDiagram typeCounts={typeCounts} />
         </div>
       </div>
