@@ -2,8 +2,10 @@
  * CatalogSnapshot — Enterprise-grade stats banner for catalog listing pages.
  *
  * Renders a dark, full-width panel with large hero metrics, subtle grid texture,
- * and a coral accent line. Replaces the old inline surface-panel + Stat pattern.
+ * and a coral accent line. Numbers count up from 0 on scroll.
  */
+
+import { useEffect, useRef, useState } from "react";
 
 export type SnapshotStat = {
   label: string;
@@ -17,6 +19,93 @@ type CatalogSnapshotProps = {
   /** Optional accent color override (defaults to coral #DC2626) */
   accent?: string;
 };
+
+/** Extract numeric part from value like "29", "1,505", "16.9k", "12 public" */
+function parseStatNum(value: string | number): { target: number; format: (n: number) => string } {
+  const str = String(value);
+  // Match leading number with optional comma/decimal (e.g. "1,505", "16.9k", "29", "12 public")
+  const match = str.match(/^([\d,]+(?:\.\d+)?)(k?)(.*)$/i);
+  if (!match) return { target: 0, format: () => str };
+  const numStr = match[1].replace(/,/g, "");
+  const num = parseFloat(numStr);
+  const hasK = match[2].toLowerCase() === "k";
+  const suffix = match[2] + match[3]; // e.g. "k+", " public"
+  const actualTarget = hasK ? num * 1000 : num;
+
+  const format = (n: number) => {
+    if (hasK) {
+      const kVal = n / 1000;
+      const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
+      return kVal.toFixed(decimals) + suffix;
+    }
+    // Preserve comma formatting for large numbers
+    const rounded = Math.round(n);
+    const formatted = rounded >= 1000 ? rounded.toLocaleString() : String(rounded);
+    return formatted + suffix;
+  };
+
+  return { target: actualTarget, format };
+}
+
+function useCountUp(target: number, duration: number, started: boolean): number {
+  const [current, setCurrent] = useState(0);
+  useEffect(() => {
+    if (!started || target === 0) return;
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setCurrent(target);
+      return;
+    }
+    const start = performance.now();
+    let raf: number;
+    const tick = (now: number) => {
+      const elapsed = Math.min((now - start) / duration, 1);
+      const progress = elapsed === 1 ? 1 : 1 - Math.pow(2, -10 * elapsed);
+      setCurrent(target * progress);
+      if (elapsed < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [started, target, duration]);
+  return current;
+}
+
+function AnimatedStatValue({ value, delay }: { value: string | number; delay: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  const [counting, setCounting] = useState(false);
+  const { target, format } = parseStatNum(value);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!visible) return;
+    const timer = setTimeout(() => setCounting(true), delay);
+    return () => clearTimeout(timer);
+  }, [visible, delay]);
+
+  const counted = useCountUp(target, 1500, counting);
+  const display = target === 0 ? String(value) : counting ? format(counted) : "0";
+
+  return (
+    <div ref={ref} className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+      {display}
+    </div>
+  );
+}
 
 export default function CatalogSnapshot({ stats, accent = "#DC2626" }: CatalogSnapshotProps) {
   return (
@@ -58,10 +147,8 @@ export default function CatalogSnapshot({ stats, accent = "#DC2626" }: CatalogSn
                   {stat.label}
                 </div>
 
-                {/* Stat value — large hero number */}
-                <div className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                  {stat.value}
-                </div>
+                {/* Stat value — animated counting number */}
+                <AnimatedStatValue value={stat.value} delay={i * 150} />
 
                 {/* Stat note */}
                 <div className="mt-1.5 text-xs leading-relaxed text-zinc-500">
