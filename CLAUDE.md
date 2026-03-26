@@ -1,12 +1,15 @@
 # Colaberry AI — Frontend
 
 ## Tech Stack
-- **Framework:** Next.js 16.1.6 (Pages Router) with React 19.2.3
+- **Framework:** Next.js 16.2.1 (Pages Router) with React 19.2.3
 - **Language:** TypeScript 5 (strict mode)
 - **Styling:** Tailwind CSS 4 + PostCSS, CSS custom properties in `src/styles/globals.css`
 - **Fonts:** Inter via `next/font/google` (variable `--font-inter`)
 - **CMS:** Strapi v5 headless — fetched via `src/lib/cms.ts` using `NEXT_PUBLIC_CMS_URL`
-- **Deployment:** Docker + Vercel-compatible
+- **Deployment:** Docker + GCP Cloud Run (prod: `colaberry-ai-prod`, CMS: `colaberry-ai-cms-prod`)
+- **Newsletter:** Substack integration (colaberry.online) — form POSTs to Substack API
+- **Podcast Transcripts:** Deepgram API (free Pay-As-You-Go, $200 credit)
+- **Default Theme:** Dark mode (enterprise standard, like Vizuara/Linear)
 
 ## Design System — Monochrome + Coral Accent
 
@@ -16,7 +19,7 @@
 | Background      | `#FFFFFF`           | `#09090B` zinc-950  |
 | Surface         | `#FAFAFA` zinc-50   | `#18181B` zinc-900  |
 | Text primary    | `#18181B` zinc-900  | `#FAFAFA` zinc-50   |
-| Text muted      | `#71717A` zinc-500  | `#A1A1AA` zinc-400  |
+| Text muted      | `#52525B` zinc-600  | `#A1A1AA` zinc-400  |
 | Border          | `#E4E4E7` zinc-200  | `#3F3F46` zinc-700  |
 | Accent (coral)  | `#DC2626`           | `#F87171`           |
 
@@ -91,8 +94,20 @@ npx tsc --noEmit     # TypeScript type check (no emit)
 npm run dev          # Local dev server
 ```
 
+## AEO (Answer Engine Optimization)
+colaberry.ai is built for AEO — optimized for AI answer engines (ChatGPT, Claude, Perplexity), not just Google.
+
+| Feature | File | Purpose |
+|---------|------|---------|
+| `/llms.txt` | `src/pages/llms.txt.ts` | Dynamic AI crawler manifest with live CMS stats |
+| `/llms-full.txt` | `src/pages/llms-full.txt.ts` | Complete content index with summaries |
+| `robots.txt` | `src/pages/robots.txt.ts` | Explicitly welcomes GPTBot, ClaudeBot, PerplexityBot |
+| FAQ Schema | `src/pages/index.tsx` | FAQPage JSON-LD for direct AI citation |
+| Quick Answer blocks | `src/components/AeoQuickAnswer.tsx` | Answer-optimized paragraphs on catalog pages |
+| Bot Defense | `src/lib/bot-defense.ts` | Multi-layer protection for forms (AEO-safe) |
+
 ## Security Agents
-Seven specialized security agents in `.claude/agents/` for continuous security auditing:
+Ten specialized agents in `.claude/agents/` for continuous auditing:
 
 | Agent | File | Purpose |
 |-------|------|---------|
@@ -103,6 +118,10 @@ Seven specialized security agents in `.claude/agents/` for continuous security a
 | API Security | `security-api.md` | CORS config, security headers, error leakage |
 | File Uploads | `security-uploads.md` | Upload validation, path traversal, MIME type checks |
 | Dependencies | `security-deps.md` | `npm audit`, Dockerfile hardening, supply chain risks |
+| Pentest | `pentest.md` | OWASP Top 10 penetration testing |
+| WCAG 2.2 | `accessibility-wcag.md` | Accessibility Level AA audit |
+| Core Web Vitals | `performance-core-web-vitals.md` | LCP, INP, CLS, PageSpeed optimization |
+| API Performance | `api-performance.md` | Response time, Postman collection, best practices |
 
 ## Spec-Driven Development (SDD)
 
