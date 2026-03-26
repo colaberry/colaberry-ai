@@ -1,5 +1,6 @@
 import AgentCard from "../../components/AgentCard";
 import CatalogSnapshot from "../../components/CatalogSnapshot";
+import EnterpriseCtaBand from "../../components/EnterpriseCtaBand";
 import Layout from "../../components/Layout";
 import SectionHeader from "../../components/SectionHeader";
 import StatePanel from "../../components/StatePanel";
@@ -440,6 +441,16 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
         <div ref={sentinelRef} className="h-1 w-full" aria-hidden="true" />
       </div>
 
+      <EnterpriseCtaBand
+        kicker="Enterprise AI platform"
+        title="Build, govern, and scale AI programs from one operating layer"
+        description="Colaberry aligns strategy, catalog discovery, and production workflows across agents, MCP, skills, and evidence-backed resources."
+        primaryHref="/request-demo"
+        primaryLabel="Request demo"
+        secondaryHref="/aixcelerator"
+        secondaryLabel="Explore platform"
+        className="mt-10"
+      />
     </Layout>
   );
 }

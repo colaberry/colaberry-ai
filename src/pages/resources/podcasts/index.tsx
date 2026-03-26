@@ -1,4 +1,5 @@
 import Layout from "../../../components/Layout";
+import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
@@ -485,7 +486,7 @@ export default function Podcasts({
               })()}
 
               {/* ── Episode list (remaining episodes) ── */}
-              <div className="mt-4 flex flex-col gap-4">
+              <div className="stagger-grid mt-4 flex flex-col gap-4">
                 {allEpisodes.slice(1).map((episode) => {
                   const canPlay = Boolean(episode.audioUrl);
                   const isPlaying = playingSlug === episode.slug;
@@ -741,6 +742,17 @@ export default function Podcasts({
 
       {/* Hidden audio element for inline playback */}
       <audio ref={audioRef} preload="metadata" />
+
+      <EnterpriseCtaBand
+        kicker="AI podcast library"
+        title="260+ episodes with full transcripts and linked artifacts"
+        description="Enterprise AI insights from industry leaders — with searchable transcripts, timestamps, and connections to agents, skills, and MCP servers."
+        primaryHref="/request-demo"
+        primaryLabel="Request demo"
+        secondaryHref="/aixcelerator"
+        secondaryLabel="Explore platform"
+        className="mt-10"
+      />
     </Layout>
   );
 }
