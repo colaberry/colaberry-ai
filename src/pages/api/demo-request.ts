@@ -84,6 +84,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(429).json({ ok: false, message: "Too many requests. Please try again shortly." });
   }
 
+  // Bot defense: block known bots + validate timing token
+  const { checkBotDefense } = await import("../../lib/bot-defense");
+  const botBlock = checkBotDefense(req);
+  if (botBlock) {
+    return res.status(403).json({ ok: false, message: botBlock });
+  }
+
   const payload = parsePayload(req);
   if (!payload) {
     return res.status(400).json({ ok: false, message: "Invalid request payload." });
