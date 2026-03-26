@@ -746,21 +746,24 @@ export default function Layout({ children }: { children: ReactNode }) {
     window.localStorage.setItem("theme", theme);
   }, [hasMounted, theme]);
 
-  useEffect(() => {
-    let isActive = true;
-    fetchGlobalNavigation()
-      .then((data) => {
-        if (!isActive) return;
-        setGlobalNav(mergeGlobalNavigation(data, fallbackNavigation));
-      })
-      .catch(() => {
-        if (!isActive) return;
-        setGlobalNav(fallbackNavigation);
-      });
-    return () => {
-      isActive = false;
-    };
-  }, []);
+  // NOTE: CMS global-navigation content type not yet created.
+  // Skip fetch to avoid 404 spam in network/logs. Uses fallbackNavigation.
+  // Re-enable when global-navigation is configured in Strapi CMS.
+  // useEffect(() => {
+  //   let isActive = true;
+  //   fetchGlobalNavigation()
+  //     .then((data) => {
+  //       if (!isActive) return;
+  //       setGlobalNav(mergeGlobalNavigation(data, fallbackNavigation));
+  //     })
+  //     .catch(() => {
+  //       if (!isActive) return;
+  //       setGlobalNav(fallbackNavigation);
+  //     });
+  //   return () => {
+  //     isActive = false;
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (!searchOpen) return;

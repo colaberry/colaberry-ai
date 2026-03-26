@@ -2,7 +2,7 @@ import crypto from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { defaultNewsletterItems } from "../../lib/newsletterCampaignDefaults";
 import { buildNewsletterTemplate } from "../../lib/newsletterTemplate";
-import { resolveSenderProvider, sendNewsletterEmail } from "../../lib/newsletterSender";
+import { resolveSenderProvider, sendNewsletterEmail, isEmailProviderConfigured } from "../../lib/newsletterSender";
 import { createUnsubscribeToken } from "../../lib/newsletterTokens";
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL;
@@ -121,6 +121,10 @@ function buildUnsubscribeUrl(email: string) {
 async function sendWelcomeEmail(email: string): Promise<DeliveryResult> {
   const provider = resolveSenderProvider();
   if (!WELCOME_EMAIL_ENABLED) {
+    return { attempted: false, sent: false, provider };
+  }
+  // Skip email if no provider is configured (avoids log spam for missing API keys)
+  if (!isEmailProviderConfigured()) {
     return { attempted: false, sent: false, provider };
   }
 
@@ -305,7 +309,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const delivery = await sendWelcomeEmail(email);
       const unsubscribeUrl = buildUnsubscribeUrl(email);
       if (!delivery.sent && delivery.error) {
-        console.error(`[newsletter-subscribe] ${requestId} welcome email failed: ${delivery.error}`);
+        console.warn(`[newsletter-subscribe] ${requestId} welcome email skipped: ${delivery.error}`);
       }
 
       const message = delivery.sent
@@ -338,7 +342,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const delivery = await sendWelcomeEmail(email);
     const unsubscribeUrl = buildUnsubscribeUrl(email);
     if (!delivery.sent && delivery.error) {
-      console.error(`[newsletter-subscribe] ${requestId} welcome email failed: ${delivery.error}`);
+      console.warn(`[newsletter-subscribe] ${requestId} welcome email skipped: ${delivery.error}`);
     }
 
     const message = delivery.sent

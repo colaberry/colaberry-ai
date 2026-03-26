@@ -160,3 +160,11 @@ export function resolveSenderProvider(): SupportedProvider {
   if (PROVIDER === "resend" || PROVIDER === "sendgrid") return PROVIDER;
   return "console";
 }
+
+/** Returns true if an email provider is properly configured with API keys. */
+export function isEmailProviderConfigured(): boolean {
+  const provider = resolveSenderProvider();
+  if (provider === "resend") return hasUsableSecret(RESEND_API_KEY);
+  if (provider === "sendgrid") return hasUsableSecret(process.env.SENDGRID_API_KEY || "");
+  return false; // "console" provider = no real email delivery
+}
