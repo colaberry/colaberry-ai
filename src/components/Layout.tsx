@@ -1559,6 +1559,24 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       ) : null}
 
+      {/* ── Newsletter Section — Substack embed (Vizuara-style) ── */}
+      <section className="reveal mx-auto mt-12 max-w-3xl px-4 sm:px-6">
+        <div className="overflow-hidden rounded-2xl border border-zinc-200/50 bg-zinc-900 p-6 text-center shadow-xl dark:border-zinc-700/50 dark:bg-zinc-950 sm:p-10">
+          <iframe
+            src="https://colaberryaipodcast.substack.com/embed"
+            width="100%"
+            height="320"
+            style={{ border: "none", background: "transparent" }}
+            frameBorder="0"
+            scrolling="no"
+            title="Subscribe to Colaberry AI Newsletter"
+          />
+        </div>
+        <p className="mt-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
+          Stay updated with our newsletter. Get the latest AI insights and enterprise platform updates directly in your inbox.
+        </p>
+      </section>
+
       <footer role="contentinfo" className="footer-surface mt-6">
         {/* ── Top section: Logo + Newsletter (left) + Link columns (right) ── */}
         <div className="mx-auto max-w-7xl px-6 pt-12 pb-8 lg:pt-16 lg:pb-10">
@@ -1585,24 +1603,12 @@ export default function Layout({ children }: { children: ReactNode }) {
                 />
               </span>
 
-              {/* Newsletter — Substack embed (like Vizuara) */}
-              <h2 className="mt-8 text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">
-                Subscribe to our AI Newsletter
-              </h2>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                Get the latest AI insights, platform updates, and enterprise AI signals directly in your inbox.
+              {/* Newsletter link — points to Substack section above */}
+              <p className="mt-8 text-xs text-zinc-500 dark:text-zinc-400">
+                <Link href="https://colaberryaipodcast.substack.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#18181B] underline hover:text-[#DC2626] dark:text-[#FAFAFA] dark:hover:text-[#F87171]">
+                  Subscribe to our AI Newsletter ↗
+                </Link>
               </p>
-              <div className="mt-4 overflow-hidden rounded-lg">
-                <iframe
-                  src="https://colaberryaipodcast.substack.com/embed"
-                  width="100%"
-                  height="150"
-                  style={{ border: "none", background: "transparent" }}
-                  frameBorder="0"
-                  scrolling="no"
-                  title="Subscribe to Colaberry AI Newsletter"
-                />
-              </div>
             </div>
 
             {/* RIGHT — Link columns + Watermark */}
