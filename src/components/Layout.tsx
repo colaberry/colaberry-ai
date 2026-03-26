@@ -1559,54 +1559,6 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       ) : null}
 
-      {/* ── Newsletter Section — Premium enterprise design ── */}
-      <section className="reveal mx-4 mt-12 sm:mx-6 lg:mx-8">
-        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-800 dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-900">
-          {/* Background pattern */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
-          {/* Coral accent line */}
-          <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#DC2626] to-transparent" />
-
-          <div className="relative px-6 py-10 text-center sm:px-12 sm:py-14">
-            {/* Coral dot */}
-            <div className="mx-auto mb-4 h-2.5 w-2.5 rounded-full bg-[#DC2626]" style={{ boxShadow: "0 0 12px rgba(220,38,38,0.4)" }} />
-
-            <h2 className="font-display text-xl font-bold text-white sm:text-2xl lg:text-3xl">
-              Colaberry AI Newsletter
-            </h2>
-            <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-zinc-400">
-              Enterprise AI insights, platform updates, and curated signals — delivered to your inbox. Join the community shaping the future of enterprise AI.
-            </p>
-
-            {/* Subscribe form — posts to Substack */}
-            <form
-              action="https://colaberryaipodcast.substack.com/api/v1/free?nojs=true"
-              method="POST"
-              target="_blank"
-              className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row sm:gap-0"
-            >
-              <input
-                type="email"
-                name="email"
-                required
-                placeholder="Enter your email"
-                className="flex-1 rounded-full border border-zinc-700 bg-zinc-800/80 px-5 py-3 text-sm text-white placeholder:text-zinc-500 focus:border-[#DC2626] focus:outline-none focus:ring-1 focus:ring-[#DC2626] sm:rounded-r-none"
-              />
-              <button
-                type="submit"
-                className="rounded-full bg-[#DC2626] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[#B91C1C] hover:shadow-lg hover:shadow-red-900/20 sm:rounded-l-none"
-              >
-                Subscribe
-              </button>
-            </form>
-
-            <p className="mt-4 text-xs text-zinc-500">
-              Free. No spam. Unsubscribe anytime.
-            </p>
-          </div>
-        </div>
-      </section>
-
       <footer role="contentinfo" className="footer-surface mt-6">
         {/* ── Top section: Logo + Newsletter (left) + Link columns (right) ── */}
         <div className="mx-auto max-w-7xl px-6 pt-12 pb-8 lg:pt-16 lg:pb-10">
@@ -1633,12 +1585,43 @@ export default function Layout({ children }: { children: ReactNode }) {
                 />
               </span>
 
-              {/* Newsletter link — points to Substack section above */}
-              <p className="mt-8 text-xs text-zinc-500 dark:text-zinc-400">
-                <Link href="https://colaberryaipodcast.substack.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#18181B] underline hover:text-[#DC2626] dark:text-[#FAFAFA] dark:hover:text-[#F87171]">
-                  Subscribe to our AI Newsletter ↗
-                </Link>
-              </p>
+              {/* Newsletter — premium form → Substack API */}
+              <h2 className="mt-8 text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">
+                Subscribe to newsletter
+              </h2>
+              <form
+                action="https://colaberryaipodcast.substack.com/api/v1/free?nojs=true"
+                method="POST"
+                target="_blank"
+                className="mt-4"
+              >
+                <div className="flex items-center gap-3">
+                  <label htmlFor="footer-newsletter-email" className="sr-only">Email address</label>
+                  <input
+                    id="footer-newsletter-email"
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="Email address"
+                    className="footer-input-underline flex-1 text-sm"
+                  />
+                  <button
+                    type="submit"
+                    aria-label="Subscribe"
+                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#18181B] text-white transition-transform hover:scale-105 dark:bg-[#FAFAFA] dark:text-[#18181B]"
+                  >
+                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+                <p className="mt-3 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                  Free. No spam. Unsubscribe anytime.{" "}
+                  <Link href="/privacy-policy" className="underline hover:text-[#18181B] dark:hover:text-white">
+                    Privacy Policy
+                  </Link>
+                </p>
+              </form>
             </div>
 
             {/* RIGHT — Link columns + Watermark */}
