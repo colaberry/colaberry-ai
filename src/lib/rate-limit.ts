@@ -21,13 +21,26 @@ function hashIp(ip: string): string {
 }
 
 /**
- * Get client IP from request, using the first value from x-forwarded-for.
+ * Get client IP from request.
+ * Uses platform-specific headers first (CF-Connecting-IP for Cloudflare,
+ * x-real-ip for Vercel), then falls back to the LAST value in
+ * x-forwarded-for (the one added by the trusted proxy, not client-supplied).
  */
 export function getClientIp(req: NextApiRequest): string {
+  // Cloudflare (production behind CF)
+  const cfIp = req.headers["cf-connecting-ip"];
+  if (cfIp) return (Array.isArray(cfIp) ? cfIp[0] : cfIp).trim();
+
+  // Vercel / Cloud Run
+  const realIp = req.headers["x-real-ip"];
+  if (realIp) return (Array.isArray(realIp) ? realIp[0] : realIp).trim();
+
+  // x-forwarded-for — use LAST IP (added by trusted proxy, not client-spoofable)
   const forwarded = req.headers["x-forwarded-for"];
   const fromHeader = Array.isArray(forwarded) ? forwarded[0] : forwarded;
   if (fromHeader) {
-    return fromHeader.split(",")[0]?.trim() || "unknown";
+    const ips = fromHeader.split(",").map((s) => s.trim()).filter(Boolean);
+    return ips[ips.length - 1] || "unknown";
   }
   return req.socket.remoteAddress || "unknown";
 }
