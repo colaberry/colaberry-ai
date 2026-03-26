@@ -210,6 +210,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .json({ ok: false, message: "Subscription service is temporarily unavailable." });
   }
 
+  // Bot defense: block known bots on form POST
+  const { isKnownBot } = await import("../../lib/bot-defense");
+  if (isKnownBot(req)) {
+    // Return 200 to not reveal detection to bot
+    return res.status(200).json({ ok: true, message: "Subscribed." });
+  }
+
   const requestId = crypto.randomUUID();
   const payload = parsePayload(req);
   if (payload === null) {
