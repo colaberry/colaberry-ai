@@ -1,4 +1,5 @@
 import SkillCard from "../../../components/SkillCard";
+import AeoQuickAnswer from "../../../components/AeoQuickAnswer";
 import CatalogSnapshot from "../../../components/CatalogSnapshot";
 import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
 import Layout from "../../../components/Layout";
@@ -198,6 +199,12 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
           />
         </div>
       </div>
+
+      <AeoQuickAnswer
+        question="What AI skills are available for enterprise agents and workflows?"
+        answer={`Colaberry AI indexes ${skills.length.toLocaleString()} reusable AI skills across ${new Set(skills.map((s) => s.category)).size} categories including workflow automation, domain-specific intelligence, and orchestration patterns. Skills are structured capability units that AI agents consume — each with metadata on prerequisites, supported models, provider details, and linked agents/MCP servers. The catalog supports enterprise-grade discovery with filtering by category, status, and provider.`}
+        facts={[`${skills.length.toLocaleString()} skills`, `${new Set(skills.map((s) => s.category)).size} categories`, "Agent-consumable", "Structured metadata"]}
+      />
 
       <CatalogSnapshot
         stats={[

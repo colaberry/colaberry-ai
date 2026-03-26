@@ -1,4 +1,5 @@
 import AgentCard from "../../components/AgentCard";
+import AeoQuickAnswer from "../../components/AeoQuickAnswer";
 import CatalogSnapshot from "../../components/CatalogSnapshot";
 import EnterpriseCtaBand from "../../components/EnterpriseCtaBand";
 import Layout from "../../components/Layout";
@@ -207,6 +208,12 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
           />
         </div>
       </div>
+
+      <AeoQuickAnswer
+        question="What AI agents does Colaberry AI offer for enterprise?"
+        answer={`Colaberry AI catalogs ${agents.length} enterprise AI agents across ${new Set(agents.map((a) => a.industry)).size} industries including Healthcare, Sales, Marketing, Legal, and IT Operations. Each agent includes ownership details, deployment runbooks, lifecycle status (Live, Beta, Concept), evaluation metrics, and LLM-ready metadata for automated discovery. Agents are governed with public and private visibility controls for enterprise compliance.`}
+        facts={[`${agents.length} agents`, `${new Set(agents.map((a) => a.industry)).size} industries`, "Lifecycle governed", "LLM-indexed"]}
+      />
 
       <CatalogSnapshot
         stats={[
