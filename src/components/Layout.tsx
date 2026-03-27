@@ -1079,7 +1079,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <svg
               viewBox="0 0 20 20"
               aria-hidden="true"
-              className={`h-3.5 w-3.5 text-zinc-400 transition-transform duration-200 ${isOpen ? "rotate-180 text-[#DC2626]" : "group-hover:tranzinc-y-[1px]"}`}
+              className={`h-3.5 w-3.5 text-zinc-400 transition-transform duration-200 ${isOpen ? "rotate-180 text-[#DC2626]" : "group-hover:translate-y-[1px]"}`}
               fill="none"
             >
               <path
@@ -1097,7 +1097,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             className={`absolute left-0 top-full z-50 pt-2.5 transition-all duration-200 ${isOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
           >
             <div
-              className={`mega-menu-panel min-w-[15rem] rounded-xl p-2 transition-all duration-200 ${isOpen ? "tranzinc-y-0" : "tranzinc-y-1.5"}`}
+              className={`mega-menu-panel min-w-[15rem] rounded-xl p-2 transition-all duration-200 ${isOpen ? "translate-y-0" : "translate-y-1.5"}`}
               role="menu"
               aria-label={`${link.label} menu`}
             >
@@ -1113,13 +1113,10 @@ export default function Layout({ children }: { children: ReactNode }) {
                       href={child.href}
                       target={child.target ?? undefined}
                       rel={getLinkRel(child.target)}
-                      className={`nav-dropdown-link focus-ring flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isChildActive ? "nav-dropdown-link-active" : ""}`}
+                      className={`nav-dropdown-link focus-ring flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isChildActive ? "nav-dropdown-link-active" : ""}`}
                       role="menuitem"
                     >
                       <span>{child.label}</span>
-                      <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 text-zinc-400 transition-transform group-hover:tranzinc-x-0.5">
-                        <path d="M6.5 3.5 11 8l-4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                      </svg>
                     </Link>
                   );
                 })}
@@ -1767,7 +1764,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     placeholder="Search agents, MCP servers, skills, resources, updates..."
                     className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 pr-12 text-sm text-zinc-900 placeholder:text-zinc-500 shadow-sm focus:border-[#DC2626]/40 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
                   />
-                  <span className="absolute right-4 top-1/2 -tranzinc-y-1/2 text-zinc-400 dark:text-[#A1A1AA]">
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-[#A1A1AA]">
                     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
                       <path
                         d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
