@@ -4,6 +4,10 @@ import Head from "next/head";
 import sanitizeHtml from "sanitize-html";
 import Layout from "../../../components/Layout";
 import SectionHeader from "../../../components/SectionHeader";
+import StickyTabBar from "../../../components/StickyTabBar";
+import SectionHeading from "../../../components/mcp/SectionHeading";
+import BulletList from "../../../components/mcp/BulletList";
+import SpecCard from "../../../components/mcp/SpecCard";
 import EnterprisePageHero from "../../../components/EnterprisePageHero";
 import AgentCard from "../../../components/AgentCard";
 import { Agent, fetchAgentBySlug, fetchRelatedAgents } from "../../../lib/cms";
@@ -218,16 +222,41 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
         />
       </div>
 
-      <section className="reveal section-spacing grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+      {/* Publisher attribution bar */}
+      {(agent.source === "internal" || agent.department) && (
+        <div className="reveal mt-4 flex flex-wrap items-center gap-x-6 gap-y-3 px-1">
+          <span className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <span className="font-medium text-zinc-500 dark:text-zinc-500">Built by</span>
+            <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+              {agent.sourceName || "Colaberry Enterprise"}
+            </span>
+          </span>
+          {agent.department && (
+            <span className="flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-400">
+              <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4h12M2 8h12M2 12h12" /></svg>
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100">{agent.department.name}</span>
+            </span>
+          )}
+          {agent.industry && (
+            <span className="flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-400">
+              <span className="font-medium">{agent.industry}</span>
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Sticky tab navigation */}
+      <StickyTabBar tabs={[
+        { id: "overview", label: "Overview" },
+        ...(orchestrationSteps.length > 0 ? [{ id: "workflow", label: "Workflow" }] : []),
+        ...(tools.length > 0 || companyNames.length > 0 ? [{ id: "integrations", label: "Integrations" }] : []),
+        { id: "specs", label: "Specs" },
+      ]} />
+
+      <section id="overview" className="reveal section-spacing scroll-mt-[128px] grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
         <div className="grid gap-6">
         <div className="surface-panel section-shell p-6">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Operational summary"
-            title="Readiness snapshot"
-            description="Signals, provenance, and ownership context that help teams deploy with confidence."
-          />
+          <SectionHeading title="Readiness Snapshot" />
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <DetailCard label="Status" value={status} description={statusHint} />
             <DetailCard
@@ -459,7 +488,7 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
       ) : null}
 
       {hasOrchestrationSection ? (
-        <section className="surface-panel section-shell p-6">
+        <section id="workflow" className="surface-panel section-shell p-6 scroll-mt-[128px]">
           <SectionHeader
             as="h2"
             size="md"
@@ -493,7 +522,7 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
       ) : null}
 
       {hasToolsSection ? (
-        <section className="surface-panel section-shell p-6">
+        <section id="integrations" className="surface-panel section-shell p-6 scroll-mt-[128px]">
           <SectionHeader
             as="h2"
             size="md"
@@ -517,7 +546,7 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
       ) : null}
 
       {hasResourcesSection ? (
-        <section className="surface-panel section-shell p-6">
+        <section id="specs" className="surface-panel section-shell p-6 scroll-mt-[128px]">
           <SectionHeader
             as="h2"
             size="md"
