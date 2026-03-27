@@ -2659,12 +2659,14 @@ export async function fetchToolBySlug(slug: string): Promise<Tool | null> {
 /** Lightweight count-only queries — fetches pageSize=1 just to read meta.pagination.total. */
 export async function fetchCatalogCounts(
   visibility?: "public" | "private"
-): Promise<{ agents: number; mcpServers: number; skills: number }> {
+): Promise<{ agents: number; mcpServers: number; skills: number; tools: number; podcasts: number }> {
   const vis = visibility ? `&filters[visibility][$eq]=${visibility}` : "";
   const endpoints = [
     { key: "agents", path: "/api/agents" },
     { key: "mcpServers", path: "/api/mcp-servers" },
     { key: "skills", path: "/api/skills" },
+    { key: "tools", path: "/api/tools" },
+    { key: "podcasts", path: "/api/podcast-episodes" },
   ] as const;
 
   const results = await Promise.all(
@@ -2681,7 +2683,7 @@ export async function fetchCatalogCounts(
     })
   );
 
-  return Object.fromEntries(results) as { agents: number; mcpServers: number; skills: number };
+  return Object.fromEntries(results) as { agents: number; mcpServers: number; skills: number; tools: number; podcasts: number };
 }
 
 /* ──────────────────────────────────────────────────────────────────────

@@ -49,7 +49,7 @@ export function getOntologyConfig(type: ContentTypeName): ContentOntologyConfig 
 
 /** Get all registered content type names */
 export function getAllContentTypes(): ContentTypeName[] {
-  return ["skill", "agent", "mcp", "tool", "podcast"];
+  return ["skill", "agent", "mcp", "podcast"];
 }
 
 /** Get all ontology configs */
@@ -78,22 +78,6 @@ export const CROSS_TYPE_RELATIONS: CrossTypeRelation[] = [
     color: "#a78bfa", // violet
   },
   {
-    sourceType: "mcp",
-    targetType: "tool",
-    relationType: "provides",
-    label: "Provides",
-    description: "MCP servers provide access to tools and external capabilities.",
-    color: "#34d399", // emerald
-  },
-  {
-    sourceType: "skill",
-    targetType: "tool",
-    relationType: "implemented_by",
-    label: "Implemented By",
-    description: "Skills are implemented using specific tools and technologies.",
-    color: "#fbbf24", // amber
-  },
-  {
     sourceType: "podcast",
     targetType: "agent",
     relationType: "discusses",
@@ -115,14 +99,6 @@ export const CROSS_TYPE_RELATIONS: CrossTypeRelation[] = [
     relationType: "discusses",
     label: "Discusses",
     description: "Podcast episodes discuss skills, techniques and best practices.",
-    color: "#fb923c", // orange
-  },
-  {
-    sourceType: "podcast",
-    targetType: "tool",
-    relationType: "discusses",
-    label: "Discusses",
-    description: "Podcast episodes discuss tools and their applications.",
     color: "#fb923c", // orange
   },
 ];

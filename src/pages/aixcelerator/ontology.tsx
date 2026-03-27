@@ -22,24 +22,20 @@ type Props = {
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  // Import CMS functions dynamically to get live counts
+  // Fetch real counts from CMS pagination totals
   const cms = await import("../../lib/cms");
-  const [skills, mcps, agents, tools, podcasts] = await Promise.all([
-    cms.fetchSkills(undefined, { maxRecords: 1 }).then((r) => r.length).catch(() => 0),
-    cms.fetchMCPServers(undefined, { maxRecords: 1 }).then((r) => r.length).catch(() => 0),
-    cms.fetchAgents(undefined, { maxRecords: 1 }).then((r) => r.length).catch(() => 0),
-    cms.fetchTools({ maxRecords: 1 }).then((r) => r.length).catch(() => 0),
-    cms.fetchPodcastEpisodes({ maxRecords: 1 }).then((r) => r.length).catch(() => 0),
-  ]);
+  const counts = await cms.fetchCatalogCounts().catch(() => ({
+    agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0,
+  }));
 
   return {
     props: {
       typeCounts: {
-        skill: skills > 0 ? 500 : 0,
-        mcp: mcps > 0 ? 200 : 0,
-        agent: agents > 0 ? 450 : 0,
-        tool: tools > 0 ? 150 : 0,
-        podcast: podcasts > 0 ? 100 : 0,
+        skill: counts.skills,
+        agent: counts.agents,
+        mcp: counts.mcpServers,
+        tool: counts.tools,
+        podcast: counts.podcasts,
       },
     },
     revalidate: 600,
@@ -48,12 +44,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 /* ── Platform Ontology SVG Diagram ────────────────────────────────── */
 
-const NODE_POSITIONS: Record<ContentTypeName, { x: number; y: number }> = {
-  agent: { x: 200, y: 80 },
-  skill: { x: 500, y: 80 },
-  mcp: { x: 200, y: 280 },
-  tool: { x: 500, y: 280 },
-  podcast: { x: 350, y: 400 },
+const NODE_POSITIONS: Partial<Record<ContentTypeName, { x: number; y: number }>> = {
+  agent: { x: 200, y: 100 },
+  skill: { x: 520, y: 100 },
+  mcp: { x: 200, y: 320 },
+  podcast: { x: 520, y: 320 },
 };
 
 function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, number> }) {
@@ -113,11 +108,11 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
         })}
 
         {/* Content type nodes */}
-        {(Object.entries(CONTENT_TYPE_META) as [ContentTypeName, typeof CONTENT_TYPE_META[ContentTypeName]][]).map(([type, meta]) => {
-          const pos = NODE_POSITIONS[type];
+        {(Object.entries(CONTENT_TYPE_META) as [ContentTypeName, typeof CONTENT_TYPE_META[ContentTypeName]][]).filter(([type]) => type in NODE_POSITIONS).map(([type, meta]) => {
+          const pos = NODE_POSITIONS[type]!;
           const isHovered = hoveredType === type;
           const count = typeCounts[type] || 0;
-          const config = { skill: "/aixcelerator/skills/ontology", agent: "/aixcelerator/agents/ontology", mcp: "/aixcelerator/mcp/ontology", tool: "/aixcelerator/tools/ontology", podcast: "/resources/podcasts/ontology" };
+          const config: Record<string, string> = { skill: "/aixcelerator/skills/ontology", agent: "/aixcelerator/agents/ontology", mcp: "/aixcelerator/mcp/ontology", podcast: "/resources/podcasts/ontology" };
 
           return (
             <g
@@ -178,7 +173,7 @@ export default function PlatformOntologyPage({ typeCounts }: InferGetStaticProps
     ogImageAlt: "Colaberry AI — AI knowledge graph and platform ontology",
   };
 
-  const totalItems = Object.values(typeCounts).reduce((s, c) => s + c, 0);
+  const totalItems = Object.entries(typeCounts).filter(([k]) => k !== "tool").reduce((s, [, c]) => s + c, 0);
 
   return (
     <Layout>
@@ -213,11 +208,11 @@ export default function PlatformOntologyPage({ typeCounts }: InferGetStaticProps
 
       {/* Stats */}
       <section className="reveal mt-8">
-        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {(Object.entries(CONTENT_TYPE_META) as [ContentTypeName, typeof CONTENT_TYPE_META[ContentTypeName]][]).map(([type, meta]) => (
-            <Link key={type} href={`${type === "podcast" ? "/resources/podcasts" : `/aixcelerator/${type === "skill" ? "skills" : type === "agent" ? "agents" : type === "mcp" ? "mcp" : "tools"}`}/ontology`} className="group catalog-card p-5 text-center">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {(Object.entries(CONTENT_TYPE_META) as [ContentTypeName, typeof CONTENT_TYPE_META[ContentTypeName]][]).filter(([type]) => type !== "tool").map(([type, meta]) => (
+            <Link key={type} href={`${type === "podcast" ? "/resources/podcasts" : `/aixcelerator/${type === "skill" ? "skills" : type === "agent" ? "agents" : "mcp"}`}/ontology`} className="group catalog-card p-5 text-center">
               <ContentTypeIcon type={type as ContentTypeName} size={28} className="mx-auto" style={{ color: meta.color }} />
-              <div className="mt-2 text-xl font-bold text-zinc-900 dark:text-zinc-50">{(typeCounts[type] || 0).toLocaleString()}+</div>
+              <div className="mt-2 text-2xl font-bold text-zinc-900 dark:text-zinc-50">{(typeCounts[type] || 0).toLocaleString()}+</div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400">{meta.label}</div>
               <div className="mt-2 text-[10px] font-semibold text-[#DC2626] group-hover:underline dark:text-[#F87171]">View Ontology →</div>
             </Link>
