@@ -69,11 +69,11 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
   const [hoveredEdge, setHoveredEdge] = useState<number | null>(null);
   const isDark = useIsDark();
   // Dark mode aware colors for inline SVG
-  const nodeStroke = isDark ? "#a1a1aa" : "#52525b";
-  const nodeFill = isDark ? "#3f3f46" : "#3f3f46";
-  const nodeFillOpacity = isDark ? 0.35 : 0.15;
-  const nodeText = isDark ? "#e4e4e7" : "#a1a1aa";
-  const edgeStroke = isDark ? "#a1a1aa" : "#71717a";
+  const nodeStroke = isDark ? "#d4d4d8" : "#52525b";
+  const nodeFill = isDark ? "#52525b" : "#3f3f46";
+  const nodeFillOpacity = isDark ? 0.4 : 0.15;
+  const nodeText = isDark ? "#fafafa" : "#71717a";
+  const edgeStroke = isDark ? "#d4d4d8" : "#71717a";
 
   const svgWidth = 720;
   const svgHeight = 500;
@@ -118,7 +118,7 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
                 stroke={isHovered ? "#DC2626" : edgeStroke}
                 strokeWidth={isHovered ? 2.5 : 1.2}
                 strokeDasharray="6,3"
-                opacity={isHovered ? 0.9 : (isDark ? 0.5 : 0.3)}
+                opacity={isHovered ? 0.9 : (isDark ? 0.65 : 0.3)}
                 className="kg-edge"
               />
               {isHovered && (
@@ -181,7 +181,7 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               </text>
 
               {/* Count */}
-              <text x={pos.x} y={pos.y + 56} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="9" fontWeight="500">
+              <text x={pos.x} y={pos.y + 56} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-400" fontSize="9" fontWeight="500">
                 {count > 0 ? `${count}+` : ""}
               </text>
             </g>
@@ -189,7 +189,7 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
         })}
 
         {/* Title */}
-        <text x={svgWidth / 2} y="24" textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="9" fontWeight="700" letterSpacing="0.12em">
+        <text x={svgWidth / 2} y="24" textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-400" fontSize="9" fontWeight="700" letterSpacing="0.12em">
           COLABERRY AI KNOWLEDGE GRAPH
         </text>
       </svg>
