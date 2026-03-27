@@ -28,7 +28,7 @@ export default function CookiePolicyPage() {
 
       <section className="mx-auto w-full max-w-4xl">
         <div className="surface-panel border border-zinc-200/80 bg-white/95 px-6 py-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-950/85 sm:px-8">
-          <div className="inline-flex items-center gap-2 rounded-md border border-[#4F2AA3]/15 bg-[#F3EEFF] px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[#2B0F63] dark:border-[#7B5CE0]/20 dark:bg-[#18233A] dark:text-[#C4B3FF]">
+          <div className="inline-flex items-center gap-2 rounded-md border border-[#DC2626]/15 bg-[#DC2626]/5 px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[#DC2626] dark:border-[#F87171]/20 dark:bg-[#F87171]/5 dark:text-[#F87171]">
             Legal
           </div>
           <h1 className="mt-4 font-sans text-display-sm sm:text-display-md font-bold text-zinc-900 dark:text-zinc-100">
