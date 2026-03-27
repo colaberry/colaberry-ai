@@ -19,6 +19,7 @@ interface Agent {
   source?: string | null;
   sourceName?: string | null;
   verified?: boolean | null;
+  department?: { name: string; slug: string } | null;
 }
 
 export default function AgentCard({ agent }: { agent: Agent }) {
@@ -64,6 +65,15 @@ export default function AgentCard({ agent }: { agent: Agent }) {
           >
             {statusLabel}
           </span>
+          {agent.source === "internal" ? (
+            <span className="chip-brand rounded-full px-2.5 py-1 text-xs font-semibold">
+              Internal
+            </span>
+          ) : agent.source === "external" ? (
+            <span className="chip chip-neutral rounded-full px-2.5 py-1 text-xs font-semibold">
+              External
+            </span>
+          ) : null}
           {agent.verified ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-[var(--trusted-surface)] px-2.5 py-1 text-xs font-semibold text-[var(--trusted-text)] ring-1 ring-inset ring-[var(--trusted-stroke)]">
               <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" aria-hidden="true">
@@ -73,6 +83,11 @@ export default function AgentCard({ agent }: { agent: Agent }) {
                 />
               </svg>
               Verified
+            </span>
+          ) : null}
+          {agent.department ? (
+            <span className="chip chip-neutral rounded-full px-2.5 py-1 text-xs font-semibold">
+              {agent.department.name}
             </span>
           ) : null}
         </div>

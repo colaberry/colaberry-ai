@@ -52,6 +52,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [tagFilter, setTagFilter] = useState("all");
+  const [departmentFilter, setDepartmentFilter] = useState("all");
   const pageSize = 24;
   const [visibleCount, setVisibleCount] = useState(pageSize);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -71,6 +72,10 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
   }, [agents]);
   const sources = useMemo(() => {
     const list = Array.from(new Set(agents.map((a) => (a.source || "internal").toLowerCase())));
+    return list.sort();
+  }, [agents]);
+  const departments = useMemo(() => {
+    const list = Array.from(new Set(agents.map((a) => a.department?.name).filter(Boolean) as string[]));
     return list.sort();
   }, [agents]);
   const tagOptions = useMemo(() => {
@@ -93,9 +98,11 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
     return acc;
   }, {});
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
-  const metaTitle = "29 AI Agents Across 13 Industries | Colaberry AI";
+  const agentCount = agents.length;
+  const industryCount = new Set(agents.map((a) => a.industry).filter(Boolean)).size;
+  const metaTitle = `${agentCount} AI Agents Across ${industryCount} Industries | Colaberry AI`;
   const metaDescription =
-    "Discover 29 enterprise AI agents with ownership, runbooks, evaluations, and deployment readiness across 13 industries. LLM-indexed for AI search discovery.";
+    `Discover ${agentCount} enterprise AI agents with ownership, runbooks, evaluations, and deployment readiness across ${industryCount} industries. LLM-indexed for AI search discovery.`;
   const seoMeta: SeoMeta = {
     title: metaTitle,
     description: metaDescription,
@@ -125,9 +132,9 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
   const filteredAgents = useMemo(() => {
     const query = effectiveSearch.trim().toLowerCase();
     return filterByVisibility(agents, allowPrivate, visibility).filter((agent) =>
-      matchesFilters(agent, query, industryFilter, statusFilter, sourceFilter, tagFilter)
+      matchesFilters(agent, query, industryFilter, statusFilter, sourceFilter, tagFilter, departmentFilter)
     );
-  }, [agents, allowPrivate, visibility, effectiveSearch, industryFilter, statusFilter, sourceFilter, tagFilter]);
+  }, [agents, allowPrivate, visibility, effectiveSearch, industryFilter, statusFilter, sourceFilter, tagFilter, departmentFilter]);
   const sortedAgents = useMemo(
     () => sortAgents(filteredAgents, sortMode),
     [filteredAgents, sortMode]
@@ -331,6 +338,29 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
               ))}
             </select>
           </div>
+          {departments.length > 0 && (
+            <div className="lg:col-span-2">
+              <label htmlFor="agent-department" className="sr-only">
+                Filter by department
+              </label>
+              <select
+                id="agent-department"
+                value={departmentFilter}
+                onChange={(event) => {
+                  setDepartmentFilter(event.target.value);
+                  setVisibleCount(pageSize);
+                }}
+                className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+              >
+                <option value="all">All departments</option>
+                {departments.map((dept) => (
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           {tagOptions.length > 0 && (
             <div className="lg:col-span-2">
               <label htmlFor="agent-tag" className="sr-only">
@@ -495,7 +525,8 @@ function matchesFilters(
   industryFilter?: string,
   statusFilter?: string,
   sourceFilter?: string,
-  tagFilter?: string
+  tagFilter?: string,
+  departmentFilter?: string
 ) {
   const industryMatch =
     !industryFilter || industryFilter === "all"
@@ -515,7 +546,11 @@ function matchesFilters(
       : (agent.tags || []).some(
           (tag) => (tag.slug || tag.name || "").toLowerCase() === tagFilter
         );
-  if (!industryMatch || !statusMatch || !sourceMatch || !tagMatch) {
+  const departmentMatch =
+    !departmentFilter || departmentFilter === "all"
+      ? true
+      : (agent.department?.name || "").toLowerCase() === departmentFilter.toLowerCase();
+  if (!industryMatch || !statusMatch || !sourceMatch || !tagMatch || !departmentMatch) {
     return false;
   }
   if (!query) {
