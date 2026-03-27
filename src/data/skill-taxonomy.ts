@@ -1,7 +1,6 @@
 /**
- * SkillNet-inspired 10-category taxonomy for AI skills.
+ * 10-category taxonomy for AI skills.
  * Maps existing CMS category/skillType values to standardized categories.
- * Based on: https://skillnet.openkg.cn/ ontology structure.
  */
 
 export type SkillCategory = {
@@ -116,7 +115,7 @@ export function classifySkill(skill: {
   return bestMatch || SKILL_CATEGORIES[SKILL_CATEGORIES.length - 1];
 }
 
-/** Relationship types between skills (SkillNet ontology) */
+/** Relationship types between skills (4-type ontology model) */
 export type SkillRelationType = "similar_to" | "depend_on" | "compose_with" | "belong_to";
 
 /* ── Ontology Config Export ────────────────────────────────────────────── */

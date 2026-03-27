@@ -31,6 +31,9 @@
 .clawhub-import-progress.json
 .github-bulk-import-progress.json
 
+# third-party raw data dumps (ephemeral, not source-controlled)
+scripts/data/clawhub-skills-raw.json
+
 # claude code worktrees
 .claude/worktrees/
 

@@ -769,6 +769,7 @@ function renderRichText(value?: string | null): ReactNode {
     allowedAttributes: {
       a: ["href", "target", "rel"],
     },
+    allowedSchemes: ["http", "https", "mailto"],
   });
   if (!clean.trim()) return null;
   return (

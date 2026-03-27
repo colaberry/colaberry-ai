@@ -118,8 +118,8 @@ export default function Home({
     {
       href: "/aixcelerator/agents",
       title: "AI Agents",
-      description: "29 enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.",
-      meta: "29 agents",
+      description: `${catalogCounts.agents || 160}+ enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.`,
+      meta: `${fmt(catalogCounts.agents || 160)} agents`,
       iconType: "agent",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
       accentColor: "#ef4444",
@@ -174,7 +174,7 @@ export default function Home({
     {
       href: "/aixcelerator/ontology",
       title: "Knowledge Graph",
-      description: "SkillNet-powered ontology mapping agents, skills, MCPs, and tools into a structured intelligence layer.",
+      description: "Knowledge graph ontology mapping agents, skills, MCPs, and tools into a structured intelligence layer.",
       meta: "Ontology",
       iconType: "mcp",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
@@ -312,7 +312,7 @@ export default function Home({
           name: "How is Colaberry AI optimized for Answer Engine Optimization (AEO)?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Colaberry AI is built for AEO — Answer Engine Optimization. Every page includes JSON-LD structured data, the site provides /llms.txt for AI crawlers (GPTBot, ClaudeBot, PerplexityBot), and all 260+ podcast episodes include full searchable transcripts. The SkillNet Knowledge Graph maps relationships between agents, skills, MCP servers, and tools — making the content natively accessible to AI answer engines like ChatGPT, Perplexity, and Claude.",
+            text: "Colaberry AI is built for AEO — Answer Engine Optimization. Every page includes JSON-LD structured data, the site provides /llms.txt for AI crawlers (GPTBot, ClaudeBot, PerplexityBot), and all 260+ podcast episodes include full searchable transcripts. The Colaberry Knowledge Graph maps relationships between agents, skills, MCP servers, and tools — making the content natively accessible to AI answer engines like ChatGPT, Perplexity, and Claude.",
           },
         },
       ],
@@ -328,7 +328,7 @@ export default function Home({
         ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </Head>
-      {/* ---- Hero (together.ai-inspired dark animated hero) ---- */}
+      {/* ---- Hero (dark animated hero) ---- */}
       <section className="-mx-4 sm:mx-0 relative overflow-hidden rounded-none sm:rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
         {/* Animated gradient mesh background */}
         <div className="hero-gradient-mesh" aria-hidden="true">
@@ -338,7 +338,7 @@ export default function Home({
           <div className="hero-orb hero-orb-center" />
         </div>
 
-        {/* Concentric rings (together.ai-inspired depth) */}
+        {/* Concentric rings (depth effect) */}
         <div className="hero-concentric-rings" aria-hidden="true">
           <div className="hero-ring hero-ring-1" />
           <div className="hero-ring hero-ring-2" />
@@ -351,7 +351,7 @@ export default function Home({
         {/* Radial vignette for depth */}
         <div className="hero-vignette" aria-hidden="true" />
 
-        {/* Floating content-type icon nodes (vizuara-inspired constellation) */}
+        {/* Floating content-type icon nodes (constellation layout) */}
         <div className="hero-floating-nodes" aria-hidden="true">
           {/* Agents node */}
           <div className="hero-node hero-node-1">

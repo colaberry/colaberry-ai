@@ -152,7 +152,7 @@ export type RelationshipComputer = (
 
 /**
  * Build graph data from items and optional collection context.
- * Default behavior computes all 4 SkillNet relationship types.
+ * Default behavior computes all 4 relationship types.
  * Pass custom `computeRelationships` to override for different content types.
  */
 export function buildGraphData(
@@ -209,14 +209,14 @@ export function buildGraphData(
   if (computeRelationships) {
     computeRelationships(skills, normalizedCollections, addLink, nodeMap);
   } else {
-    // Default: compute all 4 SkillNet relationship types
+    // Default: compute all 4 relationship types
     computeDefaultRelationships(skills, normalizedCollections, addLink, nodeMap);
   }
 
   return { nodes, links };
 }
 
-/** Default relationship computation (SkillNet 4-type model) */
+/** Default relationship computation (4-type model) */
 function computeDefaultRelationships(
   skills: GraphBuildableItem[],
   collections: { slug: string; itemSlugs: string[] }[],

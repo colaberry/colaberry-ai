@@ -1162,7 +1162,8 @@ export default function Layout({ children }: { children: ReactNode }) {
                 />
                 <Image
                   src="/brand/colaberry-ai-logo-dark.svg"
-                  alt="Colaberry.AI"
+                  alt=""
+                  aria-hidden="true"
                   width={260}
                   height={60}
                   priority
@@ -1574,7 +1575,8 @@ export default function Layout({ children }: { children: ReactNode }) {
                 />
                 <Image
                   src="/brand/colaberry-ai-logo-dark.svg"
-                  alt="Colaberry AI"
+                  alt=""
+                  aria-hidden="true"
                   width={130}
                   height={28}
                   priority
@@ -1993,7 +1995,7 @@ function FooterLink({
 
 function ThemeIcon({ isDark }: { isDark: boolean }) {
   // Show current state icon (moon = dark mode active, sun = light mode active)
-  // Vizuara-style: icon represents current mode, not the target
+  // Icon represents current mode, not the target
   if (isDark) {
     return (
       <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="currentColor">

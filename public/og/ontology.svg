@@ -20,7 +20,7 @@
   <!-- Title -->
   <text x="60" y="350" fill="#FAFAFA" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">Knowledge Graph</text>
   <!-- Subtitle -->
-  <text x="60" y="405" fill="#A1A1AA" font-family="Inter, system-ui, sans-serif" font-size="26" font-weight="400">SkillNet-powered platform ontology</text>
+  <text x="60" y="405" fill="#A1A1AA" font-family="Inter, system-ui, sans-serif" font-size="26" font-weight="400">Colaberry AI platform ontology</text>
   <!-- Bottom border accent -->
   <rect x="0" y="622" width="1200" height="8" fill="#DC2626"/>
 </svg>

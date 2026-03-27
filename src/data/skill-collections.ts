@@ -1,6 +1,6 @@
 /**
  * Curated skill collections — bundles of skills that work together.
- * Inspired by SkillNet's Skill Package Library concept.
+ * Curated bundles of skills that work together for common workflows.
  *
  * Collections come from two sources:
  * 1. Hand-curated overrides (below) — always take priority

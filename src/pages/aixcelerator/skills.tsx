@@ -243,7 +243,7 @@ export default function SkillsPage({ skills, allowPrivate, fetchError }: SkillsP
       <CatalogSnapshot
         stats={[
           { label: "Skills", value: skills.length.toLocaleString(), note: "Reusable capability profiles" },
-          { label: "Categories", value: String(SKILL_CATEGORIES.filter((c) => (taxonomyCounts[c.slug] ?? 0) > 0).length), note: "SkillNet-inspired taxonomy" },
+          { label: "Categories", value: String(SKILL_CATEGORIES.filter((c) => (taxonomyCounts[c.slug] ?? 0) > 0).length), note: "3-layer taxonomy" },
           { label: "Collections", value: String(SKILL_COLLECTIONS.length), note: "Curated skill bundles" },
           { label: "Visibility", value: `${visibilityCounts.public ?? 0} public`, note: allowPrivate ? `${visibilityCounts.private ?? 0} private` : "Private hidden" },
         ]}

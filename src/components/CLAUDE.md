@@ -2,7 +2,7 @@
 
 38+ React components, all PascalCase `.tsx` files.
 
-## Generic Page Templates (SkillNet Pattern)
+## Generic Page Templates (3-Layer Ontology Pattern)
 
 All 5 content types use these templates with a `ContentOntologyConfig`:
 

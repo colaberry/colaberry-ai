@@ -331,7 +331,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         delivery: {
           attempted: delivery.attempted,
           sent: delivery.sent,
-          provider: delivery.provider,
         },
       });
     }
@@ -364,7 +363,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       delivery: {
         attempted: delivery.attempted,
         sent: delivery.sent,
-        provider: delivery.provider,
       },
     });
   } catch (error) {

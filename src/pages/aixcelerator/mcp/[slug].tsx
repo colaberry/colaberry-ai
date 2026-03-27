@@ -163,7 +163,7 @@ export default function MCPDetail({ mcp, relatedServers }: MCPDetailProps) {
     t.parameters.filter((p) => !p.required).map((p) => ({ ...p, toolName: t.name }))
   );
 
-  // Build sticky tabs — Smithery-style: Overview | Hosting | API | Performance | Usage
+  // Build sticky tabs for section navigation
   const stickyTabs: TabItem[] = [];
   stickyTabs.push({ id: "overview", label: "Overview" });
   if (hasHostingSection) stickyTabs.push({ id: "hosting", label: "Hosting" });

@@ -49,7 +49,7 @@ ${counts.skills.toLocaleString()}+ reusable AI capability units across workflow,
 260+ episodes with full searchable transcripts, timestamps, company tags, and linked artifacts. Covers enterprise AI strategy, agent development, responsible AI governance. Generated via Deepgram for accuracy. Detail pages at ${SITE}/resources/podcasts/[slug].
 
 ### Knowledge Graph (${SITE}/aixcelerator/ontology)
-SkillNet-powered knowledge graph mapping cross-type relationships: Agents USE Skills, connect via MCP Servers, which PROVIDE Tools. Visualized as interactive ontology diagrams, force-graph ecosystem views, and curated solution stacks.
+Knowledge graph mapping cross-type relationships: Agents USE Skills, connect via MCP Servers, which PROVIDE Tools. Visualized as interactive ontology diagrams, force-graph ecosystem views, and curated solution stacks.
 
 ## Discovery Surfaces
 - ${SITE}/ — Homepage with platform overview and latest signals

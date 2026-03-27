@@ -648,7 +648,7 @@ export default function Podcasts({
           )}
         </div>
 
-        {/* ── Right sidebar (together.ai warm beige style) ── */}
+        {/* ── Right sidebar (warm beige style) ── */}
         <aside className="hidden lg:sticky lg:top-20 lg:block lg:self-start">
           <div className="rounded-2xl bg-[#E8E5DE] p-6 dark:bg-[#2A2824]">
             {/* Podcast identity */}
