@@ -19,25 +19,25 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
 
   const body = `# Colaberry AI
 
-> The go-to enterprise platform for AI agents, MCP servers, skills, podcasts, and research — built for Answer Engine Optimization (AEO).
+> Enterprise AI platform for discovering, evaluating, and deploying AI agents, MCP servers, and skills — with governance, audit trails, and Answer Engine Optimization (AEO).
 
 Last updated: ${now}
 
 ## Platform Statistics
-- ${counts.agents}+ AI Agents across 13 industries
+- ${counts.agents}+ AI Agents across 8 industries
 - ${counts.mcpServers.toLocaleString()}+ MCP Servers (Model Context Protocol integrations)
 - ${counts.skills.toLocaleString()}+ AI Skills (reusable capability units)
 - 260+ Podcast Episodes with full searchable transcripts
-- 2,302+ indexable pages with structured data
+- 8 Industry workspaces (Agriculture, Energy, Utilities, Healthcare, Climate Tech, Manufacturing, Fintech, Supply Chain)
 
 ## What is Colaberry AI?
 
-Colaberry AI is an enterprise platform where teams discover, evaluate, and deploy AI capabilities with governance, audit trails, and production-ready delivery patterns. The platform catalogs AI agents, Model Context Protocol (MCP) servers, reusable skills, podcasts with full transcripts, and research — all structured for both human teams and AI-based discovery (AEO).
+Colaberry AI is an enterprise platform where teams discover, evaluate, and deploy AI capabilities with governance, audit trails, and production-ready delivery patterns. The platform catalogs AI agents, Model Context Protocol (MCP) servers, reusable skills, podcasts with full transcripts, and industry-specific workspaces — all structured for both human teams and AI-based discovery (AEO).
 
 ## Content Types
 
 ### AI Agents (${SITE}/aixcelerator/agents)
-${counts.agents}+ enterprise AI agents with ownership, lifecycle status (Live/Beta/Concept), industry alignment, deployment runbooks, and LLM-ready metadata. Each agent has a detailed profile at ${SITE}/aixcelerator/agents/[slug].
+${counts.agents}+ enterprise AI agents with ownership, lifecycle status (Live/Beta/Concept), industry alignment, department categorization, deployment runbooks, and LLM-ready metadata. Each agent profile includes category, rating, and last-updated date. Detail pages at ${SITE}/aixcelerator/agents/[slug].
 
 ### MCP Servers (${SITE}/aixcelerator/mcp)
 ${counts.mcpServers.toLocaleString()}+ Model Context Protocol server integrations — the largest curated MCP directory. Includes tool access patterns, authentication methods, hosting options, and compatibility. Categories: Developer Tools, Communication (Slack, Teams), CRM (Salesforce), Cloud (AWS, GCP), Data (PostgreSQL, MongoDB). Detail pages at ${SITE}/aixcelerator/mcp/[slug].
@@ -48,19 +48,25 @@ ${counts.skills.toLocaleString()}+ reusable AI capability units across workflow,
 ### AI Podcasts (${SITE}/resources/podcasts)
 260+ episodes with full searchable transcripts, timestamps, company tags, and linked artifacts. Covers enterprise AI strategy, agent development, responsible AI governance. Generated via Deepgram for accuracy. Detail pages at ${SITE}/resources/podcasts/[slug].
 
+### Industries (${SITE}/industries)
+8 domain-specific workspaces for Agriculture, Energy, Utilities, Healthcare & Life Sciences, Climate Tech, Manufacturing, Fintech, and Supply Chain. Each workspace surfaces relevant agents, use cases, and outcomes. Detail pages at ${SITE}/industries/[slug].
+
 ### Knowledge Graph (${SITE}/aixcelerator/ontology)
-Knowledge graph mapping cross-type relationships: Agents USE Skills, connect via MCP Servers, which PROVIDE Tools. Visualized as interactive ontology diagrams, force-graph ecosystem views, and curated solution stacks.
+Knowledge graph mapping cross-type relationships: Agents USE Skills, connect via MCP Servers. Visualized as interactive ontology diagrams, force-graph ecosystem views, and curated solution stacks.
 
 ## Discovery Surfaces
-- ${SITE}/ — Homepage with platform overview and latest signals
+- ${SITE}/ — Homepage with platform overview, trending agents/skills/MCP/podcasts with category metadata
 - ${SITE}/aixcelerator — Platform hub
+- ${SITE}/industries — Industry-specific workspaces
+- ${SITE}/updates — News feed with curated AI ratings and daily briefings
 - ${SITE}/search?q=[query] — Full-text search across all content
 - ${SITE}/aixcelerator/ontology — Knowledge graph
 - ${SITE}/aixcelerator/ecosystem — Interactive ecosystem visualization
 - ${SITE}/aixcelerator/solution-stacks — Cross-type curated bundles
+- ${SITE}/request-demo — Enterprise demo request form
 
 ## Machine-Readable Data
-- ${SITE}/sitemap.xml — Dynamic sitemap with 2,302+ URLs
+- ${SITE}/sitemap.xml — Dynamic sitemap with all indexable URLs
 - ${SITE}/robots.txt — Crawling directives (all AI crawlers welcome)
 - ${SITE}/llms-full.txt — Complete content index with summaries
 - All pages include Schema.org JSON-LD structured data
@@ -68,13 +74,15 @@ Knowledge graph mapping cross-type relationships: Agents USE Skills, connect via
 - Open Graph + Twitter Card meta tags on all pages
 
 ## AEO (Answer Engine Optimization)
-This site is built for Answer Engine Optimization. Key features:
+This site is built for Answer Engine Optimization — designed for AI answer engines (ChatGPT, Claude, Perplexity) alongside traditional search. Key features:
 - /llms.txt (this file) for AI crawler context
 - /llms-full.txt with complete content inventory
 - JSON-LD FAQPage schema for direct question answering
 - AEO Quick Answer blocks on all catalog pages
 - Full podcast transcripts for deep content indexing
+- Category metadata on homepage signal cards for structured AI parsing
 - Semantic HTML structure optimized for LLM parsing
+- robots.txt explicitly welcomes GPTBot, ClaudeBot, PerplexityBot
 
 ## Contact
 - Enterprise inquiries: info@colaberry.com

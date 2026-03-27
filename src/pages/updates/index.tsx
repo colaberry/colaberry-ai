@@ -3,11 +3,9 @@ import Head from "next/head";
 import { GetStaticProps } from "next";
 import SectionHeader from "../../components/SectionHeader";
 import StatePanel from "../../components/StatePanel";
-import PremiumMediaCard from "../../components/PremiumMediaCard";
 import EnterpriseCtaBand from "../../components/EnterpriseCtaBand";
 import NewsletterSignup from "../../components/NewsletterSignup";
 import EnterprisePageHero from "../../components/EnterprisePageHero";
-import { heroImage } from "../../lib/media";
 import {
   fetchGaiInsightsBriefing,
   fetchGaiInsightsRatings,
@@ -64,38 +62,6 @@ export const getStaticProps: GetStaticProps<UpdatesProps> = async () => {
 };
 
 export default function Updates({ ratings, briefing, fetchError }: UpdatesProps) {
-  const updateHighlights = [
-    {
-      href: "/updates",
-      title: "Product releases",
-      description: "Feature updates, changelogs, and release notes.",
-      meta: "Product",
-      image: heroImage("hero-platform-cinematic.webp"),
-    },
-    {
-      href: "/resources/white-papers",
-      title: "Research drops",
-      description: "New white papers, POVs, and technical assets.",
-      meta: "Research",
-      image: heroImage("hero-resources-cinematic.webp"),
-    },
-    {
-      href: "https://gaiinsights.com/articles",
-      title: "Ecosystem signals",
-      description: "Curated headlines and market signals in one feed.",
-      meta: "Signals",
-      image: heroImage("hero-updates-cinematic.webp"),
-      external: true,
-    },
-    {
-      href: "/solutions",
-      title: "Roadmap highlights",
-      description: "What is shipping next across the platform layers.",
-      meta: "Roadmap",
-      image: heroImage("hero-solutions-cinematic.webp"),
-    },
-  ];
-
   const seoMeta: SeoMeta = {
     title: "Updates | Colaberry AI",
     description: "Announcements, releases, and curated AI ecosystem signals in one enterprise feed.",
@@ -127,29 +93,14 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
         title="News & product"
         description="Announcements, releases, and curated AI ecosystem signals in one enterprise feed."
         chips={["Product releases", "Daily briefings", "Top-rated AI news", "Research drops"]}
-        primaryAction={{ label: "Open updates feed", href: "/updates" }}
-        secondaryAction={{ label: "View GAI Insights", href: "https://gaiinsights.com/ratings", external: true, variant: "secondary" }}
+        primaryAction={{ label: "View top-rated news", href: "https://gaiinsights.com/ratings", external: true }}
+        secondaryAction={{ label: "Open daily briefing", href: "https://gaiinsights.com/articles", external: true, variant: "secondary" }}
         metrics={[
           { label: "Top-rated news", value: `${ratings.length}`, note: "Curated items in current refresh." },
           { label: "Briefing signals", value: `${briefing.items.length}`, note: "Headlines in current briefing." },
           { label: "Refresh cycle", value: "6h", note: "Cache and revalidation cadence." },
         ]}
       />
-
-      <section className="reveal section-spacing grid gap-3 sm:grid-cols-2">
-        {updateHighlights.map((item) => (
-          <PremiumMediaCard
-            key={item.title}
-            href={item.href}
-            title={item.title}
-            description={item.description}
-            image={item.image}
-            meta={item.meta}
-            external={item.external}
-            size="sm"
-          />
-        ))}
-      </section>
 
       {fetchError && (
         <div className="mt-6">
@@ -203,10 +154,10 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
               {ratings.slice(0, 8).map((item, index) => (
                 <li
                   key={`${item.title}-${item.date || index}`}
-                  className="card-elevated p-4"
+                  className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <span className="text-xs font-semibold text-zinc-500">
+                    <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
                       {item.date || "Latest rating"}
                     </span>
                     {item.rating ? (
@@ -223,12 +174,12 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
                     href={item.url || "https://gaiinsights.com/ratings"}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-2 block text-sm font-semibold text-[#4F2AA3] hover:text-[#6240C5] dark:text-[#7B5CE0] dark:hover:text-[#C4B3FF]"
+                    className="mt-2 block text-sm font-semibold text-zinc-900 hover:text-[#DC2626] dark:text-zinc-50 dark:hover:text-[#F87171]"
                   >
                     {item.title}
                   </a>
                   {item.rationale ? (
-                    <p className="mt-2 text-xs text-zinc-600 line-clamp-3">{item.rationale}</p>
+                    <p className="mt-2 text-xs text-zinc-500 line-clamp-3 dark:text-zinc-400">{item.rationale}</p>
                   ) : null}
                 </li>
               ))}
@@ -271,16 +222,16 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
               {briefing.items.slice(0, 12).map((item, index) => (
                 <li
                   key={`${item.title}-${index}`}
-                  className="card-elevated flex items-start gap-3 px-3 py-2"
+                  className="flex items-start gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600"
                 >
-                  <span className="mt-0.5 text-xs font-semibold text-zinc-400">
+                  <span className="mt-0.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-sm font-semibold text-[#4F2AA3] hover:text-[#6240C5] dark:text-[#7B5CE0] dark:hover:text-[#C4B3FF]"
+                    className="text-sm font-semibold text-zinc-900 hover:text-[#DC2626] dark:text-zinc-50 dark:hover:text-[#F87171]"
                   >
                     {item.title}
                   </a>

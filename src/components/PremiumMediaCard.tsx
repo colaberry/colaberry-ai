@@ -6,7 +6,8 @@ type PremiumMediaCardProps = {
   href?: string;
   title: string;
   description: string;
-  image: string;
+  image?: string;
+  icon?: ReactNode;
   alt?: string;
   meta?: string;
   kicker?: string;
@@ -21,6 +22,7 @@ export default function PremiumMediaCard({
   title,
   description,
   image,
+  icon,
   alt,
   meta,
   kicker,
@@ -45,7 +47,13 @@ export default function PremiumMediaCard({
     <>
       <div className="media-premium-frame border-0 border-b border-zinc-200 dark:border-zinc-800 rounded-none">
         <div className={`relative w-full ${aspectClass}`}>
-          {imgError ? (
+          {icon ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/80 shadow-sm dark:bg-zinc-700/50">
+                {icon}
+              </div>
+            </div>
+          ) : imgError || !image ? (
             <div className="absolute inset-0 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
               <svg viewBox="0 0 24 24" className="h-10 w-10 text-zinc-300 dark:text-zinc-600" fill="none" aria-hidden="true">
                 <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />

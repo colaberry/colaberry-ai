@@ -37,6 +37,7 @@ type HomeAgentSignal = {
   id: number;
   slug: string;
   name: string;
+  category?: string | null;
   lastUpdated?: string | null;
   rating?: number | null;
   usageCount?: number | null;
@@ -55,6 +56,7 @@ type HomeMcpSignal = {
   id: number;
   slug: string;
   name: string;
+  category?: string | null;
   lastUpdated?: string | null;
   rating?: number | null;
   usageCount?: number | null;
@@ -660,27 +662,57 @@ function SignalDashboard({
       {/* Tab panels */}
       <div className="mt-5 overflow-hidden">
         {activeTab === "Agents" && (
-          <div role="tabpanel" id="signal-panel-Agents" aria-labelledby="signal-tab-Agents" className="grid gap-4 lg:grid-cols-2">
-            <AgentRail title="Latest agents" description="Most recently updated." items={latestAgents} detailType="latest" />
-            {trendingAgents.length > 0 && (
-              <AgentRail title="Trending agents" description="Highest rated and most used." items={trendingAgents} detailType="trending" />
+          <div role="tabpanel" id="signal-panel-Agents" aria-labelledby="signal-tab-Agents">
+            {latestAgents.length > 0 && (
+              <div className="mb-4">
+                <FeaturedSignalCard item={latestAgents[0]} type="agent" label="Latest agent" href={`/aixcelerator/agents/${latestAgents[0].slug}`} />
+              </div>
             )}
+            <div className="grid gap-4 lg:grid-cols-2">
+              <AgentRail title="Latest agents" description="Most recently updated." items={latestAgents} detailType="latest" />
+              {trendingAgents.length > 0 && (
+                <AgentRail title="Trending agents" description="Highest rated and most used." items={trendingAgents} detailType="trending" />
+              )}
+            </div>
+            <div className="mt-4 text-center">
+              <Link href="/aixcelerator/agents" className="btn btn-secondary">Browse all agents</Link>
+            </div>
           </div>
         )}
         {activeTab === "Skills" && (
-          <div role="tabpanel" id="signal-panel-Skills" aria-labelledby="signal-tab-Skills" className="grid gap-4 lg:grid-cols-2">
-            <SkillRail title="Latest skills" description="Most recently updated." items={latestSkills} detailType="latest" />
-            {trendingSkills.length > 0 && (
-              <SkillRail title="Trending skills" description="Highest rated and most used." items={trendingSkills} detailType="trending" />
+          <div role="tabpanel" id="signal-panel-Skills" aria-labelledby="signal-tab-Skills">
+            {latestSkills.length > 0 && (
+              <div className="mb-4">
+                <FeaturedSignalCard item={latestSkills[0]} type="skill" label="Latest skill" href={`/aixcelerator/skills/${latestSkills[0].slug}`} />
+              </div>
             )}
+            <div className="grid gap-4 lg:grid-cols-2">
+              <SkillRail title="Latest skills" description="Most recently updated." items={latestSkills} detailType="latest" />
+              {trendingSkills.length > 0 && (
+                <SkillRail title="Trending skills" description="Highest rated and most used." items={trendingSkills} detailType="trending" />
+              )}
+            </div>
+            <div className="mt-4 text-center">
+              <Link href="/aixcelerator/skills" className="btn btn-secondary">Browse all skills</Link>
+            </div>
           </div>
         )}
         {activeTab === "MCP" && (
-          <div role="tabpanel" id="signal-panel-MCP" aria-labelledby="signal-tab-MCP" className="grid gap-4 lg:grid-cols-2">
-            <McpRail title="Latest MCP servers" description="Most recently updated." items={latestMCPs} detailType="latest" />
-            {trendingMCPs.length > 0 && (
-              <McpRail title="Trending MCP servers" description="Highest rated and most used." items={trendingMCPs} detailType="trending" />
+          <div role="tabpanel" id="signal-panel-MCP" aria-labelledby="signal-tab-MCP">
+            {latestMCPs.length > 0 && (
+              <div className="mb-4">
+                <FeaturedSignalCard item={latestMCPs[0]} type="mcp" label="Latest MCP server" href={`/aixcelerator/mcp/${latestMCPs[0].slug}`} />
+              </div>
             )}
+            <div className="grid gap-4 lg:grid-cols-2">
+              <McpRail title="Latest MCP servers" description="Most recently updated." items={latestMCPs} detailType="latest" />
+              {trendingMCPs.length > 0 && (
+                <McpRail title="Trending MCP servers" description="Highest rated and most used." items={trendingMCPs} detailType="trending" />
+              )}
+            </div>
+            <div className="mt-4 text-center">
+              <Link href="/aixcelerator/mcp" className="btn btn-secondary">Browse all MCP servers</Link>
+            </div>
           </div>
         )}
         {activeTab === "Podcasts" && (
@@ -828,6 +860,50 @@ function FeaturedPodcastCard({ episode }: { episode: HomePodcastSignal }) {
   );
 }
 
+const SIGNAL_ICONS: Record<string, { viewBox: string; d: string }> = {
+  agent: { viewBox: "0 0 24 24", d: "M9 2v2H7a2 2 0 00-2 2v2H3v4h2v2a2 2 0 002 2h2v2h2v-2h2v2h2v-2h2a2 2 0 002-2v-2h2V8h-2V6a2 2 0 00-2-2h-2V2h-2v2h-2V2H9zm-2 6h10v8H7V8zm3 2v1h1v-1h-1zm3 0v1h1v-1h-1zm-4 3v1h4v-1H9z" },
+  skill: { viewBox: "0 0 24 24", d: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" },
+  mcp: { viewBox: "0 0 24 24", d: "M4 6a2 2 0 012-2h12a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm14 1.5a1 1 0 10-2 0 1 1 0 002 0zM4 15a2 2 0 012-2h12a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2v-3zm14 1.5a1 1 0 10-2 0 1 1 0 002 0z" },
+};
+
+function FeaturedSignalCard({ item, type, label, href }: { item: { name: string; category?: string | null; lastUpdated?: string | null; rating?: number | null }; type: "agent" | "skill" | "mcp"; label: string; href: string }) {
+  const icon = SIGNAL_ICONS[type];
+  return (
+    <Link
+      href={href}
+      className="group section-card flex flex-col gap-4 rounded-lg p-4 transition sm:flex-row sm:items-center"
+    >
+      <div className="flex h-32 w-full shrink-0 items-center justify-center rounded-lg bg-[#DC2626]/10 dark:bg-[#DC2626]/20 sm:h-24 sm:w-40">
+        <svg viewBox={icon.viewBox} className="h-8 w-8 text-[#DC2626]" fill="currentColor" aria-hidden="true">
+          <path d={icon.d} />
+        </svg>
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-deep dark:text-[#FAFAFA]">
+            {label}
+          </span>
+          {item.category ? (
+            <span className="inline-flex rounded-md bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold leading-none text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+              {item.category}
+            </span>
+          ) : null}
+        </div>
+        <h4 className="mt-1 line-clamp-2 text-base font-semibold text-zinc-900 group-hover:text-brand-deep dark:text-zinc-100">
+          {item.name}
+        </h4>
+        <div className="mt-1 flex flex-wrap items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+          {formatPodcastDate(item.lastUpdated) || "Recently updated"}
+          {item.rating ? <span>· Rating {item.rating.toFixed(1)}</span> : null}
+        </div>
+      </div>
+      <span className="hidden shrink-0 text-zinc-400 transition-transform group-hover:translate-x-1 group-hover:text-brand-deep sm:block" aria-hidden="true">
+        →
+      </span>
+    </Link>
+  );
+}
+
 function PodcastRail({
   title,
   description,
@@ -922,18 +998,22 @@ function AgentRail({
             <li key={agent.slug || agent.id}>
               <Link
                 href={`/aixcelerator/agents/${agent.slug || agent.id}`}
-                className="group section-card flex items-center justify-between rounded-lg px-3 py-2.5 transition"
+                className="group section-card flex items-center gap-3 rounded-lg px-3 py-2.5 transition"
               >
-                <span className="truncate pr-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{agent.name}</span>
-                <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 group-hover:text-brand-deep dark:text-zinc-400">
-                  {detailType === "latest"
-                    ? formatPodcastDate(agent.lastUpdated) || "Updated"
-                    : agent.rating
-                    ? `R ${agent.rating.toFixed(1)}`
-                    : agent.usageCount
-                    ? formatUsageLabel(agent.usageCount)
-                    : "Trending"}
-                </span>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#DC2626]/10 dark:bg-[#DC2626]/20">
+                  <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#DC2626]" fill="currentColor" aria-hidden="true">
+                    <path d="M9 2v2H7a2 2 0 00-2 2v2H3v4h2v2a2 2 0 002 2h2v2h2v-2h2v2h2v-2h2a2 2 0 002-2v-2h2V8h-2V6a2 2 0 00-2-2h-2V2h-2v2h-2V2H9zm-2 6h10v8H7V8zm3 2v1h1v-1h-1zm3 0v1h1v-1h-1zm-4 3v1h4v-1H9z" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="line-clamp-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{agent.name}</span>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+                    {formatPodcastDate(agent.lastUpdated) || "Recently updated"}
+                    {agent.category ? <span>· {agent.category}</span> : null}
+                    {agent.rating ? <span>· Rating {agent.rating.toFixed(1)}</span> : null}
+                  </div>
+                </div>
+                <span className="ml-1 shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep dark:text-zinc-400">→</span>
               </Link>
             </li>
           ))}
@@ -966,25 +1046,22 @@ function SkillRail({
             <li key={skill.slug || skill.id}>
               <Link
                 href={`/aixcelerator/skills/${skill.slug || skill.id}`}
-                className="section-card group flex items-center justify-between rounded-lg px-3 py-2"
+                className="section-card group flex items-center gap-3 rounded-lg px-3 py-2.5"
               >
-                <div className="min-w-0">
-                  <div className="line-clamp-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                    {skill.name}
-                  </div>
-                  <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                    {detailType === "latest"
-                      ? formatPodcastDate(skill.lastUpdated) || "Updated"
-                      : skill.rating
-                      ? `R ${skill.rating.toFixed(1)}`
-                      : skill.usageCount
-                      ? formatUsageLabel(skill.usageCount)
-                      : skill.category || "Trending"}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#DC2626]/10 dark:bg-[#DC2626]/20">
+                  <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#DC2626]" fill="currentColor" aria-hidden="true">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="line-clamp-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{skill.name}</span>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+                    {formatPodcastDate(skill.lastUpdated) || "Recently updated"}
+                    {skill.category ? <span>· {skill.category}</span> : null}
+                    {skill.rating ? <span>· Rating {skill.rating.toFixed(1)}</span> : null}
                   </div>
                 </div>
-                <span className="ml-3 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep">
-                  →
-                </span>
+                <span className="ml-1 shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep dark:text-zinc-400">→</span>
               </Link>
             </li>
           ))}
@@ -1059,18 +1136,22 @@ function McpRail({
             <li key={mcp.slug || mcp.id}>
               <Link
                 href={`/aixcelerator/mcp/${mcp.slug || mcp.id}`}
-                className="section-card group flex items-center justify-between rounded-lg px-3 py-2"
+                className="section-card group flex items-center gap-3 rounded-lg px-3 py-2.5"
               >
-                <span className="truncate pr-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{mcp.name}</span>
-                <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 group-hover:text-brand-deep dark:text-zinc-400">
-                  {detailType === "latest"
-                    ? formatPodcastDate(mcp.lastUpdated) || "Updated"
-                    : mcp.rating
-                    ? `R ${mcp.rating.toFixed(1)}`
-                    : mcp.usageCount
-                    ? formatUsageLabel(mcp.usageCount)
-                    : "Trending"}
-                </span>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#DC2626]/10 dark:bg-[#DC2626]/20">
+                  <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#DC2626]" fill="currentColor" aria-hidden="true">
+                    <path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm14 1.5a1 1 0 10-2 0 1 1 0 002 0zM4 15a2 2 0 012-2h12a2 2 0 012 2v3a2 2 0 01-2 2H6a2 2 0 01-2-2v-3zm14 1.5a1 1 0 10-2 0 1 1 0 002 0z" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="line-clamp-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{mcp.name}</span>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+                    {formatPodcastDate(mcp.lastUpdated) || "Recently updated"}
+                    {mcp.category ? <span>· {mcp.category}</span> : null}
+                    {mcp.rating ? <span>· Rating {mcp.rating.toFixed(1)}</span> : null}
+                  </div>
+                </div>
+                <span className="ml-1 shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-deep dark:text-zinc-400">→</span>
               </Link>
             </li>
           ))}
@@ -1154,6 +1235,7 @@ function toHomeAgentSignal(item: Agent): HomeAgentSignal {
     id: item.id,
     slug: item.slug,
     name: item.name,
+    category: item.department?.category?.name || item.department?.name || item.industry || null,
     lastUpdated: item.lastUpdated || null,
     rating: typeof item.rating === "number" ? item.rating : null,
     usageCount: typeof item.usageCount === "number" ? item.usageCount : null,
@@ -1188,6 +1270,7 @@ function toHomeMcpSignal(item: MCPServer): HomeMcpSignal {
     id: item.id,
     slug: item.slug,
     name: item.name,
+    category: item.category || item.industry || null,
     lastUpdated: item.lastUpdated || null,
     rating: typeof item.rating === "number" ? item.rating : null,
     usageCount: typeof item.usageCount === "number" ? item.usageCount : null,

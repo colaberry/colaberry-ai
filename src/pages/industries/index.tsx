@@ -4,7 +4,7 @@ import Head from "next/head";
 import PremiumMediaCard from "../../components/PremiumMediaCard";
 import EnterpriseCtaBand from "../../components/EnterpriseCtaBand";
 import EnterprisePageHero from "../../components/EnterprisePageHero";
-import { heroImage } from "../../lib/media";
+import SectionHeader from "../../components/SectionHeader";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
 import { fetchAgents, fetchUseCases } from "../../lib/cms";
 
@@ -49,15 +49,16 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
     canonical: buildCanonical("/industries"),
   };
 
+  const iconProps = { width: 28, height: 28, viewBox: "0 0 24 24", fill: "none", stroke: "#DC2626", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   const industries = [
-    { name: "Agriculture", slug: "agriculture", image: heroImage("hero-agents-cinematic.webp") },
-    { name: "Energy", slug: "energy", image: heroImage("hero-updates-cinematic.webp") },
-    { name: "Utilities", slug: "utilities", image: heroImage("hero-platform-cinematic.webp") },
-    { name: "Healthcare & Life Sciences", slug: "healthcare-life-sciences", image: heroImage("hero-resources-cinematic.webp") },
-    { name: "Climate Tech", slug: "climate-tech", image: heroImage("hero-industries-cinematic.webp") },
-    { name: "Manufacturing", slug: "manufacturing", image: heroImage("hero-solutions-cinematic.webp") },
-    { name: "Fintech", slug: "fintech", image: heroImage("hero-mcp-cinematic.webp") },
-    { name: "Supply Chain", slug: "supply-chain", image: heroImage("hero-platform-cinematic.webp") },
+    { name: "Agriculture", slug: "agriculture", icon: <svg {...iconProps}><path d="M12 22V8" /><path d="M5 12H2a10 10 0 0020 0h-3" /><path d="M8 5.2C9 4 10.5 3 12 3c1.5 0 3 1 4 2.2" /></svg> },
+    { name: "Energy", slug: "energy", icon: <svg {...iconProps}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg> },
+    { name: "Utilities", slug: "utilities", icon: <svg {...iconProps}><path d="M6 3v18" /><path d="M18 3v18" /><path d="M6 8h12" /><path d="M6 16h12" /><circle cx="12" cy="12" r="2" /></svg> },
+    { name: "Healthcare & Life Sciences", slug: "healthcare-life-sciences", icon: <svg {...iconProps}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg> },
+    { name: "Climate Tech", slug: "climate-tech", icon: <svg {...iconProps}><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg> },
+    { name: "Manufacturing", slug: "manufacturing", icon: <svg {...iconProps}><rect x="2" y="6" width="20" height="12" rx="2" /><path d="M12 12h.01" /><path d="M17 12h.01" /><path d="M7 12h.01" /></svg> },
+    { name: "Fintech", slug: "fintech", icon: <svg {...iconProps}><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg> },
+    { name: "Supply Chain", slug: "supply-chain", icon: <svg {...iconProps}><rect x="1" y="3" width="15" height="13" rx="2" /><path d="M16 8h4a2 2 0 012 2v6a2 2 0 01-2 2H6" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg> },
   ];
   const industryHighlights = [
     {
@@ -65,28 +66,28 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
       title: "Outcome stories",
       description: "Case studies with measurable outcomes and delivery context.",
       meta: "Outcomes",
-      image: heroImage("hero-solutions-cinematic.webp"),
+      icon: <svg {...iconProps}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>,
     },
     {
-      href: "/solutions",
+      href: "/aixcelerator/skills",
       title: "Workspace templates",
       description: "Repeatable industry-aligned playbooks and signal feeds.",
       meta: "Playbooks",
-      image: heroImage("hero-platform-cinematic.webp"),
+      icon: <svg {...iconProps}><path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" /></svg>,
     },
     {
       href: "/updates",
       title: "Domain signals",
       description: "Key data sources, workflows, and AI surfaces per industry.",
       meta: "Signals",
-      image: heroImage("hero-updates-cinematic.webp"),
+      icon: <svg {...iconProps}><path d="M5.636 18.364a9 9 0 010-12.728" /><path d="M8.464 15.536a5 5 0 010-7.072" /><circle cx="12" cy="12" r="1" fill="#DC2626" stroke="none" /></svg>,
     },
     {
       href: "/aixcelerator/agents",
       title: "Governed delivery",
       description: "Ownership, approvals, and evaluation-ready metadata.",
       meta: "Governance",
-      image: heroImage("hero-agents-cinematic.webp"),
+      icon: <svg {...iconProps}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>,
     },
   ];
 
@@ -116,7 +117,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
         title="Industries"
         description="Domain-led delivery surfaces for sector-specific agents, MCP patterns, use cases, and outcomes."
         chips={["Agriculture", "Energy", "Utilities", "Healthcare", "Manufacturing", "Supply chain"]}
-        primaryAction={{ label: "Explore solutions", href: "/solutions" }}
+        primaryAction={{ label: "Explore agents", href: "/aixcelerator/agents" }}
         secondaryAction={{ label: "Browse case studies", href: "/resources/case-studies", variant: "secondary" }}
         metrics={[
           { label: "Industry tracks", value: `${industries.length}`, note: "Current vertical delivery surfaces." },
@@ -125,21 +126,36 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
         ]}
       />
 
-      <section className="reveal stagger-grid section-spacing grid gap-3 sm:grid-cols-2">
-        {industryHighlights.map((item) => (
-          <PremiumMediaCard
-            key={item.title}
-            href={item.href}
-            title={item.title}
-            description={item.description}
-            meta={item.meta}
-            image={item.image}
-            size="sm"
-          />
-        ))}
+      <section className="reveal section-spacing">
+        <SectionHeader
+          kicker="Capabilities"
+          title="What each workspace delivers"
+          description="Outcome stories, workspace templates, domain signals, and governed delivery — all domain-adapted."
+          size="md"
+        />
+        <div className="stagger-grid mt-6 grid gap-3 sm:grid-cols-2">
+          {industryHighlights.map((item) => (
+            <PremiumMediaCard
+              key={item.title}
+              href={item.href}
+              title={item.title}
+              description={item.description}
+              meta={item.meta}
+              icon={item.icon}
+              size="sm"
+            />
+          ))}
+        </div>
       </section>
 
-      <div className="reveal stagger-grid section-spacing grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="reveal section-spacing">
+        <SectionHeader
+          kicker="Verticals"
+          title="Industry workspaces"
+          description="Sector-specific delivery surfaces with curated agents, MCP servers, and domain intelligence."
+          size="md"
+        />
+        <div className="stagger-grid mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {industries.map((item) => (
           <PremiumMediaCard
             key={item.slug}
@@ -154,18 +170,19 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
               return parts.join(" \u00b7 ") + " in the catalog.";
             })()}
             meta="Industry"
-            image={item.image}
+            icon={item.icon}
             size="sm"
           />
         ))}
-      </div>
+        </div>
+      </section>
 
       <EnterpriseCtaBand
         kicker="Industry expansion"
         title="Move from catalog to outcome with domain-ready AI delivery"
         description="Combine industry context, governed agents, and MCP integrations into repeatable playbooks that teams can deploy with confidence."
-        primaryHref="/solutions"
-        primaryLabel="Explore solutions"
+        primaryHref="/aixcelerator/agents"
+        primaryLabel="Explore agents"
         secondaryHref="/resources/case-studies"
         secondaryLabel="Browse case studies"
       />

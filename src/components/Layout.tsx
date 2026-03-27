@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import {
@@ -1129,21 +1129,21 @@ export default function Layout({ children }: { children: ReactNode }) {
             </button>
             <Link href="/" className="flex min-w-0 items-center gap-2">
               <span className="inline-flex items-center justify-center px-1">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/brand/colaberry-ai-logo.svg"
                   alt="Colaberry.AI"
                   width={260}
                   height={60}
-                  priority
                   className="brand-logo-light h-8 w-auto sm:h-9 lg:h-10"
                 />
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/brand/colaberry-ai-logo-dark.svg"
                   alt=""
                   aria-hidden="true"
                   width={260}
                   height={60}
-                  priority
                   className="brand-logo-dark h-8 w-auto sm:h-9 lg:h-10"
                 />
               </span>
@@ -1542,21 +1542,21 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="max-w-sm flex-shrink-0">
               {/* Logo */}
               <span className="flex items-center">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/brand/colaberry-ai-logo.svg"
                   alt="Colaberry AI"
                   width={130}
                   height={28}
-                  priority
                   className="brand-logo-light h-7 w-auto"
                 />
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/brand/colaberry-ai-logo-dark.svg"
                   alt=""
                   aria-hidden="true"
                   width={130}
                   height={28}
-                  priority
                   className="brand-logo-dark h-7 w-auto"
                 />
               </span>
@@ -1621,21 +1621,21 @@ export default function Layout({ children }: { children: ReactNode }) {
 
               {/* ── Watermark logo — right-aligned ── */}
               <div className="footer-watermark mt-8 w-full max-w-sm lg:max-w-md" aria-hidden="true">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/brand/colaberry-ai-watermark.svg"
                   alt=""
                   width={2259}
                   height={476}
                   className="brand-logo-light h-auto w-full lg:ml-auto"
-                  priority={false}
                 />
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/brand/colaberry-ai-watermark-dark.svg"
                   alt=""
                   width={2259}
                   height={476}
                   className="brand-logo-dark h-auto w-full lg:ml-auto"
-                  priority={false}
                 />
               </div>
             </div>

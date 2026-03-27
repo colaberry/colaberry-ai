@@ -9,7 +9,8 @@
 - **Deployment:** Docker + GCP Cloud Run (prod: `colaberry-ai-prod`, CMS: `colaberry-ai-cms-prod`)
 - **Newsletter:** Substack integration (colaberry.online) — form POSTs to Substack API
 - **Podcast Transcripts:** Deepgram API (free Pay-As-You-Go, $200 credit)
-- **Default Theme:** Dark mode (enterprise standard, like Vizuara/Linear)
+- **Default Theme:** Dark mode (enterprise standard)
+- **Domain:** colaberry.ai (live, Cloud Run prod)
 
 ## Design System — Monochrome + Coral Accent
 
@@ -61,8 +62,16 @@
 - `.chip-neutral` — default filter (zinc scale)
 - `.detail-section` — content sections on detail pages
 
-**SkillNet Pattern (standard for all content types):**
+**3-Layer Ontology Pattern (standard for all content types):**
 The 3-layer ontology approach (Taxonomy → Relation Graph → Collections) is Colaberry's unique knowledge graph method. All 5 content types use generic templates (`OntologyPageTemplate`, `GraphPageTemplate`, `CollectionsPageTemplate`, `CollectionDetailTemplate`) with `ContentOntologyConfig`.
+
+**Hidden Routes (RELEASE_HIDDEN_PATHS in Layout.tsx):**
+These routes exist but are hidden from navigation until approved:
+- `/aixcelerator/tools` — Tools content type
+- `/use-cases` — Use Cases listing
+- `/solutions` — Solutions page
+- `/resources/articles` — Articles listing
+- `/resources/case-studies` — Case Studies listing
 
 ## Project Structure
 ```
@@ -105,6 +114,8 @@ colaberry.ai is built for AEO — optimized for AI answer engines (ChatGPT, Clau
 | FAQ Schema | `src/pages/index.tsx` | FAQPage JSON-LD for direct AI citation |
 | Quick Answer blocks | `src/components/AeoQuickAnswer.tsx` | Answer-optimized paragraphs on catalog pages |
 | Bot Defense | `src/lib/bot-defense.ts` | Multi-layer protection for forms (AEO-safe) |
+| Category metadata | `src/pages/index.tsx` | Homepage signal cards show category for structured AI parsing |
+| Industries | `src/pages/industries/` | 8 domain-specific workspaces with agent/use-case counts |
 
 ## Security Agents
 Ten specialized agents in `.claude/agents/` for continuous auditing:
@@ -146,7 +157,7 @@ Reusable workflows in `.claude/skills/`:
 | `/new-page` | Scaffold a new page following all standards |
 
 ## Git
-- **Branch:** `dev`
+- **Branch:** `dev` (main development), `Release-1.0` (production release)
 - **Remote:** https://github.com/saitejesh-cyber/colaberry-ai-fork
 
 ## See Also

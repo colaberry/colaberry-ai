@@ -71,12 +71,14 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     lines.push(`- ${name} | ${SITE}/aixcelerator/skills/${slug} | ${desc}`);
   }
 
-  lines.push("", `## Use Cases (${useCases.length})`, "");
-  for (const u of useCases as CmsItem[]) {
-    const name = u.name || u.title || "Untitled";
-    const slug = u.slug || "";
-    const desc = (u.description || u.summary || "").replace(/\n/g, " ").slice(0, 200);
-    lines.push(`- ${name} | ${SITE}/use-cases/${slug} | ${desc}`);
+  // Use Cases — content exists but pages are not yet public
+  if (useCases.length > 0) {
+    lines.push("", `## Use Cases (${useCases.length}) — coming soon`, "");
+    for (const u of useCases as CmsItem[]) {
+      const name = u.name || u.title || "Untitled";
+      const desc = (u.description || u.summary || "").replace(/\n/g, " ").slice(0, 200);
+      lines.push(`- ${name} | ${desc}`);
+    }
   }
 
   lines.push("", `## Podcast Episodes (${podcasts.length})`, "");
@@ -87,12 +89,14 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     lines.push(`- ${title} | ${SITE}/resources/podcasts/${slug} | ${desc}`);
   }
 
-  lines.push("", `## Articles (${articles.length})`, "");
-  for (const a of articles as CmsItem[]) {
-    const title = a.title || "Untitled";
-    const slug = a.slug || "";
-    const desc = (a.description || a.summary || "").replace(/\n/g, " ").slice(0, 200);
-    lines.push(`- ${title} | ${SITE}/resources/articles/${slug} | ${desc}`);
+  // Articles — content exists but pages are not yet public
+  if (articles.length > 0) {
+    lines.push("", `## Articles (${articles.length}) — coming soon`, "");
+    for (const a of articles as CmsItem[]) {
+      const title = a.title || "Untitled";
+      const desc = (a.description || a.summary || "").replace(/\n/g, " ").slice(0, 200);
+      lines.push(`- ${title} | ${desc}`);
+    }
   }
 
   lines.push("", `## Books (${books.length})`, "");
@@ -102,11 +106,14 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     lines.push(`- ${title} | ${SITE}/resources/books | ${desc}`);
   }
 
-  lines.push("", `## Case Studies (${caseStudies.length})`, "");
-  for (const c of caseStudies as CmsItem[]) {
-    const title = c.title || "Untitled";
-    const desc = (c.description || c.summary || "").replace(/\n/g, " ").slice(0, 200);
-    lines.push(`- ${title} | ${SITE}/resources/case-studies | ${desc}`);
+  // Case Studies — content exists but pages are not yet public
+  if (caseStudies.length > 0) {
+    lines.push("", `## Case Studies (${caseStudies.length}) — coming soon`, "");
+    for (const c of caseStudies as CmsItem[]) {
+      const title = c.title || "Untitled";
+      const desc = (c.description || c.summary || "").replace(/\n/g, " ").slice(0, 200);
+      lines.push(`- ${title} | ${desc}`);
+    }
   }
 
   lines.push("", "---", `# End of index. Total items: ${agents.length + mcpServers.length + skills.length + useCases.length + podcasts.length + articles.length + books.length + caseStudies.length}`);
