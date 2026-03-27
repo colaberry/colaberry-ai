@@ -1602,14 +1602,18 @@ function formatCountedValue(current: number, original: string): string {
   return `${prefix}${Math.round(current)}${unit}${rest}`;
 }
 
+const prefersReducedMotion =
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 function useCountUp(target: number, duration: number, started: boolean): number {
   const [current, setCurrent] = useState(0);
   useEffect(() => {
     if (!started || target === 0) return;
     // Respect prefers-reduced-motion
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setCurrent(target);
-      return;
+    if (prefersReducedMotion) {
+      const id = requestAnimationFrame(() => setCurrent(target));
+      return () => cancelAnimationFrame(id);
     }
     const start = performance.now();
     let raf: number;

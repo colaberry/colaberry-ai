@@ -6,7 +6,7 @@
 import type { GetStaticProps, InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import SectionHeader from "../../components/SectionHeader";
 import EnterpriseCtaBand from "../../components/EnterpriseCtaBand";
@@ -51,9 +51,29 @@ const NODE_POSITIONS: Partial<Record<ContentTypeName, { x: number; y: number }>>
   podcast: { x: 520, y: 320 },
 };
 
+function useIsDark() {
+  const [dark, setDark] = useState(() =>
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+  );
+  useEffect(() => {
+    const el = document.documentElement;
+    const obs = new MutationObserver(() => setDark(el.classList.contains("dark")));
+    obs.observe(el, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
+  return dark;
+}
+
 function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, number> }) {
   const [hoveredType, setHoveredType] = useState<ContentTypeName | null>(null);
   const [hoveredEdge, setHoveredEdge] = useState<number | null>(null);
+  const isDark = useIsDark();
+  // Dark mode aware colors for inline SVG
+  const nodeStroke = isDark ? "#a1a1aa" : "#52525b";
+  const nodeFill = isDark ? "#3f3f46" : "#3f3f46";
+  const nodeFillOpacity = isDark ? 0.35 : 0.15;
+  const nodeText = isDark ? "#e4e4e7" : "#a1a1aa";
+  const edgeStroke = isDark ? "#a1a1aa" : "#71717a";
 
   const svgWidth = 720;
   const svgHeight = 500;
@@ -95,10 +115,10 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               <line
                 x1={from.x} y1={from.y}
                 x2={to.x} y2={to.y}
-                stroke={isHovered ? "#DC2626" : "#71717a"}
-                strokeWidth={isHovered ? 2.5 : 1}
+                stroke={isHovered ? "#DC2626" : edgeStroke}
+                strokeWidth={isHovered ? 2.5 : 1.2}
                 strokeDasharray="6,3"
-                opacity={isHovered ? 0.9 : 0.3}
+                opacity={isHovered ? 0.9 : (isDark ? 0.5 : 0.3)}
                 className="kg-edge"
               />
               {isHovered && (
@@ -145,18 +165,18 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               <circle
                 cx={pos.x} cy={pos.y} r="36"
                 fill="none"
-                stroke={isHovered ? "#DC2626" : "#52525b"}
-                strokeWidth={isHovered ? 2 : 1}
-                opacity={isHovered ? 1 : 0.6}
+                stroke={isHovered ? "#DC2626" : nodeStroke}
+                strokeWidth={isHovered ? 2 : 1.2}
+                opacity={isHovered ? 1 : 0.8}
                 filter="url(#kgNodeShadow)"
               />
-              <circle cx={pos.x} cy={pos.y} r="36" fill={isHovered ? "#DC2626" : "#3f3f46"} opacity={isHovered ? 0.06 : 0.15} />
+              <circle cx={pos.x} cy={pos.y} r="36" fill={isHovered ? "#DC2626" : nodeFill} opacity={isHovered ? 0.08 : nodeFillOpacity} />
 
               {/* Icon */}
-              <ContentTypeIconSvg type={type} x={pos.x} y={pos.y - 4} size={20} fill={isHovered ? "#DC2626" : "#a1a1aa"} />
+              <ContentTypeIconSvg type={type} x={pos.x} y={pos.y - 4} size={20} fill={isHovered ? "#DC2626" : nodeText} />
 
               {/* Label */}
-              <text x={pos.x} y={pos.y + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={isHovered ? "#DC2626" : "#a1a1aa"}>
+              <text x={pos.x} y={pos.y + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={isHovered ? "#DC2626" : nodeText}>
                 {meta.label}
               </text>
 

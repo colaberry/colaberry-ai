@@ -47,13 +47,17 @@ function parseStatNum(value: string | number): { target: number; format: (n: num
   return { target: actualTarget, format };
 }
 
+const prefersReducedMotion =
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 function useCountUp(target: number, duration: number, started: boolean): number {
   const [current, setCurrent] = useState(0);
   useEffect(() => {
     if (!started || target === 0) return;
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setCurrent(target);
-      return;
+    if (prefersReducedMotion) {
+      const id = requestAnimationFrame(() => setCurrent(target));
+      return () => cancelAnimationFrame(id);
     }
     const start = performance.now();
     let raf: number;

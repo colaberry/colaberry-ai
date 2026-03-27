@@ -6,7 +6,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SectionHeader from "./SectionHeader";
 import EnterpriseCtaBand from "./EnterpriseCtaBand";
 import type { ContentOntologyConfig, ContentCollection } from "../lib/ontologyTypes";
@@ -25,6 +25,35 @@ export type OntologyPageTemplateProps = {
   /** Representative edges between items */
   representativeEdges?: { from: number; to: number; type: string }[];
 };
+
+/* ── Dark mode detection for SVG inline colors ──────────────────────── */
+
+function useIsDark() {
+  const [dark, setDark] = useState(() =>
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+  );
+  useEffect(() => {
+    const el = document.documentElement;
+    const obs = new MutationObserver(() => setDark(el.classList.contains("dark")));
+    obs.observe(el, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
+  return dark;
+}
+
+/** SVG color tokens that swap between light and dark */
+function svgColors(dark: boolean) {
+  return {
+    nodeFill: dark ? "#3f3f46" : "#3f3f46",       // zinc-700
+    nodeFillOpacity: dark ? 0.35 : 0.12,
+    nodeStroke: dark ? "#a1a1aa" : "#52525b",      // zinc-400 / zinc-600
+    nodeText: dark ? "#e4e4e7" : "#52525b",        // zinc-200 / zinc-600
+    nodeTextMuted: dark ? "#a1a1aa" : "#71717a",   // zinc-400 / zinc-500
+    edgeStroke: dark ? "#a1a1aa" : "#52525b",      // zinc-400 / zinc-600
+    edgeOpacity: dark ? 0.5 : 0.35,
+    legendFill: dark ? "#71717a" : "#52525b",
+  };
+}
 
 /* ── SVG Ontology Diagram ─────────────────────────────────────────────── */
 
@@ -50,6 +79,8 @@ function OntologyDiagram({
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
   const [hoveredCollection, setHoveredCollection] = useState<string | null>(null);
 
+  const isDark = useIsDark();
+  const c = svgColors(isDark);
   const categories = config.categories.filter((c) => c.slug !== "other").slice(0, 6);
   const topCollections = collections.slice(0, 6);
   const relTypes = config.relationTypes;
@@ -93,10 +124,12 @@ function OntologyDiagram({
 
         {/* Background */}
         <rect width={svgWidth} height={svgHeight} rx="16" className="fill-white dark:fill-zinc-900" />
+        {/* Dark mode: subtle lighter overlay so content is distinguishable from page bg */}
+        <rect width={svgWidth} height={svgHeight} rx="16" className="fill-transparent dark:fill-zinc-800/30" />
 
         {/* ─── LAYER 1: TAXONOMY ─── */}
-        <rect x="16" y="12" width={svgWidth - 32} height="220" rx="12" className="fill-zinc-50/80 dark:fill-zinc-800/20" filter="url(#layerShadow)" />
-        <rect x="16" y="12" width={svgWidth - 32} height="220" rx="12" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-700/40" strokeWidth="1" />
+        <rect x="16" y="12" width={svgWidth - 32} height="220" rx="12" className="fill-zinc-50/80 dark:fill-zinc-700/25" filter="url(#layerShadow)" />
+        <rect x="16" y="12" width={svgWidth - 32} height="220" rx="12" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-600/40" strokeWidth="1" />
 
         {/* Layer label */}
         <rect x="28" y="22" width={config.label.length * 8.5 + 100} height="22" rx="11" className="fill-zinc-100 dark:fill-zinc-700/40" />
@@ -128,10 +161,10 @@ function OntologyDiagram({
               onMouseLeave={() => setHoveredCategory(null)}
               style={{ cursor: "pointer" }}
             >
-              <line x1={svgWidth / 2} y1="90" x2={x + catWidth / 2} y2={y} stroke={isHovered ? "#DC2626" : "#52525b"} strokeWidth="1" strokeDasharray="4,3" opacity={isHovered ? 0.5 : 0.2} />
-              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill={isHovered ? "#DC2626" : "#3f3f46"} opacity={isHovered ? 0.08 : 0.12} />
-              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill="none" stroke={isHovered ? "#DC2626" : "#52525b"} strokeWidth={isHovered ? 1.5 : 0.8} filter="url(#nodeShadow)" />
-              <text x={x + catWidth / 2} y={y + 20} textAnchor="middle" dominantBaseline="middle" fontSize="11.5" fontWeight="600" fill={isHovered ? "#DC2626" : "#a1a1aa"}>{cat.label}</text>
+              <line x1={svgWidth / 2} y1="90" x2={x + catWidth / 2} y2={y} stroke={isHovered ? "#DC2626" : c.nodeStroke} strokeWidth="1" strokeDasharray="4,3" opacity={isHovered ? 0.5 : 0.3} />
+              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill={isHovered ? "#DC2626" : c.nodeFill} opacity={isHovered ? 0.12 : c.nodeFillOpacity} />
+              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill="none" stroke={isHovered ? "#DC2626" : c.nodeStroke} strokeWidth={isHovered ? 1.5 : 1} filter="url(#nodeShadow)" />
+              <text x={x + catWidth / 2} y={y + 20} textAnchor="middle" dominantBaseline="middle" fontSize="11.5" fontWeight="600" fill={isHovered ? "#DC2626" : c.nodeText}>{cat.label}</text>
               <text x={x + catWidth / 2} y={y + 50} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="10" fontWeight="500">{count.toLocaleString()}</text>
             </g>
           );
@@ -158,8 +191,8 @@ function OntologyDiagram({
         <line x1={svgWidth / 2} y1="234" x2={svgWidth / 2} y2="260" stroke="#DC2626" opacity="0.3" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
 
         {/* ─── LAYER 2: RELATION GRAPH ─── */}
-        <rect x="16" y="264" width={svgWidth - 32} height="160" rx="12" className="fill-zinc-50/80 dark:fill-zinc-800/20" filter="url(#layerShadow)" />
-        <rect x="16" y="264" width={svgWidth - 32} height="160" rx="12" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-700/40" strokeWidth="1" />
+        <rect x="16" y="264" width={svgWidth - 32} height="160" rx="12" className="fill-zinc-50/80 dark:fill-zinc-700/25" filter="url(#layerShadow)" />
+        <rect x="16" y="264" width={svgWidth - 32} height="160" rx="12" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-600/40" strokeWidth="1" />
 
         {/* Layer label pill */}
         <rect x="28" y="274" width={config.labelSingular.length * 8.5 + 140} height="22" rx="11" className="fill-zinc-100 dark:fill-zinc-700/40" />
@@ -170,7 +203,7 @@ function OntologyDiagram({
         {/* Edge legend — right-aligned */}
         {relTypes.slice(0, 4).map((rel, i) => (
           <g key={rel.type}>
-            <line x1={490 + i * 115} y1="284" x2={514 + i * 115} y2="284" stroke="#52525b" strokeWidth="2" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} opacity="0.5" />
+            <line x1={490 + i * 115} y1="284" x2={514 + i * 115} y2="284" stroke={c.edgeStroke} strokeWidth="2" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} opacity="0.6" />
             <text x={519 + i * 115} y="288" fontSize="9.5" fontWeight="500" className="fill-zinc-500 dark:fill-zinc-400">{rel.label}</text>
           </g>
         ))}
@@ -186,11 +219,11 @@ function OntologyDiagram({
               key={i}
               x1={from.x + 55} y1={from.y + 310}
               x2={to.x + 55} y2={to.y + 310}
-              stroke="#52525b"
+              stroke={c.edgeStroke}
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeDasharray={rel?.directional ? "6,4" : "none"}
-              opacity="0.35"
+              opacity={c.edgeOpacity}
               className={rel?.directional ? "animated-edge" : undefined}
             />
           );
@@ -200,7 +233,7 @@ function OntologyDiagram({
         {representativeItems.map((item, i) => {
           const isHovered = hoveredItem === i;
           const nodeWidth = item.name.length * 8 + 24;
-          const nodeColor = isHovered ? "#DC2626" : "#71717a";
+          const nodeColor = isHovered ? "#DC2626" : c.nodeTextMuted;
           return (
             <g
               key={item.slug}
@@ -213,7 +246,7 @@ function OntologyDiagram({
                 x={item.x} y={item.y + 300}
                 width={nodeWidth} height="30" rx="8"
                 fill={nodeColor}
-                opacity={isHovered ? 0.12 : 0.04}
+                opacity={isHovered ? 0.15 : (isDark ? 0.12 : 0.04)}
               />
               <rect
                 x={item.x} y={item.y + 300}
@@ -235,8 +268,8 @@ function OntologyDiagram({
         <line x1={svgWidth / 2} y1="426" x2={svgWidth / 2} y2="452" stroke="#DC2626" opacity="0.3" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
 
         {/* ─── LAYER 3: COLLECTION LIBRARY ─── */}
-        <rect x="16" y="456" width={svgWidth - 32} height="130" rx="12" className="fill-zinc-50/80 dark:fill-zinc-800/20" filter="url(#layerShadow)" />
-        <rect x="16" y="456" width={svgWidth - 32} height="130" rx="12" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-700/40" strokeWidth="1" />
+        <rect x="16" y="456" width={svgWidth - 32} height="130" rx="12" className="fill-zinc-50/80 dark:fill-zinc-700/25" filter="url(#layerShadow)" />
+        <rect x="16" y="456" width={svgWidth - 32} height="130" rx="12" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-600/40" strokeWidth="1" />
 
         {/* Layer label pill */}
         <rect x="28" y="466" width={config.labelSingular.length * 8.5 + 150} height="22" rx="11" className="fill-zinc-100 dark:fill-zinc-700/40" />
@@ -271,9 +304,9 @@ function OntologyDiagram({
         <rect x="16" y="598" width="240" height="72" rx="10" className="fill-white dark:fill-zinc-800/50" filter="url(#layerShadow)" />
         <rect x="16" y="598" width="240" height="72" rx="10" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-700/40" strokeWidth="0.8" />
         {[
-          { shape: "circle" as const, label: "Category", fill: "#52525b" },
-          { shape: "rect" as const, label: config.labelSingular, fill: "#52525b" },
-          { shape: "dashed-rect" as const, label: "Collection", fill: "#71717a" },
+          { shape: "circle" as const, label: "Category", fill: c.legendFill },
+          { shape: "rect" as const, label: config.labelSingular, fill: c.legendFill },
+          { shape: "dashed-rect" as const, label: "Collection", fill: c.nodeTextMuted },
         ].map((item, i) => (
           <g key={item.label}>
             {item.shape === "circle" && <circle cx="34" cy={616 + i * 18} r="5" fill={item.fill} opacity="0.6" />}
@@ -284,7 +317,7 @@ function OntologyDiagram({
         ))}
         {relTypes.slice(0, 4).map((rel, i) => (
           <g key={rel.type}>
-            <line x1="140" y1={616 + i * 18} x2="164" y2={616 + i * 18} stroke="#52525b" strokeWidth="2" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} opacity="0.5" />
+            <line x1="140" y1={616 + i * 18} x2="164" y2={616 + i * 18} stroke={c.edgeStroke} strokeWidth="2" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} opacity="0.6" />
             <text x="172" y={620 + i * 18} fontSize="10.5" fontWeight="500" className="fill-zinc-500 dark:fill-zinc-400">{rel.label}</text>
           </g>
         ))}
