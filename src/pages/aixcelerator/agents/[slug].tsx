@@ -5,10 +5,8 @@ import sanitizeHtml from "sanitize-html";
 import Layout from "../../../components/Layout";
 import SectionHeader from "../../../components/SectionHeader";
 import StickyTabBar from "../../../components/StickyTabBar";
-import SectionHeading from "../../../components/mcp/SectionHeading";
-import BulletList from "../../../components/mcp/BulletList";
-import SpecCard from "../../../components/mcp/SpecCard";
 import EnterprisePageHero from "../../../components/EnterprisePageHero";
+import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
 import AgentCard from "../../../components/AgentCard";
 import { Agent, fetchAgentBySlug, fetchRelatedAgents } from "../../../lib/cms";
 
@@ -43,7 +41,7 @@ export const getStaticProps: GetStaticProps<AgentDetailProps> = async ({ params 
     let relatedAgents: Agent[] = [];
     try {
       const visibilityFilter = allowPrivate ? undefined : "public";
-      relatedAgents = await fetchRelatedAgents(agent, { visibility: visibilityFilter, limit: 3 });
+      relatedAgents = await fetchRelatedAgents(agent, { visibility: visibilityFilter, limit: 6 });
     } catch {
       relatedAgents = [];
     }
@@ -60,12 +58,6 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
   const isPrivate = (agent.visibility || "public").toLowerCase() === "private";
   const status = agent.status || "Unknown";
   const statusKey = status.toLowerCase();
-  const statusHint =
-    statusKey === "active" || statusKey === "live"
-      ? "Production-ready or actively deployed."
-      : statusKey === "beta"
-        ? "In pilot with limited availability."
-        : "Discovery or planning stage.";
   const source = agent.source || "internal";
   const sourceLabel =
     source === "external" ? "External" : source === "partner" ? "Partner" : "Internal";
@@ -111,18 +103,12 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
   const useCases = parseList(agent.useCases);
   const limitations = parseList(agent.limitations);
   const requirements = parseList(agent.requirements);
-  const hasOverviewSection = Boolean(agent.whatItDoes || agent.longDescription || outcomes.length);
-  const hasValueSection = keyBenefits.length > 0 || limitations.length > 0;
-  const hasExecutionSection = useCases.length > 0 || Boolean(agent.exampleWorkflow) || requirements.length > 0;
-  const hasCoreSection = coreTasks.length > 0 || executionModes.length > 0;
-  const hasInputOutputSection = inputs.length > 0 || outputs.length > 0;
-  const hasOrchestrationSection = orchestrationSteps.length > 0 || securityItems.length > 0;
-  const hasToolsSection = tools.length > 0 || companyNames.length > 0;
-  const hasResourcesSection = Boolean(agent.docsUrl || agent.demoUrl || agent.changelogUrl);
-  const hasAdoptionSection = Boolean(agent.usageCount || agent.rating || agent.verified);
-  const visibilityModeNote = allowPrivate
-    ? "Private preview mode enabled for this environment."
-    : "Public-only mode in this environment.";
+
+  const hasAboutContent = Boolean(agent.whatItDoes || agent.longDescription || keyBenefits.length || useCases.length || outcomes.length || limitations.length);
+  const hasWorkflow = orchestrationSteps.length > 0;
+  const hasInputOutput = inputs.length > 0 || outputs.length > 0;
+  const hasIntegrations = tools.length > 0 || companyNames.length > 0;
+
   const keywords = [agent.industry, ...tagNames, ...companyNames].filter(Boolean).join(", ");
   const jsonLd = {
     "@context": "https://schema.org",
@@ -130,8 +116,10 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
     name: agent.name,
     description: metaDescription,
     applicationCategory: "AI Agent",
+    applicationSubCategory: agent.industry || "Enterprise AI",
     operatingSystem: "Web",
     url: canonicalUrl,
+    featureList: [...coreTasks, ...keyBenefits].filter(Boolean).join(", ") || undefined,
     publisher: {
       "@type": "Organization",
       name: "Colaberry AI",
@@ -142,7 +130,6 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
     additionalProperty: [
       { "@type": "PropertyValue", name: "Industry", value: agent.industry || "General" },
       { "@type": "PropertyValue", name: "Status", value: status },
-      { "@type": "PropertyValue", name: "Visibility", value: isPrivate ? "Private" : "Public" },
       { "@type": "PropertyValue", name: "Source", value: sourceDisplay },
       { "@type": "PropertyValue", name: "Verified", value: agent.verified ? "Yes" : "No" },
     ],
@@ -157,6 +144,15 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
     ],
   };
 
+  /* Build dynamic tabs */
+  const tabs = [
+    { id: "about", label: "About the Agent" },
+    ...(hasWorkflow ? [{ id: "how-it-works", label: "How It Works" }] : []),
+    ...(hasInputOutput ? [{ id: "inputs-outputs", label: "Inputs & Outputs" }] : []),
+    ...(hasIntegrations ? [{ id: "integrations", label: "Integrations" }] : []),
+    { id: "specs", label: "Specs" },
+  ];
+
   return (
     <Layout>
       <Head>
@@ -168,6 +164,7 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       </Head>
 
+      {/* Breadcrumb */}
       <nav className="flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400" aria-label="Breadcrumb">
         <Link href="/aixcelerator" className="hover:text-zinc-700 dark:hover:text-zinc-200">
           AIXcelerator
@@ -176,22 +173,30 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
         <Link href="/aixcelerator/agents" className="hover:text-zinc-700 dark:hover:text-zinc-200">
           Agents
         </Link>
+        {agent.department && (
+          <>
+            <span>/</span>
+            <span className="hover:text-zinc-700 dark:hover:text-zinc-200">
+              {agent.department.name}
+            </span>
+          </>
+        )}
         <span>/</span>
         <span className="text-zinc-700 dark:text-zinc-200" aria-current="page">
           {agent.name}
         </span>
       </nav>
 
+      {/* Hero — clean title + description + CTA */}
       <div className="mt-4">
         <EnterprisePageHero
-          kicker="Agent profile"
+          kicker={agent.department?.name || agent.industry || "Agent profile"}
           title={agent.name}
           description={agent.description || "Structured agent profile for enterprise catalog discovery."}
           chips={[
-            agent.industry || "General",
+            ...(agent.industry ? [agent.industry] : []),
             status.charAt(0).toUpperCase() + status.slice(1),
             sourceDisplay,
-            isPrivate ? "Private" : "Public",
             ...(agent.verified ? ["Verified"] : []),
           ]}
           primaryAction={
@@ -202,484 +207,543 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
           secondaryAction={{ label: "View all agents", href: "/aixcelerator/agents", variant: "secondary" }}
           metrics={[
             {
-              label: "Last updated",
-              value: lastUpdatedLabel || "Pending",
-              note: "Latest metadata refresh.",
+              label: "Status",
+              value: status.charAt(0).toUpperCase() + status.slice(1),
+              note: statusKey === "live" ? "Production-ready" : statusKey === "beta" ? "Pilot availability" : "Discovery stage",
             },
+            ...(agent.department ? [{
+              label: "Department",
+              value: agent.department.name,
+              note: agent.department.description || "Enterprise department",
+            }] : []),
             {
-              label: "Signals",
-              value: `${tagNames.length} tags`,
-              note: `${companyNames.length} linked companies.`,
-            },
-            {
-              label: "Visibility",
-              value: isPrivate ? "Private" : "Public",
-              note: isPrivate
-                ? "Restricted access listing."
-                : `Available for catalog discovery. ${visibilityModeNote}`,
+              label: "Source",
+              value: sourceDisplay,
+              note: source === "internal" ? "Built by Colaberry" : "Third-party integration",
             },
           ]}
         />
       </div>
 
-      {/* Publisher attribution bar */}
-      {(agent.source === "internal" || agent.department) && (
-        <div className="reveal mt-4 flex flex-wrap items-center gap-x-6 gap-y-3 px-1">
-          <span className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-            <span className="font-medium text-zinc-500 dark:text-zinc-500">Built by</span>
-            <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-              {agent.sourceName || "Colaberry Enterprise"}
-            </span>
-          </span>
-          {agent.department && (
-            <span className="flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-400">
-              <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4h12M2 8h12M2 12h12" /></svg>
-              <span className="font-semibold text-zinc-900 dark:text-zinc-100">{agent.department.name}</span>
-            </span>
-          )}
-          {agent.industry && (
-            <span className="flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-400">
-              <span className="font-medium">{agent.industry}</span>
-            </span>
-          )}
-        </div>
-      )}
-
       {/* Sticky tab navigation */}
-      <StickyTabBar tabs={[
-        { id: "overview", label: "Overview" },
-        ...(orchestrationSteps.length > 0 ? [{ id: "workflow", label: "Workflow" }] : []),
-        ...(tools.length > 0 || companyNames.length > 0 ? [{ id: "integrations", label: "Integrations" }] : []),
-        { id: "specs", label: "Specs" },
-      ]} />
+      <StickyTabBar tabs={tabs} />
 
-      <section id="overview" className="reveal section-spacing scroll-mt-[128px] grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
-        <div className="grid gap-6">
+      {/* Two-column layout: main content + sidebar */}
+      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
 
-      {hasOverviewSection ? (
-        <section className="surface-panel section-shell p-6">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="What it does"
-            title="Overview and outcomes"
-            description="Clear positioning, expected outcomes, and where this agent fits."
-          />
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-            {agent.whatItDoes || agent.longDescription ? (
-              <div className="section-card rounded-lg p-5">
-                <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-                  Overview
+        {/* ═══════════════ Main Content ═══════════════ */}
+        <div className="grid gap-8">
+
+          {/* ── About the Agent ── */}
+          {hasAboutContent && (
+            <section id="about" className="reveal scroll-mt-[128px] grid gap-6">
+              <SectionHeader
+                as="h2"
+                size="md"
+                kicker="About"
+                title="About the Agent"
+                description="What this agent does, the challenges it addresses, and where it delivers value."
+              />
+
+              {/* Overview prose */}
+              {(agent.whatItDoes || agent.longDescription) && (
+                <div className="surface-panel rounded-xl p-6">
+                  {agent.whatItDoes && (
+                    <div className="space-y-3 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                      {renderParagraphs(agent.whatItDoes)}
+                    </div>
+                  )}
+                  {agent.longDescription && (
+                    <div className="mt-4">{renderRichText(agent.longDescription)}</div>
+                  )}
                 </div>
-                {agent.whatItDoes ? (
-                  <div className="mt-3 space-y-3 text-sm text-zinc-700 dark:text-zinc-300">
-                    {renderParagraphs(agent.whatItDoes)}
+              )}
+
+              {/* Challenges / Use Cases */}
+              {useCases.length > 0 && (
+                <div className="surface-panel rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    Challenges This Agent Addresses
+                  </h3>
+                  <ul className="mt-4 space-y-3">
+                    {useCases.map((item, i) => (
+                      <li key={`uc-${i}`} className="flex gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+                        <span className="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-[10px] font-bold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                          {i + 1}
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Key Benefits — "Why use this agent?" */}
+              {keyBenefits.length > 0 && (
+                <div className="surface-panel rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    Why Use This Agent?
+                  </h3>
+                  <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                    {keyBenefits.map((item, i) => (
+                      <li key={`kb-${i}`} className="flex gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+                        <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#DC2626]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3 8.5l3.5 3.5L13 4.5" />
+                        </svg>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Outcomes */}
+              {outcomes.length > 0 && (
+                <div className="surface-panel rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    Expected Outcomes
+                  </h3>
+                  <ul className="mt-4 space-y-2">
+                    {outcomes.map((item, i) => (
+                      <li key={`out-${i}`} className="flex gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#DC2626]" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Limitations */}
+              {limitations.length > 0 && (
+                <div className="surface-panel rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    Known Limitations
+                  </h3>
+                  <ul className="mt-4 space-y-2">
+                    {limitations.map((item, i) => (
+                      <li key={`lim-${i}`} className="flex gap-3 text-sm text-zinc-500 dark:text-zinc-400">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-600" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* ── How It Works — Visual Numbered Steps ── */}
+          {hasWorkflow && (
+            <section id="how-it-works" className="reveal scroll-mt-[128px] grid gap-6">
+              <SectionHeader
+                as="h2"
+                size="md"
+                kicker="Workflow"
+                title="How the Agent Works"
+                description="Step-by-step operational flow showing how this agent processes tasks end-to-end."
+              />
+
+              {/* Example workflow overview */}
+              {agent.exampleWorkflow && (
+                <div className="surface-panel rounded-xl p-6">
+                  <div className="space-y-3 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                    {renderParagraphs(agent.exampleWorkflow)}
                   </div>
-                ) : null}
-                {agent.longDescription ? (
-                  <div className="mt-4">{renderRichText(agent.longDescription)}</div>
-                ) : null}
+                </div>
+              )}
+
+              {/* Numbered steps */}
+              <div className="relative grid gap-0">
+                {/* Vertical connector line */}
+                {orchestrationSteps.length > 1 && (
+                  <div className="absolute left-[19px] top-[40px] bottom-[40px] w-px bg-zinc-200 dark:bg-zinc-700 lg:left-[23px]" aria-hidden="true" />
+                )}
+                {orchestrationSteps.map((step, i) => (
+                  <div key={`step-${i}`} className="relative flex gap-4 pb-6 lg:gap-5">
+                    {/* Step number circle */}
+                    <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-[#DC2626] bg-white text-sm font-bold text-[#DC2626] dark:bg-zinc-950 lg:h-12 lg:w-12 lg:text-base">
+                      {i + 1}
+                    </div>
+                    {/* Step content */}
+                    <div className="surface-panel flex-1 rounded-xl p-5">
+                      <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                        Step {i + 1}
+                      </h4>
+                      <p className="mt-2 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                        {step}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ) : null}
-            {outcomes.length > 0 ? (
-              <ListSection title="Outcomes" items={outcomes} empty="Outcomes not documented yet." />
-            ) : null}
-          </div>
-        </section>
-      ) : null}
 
-      {hasValueSection ? (
-        <section className="surface-panel section-shell p-6">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Value"
-            title="Benefits and constraints"
-            description="Key benefits plus known limitations and tradeoffs."
-          />
-          <div className={`mt-6 grid gap-6 ${keyBenefits.length > 0 && limitations.length > 0 ? "lg:grid-cols-2" : ""}`}>
-            {keyBenefits.length > 0 ? (
-              <ListSection
-                title="Key benefits"
-                items={keyBenefits}
-                empty="Key benefits not documented yet."
-              />
-            ) : null}
-            {limitations.length > 0 ? (
-              <ListSection
-                title="Limitations"
-                items={limitations}
-                empty="Limitations not documented yet."
-              />
-            ) : null}
-          </div>
-        </section>
-      ) : null}
+              {/* Execution modes */}
+              {executionModes.length > 0 && (
+                <div className="surface-panel rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    Execution Modes
+                  </h3>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {executionModes.map((mode, i) => (
+                      <span key={`em-${i}`} className="chip chip-neutral rounded-full px-3 py-1.5 text-xs font-medium">
+                        {mode}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-      {hasExecutionSection ? (
-        <section className="surface-panel section-shell p-6">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Execution"
-            title="Use cases and workflow"
-            description="Where the agent is used and how it runs end-to-end."
-          />
-          <div
-            className={`mt-6 grid gap-6 ${
-              useCases.length > 0 && (agent.exampleWorkflow || requirements.length > 0)
-                ? "lg:grid-cols-[1.1fr_0.9fr]"
-                : ""
-            }`}
-          >
-            {useCases.length > 0 ? (
-              <ListSection title="Use cases" items={useCases} empty="Use cases not documented yet." />
-            ) : null}
-            {agent.exampleWorkflow || requirements.length > 0 ? (
-              <div className="section-card rounded-lg p-5">
-                {agent.exampleWorkflow ? (
-                  <>
-                    <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-                      Example workflow
+              {/* Security & compliance */}
+              {securityItems.length > 0 && (
+                <div className="surface-panel rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    Security &amp; Compliance
+                  </h3>
+                  <ul className="mt-4 space-y-2">
+                    {securityItems.map((item, i) => (
+                      <li key={`sec-${i}`} className="flex gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+                        <svg className="mt-0.5 h-4 w-4 shrink-0 text-zinc-400" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M8 1.5l5.5 3v4c0 3.5-2.5 5.5-5.5 7-3-1.5-5.5-3.5-5.5-7v-4z" />
+                        </svg>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* ── Inputs & Outputs ── */}
+          {hasInputOutput && (
+            <section id="inputs-outputs" className="reveal scroll-mt-[128px] grid gap-6">
+              <SectionHeader
+                as="h2"
+                size="md"
+                kicker="Data"
+                title="Inputs &amp; Outputs"
+                description="What data this agent consumes and the artifacts or actions it produces."
+              />
+              <div className={`grid gap-6 ${inputs.length > 0 && outputs.length > 0 ? "lg:grid-cols-2" : ""}`}>
+                {inputs.length > 0 && (
+                  <div className="surface-panel rounded-xl p-6">
+                    <div className="flex items-center gap-2">
+                      <svg className="h-5 w-5 text-zinc-400" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 10h14M12 5l5 5-5 5" />
+                      </svg>
+                      <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Input Data</h3>
                     </div>
-                    <div className="mt-3 space-y-3 text-sm text-zinc-700 dark:text-zinc-300">
-                      {renderParagraphs(agent.exampleWorkflow)}
-                    </div>
-                  </>
-                ) : null}
-                {requirements.length ? (
-                  <>
-                    <div className="mt-5 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-                      Requirements
-                    </div>
-                    <ul className="mt-3 space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
-                      {requirements.map((item, index) => (
-                        <li key={`req-${index}`} className="flex gap-2">
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#008EA8]" />
+                    <ul className="mt-4 space-y-2">
+                      {inputs.map((item, i) => (
+                        <li key={`in-${i}`} className="flex gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
                           <span>{item}</span>
                         </li>
                       ))}
                     </ul>
-                  </>
-                ) : null}
+                  </div>
+                )}
+                {outputs.length > 0 && (
+                  <div className="surface-panel rounded-xl p-6">
+                    <div className="flex items-center gap-2">
+                      <svg className="h-5 w-5 text-[#DC2626]" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 10H3M8 5L3 10l5 5" />
+                      </svg>
+                      <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Deliverables</h3>
+                    </div>
+                    <ul className="mt-4 space-y-2">
+                      {outputs.map((item, i) => (
+                        <li key={`out-${i}`} className="flex gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#DC2626]" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            ) : null}
-          </div>
-        </section>
-      ) : null}
 
-      {hasCoreSection ? (
-        <section className="surface-panel section-shell p-6">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Core tasks"
-            title="Use cases and workflows"
-            description="Primary tasks, repeatable workflows, and where the agent delivers value."
-          />
-          <div className={`mt-6 grid gap-6 ${coreTasks.length > 0 && executionModes.length > 0 ? "lg:grid-cols-2" : ""}`}>
-            {coreTasks.length > 0 ? (
-              <ListSection title="Core tasks" items={coreTasks} empty="Core tasks not listed yet." />
-            ) : null}
-            {executionModes.length > 0 ? (
-              <ListSection
-                title="Execution modes"
-                items={executionModes}
-                empty="Execution modes not documented yet."
+              {/* Core tasks */}
+              {coreTasks.length > 0 && (
+                <div className="surface-panel rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    Core Tasks
+                  </h3>
+                  <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                    {coreTasks.map((item, i) => (
+                      <li key={`ct-${i}`} className="flex gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* ── Integrations ── */}
+          {hasIntegrations && (
+            <section id="integrations" className="reveal scroll-mt-[128px] grid gap-6">
+              <SectionHeader
+                as="h2"
+                size="md"
+                kicker="Integrations"
+                title="Systems Connected"
+                description="Internal systems, APIs, and tools this agent integrates with."
               />
-            ) : null}
-          </div>
-        </section>
-      ) : null}
-
-      {hasInputOutputSection ? (
-        <section className="surface-panel section-shell p-6">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Inputs & outputs"
-            title="Data in, actions out"
-            description="Clarify the data required and the artifacts or actions produced."
-          />
-          <div className={`mt-6 grid gap-6 ${inputs.length > 0 && outputs.length > 0 ? "lg:grid-cols-2" : ""}`}>
-            {inputs.length > 0 ? (
-              <ListSection title="Inputs" items={inputs} empty="Inputs not documented yet." />
-            ) : null}
-            {outputs.length > 0 ? (
-              <ListSection title="Outputs" items={outputs} empty="Outputs not documented yet." />
-            ) : null}
-          </div>
-        </section>
-      ) : null}
-
-      {hasOrchestrationSection ? (
-        <section id="workflow" className="surface-panel section-shell p-6 scroll-mt-[128px]">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Orchestration"
-            title="How it runs"
-            description="Operational flow, orchestration steps, and governance checks."
-          />
-          <div
-            className={`mt-6 grid gap-6 ${
-              orchestrationSteps.length > 0 && securityItems.length > 0
-                ? "lg:grid-cols-[1.2fr_0.8fr]"
-                : ""
-            }`}
-          >
-            {orchestrationSteps.length > 0 ? (
-              <ListSection
-                title="Orchestration steps"
-                items={orchestrationSteps}
-                empty="Orchestration steps not documented yet."
-              />
-            ) : null}
-            {securityItems.length > 0 ? (
-              <ListSection
-                title="Security & compliance"
-                items={securityItems}
-                empty="Security and compliance details not documented yet."
-              />
-            ) : null}
-          </div>
-        </section>
-      ) : null}
-
-      {hasToolsSection ? (
-        <section id="integrations" className="surface-panel section-shell p-6 scroll-mt-[128px]">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Tools & integrations"
-            title="Systems connected"
-            description="Internal systems, APIs, or tools used by this agent."
-          />
-          <div className={`mt-6 grid gap-6 ${tools.length > 0 && companyNames.length > 0 ? "lg:grid-cols-2" : ""}`}>
-            {tools.length > 0 ? (
-              <ListSection title="Tools" items={tools} empty="Tools not documented yet." />
-            ) : null}
-            {companyNames.length > 0 ? (
-              <ListSection
-                title="Integrations"
-                items={companyNames}
-                empty="Integrations not documented yet."
-              />
-            ) : null}
-          </div>
-        </section>
-      ) : null}
-
-      {hasResourcesSection ? (
-        <section id="specs" className="surface-panel section-shell p-6 scroll-mt-[128px]">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Resources"
-            title="Docs, demo, and changelog"
-            description="Material for enablement, onboarding, and release tracking."
-          />
-          <div className="mt-6 flex flex-wrap gap-3">
-            {agent.docsUrl ? (
-              <a href={agent.docsUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
-                View docs
-              </a>
-            ) : null}
-            {agent.demoUrl ? (
-              <a href={agent.demoUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
-                View demo
-              </a>
-            ) : null}
-            {agent.changelogUrl ? (
-              <a href={agent.changelogUrl} target="_blank" rel="noreferrer" className="btn btn-ghost">
-                Changelog
-              </a>
-            ) : null}
-          </div>
-        </section>
-      ) : null}
-
-      {hasAdoptionSection ? (
-        <section className="surface-panel section-shell p-6">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Adoption"
-            title="Usage signals"
-            description="Signals to help teams evaluate readiness and adoption."
-          />
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <SignalStat
-              label="Usage"
-              value={agent.usageCount ? agent.usageCount.toLocaleString() : "—"}
-              note="Recorded runs or deployments."
-            />
-            <SignalStat
-              label="Rating"
-              value={agent.rating ? `${agent.rating.toFixed(1)} / 5` : "—"}
-              note="Internal or customer feedback."
-            />
-            <SignalStat
-              label="Verification"
-              value={agent.verified ? "Verified" : "Pending"}
-              note="Ownership and metadata review."
-            />
-          </div>
-        </section>
-      ) : null}
-
-      {relatedAgents.length > 0 && (
-        <section className="surface-panel section-shell p-6">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="Related"
-            title="Similar agents"
-            description="Other agents with shared industry alignment or tags."
-          />
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
-            {relatedAgents.map((related) => (
-              <div key={related.id} className="card-elevated">
-                <AgentCard agent={related} />
+              <div className={`grid gap-6 ${tools.length > 0 && companyNames.length > 0 ? "lg:grid-cols-2" : ""}`}>
+                {tools.length > 0 && (
+                  <div className="surface-panel rounded-xl p-6">
+                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Tools &amp; APIs</h3>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {tools.map((tool, i) => (
+                        <span key={`tool-${i}`} className="chip chip-neutral rounded-full px-3 py-1.5 text-xs font-medium">
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {companyNames.length > 0 && (
+                  <div className="surface-panel rounded-xl p-6">
+                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Companies &amp; Platforms</h3>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {companyNames.map((company, i) => (
+                        <span key={`co-${i}`} className="chip chip-neutral rounded-full px-3 py-1.5 text-xs font-medium">
+                          {company}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-        </section>
-      )}
+            </section>
+          )}
+
+          {/* ── Specs ── */}
+          <section id="specs" className="reveal scroll-mt-[128px] grid gap-6">
+            <SectionHeader
+              as="h2"
+              size="md"
+              kicker="Specifications"
+              title="Agent Specs"
+              description="Technical specifications, requirements, and deployment details."
+            />
+
+            {/* Spec grid */}
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <SpecItem label="Status" value={status.charAt(0).toUpperCase() + status.slice(1)} />
+              <SpecItem label="Industry" value={agent.industry || "General"} />
+              <SpecItem label="Source" value={sourceDisplay} />
+              {agent.department && <SpecItem label="Department" value={agent.department.name} />}
+              <SpecItem label="Verified" value={agent.verified ? "Yes" : "No"} />
+              <SpecItem label="Visibility" value={isPrivate ? "Private" : "Public"} />
+              {lastUpdatedLabel && <SpecItem label="Last Updated" value={lastUpdatedLabel} />}
+            </div>
+
+            {/* Requirements */}
+            {requirements.length > 0 && (
+              <div className="surface-panel rounded-xl p-6">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Requirements</h3>
+                <ul className="mt-4 space-y-2">
+                  {requirements.map((item, i) => (
+                    <li key={`req-${i}`} className="flex gap-3 text-sm text-zinc-700 dark:text-zinc-300">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Resources */}
+            {(agent.docsUrl || agent.demoUrl || agent.changelogUrl) && (
+              <div className="surface-panel rounded-xl p-6">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Resources</h3>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {agent.docsUrl && (
+                    <a href={agent.docsUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
+                      Documentation
+                    </a>
+                  )}
+                  {agent.demoUrl && (
+                    <a href={agent.demoUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
+                      Live Demo
+                    </a>
+                  )}
+                  {agent.changelogUrl && (
+                    <a href={agent.changelogUrl} target="_blank" rel="noreferrer" className="btn btn-ghost">
+                      Changelog
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* ── Related Agents ── */}
+          {relatedAgents.length > 0 && (
+            <section className="reveal grid gap-6">
+              <SectionHeader
+                as="h2"
+                size="md"
+                kicker="Related"
+                title="Related Agents"
+                description="Other agents in the same department or industry."
+              />
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {relatedAgents.map((related) => (
+                  <div key={related.id} className="card-elevated">
+                    <AgentCard agent={related} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
-        {/* Sidebar removed — matching MCP detail page pattern */}
-      </section>
+        {/* ═══════════════ Sticky Sidebar ═══════════════ */}
+        <aside className="hidden lg:block">
+          <div className="sticky top-[120px] grid gap-4">
+
+            {/* Quick stats panel */}
+            <div className="surface-panel rounded-xl p-5">
+              <h3 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                Quick Stats
+              </h3>
+              <dl className="mt-4 grid gap-3">
+                <SidebarStat
+                  label="Status"
+                  value={status.charAt(0).toUpperCase() + status.slice(1)}
+                  indicator={statusKey === "live" ? "live" : statusKey === "beta" ? "beta" : "default"}
+                />
+                {agent.department && (
+                  <SidebarStat label="Department" value={agent.department.name} />
+                )}
+                <SidebarStat label="Industry" value={agent.industry || "General"} />
+                <SidebarStat label="Source" value={sourceDisplay} />
+                {agent.verified && (
+                  <SidebarStat label="Verified" value="Yes" indicator="live" />
+                )}
+              </dl>
+            </div>
+
+            {/* Usage / adoption signals */}
+            {(agent.usageCount || agent.rating) && (
+              <div className="surface-panel rounded-xl p-5">
+                <h3 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                  Adoption
+                </h3>
+                <dl className="mt-4 grid gap-3">
+                  {agent.usageCount ? (
+                    <SidebarStat label="Usage" value={agent.usageCount.toLocaleString()} />
+                  ) : null}
+                  {agent.rating ? (
+                    <SidebarStat label="Rating" value={`${agent.rating.toFixed(1)} / 5`} />
+                  ) : null}
+                </dl>
+              </div>
+            )}
+
+            {/* Tags */}
+            {tagNames.length > 0 && (
+              <div className="surface-panel rounded-xl p-5">
+                <h3 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+                  Tags
+                </h3>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {tagNames.map((tag) => (
+                    <span key={tag} className="chip chip-neutral rounded-full px-2.5 py-1 text-xs font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* CTA */}
+            <div className="surface-panel rounded-xl p-5">
+              <Link
+                href={agent.sourceUrl || "/request-demo"}
+                className="btn btn-primary w-full justify-center"
+                {...(agent.sourceUrl ? { target: "_blank", rel: "noreferrer" } : {})}
+              >
+                {agent.sourceUrl ? "View Source" : "Book a Demo"}
+              </Link>
+              <Link
+                href="/aixcelerator/agents"
+                className="btn btn-secondary mt-2 w-full justify-center"
+              >
+                Browse All Agents
+              </Link>
+            </div>
+
+            {/* Last updated */}
+            {lastUpdatedLabel && (
+              <p className="text-center text-xs text-zinc-400 dark:text-zinc-500">
+                Updated {lastUpdatedLabel}
+              </p>
+            )}
+          </div>
+        </aside>
+      </div>
+
+      {/* Bottom CTA band */}
+      <EnterpriseCtaBand
+        kicker="Enterprise AI"
+        title="Ready to deploy this agent?"
+        description="Schedule a walkthrough with our team to see how this agent integrates with your workflows."
+        primaryHref="/request-demo"
+        primaryLabel="Book a demo"
+        secondaryHref="/aixcelerator/agents"
+        secondaryLabel="Browse agents"
+        className="mt-12"
+      />
     </Layout>
   );
 }
 
-function MetadataRow({ label, value, href }: { label: string; value: string; href?: string }) {
+/* ─── Helper Components ─── */
+
+function SpecItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="section-card rounded-lg p-4">
-      <dt className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{label}</dt>
-      <dd className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-        {href ? (
-          <a href={href} target="_blank" rel="noreferrer" className="text-brand-deep hover:underline dark:text-brand-purple-300 dark:hover:text-brand-purple-200">
-            {value}
-          </a>
-        ) : (
-          value
+    <div className="surface-panel rounded-xl p-4">
+      <dt className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+        {label}
+      </dt>
+      <dd className="mt-1.5 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{value}</dd>
+    </div>
+  );
+}
+
+function SidebarStat({
+  label,
+  value,
+  indicator,
+}: {
+  label: string;
+  value: string;
+  indicator?: "live" | "beta" | "default";
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <dt className="text-xs text-zinc-500 dark:text-zinc-400">{label}</dt>
+      <dd className="flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        {indicator === "live" && (
+          <span className="h-2 w-2 rounded-full bg-[#DC2626]" aria-hidden="true" />
         )}
+        {indicator === "beta" && (
+          <span className="h-2 w-2 rounded-full bg-zinc-400 dark:bg-zinc-500" aria-hidden="true" />
+        )}
+        {value}
       </dd>
     </div>
   );
 }
 
-function formatList(items?: { name?: string; slug?: string }[]) {
-  if (!items || items.length === 0) {
-    return "Not tagged yet";
-  }
-  return items.map((item) => item.name || item.slug || "").filter(Boolean).join(", ");
-}
-
-function DetailCard({
-  label,
-  value,
-  description,
-}: {
-  label: string;
-  value: string;
-  description: string;
-}) {
-  return (
-    <div className="section-card rounded-lg p-4">
-      <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{label}</div>
-      <div className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">{value}</div>
-      <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">{description}</div>
-    </div>
-  );
-}
-
-function ListBlock({
-  label,
-  items,
-  emptyLabel,
-}: {
-  label: string;
-  items: string[];
-  emptyLabel: string;
-}) {
-  return (
-    <div className="section-card rounded-lg p-4">
-      <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{label}</div>
-      {items.length ? (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {items.map((item) => (
-            <span
-              key={`${label}-${item}`}
-              className="chip chip-muted rounded-md px-2.5 py-1 text-xs font-semibold"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">{emptyLabel}</p>
-      )}
-    </div>
-  );
-}
-
-function GuidanceBlock({
-  title,
-  items,
-  actions,
-}: {
-  title: string;
-  items: string[];
-  actions?: ReactNode;
-}) {
-  return (
-    <div className="section-card rounded-lg p-5">
-      <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{title}</div>
-      <ul className="mt-3 space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
-        {items.map((item, index) => (
-          <li key={`${title}-${index}`} className="flex gap-2">
-            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#008EA8]" />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-      {actions ? actions : null}
-    </div>
-  );
-}
-
-function ListSection({ title, items, empty }: { title: string; items: string[]; empty: string }) {
-  return (
-    <div className="section-card rounded-lg p-5">
-      <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{title}</div>
-      {items.length ? (
-        <ul className="mt-3 space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
-          {items.map((item, index) => (
-            <li key={`${title}-${index}`} className="flex gap-2">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#008EA8]" />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">{empty}</p>
-      )}
-    </div>
-  );
-}
-
-function SignalStat({ label, value, note }: { label: string; value: string; note: string }) {
-  return (
-    <div className="section-card rounded-lg p-4">
-      <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">{label}</div>
-      <div className="mt-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">{value}</div>
-      <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">{note}</div>
-    </div>
-  );
-}
+/* ─── Utilities ─── */
 
 function parseList(value?: string | null): string[] {
   if (!value) return [];
@@ -705,7 +769,7 @@ function renderRichText(value?: string | null): ReactNode {
   if (!clean.trim()) return null;
   return (
     <div
-      className="text-sm text-zinc-700 dark:text-zinc-300 [&_p]:mt-3 first:[&_p]:mt-0 [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mt-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-brand-deep [&_a]:underline dark:[&_a]:text-brand-purple-300"
+      className="text-sm text-zinc-700 dark:text-zinc-300 [&_p]:mt-3 first:[&_p]:mt-0 [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mt-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-[#DC2626] [&_a]:underline dark:[&_a]:text-red-400"
       dangerouslySetInnerHTML={{ __html: clean }}
     />
   );
@@ -717,8 +781,6 @@ function renderParagraphs(value: string): ReactNode[] {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line, index) => (
-      <p key={`${line}-${index}`} className="text-sm text-zinc-700 dark:text-zinc-300">
-        {line}
-      </p>
+      <p key={`p-${index}`}>{line}</p>
     ));
 }
