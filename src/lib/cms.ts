@@ -232,6 +232,13 @@ export type Agent = {
   companies?: Company[];
   coverImageUrl?: string | null;
   coverImageAlt?: string | null;
+  department?: {
+    id: number;
+    name: string;
+    slug: string;
+    description?: string | null;
+    category?: { id: number; name: string; slug: string } | null;
+  } | null;
 };
 
 export type MCPServer = {
@@ -1098,6 +1105,31 @@ function mapAgent(item: any): Agent {
     companies,
     coverImageUrl,
     coverImageAlt,
+    department: attrs?.department?.data
+      ? {
+          id: attrs.department.data.id,
+          name: attrs.department.data.attributes?.name ?? attrs.department.data.name ?? "",
+          slug: attrs.department.data.attributes?.slug ?? attrs.department.data.slug ?? "",
+          description: attrs.department.data.attributes?.description ?? attrs.department.data.description ?? null,
+          category: attrs.department.data.attributes?.category?.data
+            ? {
+                id: attrs.department.data.attributes.category.data.id,
+                name: attrs.department.data.attributes.category.data.attributes?.name ?? "",
+                slug: attrs.department.data.attributes.category.data.attributes?.slug ?? "",
+              }
+            : null,
+        }
+      : (attrs?.department && attrs.department.id)
+        ? {
+            id: attrs.department.id,
+            name: attrs.department.name ?? "",
+            slug: attrs.department.slug ?? "",
+            description: attrs.department.description ?? null,
+            category: attrs.department.category
+              ? { id: attrs.department.category.id, name: attrs.department.category.name ?? "", slug: attrs.department.category.slug ?? "" }
+              : null,
+          }
+        : null,
   };
 }
 
@@ -1845,10 +1877,17 @@ export async function fetchAgents(
     `&populate[companies][fields][0]=name` +
     `&populate[companies][fields][1]=slug` +
     `&populate[coverImage][fields][0]=url` +
-    `&populate[coverImage][fields][1]=alternativeText`;
+    `&populate[coverImage][fields][1]=alternativeText` +
+    `&populate[department][fields][0]=name` +
+    `&populate[department][fields][1]=slug` +
+    `&populate[department][fields][2]=description` +
+    `&populate[department][populate][category][fields][0]=name` +
+    `&populate[department][populate][category][fields][1]=slug`;
   const minimalPopulateQuery =
     `&populate[coverImage][fields][0]=url` +
-    `&populate[coverImage][fields][1]=alternativeText`;
+    `&populate[coverImage][fields][1]=alternativeText` +
+    `&populate[department][fields][0]=name` +
+    `&populate[department][fields][1]=slug`;
   const buildPageQuery = (
     currentPage: number,
     publicationState: "live" | "preview",
@@ -2150,7 +2189,12 @@ export async function fetchAgentBySlug(slug: string) {
       `&populate[companies][fields][0]=name` +
       `&populate[companies][fields][1]=slug` +
       `&populate[coverImage][fields][0]=url` +
-      `&populate[coverImage][fields][1]=alternativeText`;
+      `&populate[coverImage][fields][1]=alternativeText` +
+      `&populate[department][fields][0]=name` +
+      `&populate[department][fields][1]=slug` +
+      `&populate[department][fields][2]=description` +
+      `&populate[department][populate][category][fields][0]=name` +
+      `&populate[department][populate][category][fields][1]=slug`;
 
   const json = await fetchCMSJson<CMSCollectionResponse>(query, { cacheMs: CMS_CACHE_TTL_MS });
   if (json?.data?.[0]) {
