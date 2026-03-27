@@ -19,9 +19,9 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-# Copy dependencies (include dev for next.config.ts transpilation)
+# Copy only production dependencies (dev deps not needed at runtime)
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --omit=dev
 
 # Copy built output and config from builder
 COPY --from=builder /app/.next ./.next

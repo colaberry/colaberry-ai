@@ -15,7 +15,12 @@
 import type { NextApiRequest } from "next";
 import crypto from "crypto";
 
-const BOT_TOKEN_SECRET = process.env.BOT_TOKEN_SECRET || "colaberry-bot-defense-2026";
+const BOT_TOKEN_SECRET = process.env.BOT_TOKEN_SECRET || "";
+
+/** Fail closed: if no secret configured, tokens cannot be validated. */
+function hasSecret(): boolean {
+  return BOT_TOKEN_SECRET.length > 0;
+}
 
 /**
  * Generate a time-stamped bot defense token for the client.
@@ -23,6 +28,7 @@ const BOT_TOKEN_SECRET = process.env.BOT_TOKEN_SECRET || "colaberry-bot-defense-
  * Token encodes the timestamp so we can check minimum form fill time.
  */
 export function generateBotToken(): string {
+  if (!hasSecret()) return "";
   const timestamp = Date.now().toString(36);
   const signature = crypto
     .createHmac("sha256", BOT_TOKEN_SECRET)
@@ -41,6 +47,11 @@ export function validateBotToken(
   minAgeMs = 3000, // Minimum 3 seconds to fill form (human speed)
   maxAgeMs = 3600_000, // Maximum 1 hour (form not stale)
 ): { valid: boolean; reason?: string } {
+  // If no secret configured, skip token validation (allow through but log)
+  if (!hasSecret()) {
+    return { valid: true, reason: "no_secret_configured" };
+  }
+
   if (!token || typeof token !== "string") {
     return { valid: false, reason: "missing_token" };
   }
@@ -57,7 +68,10 @@ export function validateBotToken(
     .digest("hex")
     .slice(0, 16);
 
-  if (signature !== expectedSig) {
+  // Timing-safe comparison to prevent signature guessing
+  const sigBuf = Buffer.from(signature, "utf8");
+  const expectedBuf = Buffer.from(expectedSig, "utf8");
+  if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) {
     return { valid: false, reason: "invalid_signature" };
   }
 
