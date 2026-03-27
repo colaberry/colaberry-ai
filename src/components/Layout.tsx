@@ -42,13 +42,30 @@ const fallbackNavigation: GlobalNavigation = {
       ],
     },
     {
+      label: "Industries",
+      href: "/industries",
+      order: 2,
+      group: "header",
+      children: [
+        { label: "All Industries", href: "/industries", order: 1 },
+      ],
+    },
+    {
       label: "Resources",
       href: "/resources",
       order: 3,
       group: "header",
       children: [
         { label: "Podcasts", href: "/resources/podcasts", order: 1 },
+        { label: "Books & White Papers", href: "/resources/books", order: 3 },
       ],
+    },
+    {
+      label: "Updates",
+      href: "/updates",
+      order: 4,
+      group: "header",
+      children: [{ label: "News & Product", href: "/updates", order: 1 }],
     },
   ],
   footerColumns: [
@@ -60,6 +77,7 @@ const fallbackNavigation: GlobalNavigation = {
         { label: "MCP servers", href: "/aixcelerator/mcp", order: 3, group: "Product" },
         { label: "Skills", href: "/aixcelerator/skills", order: 4, group: "Product" },
         { label: "Discovery assistant", href: "/assistant", order: 5, group: "Product" },
+        { label: "Industries", href: "/industries", order: 9, group: "Product" },
       ],
     },
     {
@@ -67,6 +85,8 @@ const fallbackNavigation: GlobalNavigation = {
       links: [
         { label: "Resources hub", href: "/resources", order: 1, group: "Resources" },
         { label: "Podcasts", href: "/resources/podcasts", order: 2, group: "Resources" },
+        { label: "White papers", href: "/resources/white-papers", order: 3, group: "Resources" },
+        { label: "News & product", href: "/updates", order: 5, group: "Resources" },
       ],
     },
   ],
@@ -126,12 +146,14 @@ const FOOTER_COLUMNS = [
       { label: "Agents", href: "/aixcelerator/agents" },
       { label: "MCP Servers", href: "/aixcelerator/mcp" },
       { label: "Skills", href: "/aixcelerator/skills" },
+      { label: "Industries", href: "/industries" },
     ],
   },
   {
     title: "Resources",
     links: [
       { label: "Podcasts", href: "/resources/podcasts" },
+      { label: "Updates", href: "/updates" },
       { label: "Contact", href: "/request-demo" },
     ],
   },
@@ -245,12 +267,9 @@ const SHOW_ALL_NAV = process.env.NEXT_PUBLIC_SHOW_ALL_NAV === "true";
 const RELEASE_HIDDEN_PATHS = SHOW_ALL_NAV ? new Set<string>() : new Set([
   "/aixcelerator/tools",
   "/use-cases",
-  "/industries",
   "/solutions",
-  "/updates",
   "/resources/articles",
   "/resources/case-studies",
-  "/resources/white-papers",
 ]);
 
 const PLATFORM_CHILD_BLUEPRINT = [
