@@ -83,7 +83,7 @@ function OntologyDiagram({
             <feDropShadow dx="0" dy="1" stdDeviation="3" floodOpacity="0.04" />
           </filter>
           <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
-            <path d="M0 0 L10 4 L0 8 Z" className="fill-zinc-300 dark:fill-zinc-600" />
+            <path d="M0 0 L10 4 L0 8 Z" fill="#DC2626" opacity="0.4" />
           </marker>
           <style>{`
             @keyframes dashMove { to { stroke-dashoffset: -24; } }
@@ -129,9 +129,9 @@ function OntologyDiagram({
               onMouseLeave={() => setHoveredCategory(null)}
               style={{ cursor: "pointer" }}
             >
-              <line x1={svgWidth / 2} y1="90" x2={x + catWidth / 2} y2={y} className="stroke-zinc-200 dark:stroke-zinc-700" strokeWidth="1" strokeDasharray="4,3" />
-              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill={color} opacity={isHovered ? 0.15 : 0.06} />
-              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill="none" stroke={color} strokeWidth={isHovered ? 2 : 1.2} filter="url(#nodeShadow)" />
+              <line x1={svgWidth / 2} y1="90" x2={x + catWidth / 2} y2={y} stroke={isHovered ? "#DC2626" : undefined} className={isHovered ? undefined : "stroke-zinc-200 dark:stroke-zinc-700"} strokeWidth="1" strokeDasharray="4,3" opacity={isHovered ? 0.6 : 1} />
+              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill={isHovered ? "#DC2626" : color} opacity={isHovered ? 0.1 : 0.05} />
+              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill="none" stroke={isHovered ? "#DC2626" : color} strokeWidth={isHovered ? 2 : 1.2} filter="url(#nodeShadow)" />
               <text x={x + catWidth / 2} y={y + 20} textAnchor="middle" dominantBaseline="middle" fontSize="11.5" fontWeight="600" fill={color}>{cat.label}</text>
               <text x={x + catWidth / 2} y={y + 50} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="10" fontWeight="500">{count.toLocaleString()}</text>
             </g>
@@ -156,7 +156,7 @@ function OntologyDiagram({
         })}
 
         {/* Arrow between Layer 1 and 2 */}
-        <line x1={svgWidth / 2} y1="234" x2={svgWidth / 2} y2="260" className="stroke-zinc-300 dark:stroke-zinc-600" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
+        <line x1={svgWidth / 2} y1="234" x2={svgWidth / 2} y2="260" stroke="#DC2626" opacity="0.3" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
 
         {/* ─── LAYER 2: RELATION GRAPH ─── */}
         <rect x="16" y="264" width={svgWidth - 32} height="160" rx="12" className="fill-zinc-50/80 dark:fill-zinc-800/20" filter="url(#layerShadow)" />
@@ -191,7 +191,8 @@ function OntologyDiagram({
               strokeWidth="2"
               strokeLinecap="round"
               strokeDasharray={rel?.directional ? "6,4" : "none"}
-              opacity="0.6"
+              opacity="0.5"
+              className={rel?.directional ? "animated-edge" : undefined}
             />
           );
         })}
@@ -200,6 +201,7 @@ function OntologyDiagram({
         {representativeItems.map((item, i) => {
           const isHovered = hoveredItem === i;
           const nodeWidth = item.name.length * 8 + 24;
+          const nodeColor = isHovered ? "#DC2626" : "#71717a";
           return (
             <g
               key={item.slug}
@@ -211,14 +213,14 @@ function OntologyDiagram({
               <rect
                 x={item.x} y={item.y + 300}
                 width={nodeWidth} height="30" rx="8"
-                fill="#71717a"
-                opacity={isHovered ? 0.18 : 0.06}
+                fill={nodeColor}
+                opacity={isHovered ? 0.12 : 0.04}
               />
               <rect
                 x={item.x} y={item.y + 300}
                 width={nodeWidth} height="30" rx="8"
                 fill="none"
-                stroke="#71717a" strokeWidth={isHovered ? 2.5 : 1.5}
+                stroke={nodeColor} strokeWidth={isHovered ? 2 : 1.2}
                 filter="url(#nodeShadow)"
               />
               <text
@@ -231,7 +233,7 @@ function OntologyDiagram({
         })}
 
         {/* Arrow between Layer 2 and 3 */}
-        <line x1={svgWidth / 2} y1="426" x2={svgWidth / 2} y2="452" className="stroke-zinc-300 dark:stroke-zinc-600" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
+        <line x1={svgWidth / 2} y1="426" x2={svgWidth / 2} y2="452" stroke="#DC2626" opacity="0.3" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
 
         {/* ─── LAYER 3: COLLECTION LIBRARY ─── */}
         <rect x="16" y="456" width={svgWidth - 32} height="130" rx="12" className="fill-zinc-50/80 dark:fill-zinc-800/20" filter="url(#layerShadow)" />
@@ -259,7 +261,7 @@ function OntologyDiagram({
               style={{ cursor: "pointer" }}
             >
               <rect x={x} y={y} width={colWidth} height="68" rx="10" className={isHovered ? "fill-zinc-100 dark:fill-zinc-800" : "fill-white dark:fill-zinc-800/40"} filter="url(#nodeShadow)" />
-              <rect x={x} y={y} width={colWidth} height="68" rx="10" fill="none" className="stroke-zinc-200 dark:stroke-zinc-700" strokeWidth={isHovered ? 1.5 : 0.8} />
+              <rect x={x} y={y} width={colWidth} height="68" rx="10" fill="none" stroke={isHovered ? "#DC2626" : undefined} className={isHovered ? undefined : "stroke-zinc-200 dark:stroke-zinc-700"} strokeWidth={isHovered ? 1.5 : 0.8} opacity={isHovered ? 0.6 : 1} />
               <text x={x + colWidth / 2} y={y + 28} textAnchor="middle" fontSize="11.5" fontWeight="700" className="fill-zinc-800 dark:fill-zinc-200">{col.slug}</text>
               <text x={x + colWidth / 2} y={y + 48} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="10" fontWeight="500">{col.itemSlugs.length} items</text>
             </g>
@@ -378,7 +380,7 @@ export default function OntologyPageTemplate({
       <section className="reveal mt-12">
         <SectionHeader size="md" kicker="Architecture" title="Three-Layer Design" description={`How ${config.label.toLowerCase()} are organized from abstract taxonomy to deployable collections.`} />
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #a1a1aa" }}>
+          <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
             <div className="p-6">
               <div className="flex items-center gap-2.5">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">1</span>
@@ -406,7 +408,7 @@ export default function OntologyPageTemplate({
             </div>
           </div>
 
-          <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #a1a1aa" }}>
+          <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
             <div className="p-6">
               <div className="flex items-center gap-2.5">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">2</span>
@@ -434,7 +436,7 @@ export default function OntologyPageTemplate({
             </div>
           </div>
 
-          <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #a1a1aa" }}>
+          <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
             <div className="p-6">
               <div className="flex items-center gap-2.5">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">3</span>
@@ -472,7 +474,7 @@ export default function OntologyPageTemplate({
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {relTypes.map((rel) => (
             <div key={rel.type} className="catalog-card overflow-hidden p-0">
-              <div className="h-0.5 bg-zinc-300 dark:bg-zinc-600" />
+              <div className="h-0.5 bg-[#DC2626]/30 dark:bg-[#F87171]/20" />
               <div className="p-5">
                 <div className="flex items-center gap-2.5">
                   <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">

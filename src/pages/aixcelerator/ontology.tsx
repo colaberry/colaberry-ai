@@ -60,7 +60,20 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
 
   return (
     <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[600px]" style={{ maxHeight: `${svgHeight}px` }}>
+      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[600px]" style={{ maxHeight: `${svgHeight}px`, fontFamily: "Inter, system-ui, -apple-system, sans-serif" }}>
+        <defs>
+          <filter id="kgNodeShadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.08" />
+          </filter>
+          <filter id="kgHoverShadow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="3" stdDeviation="8" floodColor="#DC2626" floodOpacity="0.12" />
+          </filter>
+          <style>{`
+            @keyframes kgDashMove { to { stroke-dashoffset: -18; } }
+            .kg-edge { animation: kgDashMove 2s linear infinite; }
+          `}</style>
+        </defs>
+
         <rect width={svgWidth} height={svgHeight} rx="12" className="fill-zinc-50 dark:fill-zinc-900" />
 
         {/* Cross-type relationship edges */}
@@ -82,10 +95,11 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               <line
                 x1={from.x} y1={from.y}
                 x2={to.x} y2={to.y}
-                stroke={rel.color}
+                stroke={isHovered ? "#DC2626" : rel.color}
                 strokeWidth={isHovered ? 2.5 : 1.5}
                 strokeDasharray="6,3"
-                opacity={isHovered ? 1 : 0.5}
+                opacity={isHovered ? 0.9 : 0.4}
+                className="kg-edge"
               />
               {isHovered && (
                 <>
@@ -94,8 +108,8 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
                     y={midY - 12}
                     width={rel.label.length * 7 + 12}
                     height="18"
-                    rx="4"
-                    fill={rel.color}
+                    rx="9"
+                    fill="#DC2626"
                     opacity="0.9"
                   />
                   <text x={midX} y={midY} textAnchor="middle" fontSize="9" fontWeight="600" fill="#fff">
@@ -122,20 +136,21 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               style={{ cursor: "pointer" }}
               onClick={() => { window.location.href = config[type]; }}
             >
-              {/* Glow ring on hover */}
+              {/* Glow ring on hover — coral accent */}
               {isHovered && (
-                <circle cx={pos.x} cy={pos.y} r="44" fill={meta.color} opacity="0.08" />
+                <circle cx={pos.x} cy={pos.y} r="46" fill="#DC2626" opacity="0.06" />
               )}
 
               {/* Node circle */}
               <circle
                 cx={pos.x} cy={pos.y} r="36"
                 fill="none"
-                stroke={meta.color}
-                strokeWidth={isHovered ? 3 : 2}
-                opacity={isHovered ? 1 : 0.8}
+                stroke={isHovered ? "#DC2626" : meta.color}
+                strokeWidth={isHovered ? 2.5 : 1.5}
+                opacity={isHovered ? 1 : 0.7}
+                filter="url(#kgNodeShadow)"
               />
-              <circle cx={pos.x} cy={pos.y} r="36" fill={meta.color} opacity="0.08" />
+              <circle cx={pos.x} cy={pos.y} r="36" fill={meta.color} opacity="0.06" />
 
               {/* Icon */}
               <ContentTypeIconSvg type={type} x={pos.x} y={pos.y - 4} size={20} fill={meta.color} />
@@ -146,7 +161,7 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               </text>
 
               {/* Count */}
-              <text x={pos.x} y={pos.y + 56} textAnchor="middle" className="fill-zinc-400" fontSize="9">
+              <text x={pos.x} y={pos.y + 56} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="9" fontWeight="500">
                 {count > 0 ? `${count}+` : ""}
               </text>
             </g>
