@@ -36,20 +36,9 @@ const fallbackNavigation: GlobalNavigation = {
         { label: "Agents", href: "/aixcelerator/agents", order: 1 },
         { label: "MCP Servers", href: "/aixcelerator/mcp", order: 2 },
         { label: "Skills", href: "/aixcelerator/skills", order: 3 },
-        { label: "Use Cases", href: "/use-cases", order: 4 },
         { label: "Platform Ontology", href: "/aixcelerator/ontology", order: 6 },
         { label: "Ecosystem Graph", href: "/aixcelerator/ecosystem", order: 7 },
         { label: "Solution Stacks", href: "/aixcelerator/solution-stacks", order: 8 },
-      ],
-    },
-    {
-      label: "Industries",
-      href: "/industries",
-      order: 2,
-      group: "header",
-      children: [
-        { label: "All Industries", href: "/industries", order: 1 },
-        { label: "Solutions & Playbooks", href: "/solutions", order: 2 },
       ],
     },
     {
@@ -59,17 +48,7 @@ const fallbackNavigation: GlobalNavigation = {
       group: "header",
       children: [
         { label: "Podcasts", href: "/resources/podcasts", order: 1 },
-        { label: "Articles", href: "/resources/articles", order: 2 },
-        { label: "Books & White Papers", href: "/resources/books", order: 3 },
-        { label: "Case Studies", href: "/resources/case-studies", order: 4 },
       ],
-    },
-    {
-      label: "Updates",
-      href: "/updates",
-      order: 4,
-      group: "header",
-      children: [{ label: "News & Product", href: "/updates", order: 1 }],
     },
   ],
   footerColumns: [
@@ -81,9 +60,6 @@ const fallbackNavigation: GlobalNavigation = {
         { label: "MCP servers", href: "/aixcelerator/mcp", order: 3, group: "Product" },
         { label: "Skills", href: "/aixcelerator/skills", order: 4, group: "Product" },
         { label: "Discovery assistant", href: "/assistant", order: 5, group: "Product" },
-        { label: "Solutions", href: "/solutions", order: 7, group: "Product" },
-        { label: "Use cases", href: "/use-cases", order: 8, group: "Product" },
-        { label: "Industries", href: "/industries", order: 9, group: "Product" },
       ],
     },
     {
@@ -91,9 +67,6 @@ const fallbackNavigation: GlobalNavigation = {
       links: [
         { label: "Resources hub", href: "/resources", order: 1, group: "Resources" },
         { label: "Podcasts", href: "/resources/podcasts", order: 2, group: "Resources" },
-        { label: "White papers", href: "/resources/white-papers", order: 3, group: "Resources" },
-        { label: "Articles", href: "/resources/articles", order: 4, group: "Resources" },
-        { label: "News & product", href: "/updates", order: 5, group: "Resources" },
       ],
     },
   ],
@@ -153,23 +126,12 @@ const FOOTER_COLUMNS = [
       { label: "Agents", href: "/aixcelerator/agents" },
       { label: "MCP Servers", href: "/aixcelerator/mcp" },
       { label: "Skills", href: "/aixcelerator/skills" },
-      { label: "Solutions", href: "/solutions" },
-      { label: "Use Cases", href: "/use-cases" },
-      { label: "Industries", href: "/industries" },
-    ],
-  },
-  {
-    title: "Catalog",
-    links: [
-      { label: "Podcasts", href: "/resources/podcasts" },
-      { label: "Articles", href: "/resources/articles" },
-      { label: "Case Studies", href: "/resources/case-studies" },
     ],
   },
   {
     title: "Resources",
     links: [
-      { label: "Updates", href: "/updates" },
+      { label: "Podcasts", href: "/resources/podcasts" },
       { label: "Contact", href: "/request-demo" },
     ],
   },
@@ -296,8 +258,6 @@ const PLATFORM_CHILD_BLUEPRINT = [
   { label: "Agents", href: "/aixcelerator/agents" },
   { label: "MCP servers", href: "/aixcelerator/mcp" },
   { label: "Skills", href: "/aixcelerator/skills" },
-  { label: "Tools", href: "/aixcelerator/tools" },
-  { label: "Use cases", href: "/use-cases" },
   { label: "Discovery assistant", href: "/assistant" },
 ];
 
@@ -534,7 +494,7 @@ function buildWorkspaceSections(nav: GlobalNavigation): WorkspaceSection[] {
   const platformSectionLinks = dedupeWorkspaceLinks([
     { label: "Overview", href: platformLink.href, target: platformLink.target },
     ...platformChildren,
-  ]).filter((link) => normalizePath(link.href) !== "/assistant");
+  ]).filter((link) => normalizePath(link.href) !== "/assistant" && isReleasePath(link.href));
 
   const resourceChildren = (resourcesLink?.children || []).filter((child) =>
     ["podcasts", "white papers", "articles", "books", "case studies", "resources hub"].includes(
@@ -546,13 +506,13 @@ function buildWorkspaceSections(nav: GlobalNavigation): WorkspaceSection[] {
     { label: "Discovery assistant", href: "/assistant" },
     ...resourceChildren.map((child) => ({ label: child.label, href: child.href, target: child.target })),
     updatesLink ? { label: "News & product", href: updatesLink.href, target: updatesLink.target } : null,
-  ].filter(Boolean) as WorkspaceLink[]);
+  ].filter(Boolean) as WorkspaceLink[]).filter((link) => isReleasePath(link.href));
 
   const exploreLinks = dedupeWorkspaceLinks([
     industriesLink ? { label: "Industries", href: industriesLink.href, target: industriesLink.target } : null,
     solutionsLink ? { label: "Solutions", href: solutionsLink.href, target: solutionsLink.target } : null,
     resourcesLink ? { label: "Resources", href: resourcesLink.href, target: resourcesLink.target } : null,
-  ].filter(Boolean) as WorkspaceLink[]);
+  ].filter(Boolean) as WorkspaceLink[]).filter((link) => isReleasePath(link.href));
 
   return [
     { title: "Platform", links: platformSectionLinks },

@@ -119,7 +119,6 @@ function OntologyDiagram({
           const y = 128;
           const count = categoryCounts[cat.slug] || 0;
           const isHovered = hoveredCategory === cat.slug;
-          const color = config.categoryColors[cat.slug] || "#a1a1aa";
 
           return (
             <g
@@ -129,10 +128,10 @@ function OntologyDiagram({
               onMouseLeave={() => setHoveredCategory(null)}
               style={{ cursor: "pointer" }}
             >
-              <line x1={svgWidth / 2} y1="90" x2={x + catWidth / 2} y2={y} stroke={isHovered ? "#DC2626" : undefined} className={isHovered ? undefined : "stroke-zinc-200 dark:stroke-zinc-700"} strokeWidth="1" strokeDasharray="4,3" opacity={isHovered ? 0.6 : 1} />
-              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill={isHovered ? "#DC2626" : color} opacity={isHovered ? 0.1 : 0.05} />
-              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill="none" stroke={isHovered ? "#DC2626" : color} strokeWidth={isHovered ? 2 : 1.2} filter="url(#nodeShadow)" />
-              <text x={x + catWidth / 2} y={y + 20} textAnchor="middle" dominantBaseline="middle" fontSize="11.5" fontWeight="600" fill={color}>{cat.label}</text>
+              <line x1={svgWidth / 2} y1="90" x2={x + catWidth / 2} y2={y} stroke={isHovered ? "#DC2626" : "#52525b"} strokeWidth="1" strokeDasharray="4,3" opacity={isHovered ? 0.5 : 0.2} />
+              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill={isHovered ? "#DC2626" : "#3f3f46"} opacity={isHovered ? 0.08 : 0.12} />
+              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill="none" stroke={isHovered ? "#DC2626" : "#52525b"} strokeWidth={isHovered ? 1.5 : 0.8} filter="url(#nodeShadow)" />
+              <text x={x + catWidth / 2} y={y + 20} textAnchor="middle" dominantBaseline="middle" fontSize="11.5" fontWeight="600" fill={isHovered ? "#DC2626" : "#a1a1aa"}>{cat.label}</text>
               <text x={x + catWidth / 2} y={y + 50} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="10" fontWeight="500">{count.toLocaleString()}</text>
             </g>
           );
@@ -171,7 +170,7 @@ function OntologyDiagram({
         {/* Edge legend — right-aligned */}
         {relTypes.slice(0, 4).map((rel, i) => (
           <g key={rel.type}>
-            <line x1={490 + i * 115} y1="284" x2={514 + i * 115} y2="284" className="stroke-zinc-400 dark:stroke-zinc-500" strokeWidth="2.5" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} />
+            <line x1={490 + i * 115} y1="284" x2={514 + i * 115} y2="284" stroke="#52525b" strokeWidth="2" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} opacity="0.5" />
             <text x={519 + i * 115} y="288" fontSize="9.5" fontWeight="500" className="fill-zinc-500 dark:fill-zinc-400">{rel.label}</text>
           </g>
         ))}
@@ -187,11 +186,11 @@ function OntologyDiagram({
               key={i}
               x1={from.x + 55} y1={from.y + 310}
               x2={to.x + 55} y2={to.y + 310}
-              stroke="#a1a1aa"
-              strokeWidth="2"
+              stroke="#52525b"
+              strokeWidth="1.5"
               strokeLinecap="round"
               strokeDasharray={rel?.directional ? "6,4" : "none"}
-              opacity="0.5"
+              opacity="0.35"
               className={rel?.directional ? "animated-edge" : undefined}
             />
           );
@@ -272,21 +271,21 @@ function OntologyDiagram({
         <rect x="16" y="598" width="240" height="72" rx="10" className="fill-white dark:fill-zinc-800/50" filter="url(#layerShadow)" />
         <rect x="16" y="598" width="240" height="72" rx="10" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-700/40" strokeWidth="0.8" />
         {[
-          { shape: "circle" as const, label: "Category", fill: "#71717a" },
-          { shape: "rect" as const, label: config.labelSingular, fill: "#71717a" },
-          { shape: "dashed-rect" as const, label: "Collection", fill: "#a1a1aa" },
+          { shape: "circle" as const, label: "Category", fill: "#52525b" },
+          { shape: "rect" as const, label: config.labelSingular, fill: "#52525b" },
+          { shape: "dashed-rect" as const, label: "Collection", fill: "#71717a" },
         ].map((item, i) => (
           <g key={item.label}>
-            {item.shape === "circle" && <circle cx="34" cy={616 + i * 18} r="5" fill={item.fill} />}
-            {item.shape === "rect" && <rect x="29" y={611 + i * 18} width="10" height="10" rx="3" fill={item.fill} />}
-            {item.shape === "dashed-rect" && <rect x="29" y={611 + i * 18} width="10" height="10" rx="3" fill="none" stroke={item.fill} strokeWidth="1.5" strokeDasharray="2,2" />}
-            <text x="50" y={620 + i * 18} fontSize="10.5" fontWeight="500" className="fill-zinc-600 dark:fill-zinc-400">{item.label}</text>
+            {item.shape === "circle" && <circle cx="34" cy={616 + i * 18} r="5" fill={item.fill} opacity="0.6" />}
+            {item.shape === "rect" && <rect x="29" y={611 + i * 18} width="10" height="10" rx="3" fill={item.fill} opacity="0.6" />}
+            {item.shape === "dashed-rect" && <rect x="29" y={611 + i * 18} width="10" height="10" rx="3" fill="none" stroke={item.fill} strokeWidth="1.5" strokeDasharray="2,2" opacity="0.5" />}
+            <text x="50" y={620 + i * 18} fontSize="10.5" fontWeight="500" className="fill-zinc-500 dark:fill-zinc-400">{item.label}</text>
           </g>
         ))}
         {relTypes.slice(0, 4).map((rel, i) => (
           <g key={rel.type}>
-            <line x1="140" y1={616 + i * 18} x2="164" y2={616 + i * 18} className="stroke-zinc-400 dark:stroke-zinc-500" strokeWidth="2.5" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} />
-            <text x="172" y={620 + i * 18} fontSize="10.5" fontWeight="500" className="fill-zinc-600 dark:fill-zinc-400">{rel.label}</text>
+            <line x1="140" y1={616 + i * 18} x2="164" y2={616 + i * 18} stroke="#52525b" strokeWidth="2" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} opacity="0.5" />
+            <text x="172" y={620 + i * 18} fontSize="10.5" fontWeight="500" className="fill-zinc-500 dark:fill-zinc-400">{rel.label}</text>
           </g>
         ))}
       </svg>

@@ -95,10 +95,10 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               <line
                 x1={from.x} y1={from.y}
                 x2={to.x} y2={to.y}
-                stroke={isHovered ? "#DC2626" : rel.color}
-                strokeWidth={isHovered ? 2.5 : 1.5}
+                stroke={isHovered ? "#DC2626" : "#71717a"}
+                strokeWidth={isHovered ? 2.5 : 1}
                 strokeDasharray="6,3"
-                opacity={isHovered ? 0.9 : 0.4}
+                opacity={isHovered ? 0.9 : 0.3}
                 className="kg-edge"
               />
               {isHovered && (
@@ -145,18 +145,18 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               <circle
                 cx={pos.x} cy={pos.y} r="36"
                 fill="none"
-                stroke={isHovered ? "#DC2626" : meta.color}
-                strokeWidth={isHovered ? 2.5 : 1.5}
-                opacity={isHovered ? 1 : 0.7}
+                stroke={isHovered ? "#DC2626" : "#52525b"}
+                strokeWidth={isHovered ? 2 : 1}
+                opacity={isHovered ? 1 : 0.6}
                 filter="url(#kgNodeShadow)"
               />
-              <circle cx={pos.x} cy={pos.y} r="36" fill={meta.color} opacity="0.06" />
+              <circle cx={pos.x} cy={pos.y} r="36" fill={isHovered ? "#DC2626" : "#3f3f46"} opacity={isHovered ? 0.06 : 0.15} />
 
               {/* Icon */}
-              <ContentTypeIconSvg type={type} x={pos.x} y={pos.y - 4} size={20} fill={meta.color} />
+              <ContentTypeIconSvg type={type} x={pos.x} y={pos.y - 4} size={20} fill={isHovered ? "#DC2626" : "#a1a1aa"} />
 
               {/* Label */}
-              <text x={pos.x} y={pos.y + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={meta.color}>
+              <text x={pos.x} y={pos.y + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={isHovered ? "#DC2626" : "#a1a1aa"}>
                 {meta.label}
               </text>
 
@@ -182,7 +182,7 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
 export default function PlatformOntologyPage({ typeCounts }: InferGetStaticPropsType<typeof getStaticProps>) {
   const seoMeta: SeoMeta = {
     title: "AI Knowledge Graph — Platform Ontology | Colaberry AI",
-    description: "Knowledge graph mapping how AI agents, skills, MCP servers, tools, and podcasts connect across the Colaberry AI platform.",
+    description: "Knowledge graph mapping how AI agents, skills, MCP servers, and podcasts connect across the Colaberry AI platform.",
     canonical: buildCanonical("/aixcelerator/ontology"),
     ogImage: "/og/ontology.png",
     ogImageAlt: "Colaberry AI — AI knowledge graph and platform ontology",
@@ -206,13 +206,20 @@ export default function PlatformOntologyPage({ typeCounts }: InferGetStaticProps
             size="xl"
             kicker="Platform"
             title="Knowledge Graph"
-            description="How Agents, Skills, MCP Servers, Tools, and Podcasts are interconnected in the Colaberry AI platform. Click any node to explore its ontology."
+            description="How Agents, Skills, MCP Servers, and Podcasts are interconnected in the Colaberry AI platform. Click any node to explore its ontology."
           />
-          <div className="mt-4 rounded-xl border border-zinc-200/80 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
-            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              <span className="mr-1.5 inline-block rounded bg-[#DC2626]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#DC2626] dark:text-[#F87171]">Colaberry&apos;s Own Method</span>
-              Cross-type relationships create a unified knowledge graph. Agents USE Skills, connect via MCPs, which PROVIDE Tools. Podcasts DISCUSS all of them.
-            </p>
+          <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-zinc-950/30">
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#DC2626]/10 dark:bg-[#DC2626]/15">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-[#DC2626] dark:text-[#F87171]" aria-hidden="true"><path d="M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </span>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#DC2626] dark:text-[#F87171]">Colaberry&apos;s Own Method</span>
+                <p className="mt-1 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  Cross-type relationships create a unified knowledge graph. Agents USE Skills, connect via MCPs. Podcasts DISCUSS all of them.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -226,7 +233,7 @@ export default function PlatformOntologyPage({ typeCounts }: InferGetStaticProps
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {(Object.entries(CONTENT_TYPE_META) as [ContentTypeName, typeof CONTENT_TYPE_META[ContentTypeName]][]).filter(([type]) => type !== "tool").map(([type, meta]) => (
             <Link key={type} href={`${type === "podcast" ? "/resources/podcasts" : `/aixcelerator/${type === "skill" ? "skills" : type === "agent" ? "agents" : "mcp"}`}/ontology`} className="group catalog-card p-5 text-center">
-              <ContentTypeIcon type={type as ContentTypeName} size={28} className="mx-auto" style={{ color: meta.color }} />
+              <ContentTypeIcon type={type as ContentTypeName} size={28} className="mx-auto text-zinc-400 dark:text-zinc-500 transition-colors group-hover:text-[#DC2626] dark:group-hover:text-[#F87171]" />
               <div className="mt-2 text-2xl font-bold text-zinc-900 dark:text-zinc-50">{(typeCounts[type] || 0).toLocaleString()}+</div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400">{meta.label}</div>
               <div className="mt-2 text-[10px] font-semibold text-[#DC2626] group-hover:underline dark:text-[#F87171]">View Ontology →</div>
@@ -245,7 +252,7 @@ export default function PlatformOntologyPage({ typeCounts }: InferGetStaticProps
           {CROSS_TYPE_RELATIONS.slice(0, 4).map((rel) => (
             <div key={`${rel.sourceType}-${rel.targetType}-${rel.relationType}`} className="catalog-card p-5">
               <div className="flex items-center gap-2">
-                <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: rel.color }} />
+                <span className="inline-block h-2 w-2 rounded-full bg-[#DC2626] dark:bg-[#F87171]" />
                 <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{rel.label}</span>
               </div>
               <div className="mt-1 text-[10px] text-zinc-400">
@@ -282,7 +289,7 @@ export default function PlatformOntologyPage({ typeCounts }: InferGetStaticProps
       <EnterpriseCtaBand
         kicker="Platform knowledge graph"
         title="Explore the full ecosystem"
-        description="Discover how Agents, Skills, MCP Servers, Tools, and Podcasts connect across the Colaberry AI platform."
+        description="Discover how Agents, Skills, MCP Servers, and Podcasts connect across the Colaberry AI platform."
         primaryHref="/aixcelerator/ecosystem"
         primaryLabel="View ecosystem graph"
         secondaryHref="/aixcelerator/skills"
