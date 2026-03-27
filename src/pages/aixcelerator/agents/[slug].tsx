@@ -253,7 +253,7 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
                       {renderParagraphs(agent.whatItDoes)}
                     </div>
                   )}
-                  {agent.longDescription && (
+                  {agent.longDescription && !agent.whatItDoes && !looksLikeRawMarkdown(agent.longDescription) && (
                     <div className="mt-4">{renderRichText(agent.longDescription)}</div>
                   )}
                 </div>
@@ -744,6 +744,10 @@ function SidebarStat({
 }
 
 /* ─── Utilities ─── */
+
+function looksLikeRawMarkdown(value: string): boolean {
+  return /^#\s|^##\s/m.test(value);
+}
 
 function parseList(value?: string | null): string[] {
   if (!value) return [];
