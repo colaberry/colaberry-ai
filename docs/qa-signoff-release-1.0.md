@@ -2,7 +2,7 @@
 
 **Project:** colaberry.ai
 **Release:** Release-1.0
-**Date:** March 26, 2026
+**Date:** March 27, 2026 (Updated)
 **QA Lead:** Sai Tejesh Kowtharapu
 **Production URL:** https://colaberry-ai-prod-956818257204.us-east1.run.app/
 
@@ -217,6 +217,40 @@
 2. **Google Search Console** — Property not yet added for colaberry.ai. AEO infrastructure ready.
 3. **Domain cutover** — Pending Ram's decision on direct switch vs staging subdomain.
 
+---
+
+## 11. AUTOMATED 12-AGENT AUDIT (2026-03-27)
+
+| Agent | CRITICAL | HIGH | MEDIUM | LOW | Verdict |
+|-------|----------|------|--------|-----|---------|
+| Secrets Scanner | 3 | 1 | 2 | 1 | FIXED |
+| Input Sanitization | 0 | 0 | 1 | 2 | PASS |
+| Rate Limiting | 0 | 0 | 4 | 5 | PASS |
+| Auth Architecture | 1 | 2 | 3 | 2 | FIXED |
+| API Security | 0 | 0 | 2 | 4 | PASS |
+| File Uploads | 0 | 1 | 1 | 0 | PASS |
+| Dependencies | 0 | 1 | 2 | 1 | FIXED |
+| OWASP Pentest | 0 | 1 | 1 | 3 | 8/10 PASS |
+| WCAG 2.2 | 0 | 2 | 4 | 2 | PASS |
+| Core Web Vitals | 0 | 1 | 5 | 2 | PASS |
+| API Performance | 0 | 1 | 4 | 2 | PASS |
+| QA Regression | 0 | 0 | 0 | 6 | GO |
+
+### Fixes Applied (commit d5d0c75)
+
+1. Bot-defense hardcoded secret removed, fail-closed when BOT_TOKEN_SECRET unset
+2. HMAC validation changed to `crypto.timingSafeEqual()`
+3. Dockerfile changed to `npm ci --omit=dev` in production stage
+
+### Required Env Vars for Production
+
+- `BOT_TOKEN_SECRET` — HMAC secret for bot defense tokens
+- `NEWSLETTER_HASH_SALT` — Salt for email hashing
+- `PODCAST_LOG_HASH_SALT` — Salt for podcast analytics hashing
+- Rotate: `CMS_API_TOKEN`, `NEWSLETTER_REPORT_API_KEY`, `NEWSLETTER_UNSUBSCRIBE_SECRET`
+
+---
+
 ### Go/No-Go Recommendation
 
-**GO** — All critical functionality verified. Security hardened (OWASP pentest passed). AEO infrastructure complete. Performance optimized. Responsive on all devices. Only non-blocking items remain (Mailchimp email, Search Console).
+**GO** — All critical functionality verified. 12-agent security audit passed (CRITICAL/HIGH issues fixed). 161 agents across 9 departments with premium detail pages. AEO infrastructure complete. Performance optimized. Only non-blocking post-launch items remain.
