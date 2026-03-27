@@ -255,81 +255,6 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
 
       <section id="overview" className="reveal section-spacing scroll-mt-[128px] grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
         <div className="grid gap-6">
-        <div className="surface-panel section-shell p-6">
-          <SectionHeading title="Readiness Snapshot" />
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <DetailCard label="Status" value={status} description={statusHint} />
-            <DetailCard
-              label="Visibility"
-              value={isPrivate ? "Private" : "Public"}
-              description={isPrivate ? "Restricted access listing." : "Available for catalog discovery."}
-            />
-            <DetailCard
-              label="Verified"
-              value={agent.verified ? "Yes" : "No"}
-              description={agent.verified ? "Ownership and metadata reviewed." : "Verification pending."}
-            />
-            <DetailCard
-              label="Industry"
-              value={agent.industry || "General"}
-              description="Primary domain alignment."
-            />
-            <DetailCard
-              label="Source"
-              value={sourceDisplay}
-              description="Origin and stewardship."
-            />
-            <DetailCard
-              label="Signals"
-              value={`${tagNames.length} tags • ${companyNames.length} companies`}
-              description="Discovery metadata attached."
-            />
-          </div>
-
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <ListBlock label="Capabilities" items={tagNames} emptyLabel="Capabilities not tagged yet." />
-            <ListBlock
-              label="Integrations"
-              items={companyNames}
-              emptyLabel="No integrations linked yet."
-            />
-          </div>
-
-          <div className="mt-6 grid gap-4 lg:grid-cols-2">
-            <GuidanceBlock
-              title="Deployment guidance"
-              items={[
-                statusKey === "active" || statusKey === "live"
-                  ? "Production-ready and actively deployed."
-                  : statusKey === "beta"
-                    ? "In pilot with limited availability."
-                    : "Discovery or planning stage.",
-                agent.verified ? "Verified metadata and ownership confirmed." : "Verification pending.",
-                isPrivate ? "Private listing with restricted access." : "Public listing for catalog discovery.",
-                sourceDisplay ? `Stewardship: ${sourceDisplay}.` : "Stewardship details pending.",
-              ]}
-            />
-            <GuidanceBlock
-              title="Resources"
-              items={[
-                agent.sourceUrl ? "Source repository or docs available." : "Source link not provided yet.",
-                "Contact Colaberry for enablement, rollout, or evaluation support.",
-              ]}
-              actions={
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {agent.sourceUrl ? (
-                    <a href={agent.sourceUrl} target="_blank" rel="noreferrer" className="btn btn-secondary btn-compact">
-                      View source
-                    </a>
-                  ) : null}
-                  <Link href="/request-demo" className="btn btn-ghost btn-compact">
-                    Request enablement
-                  </Link>
-                </div>
-              }
-            />
-          </div>
-        </div>
 
       {hasOverviewSection ? (
         <section className="surface-panel section-shell p-6">
@@ -623,32 +548,7 @@ export default function AgentDetail({ agent, allowPrivate, relatedAgents }: Agen
       )}
         </div>
 
-        <aside className="surface-panel p-6 lg:sticky lg:top-6">
-          <SectionHeader
-            as="h2"
-            size="md"
-            kicker="LLM metadata"
-            title="Structured profile"
-            description="Fields optimized for catalog indexing and retrieval."
-          />
-          <dl className="mt-6 grid gap-4">
-            <MetadataRow label="Name" value={agent.name} />
-            <MetadataRow label="Slug" value={agent.slug || "Not provided"} />
-            <MetadataRow label="Industry" value={agent.industry || "General"} />
-            <MetadataRow label="Status" value={status} />
-            <MetadataRow label="Visibility" value={isPrivate ? "Private" : "Public"} />
-            <MetadataRow label="Source" value={sourceDisplay} />
-            <MetadataRow label="Verified" value={agent.verified ? "Yes" : "No"} />
-            <MetadataRow label="Last updated" value={lastUpdatedLabel || "Not provided"} />
-            <MetadataRow label="Tags" value={formatList(agent.tags)} />
-            <MetadataRow label="Companies" value={formatList(agent.companies)} />
-            <MetadataRow
-              label="Source URL"
-              value={agent.sourceUrl || "Not linked yet"}
-              href={agent.sourceUrl || undefined}
-            />
-          </dl>
-        </aside>
+        {/* Sidebar removed — matching MCP detail page pattern */}
       </section>
     </Layout>
   );
