@@ -211,6 +211,18 @@ export default function Home({
       ],
     },
     {
+      id: "skills" as const,
+      label: "Skills",
+      title: "Reusable AI skill library",
+      description: "Discover modular, composable skills that agents use to execute tasks — from data extraction to code generation. Browse by category, source, and compatibility.",
+      href: "/aixcelerator/skills",
+      metrics: [
+        { value: fmt(catalogCounts.skills), label: "Skills indexed" },
+        { value: "10", label: "Categories" },
+        { value: "Composable", label: "Architecture" },
+      ],
+    },
+    {
       id: "observability" as const,
       label: "Observability",
       title: "Observability + evaluation",
@@ -238,10 +250,10 @@ export default function Home({
       id: "workspaces" as const,
       label: "Workspaces",
       title: "Industry workspaces",
-      description: "Bring domain context into delivery with repeatable playbooks and patterns. Tailored for agriculture, healthcare, fintech, and more.",
+      description: "Bring domain context into delivery with repeatable playbooks and patterns. Tailored for agriculture, healthcare, oil & gas, biotech, and more.",
       href: "/industries",
       metrics: [
-        { value: "8+", label: "Industries" },
+        { value: "10", label: "Industries" },
         { value: "Custom", label: "Playbooks" },
         { value: "Domain", label: "Intelligence" },
       ],
