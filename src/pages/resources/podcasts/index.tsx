@@ -17,6 +17,7 @@ import { heroImage } from "../../../lib/media";
 import { logPodcastEvent } from "../../../lib/podcastTelemetry";
 import { seoTags, type SeoMeta } from "../../../lib/seo";
 import { getTrackingContext } from "../../../lib/tracking";
+import { usePodcastPlayer } from "../../../contexts/PodcastPlayerContext";
 
 const PAGE_SIZE = 24;
 const PODCAST_BRAND_IMAGE = "/media/podcast/colaberry-ai-podcast-brand.svg";
@@ -53,7 +54,7 @@ export default function Podcasts({
   totalEpisodes,
   initialHasMore,
 }: PodcastsPageProps) {
-  const [playingSlug, setPlayingSlug] = useState<string | null>(null);
+  const { play: globalPlay, isPlaying: globalIsPlaying, isCurrentEpisode } = usePodcastPlayer();
   const [searchOpen, setSearchOpen] = useState(Boolean(searchQuery.trim()));
   const [allEpisodes, setAllEpisodes] = useState<PodcastEpisode[]>(initialEpisodes);
   const [hasMore, setHasMore] = useState(initialHasMore);
@@ -61,7 +62,6 @@ export default function Podcasts({
   const [displayTotal, setDisplayTotal] = useState(totalEpisodes);
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   // Refs to avoid stale closures in IntersectionObserver callback
   const loadingRef = useRef(false);
   const pageRef = useRef(1);
@@ -113,52 +113,16 @@ export default function Podcasts({
     }
   }
 
-  // Handle audio ended → reset icon + persist playback position for resume
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const onEnded = () => {
-      setPlayingSlug(null);
-      localStorage.removeItem("podcast-playing-slug");
-    };
-    const onPause = () => {
-      localStorage.removeItem("podcast-playing-slug");
-    };
-    let lastSaved = 0;
-    const onTimeUpdate = () => {
-      const now = audio.currentTime;
-      if (now - lastSaved >= 2) {
-        lastSaved = now;
-        localStorage.setItem("podcast-playing-time", String(now));
-      }
-    };
-    audio.addEventListener("ended", onEnded);
-    audio.addEventListener("pause", onPause);
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    return () => {
-      audio.removeEventListener("ended", onEnded);
-      audio.removeEventListener("pause", onPause);
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-    };
-  }, []);
-
   const handlePlay = (episode: PodcastEpisode, source: string) => {
-    const audio = audioRef.current;
-    if (!audio || !episode.audioUrl) return;
-
-    if (playingSlug === episode.slug) {
-      // Same episode → pause
-      audio.pause();
-      setPlayingSlug(null);
-      return;
-    }
-
-    // Different episode → load and play
-    audio.src = episode.audioUrl;
-    audio.play();
-    setPlayingSlug(episode.slug);
-    localStorage.setItem("podcast-playing-slug", episode.slug);
-    localStorage.setItem("podcast-playing-time", "0");
+    if (!episode.audioUrl) return;
+    globalPlay({
+      slug: episode.slug,
+      title: episode.title,
+      audioUrl: episode.audioUrl,
+      coverImageUrl: episode.coverImageUrl,
+      coverImageAlt: episode.coverImageAlt,
+      duration: episode.duration,
+    });
     logPodcastEvent("play", source, { slug: episode.slug, title: episode.title });
   };
 
@@ -355,7 +319,7 @@ export default function Podcasts({
               {(() => {
                 const hero = allEpisodes[0];
                 const heroCanPlay = Boolean(hero.audioUrl);
-                const heroIsPlaying = playingSlug === hero.slug;
+                const heroIsPlaying = isCurrentEpisode(hero.slug) && globalIsPlaying;
                 const heroType = (hero.podcastType || "internal").toLowerCase();
                 const heroIsExternal = heroType === "external";
                 const heroArtwork = heroIsExternal
@@ -497,7 +461,7 @@ export default function Podcasts({
               <div className="stagger-grid mt-4 flex flex-col gap-4">
                 {allEpisodes.slice(1).map((episode) => {
                   const canPlay = Boolean(episode.audioUrl);
-                  const isPlaying = playingSlug === episode.slug;
+                  const isPlaying = isCurrentEpisode(episode.slug) && globalIsPlaying;
                   const shortDate = formatShortDate(episode.publishedDate);
                   const episodeType = (episode.podcastType || "internal").toLowerCase();
                   const isExternal = episodeType === "external";
@@ -748,8 +712,7 @@ export default function Podcasts({
         </aside>
       </section>
 
-      {/* Hidden audio element for inline playback */}
-      <audio ref={audioRef} preload="metadata" />
+      {/* Global audio element is now in PodcastPlayerContext */}
 
       <EnterpriseCtaBand
         kicker="AI podcast library"

@@ -18,6 +18,7 @@ import {
 } from "../../../lib/cms";
 import sanitizeHtml from "sanitize-html";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { usePodcastPlayer } from "../../../contexts/PodcastPlayerContext";
 
 const PODCAST_BRAND_IMAGE = "/media/podcast/colaberry-ai-podcast-brand.svg";
 import { logPodcastEvent } from "../../../lib/podcastTelemetry";
@@ -101,10 +102,11 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
   };
   const playerRef = useRef<HTMLDivElement | null>(null);
   const hasLoggedView = useRef(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
+  const {
+    audioRef,
+    play: globalPlay,
+    isCurrentEpisode,
+  } = usePodcastPlayer();
 
   /* ── Sidebar subscribe state ── */
   const [sidebarEmail, setSidebarEmail] = useState("");
@@ -147,58 +149,22 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
     }
   }, [episode.slug, episode.title]);
 
+  // Auto-load this episode into the global player when visiting the detail page
+  // (only if it's not already the current episode)
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const syncTime = () => setCurrentTime(audio.currentTime || 0);
-    const syncDuration = () => {
-      const nextDuration = Number.isFinite(audio.duration) ? audio.duration : 0;
-      setDuration(nextDuration);
-    };
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-    const handleEnded = () => setIsPlaying(false);
-
-    syncTime();
-    syncDuration();
-    setIsPlaying(!audio.paused);
-
-    // Resume playback from listing page if this episode was playing
-    const savedSlug = localStorage.getItem("podcast-playing-slug");
-    const savedTime = parseFloat(localStorage.getItem("podcast-playing-time") || "0");
-    if (savedSlug === episode.slug && savedTime > 0) {
-      const resumeOnReady = () => {
-        audio.currentTime = savedTime;
-        audio.play().catch(() => undefined);
-        audio.removeEventListener("loadedmetadata", resumeOnReady);
-      };
-      if (audio.readyState >= 1) {
-        audio.currentTime = savedTime;
-        audio.play().catch(() => undefined);
-      } else {
-        audio.addEventListener("loadedmetadata", resumeOnReady);
-      }
-      localStorage.removeItem("podcast-playing-slug");
-      localStorage.removeItem("podcast-playing-time");
+    if (audioUrl && !isCurrentEpisode(episode.slug)) {
+      globalPlay({
+        slug: episode.slug,
+        title: episode.title,
+        audioUrl,
+        coverImageUrl: episode.coverImageUrl,
+        coverImageAlt: episode.coverImageAlt,
+        duration: episode.duration,
+      });
     }
-
-    audio.addEventListener("play", handlePlay);
-    audio.addEventListener("pause", handlePause);
-    audio.addEventListener("ended", handleEnded);
-    audio.addEventListener("timeupdate", syncTime);
-    audio.addEventListener("loadedmetadata", syncDuration);
-    audio.addEventListener("durationchange", syncDuration);
-
-    return () => {
-      audio.removeEventListener("play", handlePlay);
-      audio.removeEventListener("pause", handlePause);
-      audio.removeEventListener("ended", handleEnded);
-      audio.removeEventListener("timeupdate", syncTime);
-      audio.removeEventListener("loadedmetadata", syncDuration);
-      audio.removeEventListener("durationchange", syncDuration);
-    };
-  }, [audioUrl, episode.slug]);
+    // Only on mount / episode change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [episode.slug, audioUrl]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -250,7 +216,6 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
   );
   const shouldForceNative = hasTimedTranscript && audioUrl;
   const usesNativePlayer = Boolean(audioUrl && (shouldForceNative || preferNative));
-  const showMiniPlayer = usesNativePlayer && (isPlaying || currentTime > 0);
   const subscribeLinks = (episode.platformLinks || []).filter(
     (link): link is PlatformLink & { url: string } => Boolean(link?.url)
   );
@@ -262,34 +227,6 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
         day: "numeric",
       })
     : null;
-
-  const formatTime = (value: number) => {
-    if (!Number.isFinite(value) || value <= 0) {
-      return "0:00";
-    }
-    const minutes = Math.floor(value / 60);
-    const seconds = Math.floor(value % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
-
-  const handleTogglePlayback = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (audio.paused) {
-      audio.play();
-    } else {
-      audio.pause();
-    }
-  };
-
-  const handleStopPlayback = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.pause();
-    audio.currentTime = 0;
-    setCurrentTime(0);
-    setIsPlaying(false);
-  };
 
   return (
     <Layout>
@@ -368,6 +305,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
                 audioRef={audioRef}
                 forwardSkipSeconds={30}
                 className=""
+                externalAudio
                 onPlay={() => logPodcastEvent("play", undefined, { slug: episode.slug, title: episode.title })}
               />
             ) : (
@@ -746,74 +684,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
         </section>
       ) : null}
 
-      {showMiniPlayer && (
-        <div className="pointer-events-none fixed bottom-4 left-1/2 z-50 w-[min(100%-2rem,64rem)] -translate-x-1/2">
-          <div className="pointer-events-auto card-elevated relative overflow-hidden p-3 shadow-lg backdrop-blur">
-            {/* Mini player progress bar */}
-            <div className="absolute top-0 left-0 right-0 h-0.5 bg-zinc-200/50 dark:bg-zinc-700/50">
-              <div className="h-full bg-[var(--pivot-fill)] transition-[width] duration-200" style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }} />
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Mini player artwork */}
-              <div className="hidden h-10 w-10 shrink-0 overflow-hidden rounded-lg sm:block">
-                <Image
-                  src={episode.coverImageUrl || PODCAST_BRAND_IMAGE}
-                  alt={episode.title}
-                  width={40}
-                  height={40}
-                  className="h-full w-full object-cover"
-                  sizes="40px"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleTogglePlayback}
-                  className="btn btn-secondary btn-icon"
-                  aria-label={isPlaying ? "Pause audio" : "Play audio"}
-                  aria-pressed={isPlaying}
-                >
-                  {isPlaying ? (
-                    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-                      <rect x="6" y="5" width="4" height="14" fill="currentColor" />
-                      <rect x="14" y="5" width="4" height="14" fill="currentColor" />
-                    </svg>
-                  ) : (
-                    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-                      <path d="M8 5v14l11-7-11-7Z" fill="currentColor" />
-                    </svg>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleStopPlayback}
-                  className="btn btn-secondary btn-icon"
-                  aria-label="Stop audio"
-                >
-                  <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-                    <rect x="6" y="6" width="12" height="12" fill="currentColor" />
-                  </svg>
-                </button>
-              </div>
-              <span className="text-xs font-semibold tabular-nums text-zinc-500 dark:text-zinc-400">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-              <div className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  {episode.title}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => playerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                className="btn btn-ghost btn-compact"
-              >
-                Back to player
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Mini player is now handled by GlobalMiniPlayer in _app.tsx */}
 
     </Layout>
   );

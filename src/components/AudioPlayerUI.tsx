@@ -7,6 +7,8 @@ type AudioPlayerUIProps = {
   audioRef?: React.RefObject<HTMLAudioElement | null>;
   forwardSkipSeconds?: number;
   className?: string;
+  /** When true, skip rendering the internal <audio> element (used with global player) */
+  externalAudio?: boolean;
 };
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2] as const;
@@ -25,6 +27,7 @@ export default function AudioPlayerUI({
   audioRef: externalRef,
   forwardSkipSeconds = 15,
   className,
+  externalAudio = false,
 }: AudioPlayerUIProps) {
   const internalRef = useRef<HTMLAudioElement>(null);
   const resolvedRef = externalRef ?? internalRef;
@@ -40,6 +43,11 @@ export default function AudioPlayerUI({
   useEffect(() => {
     const audio = resolvedRef.current;
     if (!audio) return;
+
+    // Sync initial state (important when externalAudio is true and audio is already playing)
+    setPlaying(!audio.paused);
+    setCurrentTime(audio.currentTime);
+    if (Number.isFinite(audio.duration)) setDuration(audio.duration);
 
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
     const onLoaded = () => setDuration(audio.duration);
@@ -116,7 +124,7 @@ export default function AudioPlayerUI({
 
   return (
     <div className={className ?? "surface-panel rounded-xl border border-[var(--stroke)] p-4"}>
-      <audio ref={resolvedRef} src={src} preload="metadata" />
+      {!externalAudio && <audio ref={resolvedRef} src={src} preload="metadata" />}
 
       {title ? (
         <div className="mb-3 text-sm font-semibold text-[var(--text-primary)] line-clamp-1">

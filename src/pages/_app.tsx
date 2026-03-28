@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 
 import "../styles/globals.css";
 import GuidedTourProvider from "../components/GuidedTour/GuidedTourProvider";
+import { PodcastPlayerProvider } from "../contexts/PodcastPlayerContext";
+import GlobalMiniPlayer from "../components/GlobalMiniPlayer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,17 +45,20 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <div
-        style={{
-          opacity: transitioning ? 0 : 1,
-          transition: "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)",
-          willChange: transitioning ? "opacity" : "auto",
-        }}
-      >
-        <GuidedTourProvider>
-          <Component {...pageProps} />
-        </GuidedTourProvider>
-      </div>
+      <PodcastPlayerProvider>
+        <div
+          style={{
+            opacity: transitioning ? 0 : 1,
+            transition: "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+            willChange: transitioning ? "opacity" : "auto",
+          }}
+        >
+          <GuidedTourProvider>
+            <Component {...pageProps} />
+          </GuidedTourProvider>
+        </div>
+        <GlobalMiniPlayer />
+      </PodcastPlayerProvider>
     </div>
   );
 }
