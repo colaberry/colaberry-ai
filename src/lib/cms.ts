@@ -2951,7 +2951,7 @@ export async function fetchPodcastCategoryCounts(): Promise<Record<string, numbe
     const counts: Record<string, number> = {};
     for (const ep of sample) {
       // classifyPodcast expects {tags, description, title}; PodcastEpisode has these
-      const cat = classifyPodcast(ep as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+      const cat = classifyPodcast(ep as any);  
       counts[cat.slug] = (counts[cat.slug] || 0) + 1;
     }
     if (sample.length > 0 && total > sample.length) {
@@ -3000,7 +3000,7 @@ export async function fetchToolCategoryCounts(): Promise<Record<string, number>>
     const total = totalRes?.meta?.pagination?.total ?? sample.length;
     const counts: Record<string, number> = {};
     for (const tool of sample) {
-      const cat = classifyTool(tool as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+      const cat = classifyTool(tool as any);  
       counts[cat.slug] = (counts[cat.slug] || 0) + 1;
     }
     if (sample.length > 0 && total > sample.length) {

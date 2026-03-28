@@ -6,7 +6,6 @@
  * Skills-specific backward-compatible wrappers are kept for existing code.
  */
 
-import type { SkillRelationType } from "../data/skill-taxonomy";
 import type { OntologyItem, ContentOntologyConfig } from "./ontologyTypes";
 
 /* ── Types ────────────────────────────────────────────────────────────── */

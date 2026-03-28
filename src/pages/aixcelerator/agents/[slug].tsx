@@ -54,7 +54,7 @@ export const getStaticProps: GetStaticProps<AgentDetailProps> = async ({ params 
   }
 };
 
-export default function AgentDetail({ agent, allowPrivate, relatedAgents }: AgentDetailProps) {
+export default function AgentDetail({ agent, allowPrivate: _allowPrivate, relatedAgents }: AgentDetailProps) {
   const isPrivate = (agent.visibility || "public").toLowerCase() === "private";
   const status = agent.status || "Unknown";
   const statusKey = status.toLowerCase();

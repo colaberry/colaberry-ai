@@ -140,6 +140,7 @@ export default function AudioPlayerUI({
         aria-valuenow={Math.round(currentTime)}
         aria-valuemin={0}
         aria-valuemax={Math.round(duration)}
+        aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
         tabIndex={0}
         className="group relative h-2 cursor-pointer rounded-full bg-[var(--surface-soft)]"
         onClick={seek}
@@ -149,7 +150,7 @@ export default function AudioPlayerUI({
         }}
       >
         <div
-          className="absolute inset-y-0 left-0 rounded-full bg-[var(--pivot-fill)] transition-[width] duration-100"
+          className="absolute inset-y-0 left-0 rounded-full bg-[var(--pivot-fill)] transition-[width] duration-100 motion-reduce:transition-none"
           style={{ width: `${progress}%` }}
         />
         <div
@@ -171,7 +172,7 @@ export default function AudioPlayerUI({
           <button
             type="button"
             onClick={() => skip(-15)}
-            className="relative flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
+            className="relative flex h-11 w-11 items-center justify-center rounded-full text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
             aria-label="Skip back 15 seconds"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -185,7 +186,7 @@ export default function AudioPlayerUI({
           <button
             type="button"
             onClick={togglePlay}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-900 text-white shadow-md transition-transform hover:scale-105 dark:bg-zinc-100 dark:text-zinc-900"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-900 text-white shadow-md transition-transform hover:scale-105 motion-reduce:transition-none dark:bg-zinc-100 dark:text-zinc-900"
             aria-label={playing ? "Pause" : "Play"}
           >
             {playing ? (
@@ -204,7 +205,7 @@ export default function AudioPlayerUI({
           <button
             type="button"
             onClick={() => skip(forwardSkipSeconds)}
-            className="relative flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
+            className="relative flex h-11 w-11 items-center justify-center rounded-full text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
             aria-label={`Skip forward ${forwardSkipSeconds} seconds`}
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -220,7 +221,7 @@ export default function AudioPlayerUI({
           <button
             type="button"
             onClick={cycleSpeed}
-            className="rounded-md border border-[var(--stroke)] px-2 py-1 text-xs font-semibold text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-soft)]"
+            className="min-h-[44px] min-w-[44px] rounded-md border border-[var(--stroke)] px-2 py-1 text-xs font-semibold text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-soft)]"
             aria-label={`Playback speed ${speed}x`}
           >
             {speed}x

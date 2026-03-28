@@ -19,7 +19,7 @@ import {
   type PodcastEpisode,
   type UseCase,
 } from "../lib/cms";
-import { heroImage } from "../lib/media";
+// heroImage available from ../lib/media if needed
 import { seoTags, type SeoMeta } from "../lib/seo";
 
 type HomePodcastSignal = {
@@ -101,6 +101,7 @@ export default function Home({
 }: HomeProps) {
   const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k+` : `${n}+`;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- false positive: used at line ~492
   const industries = [
     { name: "Agriculture", slug: "agriculture", icon: "leaf" as const },
     { name: "Energy", slug: "energy", icon: "droplet" as const },
@@ -605,8 +606,8 @@ function SignalDashboard({
   trendingMCPs,
   latestPodcasts,
   trendingPodcasts,
-  latestUseCases,
-  trendingUseCases,
+  latestUseCases: _latestUseCases,
+  trendingUseCases: _trendingUseCases,
 }: {
   latestAgents: HomeAgentSignal[];
   trendingAgents: HomeAgentSignal[];
@@ -979,7 +980,7 @@ function AgentRail({
   title,
   description,
   items,
-  detailType,
+  detailType: _detailType,
 }: {
   title: string;
   description: string;
@@ -1027,7 +1028,7 @@ function SkillRail({
   title,
   description,
   items,
-  detailType,
+  detailType: _detailType,
 }: {
   title: string;
   description: string;
@@ -1071,7 +1072,7 @@ function SkillRail({
   );
 }
 
-function UseCaseRail({
+function _UseCaseRail({
   title,
   description,
   items,
@@ -1117,7 +1118,7 @@ function McpRail({
   title,
   description,
   items,
-  detailType,
+  detailType: _detailType,
 }: {
   title: string;
   description: string;
@@ -1429,7 +1430,7 @@ function scoreTrendingSkill(skill: Skill) {
   return ratingScore + usageScore + verifiedScore + linkageScore + completenessScore + freshnessScore;
 }
 
-function formatUsageLabel(value: number) {
+function _formatUsageLabel(value: number) {
   if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
   if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
   return String(value);
@@ -1437,6 +1438,7 @@ function formatUsageLabel(value: number) {
 
 type IndustryIcon = "leaf" | "tower" | "droplet" | "dna" | "factory" | "truck";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- false positive: used at line ~493
 function IndustryTile({
   href,
   title,

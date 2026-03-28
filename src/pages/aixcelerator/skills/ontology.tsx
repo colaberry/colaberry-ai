@@ -10,7 +10,8 @@ import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../../
 import { SKILL_CATEGORIES } from "../../../data/skill-taxonomy";
 import { SKILL_COLLECTIONS } from "../../../data/skill-collections";
 import { fetchSkillCategoryCounts, fetchAllSkillTags } from "../../../lib/cms";
-import { RELATIONSHIP_TYPE_COLORS, RELATIONSHIP_TYPE_LABELS } from "../../../lib/graphUtils";
+// RELATIONSHIP_TYPE_COLORS and RELATIONSHIP_TYPE_LABELS available from graphUtils if needed
+
 import ContentTypeIcon from "../../../components/ContentTypeIcon";
 
 /* ── Relationship metadata ─────────────────────────────────────────── */

@@ -13,7 +13,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/router";
-import { fetchGlobalNavigation, GlobalNavigation } from "../lib/cms";
+import { GlobalNavigation } from "../lib/cms";
 import { captureUtmContextFromLocation, getTrackingContext } from "../lib/tracking";
 import AnimatedSignalBanner from "./AnimatedSignalBanner";
 import { usePodcastPlayer } from "../contexts/PodcastPlayerContext";
@@ -404,7 +404,7 @@ function getRequestDemoLabel(label: string) {
   return label;
 }
 
-function mergeGlobalNavigation(primary: GlobalNavigation | null, fallback: GlobalNavigation): GlobalNavigation {
+function _mergeGlobalNavigation(primary: GlobalNavigation | null, fallback: GlobalNavigation): GlobalNavigation {
   if (!primary) return fallback;
   const fallbackHeaderIndex = new Map(
     fallback.headerLinks.map((link) => [`${link.label}|${link.href}`, link])
@@ -608,7 +608,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [hasMounted, setHasMounted] = useState(false);
-  const [globalNav, setGlobalNav] = useState<GlobalNavigation>(fallbackNavigation);
+  const [globalNav, _setGlobalNav] = useState<GlobalNavigation>(fallbackNavigation);
   const [searchOpen, setSearchOpen] = useState(false);
   const [discoveryOpen, setDiscoveryOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -623,8 +623,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [footerHoneypot, setFooterHoneypot] = useState("");
   const [footerConsent, setFooterConsent] = useState(false);
   const [footerSubState, setFooterSubState] = useState<"idle" | "submitting" | "success" | "error">("idle");
-  const [footerSubMessage, setFooterSubMessage] = useState<string | null>(null);
-  const [footerUnsubUrl, setFooterUnsubUrl] = useState<string | null>(null);
+  const [_footerSubMessage, setFooterSubMessage] = useState<string | null>(null);
+  const [_footerUnsubUrl, setFooterUnsubUrl] = useState<string | null>(null);
   const footerTrackingContext = useMemo(() => getTrackingContext(), []);
   const lastScrollY = useRef(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -738,11 +738,11 @@ export default function Layout({ children }: { children: ReactNode }) {
   //   fetchGlobalNavigation()
   //     .then((data) => {
   //       if (!isActive) return;
-  //       setGlobalNav(mergeGlobalNavigation(data, fallbackNavigation));
+  //       _setGlobalNav(_mergeGlobalNavigation(data, fallbackNavigation));
   //     })
   //     .catch(() => {
   //       if (!isActive) return;
-  //       setGlobalNav(fallbackNavigation);
+  //       _setGlobalNav(fallbackNavigation);
   //     });
   //   return () => {
   //     isActive = false;
@@ -950,7 +950,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     setDemoWizardOpen(true);
   };
 
-  async function handleFooterNewsletterSubmit(event: FormEvent<HTMLFormElement>) {
+  async function _handleFooterNewsletterSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (footerSubState === "submitting" || !footerConsent) return;
     setFooterSubState("submitting");
@@ -1849,10 +1849,12 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       ) : null}
       {isCatalogWorkspace && !mobileMenuOpen && !workspaceMobileRailOpen && !searchOpen ? (
-        <div className={`pointer-events-none fixed inset-x-0 z-30 flex justify-center px-4 transition-[bottom] duration-300 lg:inset-x-auto lg:right-8 lg:px-0 ${miniPlayerVisible ? "bottom-16" : "bottom-5"}`}>
+        <div className={`pointer-events-none fixed inset-x-0 z-30 flex justify-center px-4 transition-[bottom] duration-300 motion-reduce:transition-none lg:inset-x-auto lg:right-8 lg:px-0 ${miniPlayerVisible ? "bottom-16" : "bottom-5"}`}>
           <form
             action="/search"
             method="get"
+            role="search"
+            aria-label="Search this workspace"
             className="pointer-events-auto flex w-full max-w-2xl items-center gap-2 rounded-lg border border-zinc-200/80 bg-white/95 p-2 shadow-xl dark:border-[#3F3F46] dark:bg-[#18181B]/95 lg:w-[36rem]"
           >
             <label htmlFor="workspace-ask" className="sr-only">
@@ -1862,10 +1864,11 @@ export default function Layout({ children }: { children: ReactNode }) {
               id="workspace-ask"
               name="q"
               type="search"
+              autoComplete="off"
               placeholder="Ask this page: agents, MCP servers, skills, use cases..."
-              className="w-full rounded-xl border border-transparent bg-transparent px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#DC2626]/35 focus:outline-none dark:text-zinc-100 dark:placeholder:text-zinc-500"
+              className="min-h-[44px] w-full rounded-xl border border-transparent bg-transparent px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#DC2626]/35 focus:outline-none dark:text-zinc-100 dark:placeholder:text-zinc-500"
             />
-            <button type="submit" className="btn btn-primary btn-sm whitespace-nowrap">
+            <button type="submit" aria-label="Submit search" className="btn btn-primary btn-sm min-h-[44px] whitespace-nowrap">
               Ask
             </button>
           </form>

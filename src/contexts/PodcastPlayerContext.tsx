@@ -11,10 +11,24 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
 } from "react";
+
+/* ── Validation helpers (defense-in-depth for localStorage values) ── */
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+function isValidAudioUrl(url: string): boolean {
+  if (url.startsWith("/")) return true;
+  try { return new URL(url).protocol === "https:"; }
+  catch { return false; }
+}
+
+function isValidSlug(slug: string): boolean {
+  return SLUG_RE.test(slug);
+}
 
 /* ── Minimal episode shape needed by the global player ── */
 export type PodcastEpisodeMini = {
@@ -63,12 +77,13 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     if (typeof window === "undefined") return null;
     const slug = localStorage.getItem("podcast-playing-slug");
     const audioUrl = localStorage.getItem("podcast-playing-audioUrl");
-    if (!slug || !audioUrl) return null;
+    if (!slug || !audioUrl || !isValidSlug(slug) || !isValidAudioUrl(audioUrl)) return null;
+    const coverUrl = localStorage.getItem("podcast-playing-cover") || null;
     return {
       slug,
       title: localStorage.getItem("podcast-playing-title") || "",
       audioUrl,
-      coverImageUrl: localStorage.getItem("podcast-playing-cover") || null,
+      coverImageUrl: coverUrl && isValidAudioUrl(coverUrl) ? coverUrl : null,
     };
   });
   const [isPlaying, setIsPlaying] = useState(false);
@@ -217,7 +232,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     [currentEpisode]
   );
 
-  const value: PodcastPlayerContextValue = {
+  const value: PodcastPlayerContextValue = useMemo(() => ({
     audioRef,
     currentEpisode,
     isPlaying,
@@ -229,7 +244,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     stop,
     seek,
     isCurrentEpisode,
-  };
+  }), [currentEpisode, isPlaying, currentTime, duration, play, pause, togglePlayback, stop, seek, isCurrentEpisode]);
 
   return (
     <PodcastPlayerContext.Provider value={value}>

@@ -30,21 +30,28 @@ export default function GlobalMiniPlayer() {
   const detailPath = `/resources/podcasts/${currentEpisode.slug}`;
   if (router.asPath.startsWith(detailPath)) return null;
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const progress = duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-zinc-200/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800/60 dark:bg-zinc-950/95 dark:supports-[backdrop-filter]:bg-zinc-950/80">
+    <aside role="complementary" aria-label="Audio mini player" className="fixed inset-x-0 bottom-0 z-50 border-t border-zinc-200/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800/60 dark:bg-zinc-950/95 dark:supports-[backdrop-filter]:bg-zinc-950/80">
       {/* Progress bar — thin line at top of mini player */}
-      <div className="h-0.5 w-full bg-zinc-200/60 dark:bg-zinc-800">
+      <div
+        role="progressbar"
+        aria-label="Playback progress"
+        aria-valuenow={Math.round(currentTime)}
+        aria-valuemin={0}
+        aria-valuemax={Math.round(duration)}
+        className="h-0.5 w-full bg-zinc-200/60 dark:bg-zinc-800"
+      >
         <div
-          className="h-full bg-[#DC2626] transition-[width] duration-200"
+          className="h-full bg-[#DC2626] transition-[width] duration-200 motion-reduce:transition-none"
           style={{ width: `${progress}%` }}
         />
       </div>
 
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2 sm:px-6">
         {/* Cover art */}
-        <Link href={detailPath} className="shrink-0">
+        <Link href={detailPath} className="shrink-0" aria-label={`Go to ${currentEpisode.title}`}>
           <Image
             src={currentEpisode.coverImageUrl || PODCAST_BRAND_IMAGE}
             alt={currentEpisode.coverImageAlt || currentEpisode.title}
@@ -68,7 +75,7 @@ export default function GlobalMiniPlayer() {
         <button
           type="button"
           onClick={togglePlayback}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white shadow-sm transition-transform hover:scale-105 dark:bg-zinc-100 dark:text-zinc-900"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white shadow-sm transition-transform hover:scale-105 motion-reduce:transition-none dark:bg-zinc-100 dark:text-zinc-900"
           aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (
@@ -87,7 +94,7 @@ export default function GlobalMiniPlayer() {
         <button
           type="button"
           onClick={stop}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
           aria-label="Stop playback"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -95,6 +102,6 @@ export default function GlobalMiniPlayer() {
           </svg>
         </button>
       </div>
-    </div>
+    </aside>
   );
 }
