@@ -1139,7 +1139,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-logo-2-dark.svg"
+                  src="/brand/Colaberry.AI_Logo_Dark.svg"
                   alt=""
                   aria-hidden="true"
                   width={260}
@@ -1552,7 +1552,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-logo-2-dark.svg"
+                  src="/brand/Colaberry.AI_Logo_Dark.svg"
                   alt=""
                   aria-hidden="true"
                   width={130}
