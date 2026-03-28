@@ -1131,15 +1131,15 @@ export default function Layout({ children }: { children: ReactNode }) {
               <span className="inline-flex items-center justify-center px-1">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-logo.svg"
-                  alt="Colaberry.AI"
+                  src="/brand/colaberry-ai-logo%202.svg"
+                  alt="ColaberryAI"
                   width={260}
                   height={60}
                   className="brand-logo-light h-8 w-auto sm:h-9 lg:h-10"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-logo-dark.svg"
+                  src="/brand/colaberry-ai-logo-2-dark.svg"
                   alt=""
                   aria-hidden="true"
                   width={260}
@@ -1544,15 +1544,15 @@ export default function Layout({ children }: { children: ReactNode }) {
               <span className="flex items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-logo.svg"
-                  alt="Colaberry AI"
+                  src="/brand/colaberry-ai-logo%202.svg"
+                  alt="ColaberryAI"
                   width={130}
                   height={28}
                   className="brand-logo-light h-7 w-auto"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-logo-dark.svg"
+                  src="/brand/colaberry-ai-logo-2-dark.svg"
                   alt=""
                   aria-hidden="true"
                   width={130}
@@ -1623,17 +1623,17 @@ export default function Layout({ children }: { children: ReactNode }) {
               <div className="footer-watermark mt-8 w-full max-w-sm lg:max-w-md" aria-hidden="true">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-watermark.svg"
+                  src="/brand/colaberry-ai-watermark-2.svg"
                   alt=""
-                  width={2259}
+                  width={2204}
                   height={476}
                   className="brand-logo-light h-auto w-full lg:ml-auto"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-watermark-dark.svg"
+                  src="/brand/colaberry-ai-watermark-2-dark.svg"
                   alt=""
-                  width={2259}
+                  width={2204}
                   height={476}
                   className="brand-logo-dark h-auto w-full lg:ml-auto"
                 />
