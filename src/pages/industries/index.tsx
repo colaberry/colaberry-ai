@@ -53,8 +53,10 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
   const industries = [
     { name: "Agriculture", slug: "agriculture", icon: <svg {...iconProps}><path d="M12 22V8" /><path d="M5 12H2a10 10 0 0020 0h-3" /><path d="M8 5.2C9 4 10.5 3 12 3c1.5 0 3 1 4 2.2" /></svg> },
     { name: "Energy", slug: "energy", icon: <svg {...iconProps}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg> },
+    { name: "Oil & Gas", slug: "oil-and-gas", icon: <svg {...iconProps}><path d="M6 14c0 4 6 7 6 7s6-3 6-7c0-3-2-5-6-9-4 4-6 6-6 9z" /><path d="M12 21v-4" /><circle cx="12" cy="14" r="1" fill="#DC2626" stroke="none" /></svg> },
     { name: "Utilities", slug: "utilities", icon: <svg {...iconProps}><path d="M6 3v18" /><path d="M18 3v18" /><path d="M6 8h12" /><path d="M6 16h12" /><circle cx="12" cy="12" r="2" /></svg> },
     { name: "Healthcare & Life Sciences", slug: "healthcare-life-sciences", icon: <svg {...iconProps}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg> },
+    { name: "Biotech", slug: "biotech", icon: <svg {...iconProps}><circle cx="12" cy="12" r="3" /><path d="M12 3v6" /><path d="M12 15v6" /><path d="M3 12h6" /><path d="M15 12h6" /><path d="M5.64 5.64l4.24 4.24" /><path d="M14.12 14.12l4.24 4.24" /><path d="M5.64 18.36l4.24-4.24" /><path d="M14.12 9.88l4.24-4.24" /></svg> },
     { name: "Climate Tech", slug: "climate-tech", icon: <svg {...iconProps}><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg> },
     { name: "Manufacturing", slug: "manufacturing", icon: <svg {...iconProps}><rect x="2" y="6" width="20" height="12" rx="2" /><path d="M12 12h.01" /><path d="M17 12h.01" /><path d="M7 12h.01" /></svg> },
     { name: "Fintech", slug: "fintech", icon: <svg {...iconProps}><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg> },
@@ -116,7 +118,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
         kicker="Industry expertise"
         title="Industries"
         description="Domain-led delivery surfaces for sector-specific agents, MCP patterns, use cases, and outcomes."
-        chips={["Agriculture", "Energy", "Utilities", "Healthcare", "Manufacturing", "Supply chain"]}
+        chips={["Agriculture", "Energy", "Oil & Gas", "Healthcare", "Biotech", "Manufacturing", "Supply chain"]}
         primaryAction={{ label: "Explore agents", href: "/aixcelerator/agents" }}
         secondaryAction={{ label: "Browse case studies", href: "/resources/case-studies", variant: "secondary" }}
         metrics={[

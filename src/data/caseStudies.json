@@ -818,5 +818,83 @@
         "slide": "slide25"
       }
     ]
+  },
+  "oil-and-gas": {
+    "industry": "Oil & Gas",
+    "cases": [
+      {
+        "challenge": [
+          "Oil & gas operators faced unplanned equipment downtime costing millions per day, with traditional inspection methods unable to predict failures across distributed pipeline networks"
+        ],
+        "solution": [
+          "Deployed AI-driven predictive maintenance models using sensor telemetry, vibration analysis, and anomaly detection across pipeline and compressor station assets",
+          "Integrated real-time SCADA data with machine learning pipelines for early fault detection and remaining useful life estimation",
+          "Built dashboard for field operations teams to prioritize maintenance schedules based on failure probability scores"
+        ],
+        "outcomes": [
+          "35% reduction in unplanned downtime across monitored assets",
+          "Estimated $2.4M annual savings per production facility",
+          "Maintenance planning horizon extended from reactive to 30-day predictive window"
+        ],
+        "title": "Predictive maintenance for pipeline and compressor station assets",
+        "id": "oil-gas-case-1"
+      },
+      {
+        "challenge": [
+          "Reservoir engineers relied on manual workflows and legacy simulation tools, resulting in slow subsurface modeling cycles and suboptimal well placement decisions"
+        ],
+        "solution": [
+          "Applied deep learning surrogate models trained on historical reservoir simulation data to accelerate subsurface forecasting",
+          "Automated seismic interpretation workflows using computer vision models for fault detection and horizon mapping",
+          "Integrated automated well-log analysis with production optimization agents"
+        ],
+        "outcomes": [
+          "Simulation cycle time reduced from weeks to hours using surrogate models",
+          "15% improvement in well placement accuracy based on AI-recommended locations",
+          "Engineers freed from routine interpretation tasks, focusing on high-value decision-making"
+        ],
+        "title": "AI-accelerated reservoir modeling and well placement optimization",
+        "id": "oil-gas-case-2"
+      }
+    ]
+  },
+  "biotech": {
+    "industry": "Biotech",
+    "cases": [
+      {
+        "challenge": [
+          "Drug discovery pipelines suffered from high attrition rates, with 90% of candidates failing in clinical trials due to inadequate target validation and ADMET prediction"
+        ],
+        "solution": [
+          "Deployed graph neural networks for molecular property prediction and drug-target interaction modeling",
+          "Built automated ADMET screening pipelines using ensemble ML models trained on proprietary compound libraries",
+          "Integrated generative chemistry models for novel molecule design optimized for desired pharmacological profiles"
+        ],
+        "outcomes": [
+          "40% reduction in early-stage screening time for lead compound identification",
+          "Hit rate for viable candidates improved from 2% to 8% in target validation phase",
+          "3 novel molecular scaffolds identified and advanced to preclinical evaluation"
+        ],
+        "title": "AI-accelerated drug discovery and lead compound optimization",
+        "id": "biotech-case-1"
+      },
+      {
+        "challenge": [
+          "Genomics research teams struggled with petabyte-scale sequencing data analysis, with manual bioinformatics pipelines creating bottlenecks in variant calling and annotation"
+        ],
+        "solution": [
+          "Automated NGS data processing pipelines using cloud-native workflow orchestration with containerized analysis tools",
+          "Applied deep learning models for variant calling accuracy improvement and structural variant detection",
+          "Built knowledge graph integrating variant annotations from ClinVar, gnomAD, and proprietary datasets for clinical interpretation"
+        ],
+        "outcomes": [
+          "Whole genome analysis turnaround reduced from 5 days to 8 hours",
+          "Variant calling concordance improved to 99.7% compared to gold-standard benchmarks",
+          "Clinical interpretation time reduced by 60% through automated annotation and prioritization"
+        ],
+        "title": "Scalable genomics pipeline for clinical-grade variant analysis",
+        "id": "biotech-case-2"
+      }
+    ]
   }
 }

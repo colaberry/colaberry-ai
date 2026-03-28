@@ -17,8 +17,8 @@ type IndustryPageProps = {
 };
 
 const INDUSTRY_SLUGS = [
-  "agriculture", "energy", "utilities", "healthcare-life-sciences",
-  "climate-tech", "manufacturing", "fintech", "supply-chain",
+  "agriculture", "energy", "oil-and-gas", "utilities", "healthcare-life-sciences",
+  "biotech", "climate-tech", "manufacturing", "fintech", "supply-chain",
 ];
 
 export const getStaticPaths: GetStaticPaths = async () => ({

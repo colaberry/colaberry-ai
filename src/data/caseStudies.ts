@@ -24,8 +24,8 @@ type RawIndustry = {
 const rawTyped = raw as Record<string, RawIndustry>;
 
 const slugAliases: Record<string, string> = {
-  "oil-gas": "energy",
-  biotech: "healthcare-life-sciences",
+  "oil-gas": "oil-and-gas",
+  "oil-and-gas": "oil-and-gas",
   "healthcare": "healthcare-life-sciences",
   "health-care": "healthcare-life-sciences",
   "life-sciences": "healthcare-life-sciences",

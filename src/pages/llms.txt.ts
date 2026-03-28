@@ -28,7 +28,7 @@ Last updated: ${now}
 - ${counts.mcpServers.toLocaleString()}+ MCP Servers (Model Context Protocol integrations)
 - ${counts.skills.toLocaleString()}+ AI Skills (reusable capability units)
 - 260+ Podcast Episodes with full searchable transcripts
-- 8 Industry workspaces (Agriculture, Energy, Utilities, Healthcare, Climate Tech, Manufacturing, Fintech, Supply Chain)
+- 10 Industry workspaces (Agriculture, Energy, Oil & Gas, Utilities, Healthcare & Life Sciences, Biotech, Climate Tech, Manufacturing, Fintech, Supply Chain)
 
 ## What is Colaberry AI?
 
