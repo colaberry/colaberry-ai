@@ -2584,6 +2584,11 @@ footer .footer-link:focus-visible {
   pointer-events: auto;
 }
 
+/* Shift back-to-top up when GlobalMiniPlayer is visible (~56px bar) */
+.back-to-top.mini-player-offset {
+  bottom: 5rem;
+}
+
 /* ---------------------------------------------------------------------------
  * Header scroll-compression
  * --------------------------------------------------------------------------- */

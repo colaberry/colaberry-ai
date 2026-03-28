@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { fetchGlobalNavigation, GlobalNavigation } from "../lib/cms";
 import { captureUtmContextFromLocation, getTrackingContext } from "../lib/tracking";
 import AnimatedSignalBanner from "./AnimatedSignalBanner";
+import { usePodcastPlayer } from "../contexts/PodcastPlayerContext";
 
 const CookieConsentBanner = dynamic(() => import("./CookieConsentBanner"), {
   ssr: false,
@@ -629,8 +630,13 @@ export default function Layout({ children }: { children: ReactNode }) {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchDialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const { currentEpisode } = usePodcastPlayer();
   const currentPath = normalizePath(router.asPath || "/");
   const isCatalogWorkspace = isCatalogWorkspacePath(currentPath);
+  // GlobalMiniPlayer is visible when an episode is loaded AND we're not on its detail page
+  const miniPlayerVisible =
+    !!currentEpisode &&
+    !router.asPath.startsWith(`/resources/podcasts/${currentEpisode.slug}`);
   const headerNavPaths = globalNav.headerLinks
     .map((link) => normalizePath(link.href))
     .filter((href) => !isExternalHref(href));
@@ -1843,7 +1849,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       ) : null}
       {isCatalogWorkspace && !mobileMenuOpen && !workspaceMobileRailOpen && !searchOpen ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center px-4 lg:inset-x-auto lg:right-8 lg:px-0">
+        <div className={`pointer-events-none fixed inset-x-0 z-30 flex justify-center px-4 transition-[bottom] duration-300 lg:inset-x-auto lg:right-8 lg:px-0 ${miniPlayerVisible ? "bottom-16" : "bottom-5"}`}>
           <form
             action="/search"
             method="get"
@@ -1876,7 +1882,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <button
         type="button"
         aria-label="Back to top"
-        className={`back-to-top btn-icon${headerCompact ? " visible" : ""}`}
+        className={`back-to-top btn-icon${headerCompact ? " visible" : ""}${miniPlayerVisible ? " mini-player-offset" : ""}`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">

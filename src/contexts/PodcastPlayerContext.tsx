@@ -57,7 +57,20 @@ const PodcastPlayerContext = createContext<PodcastPlayerContextValue | null>(nul
 /* ── Provider ── */
 export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [currentEpisode, setCurrentEpisode] = useState<PodcastEpisodeMini | null>(null);
+
+  // Lazy-initialize from localStorage so we don't need setState inside an effect
+  const [currentEpisode, setCurrentEpisode] = useState<PodcastEpisodeMini | null>(() => {
+    if (typeof window === "undefined") return null;
+    const slug = localStorage.getItem("podcast-playing-slug");
+    const audioUrl = localStorage.getItem("podcast-playing-audioUrl");
+    if (!slug || !audioUrl) return null;
+    return {
+      slug,
+      title: localStorage.getItem("podcast-playing-title") || "",
+      audioUrl,
+      coverImageUrl: localStorage.getItem("podcast-playing-cover") || null,
+    };
+  });
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -108,36 +121,25 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  /* ── Restore session on mount (crash recovery) ── */
+  /* ── Restore audio element on mount (crash recovery) ── */
+  // Episode metadata is restored via lazy useState initializer above.
+  // This effect only syncs the external <audio> element.
   useEffect(() => {
-    const savedSlug = localStorage.getItem("podcast-playing-slug");
+    if (!currentEpisode) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+
     const savedTime = parseFloat(localStorage.getItem("podcast-playing-time") || "0");
-    const savedTitle = localStorage.getItem("podcast-playing-title") || "";
-    const savedAudioUrl = localStorage.getItem("podcast-playing-audioUrl") || "";
-    const savedCover = localStorage.getItem("podcast-playing-cover") || "";
-
-    if (savedSlug && savedAudioUrl) {
-      // Restore episode metadata (won't autoplay — just pre-load for resume)
-      setCurrentEpisode({
-        slug: savedSlug,
-        title: savedTitle,
-        audioUrl: savedAudioUrl,
-        coverImageUrl: savedCover || null,
-      });
-
-      const audio = audioRef.current;
-      if (audio) {
-        audio.src = savedAudioUrl;
-        audio.preload = "metadata";
-        // Set position once metadata loads
-        const onReady = () => {
-          if (savedTime > 0) audio.currentTime = savedTime;
-          audio.removeEventListener("loadedmetadata", onReady);
-        };
-        audio.addEventListener("loadedmetadata", onReady);
-      }
-    }
-    // Only on mount
+    audio.src = currentEpisode.audioUrl;
+    audio.preload = "metadata";
+    // Set position once metadata loads
+    const onReady = () => {
+      if (savedTime > 0) audio.currentTime = savedTime;
+      audio.removeEventListener("loadedmetadata", onReady);
+    };
+    audio.addEventListener("loadedmetadata", onReady);
+    // Only on mount — currentEpisode from lazy init won't change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* ── Actions ── */
