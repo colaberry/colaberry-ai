@@ -86,6 +86,23 @@ type HomeProps = {
   catalogCounts: { agents: number; mcpServers: number; skills: number };
 };
 
+/* ── Integration chip logos (16×16 simplified brand marks) ── */
+const _sz = { width: 16, height: 16, viewBox: "0 0 24 24", className: "shrink-0" };
+const INTEGRATION_CHIPS: { name: string; logo: React.ReactNode }[] = [
+  { name: "Slack", logo: <svg {..._sz} fill="none"><path d="M14.5 2a2.5 2.5 0 00-.14 5H17V4.5A2.5 2.5 0 0014.5 2zM2 14.5a2.5 2.5 0 005-.14V12H4.5A2.5 2.5 0 002 14.5zM9.5 22a2.5 2.5 0 00.14-5H7v2.5A2.5 2.5 0 009.5 22zM22 9.5a2.5 2.5 0 00-5 .14V12h2.5A2.5 2.5 0 0022 9.5zM7 9.64V7H4.5a2.5 2.5 0 000 5H7v-2.36zM17 14.36V17h2.5a2.5 2.5 0 000-5H17v2.36zM12 7h2.36A2.5 2.5 0 0012 4.5V7zM12 17h-2.36A2.5 2.5 0 0012 19.5V17z" fill="#E01E5A"/></svg> },
+  { name: "Microsoft Teams", logo: <svg {..._sz} fill="none"><rect x="3" y="3" width="18" height="18" rx="3" fill="#5B5FC7"/><path d="M7 8h6v2H9v5H7V8zm7.5 0a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM13 12h3v4h-2v-3h-1v-1z" fill="#fff"/></svg> },
+  { name: "Google Drive", logo: <svg {..._sz} fill="none"><path d="M8.5 3h7L22 15H8.5L2 15 8.5 3z" fill="#FFD04B"/><path d="M8.5 3L2 15h6.5L15.5 3H8.5z" fill="#4CAF50"/><path d="M15.5 3L22 15h-6.5L9 15 15.5 3z" fill="#1A73E8"/><path d="M2 15l3.25 6h13.5L22 15H2z" fill="#EA4335" opacity=".6"/></svg> },
+  { name: "Salesforce", logo: <svg {..._sz} fill="none"><path d="M10 4.5c1.1-.9 2.5-1.5 4-1.5 2.5 0 4.6 1.5 5.5 3.6a5 5 0 01-1 9.9H5.5a4.5 4.5 0 01-1.2-8.8A5.5 5.5 0 0110 4.5z" fill="#00A1E0"/></svg> },
+  { name: "ServiceNow", logo: <svg {..._sz} fill="none"><circle cx="12" cy="12" r="10" fill="#81B5A1"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg> },
+  { name: "Workday", logo: <svg {..._sz} fill="none"><circle cx="12" cy="8" r="4" fill="#F68D2E"/><circle cx="7" cy="16" r="3" fill="#F68D2E"/><circle cx="17" cy="16" r="3" fill="#F68D2E"/></svg> },
+  { name: "Jira", logo: <svg {..._sz} fill="none"><path d="M22 12L12.5 2 12 2.5 17.5 8H6l5.5 5.5L6 19h11.5L12 24.5l.5.5L22 12z" fill="#2684FF"/></svg> },
+  { name: "Okta", logo: <svg {..._sz} fill="none"><circle cx="12" cy="12" r="9" stroke="#007DC1" strokeWidth="3" fill="none"/></svg> },
+  { name: "Zendesk", logo: <svg {..._sz} fill="none"><path d="M12 3v9L3 21h9V12l9 9V3h-9z" fill="currentColor" className="text-[#03363D] dark:text-[#78D9C6]"/></svg> },
+  { name: "Snowflake", logo: <svg {..._sz} fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#29B5E8" strokeWidth="2" strokeLinecap="round"/><circle cx="12" cy="12" r="2" fill="#29B5E8"/></svg> },
+  { name: "AWS", logo: <svg {..._sz} fill="none"><path d="M8.3 14.5c0 .3 0 .5.2.7l2.3 2.6-.1.1-3.3-1.3c-.2-.1-.3-.3-.3-.5v-3.3l1.2.5v1.2zm7.4 0v-1.2l1.2-.5v3.3c0 .2-.1.4-.3.5l-3.3 1.3-.1-.1 2.3-2.6c.1-.2.2-.4.2-.7zM12 6.5l3.2 1.3-3.2 1.3-3.2-1.3L12 6.5zm-4.5 3l1.2-.5 3 1.2v2.6l-1 .4V10l-3.2-1.3v.8z" fill="#FF9900"/><path d="M12.3 12.7l3-1.2 1.2.5v.8l-3.2 1.3v-3.3l-1 .4v1.5z" fill="#FF9900"/></svg> },
+  { name: "GitHub", logo: <svg {..._sz} fill="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.6 9.6 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z" fill="currentColor" className="text-zinc-800 dark:text-zinc-200"/></svg> },
+];
+
 export default function Home({
   latestPodcasts,
   latestAgents,
@@ -482,12 +499,13 @@ export default function Home({
           </Link>
         </div>
         <div className="mt-5 flex flex-wrap gap-2">
-          {["Slack", "Microsoft Teams", "Google Drive", "Salesforce", "ServiceNow", "Workday", "Jira", "Okta", "Zendesk", "Snowflake", "AWS", "GitHub"].map((name) => (
+          {INTEGRATION_CHIPS.map(({ name, logo }) => (
             <Link
               key={name}
               href={`/aixcelerator/mcp?q=${encodeURIComponent(name.toLowerCase())}`}
-              className="chip chip-muted rounded-md px-3 py-1.5 text-xs font-medium transition-colors hover:bg-zinc-200 hover:text-zinc-900 dark:hover:bg-zinc-700 dark:hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-white"
             >
+              {logo}
               {name}
             </Link>
           ))}
