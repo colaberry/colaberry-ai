@@ -120,7 +120,7 @@ export default function CollectionsIndexPage({
         <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-zinc-200 px-4 py-2 text-sm dark:border-zinc-700">
           <span className="font-bold text-zinc-900 dark:text-zinc-50">{allCollections.length}</span>
           <span className="text-zinc-500 dark:text-zinc-400">Collections</span>
-          <span className="mx-1 text-zinc-300 dark:text-zinc-600">|</span>
+          <span className="mx-1 text-zinc-300 dark:text-zinc-500">|</span>
           <span className="font-bold text-zinc-900 dark:text-zinc-50">{totalSkills}</span>
           <span className="text-zinc-500 dark:text-zinc-400">Total Skills</span>
         </div>
@@ -133,7 +133,7 @@ export default function CollectionsIndexPage({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search collections..."
-          className="h-9 w-64 rounded-full border border-zinc-300 bg-white px-4 text-xs text-zinc-900 placeholder-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
+          className="h-9 w-64 rounded-full border border-zinc-300 bg-white px-4 text-xs text-zinc-900 placeholder-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-400"
         />
 
         {/* Category pills */}

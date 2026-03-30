@@ -618,6 +618,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [allowBackdropClose, setAllowBackdropClose] = useState(true);
   const [demoWizardOpen, setDemoWizardOpen] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
+  const [headerScrolled, setHeaderScrolled] = useState(false);
   // Footer newsletter state
   const [footerEmail, setFooterEmail] = useState("");
   const [footerHoneypot, setFooterHoneypot] = useState("");
@@ -632,6 +633,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const { currentEpisode } = usePodcastPlayer();
   const currentPath = normalizePath(router.asPath || "/");
+  const isHomePage = currentPath === "/";
   const isCatalogWorkspace = isCatalogWorkspacePath(currentPath);
   // GlobalMiniPlayer is visible when an episode is loaded AND we're not on its detail page
   const miniPlayerVisible =
@@ -701,6 +703,14 @@ export default function Layout({ children }: { children: ReactNode }) {
         ticking = false;
       });
     };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* Homepage header: transparent → solid at 20px scroll */
+  useEffect(() => {
+    const onScroll = () => setHeaderScrolled(window.scrollY > 20);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -1118,7 +1128,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <link rel="dns-prefetch" href="https://www.buzzsprout.com" />
       </Head>
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-deep focus:shadow-lg focus:ring-2 focus:ring-[#DC2626]/40">Skip to content</a>
-      <header role="banner" className={`site-header sticky top-0 z-40 border-b transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${headerCompact ? "site-header--compact border-[var(--stroke)]/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] backdrop-blur-xl dark:bg-[#18181B]/80" : "border-[var(--stroke)] bg-white shadow-sm dark:bg-[#18181B]"}`}>
+      <header role="banner" className={`site-header sticky top-0 z-40 border-b transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${headerCompact ? "site-header--compact border-[var(--stroke)]/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] backdrop-blur-xl dark:bg-[#18181B]/80" : isHomePage ? "border-[var(--stroke)]/40 bg-white shadow-none dark:border-white/[0.06] dark:bg-[#09090B]" : "border-[var(--stroke)] bg-white shadow-sm dark:bg-[#18181B]"}`}>
         <div className="flex w-full items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 lg:gap-3">
             {/* ── Mobile hamburger (left-aligned, Gmail/YouTube pattern) ── */}
@@ -1529,7 +1539,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </main>
         </div>
       ) : (
-        <main id="main-content" className="main-offset relative w-full flex-1 px-4 sm:px-6 xl:px-8">
+        <main id="main-content" className={`${isHomePage ? "main-offset-home" : "main-offset"} relative w-full flex-1 px-4 sm:px-6 xl:px-8`}>
           {children}
         </main>
       )}
