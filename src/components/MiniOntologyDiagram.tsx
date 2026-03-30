@@ -47,10 +47,11 @@ export default function MiniOntologyDiagram({
 
   const svgWidth = 460;
   const centerX = svgWidth / 2;
-  const centerY = 62;
+  const centerY = 58;
   const catHeight = 28;
   const nodeGapX = 10;
-  const nodeGapY = 16;
+  const nodeGapY = 14;
+  const catStartY = 160; // top of first category row — generous gap from hub
   const charWidth = 6.2; // approximate px per character at 10px font
   const dotSpace = 16; // space for the accent dot
 
@@ -74,13 +75,13 @@ export default function MiniOntologyDiagram({
     rowTotalWidth += (rowItems - 1) * nodeGapX;
     let x = (svgWidth - rowTotalWidth) / 2;
     for (let j = rowStart; j < rowStart + col; j++) x += catWidths[j] + nodeGapX;
-    const y = 148 + row * (catHeight + nodeGapY);
+    const y = catStartY + row * (catHeight + nodeGapY);
     return { x, y };
   });
 
   // Calculate total SVG height based on rows
   const totalRows = Math.ceil(categories.length / cols);
-  const svgHeight = 148 + totalRows * (catHeight + nodeGapY) + 16;
+  const svgHeight = catStartY + totalRows * (catHeight + nodeGapY) + 14;
 
   // Colors
   const nodeStroke = isDark ? "rgba(161,161,170,0.5)" : "rgba(82,82,91,0.35)";
@@ -146,12 +147,13 @@ export default function MiniOntologyDiagram({
           const catColor = config.categoryColors[cat.slug] || "#a1a1aa";
           const endX = pos.x + w / 2;
           const endY = pos.y;
-          const midY = (centerY + 20 + endY) / 2;
+          const lineStartY = centerY + 18;
+          const midY = (lineStartY + endY) / 2;
 
           return (
             <path
               key={`line-${cat.slug}`}
-              d={`M${centerX},${centerY + 18} C${centerX},${midY} ${endX},${midY} ${endX},${endY}`}
+              d={`M${centerX},${lineStartY} C${centerX},${midY} ${endX},${midY} ${endX},${endY}`}
               fill="none"
               stroke={isHovered ? catColor : lineColor}
               strokeWidth={isHovered ? 1.2 : 0.7}
@@ -164,34 +166,33 @@ export default function MiniOntologyDiagram({
 
         {/* ── Central hub node ── */}
         <rect
-          x={centerX - 52} y={centerY - 16}
-          width="104" height="32" rx="16"
+          x={centerX - 54} y={centerY - 18}
+          width="108" height="36" rx="18"
           fill={isDark ? "#18181b" : "#fafafa"}
           stroke={isDark ? "rgba(220,38,38,0.35)" : "rgba(220,38,38,0.2)"}
           strokeWidth="1"
           filter={`url(#mcg-${config.contentType})`}
         />
         <rect
-          x={centerX - 51} y={centerY - 15}
-          width="102" height="30" rx="15"
+          x={centerX - 53} y={centerY - 17}
+          width="106" height="34" rx="17"
           fill="none"
           stroke={isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.03)"}
           strokeWidth="0.5"
         />
-        <text x={centerX} y={centerY + 1} textAnchor="middle" dominantBaseline="middle"
+        <text x={centerX} y={centerY - 2} textAnchor="middle" dominantBaseline="middle"
           fontSize="13" fontWeight="800" letterSpacing="-0.02em"
           fill={isDark ? "#fafafa" : "#18181b"}>
           {config.label}
         </text>
-
-        {/* Total count */}
-        <text x={centerX} y={centerY + 26} textAnchor="middle"
-          fontSize="10.5" fontWeight="600" fill={isDark ? "#a1a1aa" : "#71717a"}>
+        <text x={centerX} y={centerY + 12} textAnchor="middle" dominantBaseline="middle"
+          fontSize="9" fontWeight="500"
+          fill={isDark ? "#a1a1aa" : "#71717a"}>
           {totalItems.toLocaleString()} cataloged
         </text>
 
         {/* Relationship label */}
-        <text x={centerX} y={centerY + 42} textAnchor="middle"
+        <text x={centerX} y={centerY + 38} textAnchor="middle"
           fontSize="8" fontWeight="500" fontStyle="italic"
           fill={isDark ? "rgba(161,161,170,0.4)" : "rgba(113,113,122,0.4)"}>
           has_category
