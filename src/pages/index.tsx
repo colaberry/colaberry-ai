@@ -402,8 +402,8 @@ export default function Home({
 
 
         {/* Content — split layout: text left, orbital diagram right */}
-        <div className="relative z-10 mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-18 md:px-10 lg:px-12 lg:py-24 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-16 xl:py-28">
-          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-16">
+        <div className="relative z-10 mx-auto max-w-[90rem] px-5 py-10 sm:px-6 sm:py-12 md:px-8 lg:px-10 lg:py-14 lg:min-h-[70vh] lg:flex lg:flex-col lg:justify-center xl:px-12 xl:py-16">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
             {/* LEFT: Text content */}
             <div className="text-center lg:text-left">
               <div
@@ -418,7 +418,7 @@ export default function Home({
                 Discover, govern, and scale{" "}
                 <span className="hero-word-rotator">
                   <span className="hero-word-track">
-                    <span className="text-gradient">enterprise AI</span>
+                    <span className="text-gradient">AI podcasts</span>
                     <span className="text-gradient">AI agents</span>
                     <span className="text-gradient">MCP servers</span>
                     <span className="text-gradient">AI skills</span>
