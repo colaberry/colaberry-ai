@@ -48,7 +48,7 @@ function Skeleton() {
 function EmptyState() {
   return (
     <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-8 text-center dark:border-zinc-700 dark:bg-zinc-900">
-      <svg className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 3v18h18" />
         <path d="m7 16 4-8 4 4 4-6" />
       </svg>
@@ -90,7 +90,7 @@ export default function PerformanceTab({ slug }: { slug: string }) {
           </thead>
           <tbody>
             {data.tools.map((tool) => (
-              <tr key={tool.name} className="border-b border-zinc-100 dark:border-zinc-700">
+              <tr key={tool.name} className="border-b border-zinc-100 dark:border-zinc-800">
                 <td className="py-2.5 pr-4 font-mono text-xs font-semibold text-zinc-900 dark:text-zinc-100">{tool.name}</td>
                 <td className="py-2.5 pr-4 text-right text-sm tabular-nums text-zinc-700 dark:text-zinc-300">{tool.calls.toLocaleString()}</td>
                 <td className="py-2.5 pr-4 text-right text-sm tabular-nums text-zinc-700 dark:text-zinc-300">{formatLatency(tool.avgLatencyMs)}</td>

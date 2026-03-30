@@ -130,17 +130,6 @@ export default function Home({
 }: HomeProps) {
   const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k+` : `${n}+`;
 
-  /* ── Mouse-reactive parallax for orbital diagram ── */
-  const heroRef = useRef<HTMLElement>(null);
-  const [mx, setMx] = useState(0);
-  const [my, setMy] = useState(0);
-  const handleHeroMouse = useCallback((e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMx((e.clientX - rect.left) / rect.width - 0.5);
-    setMy((e.clientY - rect.top) / rect.height - 0.5);
-  }, []);
-  const handleHeroLeave = useCallback(() => { setMx(0); setMy(0); }, []);
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- false positive: used at line ~492
   const industries = [
     { name: "Agriculture", slug: "agriculture", icon: "leaf" as const },
@@ -384,7 +373,7 @@ export default function Home({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </Head>
       {/* ---- Hero (dark animated hero) ---- */}
-      <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="-mx-4 sm:mx-0 relative overflow-hidden rounded-none sm:rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
+      <section className="-mx-4 sm:mx-0 relative overflow-hidden rounded-none sm:rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
         {/* Animated gradient mesh background */}
         <div className="hero-gradient-mesh" aria-hidden="true">
           <div className="hero-orb hero-orb-1" />
@@ -393,134 +382,87 @@ export default function Home({
           <div className="hero-orb hero-orb-center" />
         </div>
 
+        {/* Concentric rings (depth effect) */}
+        <div className="hero-concentric-rings" aria-hidden="true">
+          <div className="hero-ring hero-ring-1" />
+          <div className="hero-ring hero-ring-2" />
+          <div className="hero-ring hero-ring-3" />
+        </div>
+
+        {/* Subtle grid overlay */}
+        <div className="animated-signal-grid pointer-events-none absolute inset-0 opacity-[0.07]" aria-hidden="true" />
 
         {/* Radial vignette for depth */}
         <div className="hero-vignette" aria-hidden="true" />
 
-        {/* Subtle noise grain texture — premium depth */}
-        <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.03]" aria-hidden="true" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat", backgroundSize: "256px 256px" }} />
+        {/* Floating content-type icon nodes (constellation layout) */}
+        <div className="hero-floating-nodes" aria-hidden="true">
+          {/* Agents node */}
+          <div className="hero-node hero-node-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.3 24.3 0 0 1 4.5 0m0 0v5.714a2.25 2.25 0 0 0 .659 1.591L19 14.5m-4.75-11.396c.251.023.501.05.75.082M12 21a9 9 0 0 0 9-9m-9 9a9 9 0 0 1-9-9" /></svg>
+          </div>
+          {/* MCP node */}
+          <div className="hero-node hero-node-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-13.5-3a3 3 0 0 1 0-6h13.5a3 3 0 1 1 0 6M6 6.75h.008v.008H6V6.75Zm0 7.5h.008v.008H6v-.008Zm0 7.5h.008v.008H6v-.008Z" /></svg>
+          </div>
+          {/* Skills node */}
+          <div className="hero-node hero-node-3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg>
+          </div>
+          {/* Podcasts node */}
+          <div className="hero-node hero-node-4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
+          </div>
+          {/* Knowledge Graph node */}
+          <div className="hero-node hero-node-5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
+          </div>
+        </div>
 
+        {/* Content — centered layout */}
+        <div className="relative z-10 mx-auto max-w-4xl px-5 py-16 text-center sm:px-8 sm:py-20 md:px-10 lg:py-24">
+          <div
+            className="rise-in rise-delay-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 tracking-[0.2em]"
+            style={{ borderColor: "rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.06)", color: "#FAFAFA" }}
+          >
+            <span className="kicker-chip-dot" />
+            Enterprise AI Platform
+          </div>
 
-        {/* Content — split layout: text left, orbital diagram right */}
-        <div className="relative z-10 mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-18 md:px-10 lg:px-12 lg:py-24 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-16 xl:py-28">
-          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-16">
-            {/* LEFT: Text content */}
-            <div className="text-center lg:text-left">
-              <div
-                className="hero-stagger-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 text-xs tracking-[0.15em] lg:mx-0"
-                style={{ borderColor: "rgba(255,255,255,0.20)", background: "rgba(255,255,255,0.08)", color: "#FAFAFA" }}
-              >
-                <span className="kicker-chip-dot" />
-                Enterprise AI Platform
-              </div>
+          <h1 className="mt-6 font-sans text-display-md font-bold text-white sm:text-display-lg md:text-display-xl lg:text-display-2xl xl:text-display-hero">
+            Discover, govern, and scale{" "}
+            <span className="text-gradient">enterprise AI</span>
+          </h1>
 
-              <h1 className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl">
-                Discover, govern, and scale{" "}
-                <span className="hero-word-rotator">
-                  <span className="hero-word-track">
-                    <span className="text-gradient">enterprise AI</span>
-                    <span className="text-gradient">AI agents</span>
-                    <span className="text-gradient">MCP servers</span>
-                    <span className="text-gradient">AI skills</span>
-                  </span>
-                </span>
-              </h1>
+          <p className="rise-in rise-delay-3 mx-auto mt-6 max-w-2xl text-body-lg leading-relaxed text-zinc-400">
+            A unified catalog where teams discover, evaluate, and deploy AI agents, MCP servers, skills, and research — governed and structured for both people and LLMs.
+          </p>
 
-              <p className="hero-stagger-3 mx-auto mt-5 max-w-2xl text-body-lg leading-relaxed text-zinc-300 text-balance lg:mx-0">
-                A unified catalog where teams discover, evaluate, and deploy AI agents, MCP servers, skills, and research — governed and structured for both people and LLMs.
-              </p>
-
-              <div className="hero-stagger-4 mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
-                <Link href="/request-demo" className="btn btn-cta" data-tour="hero-cta">
-                  Book a demo
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </Link>
-                <Link
-                  href="/aixcelerator"
-                  className="btn"
-                  style={{ borderColor: "rgba(255,255,255,0.2)", color: "#FAFAFA", background: "rgba(255,255,255,0.06)" }}
-                >
-                  Explore platform
-                </Link>
-              </div>
-            </div>
-
-            {/* RIGHT: Live metrics feed — typography-first showcase */}
-            <div className="hidden items-center justify-end lg:flex relative">
-              {/* Grid dot pattern — subtle texture */}
-              <div className="hero-grid-dots" aria-hidden="true" />
-
-              {/* Atmospheric glow — parallax counter-motion */}
-              <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" style={{ transform: `translate(${mx * -6}px, ${my * -6}px)`, transition: "transform 0.2s ease-out", willChange: "transform" }}>
-                <div className="absolute right-[5%] top-[0%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(220,38,38,0.14)_0%,rgba(220,38,38,0.04)_30%,transparent_55%)] blur-2xl" />
-                <div className="absolute right-[20%] top-[50%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.10)_0%,transparent_55%)] blur-3xl" />
-                <div className="absolute right-[0%] top-[25%] h-[250px] w-[250px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.08)_0%,transparent_55%)] blur-3xl" />
-              </div>
-
-              {/* Hero metric — one massive number + bar breakdown */}
-              <div className="relative z-10" style={{ transform: `translate(${mx * 8}px, ${my * 8}px)`, transition: "transform 0.15s ease-out", willChange: "transform", maxWidth: 420 }}>
-                {/* The ONE big hero number */}
-                <div className="hero-metric-hero">
-                  <div className="hero-metric-hero-number">
-                    <span>{fmt(catalogCounts.agents + catalogCounts.mcpServers + catalogCounts.skills + 246)}</span>
-                  </div>
-                  <div className="hero-metric-hero-label">AI resources cataloged</div>
-                </div>
-
-                {/* Category breakdown — horizontal bar chart */}
-                <div className="hero-breakdown">
-                  <Link href="/aixcelerator/agents" className="hero-bar-row" style={{ "--mc": "245, 158, 11" } as React.CSSProperties}>
-                    <div className="hero-bar-row-label">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.3 24.3 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19 14.5M12 21a9 9 0 0 0 9-9m-9 9a9 9 0 0 1-9-9" /></svg>
-                      Agents
-                    </div>
-                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "35%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(catalogCounts.agents)}</div>
-                  </Link>
-
-                  <Link href="/aixcelerator/mcp" className="hero-bar-row" style={{ "--mc": "6, 182, 212" } as React.CSSProperties}>
-                    <div className="hero-bar-row-label">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-13.5-3a3 3 0 0 1 0-6h13.5a3 3 0 1 1 0 6" /></svg>
-                      MCP Servers
-                    </div>
-                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "55%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(catalogCounts.mcpServers)}</div>
-                  </Link>
-
-                  <Link href="/aixcelerator/skills" className="hero-bar-row" style={{ "--mc": "139, 92, 246" } as React.CSSProperties}>
-                    <div className="hero-bar-row-label">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg>
-                      Skills
-                    </div>
-                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "95%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(catalogCounts.skills)}</div>
-                  </Link>
-
-                  <Link href="/resources/podcasts" className="hero-bar-row" style={{ "--mc": "236, 72, 153" } as React.CSSProperties}>
-                    <div className="hero-bar-row-label">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
-                      Podcasts
-                    </div>
-                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "40%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">246</div>
-                  </Link>
-                </div>
-              </div>
-            </div>
+          <div className="rise-in mt-8 flex flex-wrap justify-center gap-4" style={{ animationDelay: "0.32s" }}>
+            <Link href="/request-demo" className="btn btn-cta" data-tour="hero-cta">
+              Book a demo
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+            <Link
+              href="/aixcelerator"
+              className="btn"
+              style={{ borderColor: "rgba(255,255,255,0.2)", color: "#FAFAFA", background: "rgba(255,255,255,0.06)" }}
+            >
+              Explore platform
+            </Link>
           </div>
         </div>
       </section>
 
       {/* ---- Trust metrics ---- */}
       <section className="reveal section-spacing">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <AnimatedMetric value="8+" label="Industries served" note="Agriculture to fintech" delay={0} />
           <AnimatedMetric value={fmt(catalogCounts.agents)} label="Agent profiles" note="Cataloged and governed" delay={150} />
           <AnimatedMetric value={fmt(catalogCounts.mcpServers)} label="MCP servers" note="Integration-ready connectors" delay={300} />
           <AnimatedMetric value={fmt(catalogCounts.skills)} label="Skills indexed" note="Reusable capability units" delay={450} />
-          <PodcastPromoCard episodeCount={246} delay={600} />
         </div>
       </section>
 
@@ -573,7 +515,7 @@ export default function Home({
             <Link
               key={name}
               href={`/aixcelerator/mcp?q=${encodeURIComponent(name.toLowerCase())}`}
-              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-white"
             >
               {logo}
               {name}
@@ -865,7 +807,7 @@ function CatalogCard({ href, title, description, meta, iconType, gradient, accen
   return (
     <Link
       href={href}
-      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-zinc-900 dark:hover:border-zinc-500"
+      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-zinc-900 dark:hover:border-zinc-600"
       aria-label={`Open ${title}`}
     >
       <div className={`relative flex items-center justify-center bg-gradient-to-br ${gradient} px-6 py-12`}>
@@ -1790,61 +1732,6 @@ function AnimatedMetric({
         <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{note}</p>
       </div>
     </div>
-  );
-}
-
-/* ── Podcast metric card — uniform with siblings, subtle CTA on hover ── */
-function PodcastPromoCard({ episodeCount, delay = 0 }: { episodeCount: number; delay?: number }) {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const [visible, setVisible] = useState(false);
-  const [counting, setCounting] = useState(false);
-  const { target } = parseMetricValue(`${episodeCount}+`);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!visible) return;
-    const timer = setTimeout(() => setCounting(true), delay);
-    return () => clearTimeout(timer);
-  }, [visible, delay]);
-
-  const counted = useCountUp(target, 1500, counting);
-  const displayValue = counting ? `${Math.round(counted)}+` : "0";
-
-  return (
-    <Link href="/resources/podcasts" ref={ref} className="podcast-metric-card card-glass gradient-border p-5 text-center group">
-      <div
-        className={visible ? "counter-animate" : "opacity-0"}
-        style={{ animationDelay: `${delay}ms` }}
-      >
-        <div className="font-sans text-display-sm font-bold bg-gradient-to-r from-[#B91C1C] to-[#DC2626] bg-clip-text text-transparent dark:from-[#F87171] dark:to-[#FCA5A5]">
-          {displayValue}
-        </div>
-        <div className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Podcast episodes</div>
-        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">AI leadership insights</p>
-        {/* Subtle play CTA — appears prominently on hover */}
-        <div className="podcast-metric-cta">
-          <span className="podcast-metric-play">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3"><path d="M8 5.14v14l11-7-11-7z" /></svg>
-          </span>
-          <span>Listen now</span>
-        </div>
-      </div>
-    </Link>
   );
 }
 

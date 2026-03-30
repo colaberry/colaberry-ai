@@ -34,7 +34,7 @@ export default function MCPToolCard({ tool, index }: { tool: ParsedTool; index: 
         )}
       </button>
       {expanded && hasDescription && (
-        <div className="px-3.5 pb-3.5 pt-0 border-t border-zinc-100 dark:border-zinc-700">
+        <div className="px-3.5 pb-3.5 pt-0 border-t border-zinc-100 dark:border-zinc-800">
           <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{tool.description}</p>
         </div>
       )}

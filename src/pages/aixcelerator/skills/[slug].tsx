@@ -442,7 +442,7 @@ export default function SkillDetailPage({ skill, skillMdContent, relatedSkills, 
               <SectionHeading title="References" />
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {skill.docsUrl && (
-                  <a href={skill.docsUrl} target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-lg border border-zinc-200 p-4 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-500">
+                  <a href={skill.docsUrl} target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-lg border border-zinc-200 p-4 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600">
                     <svg className="h-5 w-5 shrink-0 text-zinc-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                     <div>
                       <div className="text-sm font-semibold text-zinc-900 group-hover:text-[#DC2626] dark:text-zinc-100">Documentation</div>
@@ -451,7 +451,7 @@ export default function SkillDetailPage({ skill, skillMdContent, relatedSkills, 
                   </a>
                 )}
                 {skill.demoUrl && (
-                  <a href={skill.demoUrl} target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-lg border border-zinc-200 p-4 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-500">
+                  <a href={skill.demoUrl} target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-lg border border-zinc-200 p-4 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600">
                     <svg className="h-5 w-5 shrink-0 text-zinc-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" /></svg>
                     <div>
                       <div className="text-sm font-semibold text-zinc-900 group-hover:text-[#DC2626] dark:text-zinc-100">Demo</div>
@@ -460,7 +460,7 @@ export default function SkillDetailPage({ skill, skillMdContent, relatedSkills, 
                   </a>
                 )}
                 {skill.sourceUrl && (
-                  <a href={skill.sourceUrl} target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-lg border border-zinc-200 p-4 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-500">
+                  <a href={skill.sourceUrl} target="_blank" rel="noreferrer" className="group flex items-center gap-3 rounded-lg border border-zinc-200 p-4 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600">
                     <svg className="h-5 w-5 shrink-0 text-zinc-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" /></svg>
                     <div>
                       <div className="text-sm font-semibold text-zinc-900 group-hover:text-[#DC2626] dark:text-zinc-100">Source Code</div>
@@ -814,7 +814,7 @@ function ReviewsSection({ skillName, skillSlug, sourceUrl }: { skillName: string
             className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
               vote === "up"
                 ? "border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
-                : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-300"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-300"
             }`}
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -828,7 +828,7 @@ function ReviewsSection({ skillName, skillSlug, sourceUrl }: { skillName: string
             className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
               vote === "down"
                 ? "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-900/20 dark:text-red-400"
-                : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-300"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-300"
             }`}
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -841,7 +841,7 @@ function ReviewsSection({ skillName, skillSlug, sourceUrl }: { skillName: string
 
       {/* Empty state */}
       <div className="rounded-xl border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-600">
-        <svg className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">
+        <svg className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
         </svg>
         <p className="mt-3 text-sm font-medium text-zinc-600 dark:text-zinc-400">No agent reviews yet</p>
