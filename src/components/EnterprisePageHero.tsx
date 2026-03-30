@@ -98,7 +98,7 @@ export default function EnterprisePageHero({
         </div>
 
         {image ? (
-          <div className="rise-in group relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900 sm:p-6" style={{ animationDelay: "0.2s" }}>
+          <div className="rise-in group relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 sm:p-6" style={{ animationDelay: "0.2s" }}>
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
@@ -109,7 +109,7 @@ export default function EnterprisePageHero({
                 <div className="mt-1.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{imageDescription}</div>
               </div>
             </div>
-            <div className="relative mt-4 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <div className="relative mt-4 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
               <div className="relative aspect-[16/9]">
                 <Image
                   src={image}
@@ -130,7 +130,7 @@ export default function EnterprisePageHero({
           {metrics.map((metric) => (
             <article
               key={metric.label}
-              className="rounded-lg border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded-lg border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-800 dark:bg-zinc-900"
             >
               <div className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">{metric.label}</div>
               <div className="mt-2 text-lg font-bold text-zinc-900 dark:text-zinc-50">{metric.value}</div>

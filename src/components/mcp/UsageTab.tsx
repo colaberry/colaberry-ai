@@ -33,7 +33,7 @@ function Skeleton() {
 function EmptyState() {
   return (
     <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-8 text-center dark:border-zinc-700 dark:bg-zinc-900">
-      <svg className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
@@ -81,7 +81,7 @@ export default function UsageTab({ slug }: { slug: string }) {
             </thead>
             <tbody>
               {data.topClients.map((client, i) => (
-                <tr key={client.name} className="border-b border-zinc-100 dark:border-zinc-700">
+                <tr key={client.name} className="border-b border-zinc-100 dark:border-zinc-800">
                   <td className="py-2.5 pr-3 text-sm font-bold text-zinc-400 dark:text-zinc-500">{i + 1}</td>
                   <td className="py-2.5 pr-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">{client.name}</td>
                   <td className="py-2.5 text-right text-sm tabular-nums text-zinc-700 dark:text-zinc-300">{client.calls.toLocaleString()}</td>
