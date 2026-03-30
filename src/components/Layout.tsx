@@ -1133,25 +1133,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
             </button>
-            {/* ── Desktop collapse sidebar toggle (left-aligned, next to logo) ── */}
-            {isCatalogWorkspace ? (
-              <button
-                type="button"
-                onClick={() => setWorkspaceRailCollapsed((current) => !current)}
-                className="hidden lg:inline-flex items-center justify-center h-10 w-10 rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
-                aria-expanded={!workspaceRailCollapsed}
-                aria-label={workspaceRailCollapsed ? "Expand catalog menu" : "Collapse catalog menu"}
-              >
-                <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5" fill="none">
-                  <path
-                    d="M4 5h12M4 10h12M4 15h12"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
-            ) : null}
             <Link href="/" className="flex min-w-0 items-center gap-2">
               <span className="inline-flex items-center justify-center px-1">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1178,6 +1159,25 @@ export default function Layout({ children }: { children: ReactNode }) {
           <nav role="navigation" aria-label="Main navigation" className="hidden min-w-0 items-center gap-1.5 text-sm lg:flex">
             {isCatalogWorkspace ? (
               <>
+                <button
+                  type="button"
+                  onClick={() => setWorkspaceRailCollapsed((current) => !current)}
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                  aria-expanded={!workspaceRailCollapsed}
+                  aria-label={workspaceRailCollapsed ? "Expand catalog menu" : "Collapse catalog menu"}
+                >
+                  <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none">
+                    <path
+                      d="M4 5h12M4 10h12M4 15h12"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className="hidden min-[1700px]:inline">
+                    {workspaceRailCollapsed ? "Expand menu" : "Collapse menu"}
+                  </span>
+                </button>
                 <span className="hidden rounded-md px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400 min-[1560px]:inline-flex dark:text-zinc-500">
                   Catalog workspace
                 </span>
