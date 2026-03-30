@@ -159,6 +159,15 @@ export default function Home({
 
   const catalogs: CatalogItem[] = [
     {
+      href: "/resources/podcasts",
+      title: "AI Podcasts",
+      description: "246 episodes with full transcripts, timestamps, and linked artifacts from Colaberry AI.",
+      meta: "246 episodes",
+      iconType: "podcast",
+      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
+      accentColor: "#a78bfa",
+    },
+    {
       href: "/aixcelerator/agents",
       title: "AI Agents",
       description: `${catalogCounts.agents || 160}+ enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.`,
@@ -196,15 +205,6 @@ export default function Home({
       accentColor: "#10b981",
     },
     */
-    {
-      href: "/resources/podcasts",
-      title: "AI Podcasts",
-      description: "246 episodes with full transcripts, timestamps, and linked artifacts from Colaberry AI.",
-      meta: "246 episodes",
-      iconType: "podcast",
-      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
-      accentColor: "#a78bfa",
-    },
     {
       href: "/resources/books",
       title: "Books & Research",
@@ -471,6 +471,15 @@ export default function Home({
 
                 {/* Category breakdown — horizontal bar chart */}
                 <div className="hero-breakdown">
+                  <Link href="/resources/podcasts" className="hero-bar-row" style={{ "--mc": "236, 72, 153" } as React.CSSProperties}>
+                    <div className="hero-bar-row-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
+                      Podcasts
+                    </div>
+                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "40%" } as React.CSSProperties} /></div>
+                    <div className="hero-bar-count">246</div>
+                  </Link>
+
                   <Link href="/aixcelerator/agents" className="hero-bar-row" style={{ "--mc": "245, 158, 11" } as React.CSSProperties}>
                     <div className="hero-bar-row-label">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.3 24.3 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19 14.5M12 21a9 9 0 0 0 9-9m-9 9a9 9 0 0 1-9-9" /></svg>
@@ -497,15 +506,6 @@ export default function Home({
                     <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "95%" } as React.CSSProperties} /></div>
                     <div className="hero-bar-count">{fmt(catalogCounts.skills)}</div>
                   </Link>
-
-                  <Link href="/resources/podcasts" className="hero-bar-row" style={{ "--mc": "236, 72, 153" } as React.CSSProperties}>
-                    <div className="hero-bar-row-label">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
-                      Podcasts
-                    </div>
-                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "40%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">246</div>
-                  </Link>
                 </div>
               </div>
             </div>
@@ -516,11 +516,11 @@ export default function Home({
       {/* ---- Trust metrics ---- */}
       <section className="reveal section-spacing">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <AnimatedMetric value="8+" label="Industries served" note="Agriculture to fintech" delay={0} />
-          <AnimatedMetric value={fmt(catalogCounts.agents)} label="Agent profiles" note="Cataloged and governed" delay={150} />
-          <AnimatedMetric value={fmt(catalogCounts.mcpServers)} label="MCP servers" note="Integration-ready connectors" delay={300} />
-          <AnimatedMetric value={fmt(catalogCounts.skills)} label="Skills indexed" note="Reusable capability units" delay={450} />
-          <PodcastPromoCard episodeCount={246} delay={600} />
+          <PodcastPromoCard episodeCount={246} delay={0} />
+          <AnimatedMetric value="8+" label="Industries served" note="Agriculture to fintech" delay={150} />
+          <AnimatedMetric value={fmt(catalogCounts.agents)} label="Agent profiles" note="Cataloged and governed" delay={300} />
+          <AnimatedMetric value={fmt(catalogCounts.mcpServers)} label="MCP servers" note="Integration-ready connectors" delay={450} />
+          <AnimatedMetric value={fmt(catalogCounts.skills)} label="Skills indexed" note="Reusable capability units" delay={600} />
         </div>
       </section>
 
@@ -694,7 +694,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   };
 };
 
-const SIGNAL_TABS = ["Agents", "Skills", "MCP", "Podcasts"] as const; // Use Cases hidden for Release-1.0
+const SIGNAL_TABS = ["Podcasts", "Agents", "Skills", "MCP"] as const; // Use Cases hidden for Release-1.0
 type SignalTab = (typeof SIGNAL_TABS)[number];
 
 function SignalDashboard({
@@ -720,7 +720,7 @@ function SignalDashboard({
   latestUseCases: HomeUseCaseSignal[];
   trendingUseCases: HomeUseCaseSignal[];
 }) {
-  const [activeTab, setActiveTab] = useState<SignalTab>("Agents");
+  const [activeTab, setActiveTab] = useState<SignalTab>("Podcasts");
 
   const onTabChange = useCallback((tab: SignalTab) => {
     setActiveTab(tab);
