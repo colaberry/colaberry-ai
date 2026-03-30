@@ -618,6 +618,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [allowBackdropClose, setAllowBackdropClose] = useState(true);
   const [demoWizardOpen, setDemoWizardOpen] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
+  const [headerScrolled, setHeaderScrolled] = useState(false);
   // Footer newsletter state
   const [footerEmail, setFooterEmail] = useState("");
   const [footerHoneypot, setFooterHoneypot] = useState("");
@@ -632,6 +633,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const { currentEpisode } = usePodcastPlayer();
   const currentPath = normalizePath(router.asPath || "/");
+  const isHomePage = currentPath === "/";
   const isCatalogWorkspace = isCatalogWorkspacePath(currentPath);
   // GlobalMiniPlayer is visible when an episode is loaded AND we're not on its detail page
   const miniPlayerVisible =
@@ -701,6 +703,14 @@ export default function Layout({ children }: { children: ReactNode }) {
         ticking = false;
       });
     };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* Homepage header: transparent → solid at 20px scroll */
+  useEffect(() => {
+    const onScroll = () => setHeaderScrolled(window.scrollY > 20);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -1118,7 +1128,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <link rel="dns-prefetch" href="https://www.buzzsprout.com" />
       </Head>
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-deep focus:shadow-lg focus:ring-2 focus:ring-[#DC2626]/40">Skip to content</a>
-      <header role="banner" className={`site-header sticky top-0 z-40 border-b transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${headerCompact ? "site-header--compact border-[var(--stroke)]/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] backdrop-blur-xl dark:bg-[#18181B]/80" : "border-[var(--stroke)] bg-white shadow-sm dark:bg-[#18181B]"}`}>
+      <header role="banner" className={`site-header sticky top-0 z-40 border-b transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${headerCompact ? "site-header--compact border-[var(--stroke)]/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] backdrop-blur-xl dark:bg-[#18181B]/80" : isHomePage ? "border-[var(--stroke)]/40 bg-white shadow-none dark:border-white/[0.06] dark:bg-[#09090B]" : "border-[var(--stroke)] bg-white shadow-sm dark:bg-[#18181B]"}`}>
         <div className="flex w-full items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 lg:gap-3">
             {/* ── Mobile hamburger (left-aligned, Gmail/YouTube pattern) ── */}
@@ -1133,6 +1143,25 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
             </button>
+            {/* ── Desktop collapse sidebar toggle (left-aligned, next to logo) ── */}
+            {isCatalogWorkspace ? (
+              <button
+                type="button"
+                onClick={() => setWorkspaceRailCollapsed((current) => !current)}
+                className="hidden lg:inline-flex items-center justify-center h-10 w-10 rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                aria-expanded={!workspaceRailCollapsed}
+                aria-label={workspaceRailCollapsed ? "Expand catalog menu" : "Collapse catalog menu"}
+              >
+                <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5" fill="none">
+                  <path
+                    d="M4 5h12M4 10h12M4 15h12"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            ) : null}
             <Link href="/" className="flex min-w-0 items-center gap-2">
               <span className="inline-flex items-center justify-center px-1">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1159,25 +1188,6 @@ export default function Layout({ children }: { children: ReactNode }) {
           <nav role="navigation" aria-label="Main navigation" className="hidden min-w-0 items-center gap-1.5 text-sm lg:flex">
             {isCatalogWorkspace ? (
               <>
-                <button
-                  type="button"
-                  onClick={() => setWorkspaceRailCollapsed((current) => !current)}
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
-                  aria-expanded={!workspaceRailCollapsed}
-                  aria-label={workspaceRailCollapsed ? "Expand catalog menu" : "Collapse catalog menu"}
-                >
-                  <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none">
-                    <path
-                      d="M4 5h12M4 10h12M4 15h12"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="hidden min-[1700px]:inline">
-                    {workspaceRailCollapsed ? "Expand menu" : "Collapse menu"}
-                  </span>
-                </button>
                 <span className="hidden rounded-md px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400 min-[1560px]:inline-flex dark:text-zinc-500">
                   Catalog workspace
                 </span>
@@ -1529,7 +1539,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </main>
         </div>
       ) : (
-        <main id="main-content" className="main-offset relative w-full flex-1 px-4 sm:px-6 xl:px-8">
+        <main id="main-content" className={`${isHomePage ? "main-offset-home" : "main-offset"} relative w-full flex-1 px-4 sm:px-6 xl:px-8`}>
           {children}
         </main>
       )}

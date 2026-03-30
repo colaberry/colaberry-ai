@@ -41,7 +41,7 @@ export default function GlobalMiniPlayer() {
         aria-valuenow={Math.round(currentTime)}
         aria-valuemin={0}
         aria-valuemax={Math.round(duration)}
-        className="h-0.5 w-full bg-zinc-200/60 dark:bg-zinc-800"
+        className="h-0.5 w-full bg-zinc-200/60 dark:bg-zinc-700"
       >
         <div
           className="h-full bg-[#DC2626] transition-[width] duration-200 motion-reduce:transition-none"

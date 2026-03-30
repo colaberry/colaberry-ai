@@ -292,7 +292,7 @@ export default function Podcasts({
               <Link
                 key={c.slug}
                 href={`/resources/podcasts?q=${encodeURIComponent(c.name)}`}
-                className="rounded-full border border-zinc-200/80 px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                className="rounded-full border border-zinc-200/80 px-2.5 py-1 text-xs font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-200"
               >
                 {c.name}
               </Link>
@@ -392,11 +392,11 @@ export default function Podcasts({
                         ) : null}
                         {hero.duration ? (
                           <>
-                            <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                            <span className="text-zinc-300 dark:text-zinc-500" aria-hidden="true">·</span>
                             <span className="font-medium text-zinc-400 dark:text-zinc-400">{hero.duration}</span>
                           </>
                         ) : null}
-                        <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                        <span className="text-zinc-300 dark:text-zinc-500" aria-hidden="true">·</span>
                         <span className="font-medium text-zinc-400 dark:text-zinc-400">{heroIsExternal ? "External" : "Colaberry AI"}</span>
                       </div>
 
@@ -501,11 +501,11 @@ export default function Podcasts({
                           {shortDate ? <span className="font-medium text-zinc-400 dark:text-zinc-400">{shortDate}</span> : null}
                           {episode.duration ? (
                             <>
-                              <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                              <span className="text-zinc-300 dark:text-zinc-500" aria-hidden="true">·</span>
                               <span className="font-medium text-zinc-400 dark:text-zinc-400">{episode.duration}</span>
                             </>
                           ) : null}
-                          <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
+                          <span className="text-zinc-300 dark:text-zinc-500" aria-hidden="true">·</span>
                           <span className="font-medium text-zinc-400 dark:text-zinc-400">{isExternal ? "External" : "Colaberry AI"}</span>
                         </div>
 
