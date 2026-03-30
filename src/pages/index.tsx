@@ -393,28 +393,26 @@ export default function Home({
           <div className="hero-orb hero-orb-center" />
         </div>
 
-
         {/* Radial vignette for depth */}
         <div className="hero-vignette" aria-hidden="true" />
 
         {/* Subtle noise grain texture — premium depth */}
         <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.03]" aria-hidden="true" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat", backgroundSize: "256px 256px" }} />
 
-
         {/* Content — split layout: text left, orbital diagram right */}
-        <div className="relative z-10 mx-auto max-w-[90rem] px-5 py-10 sm:px-6 sm:py-12 md:px-8 lg:px-10 lg:py-14 lg:min-h-[70vh] lg:flex lg:flex-col lg:justify-center xl:px-12 xl:py-16">
+        <div className="relative z-10 mx-auto max-w-[90rem] px-5 py-10 sm:px-6 sm:py-12 md:px-8 lg:px-10 lg:py-14 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-12 xl:py-16">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
             {/* LEFT: Text content */}
             <div className="text-center lg:text-left">
               <div
-                className="hero-stagger-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 text-xs tracking-[0.15em] lg:mx-0"
+                className="hero-stagger-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 text-[0.75rem] tracking-[0.14em] lg:mx-0"
                 style={{ borderColor: "rgba(255,255,255,0.20)", background: "rgba(255,255,255,0.08)", color: "#FAFAFA" }}
               >
                 <span className="kicker-chip-dot" />
                 Enterprise AI Platform
               </div>
 
-              <h1 className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl">
+              <h1 className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white text-balance sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl">
                 Discover, govern, and scale{" "}
                 <span className="hero-word-rotator">
                   <span className="hero-word-track">

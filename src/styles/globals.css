@@ -532,28 +532,19 @@ h6 {
   text-wrap: balance;
 }
 
-/* Gradient text utility — simplified to solid color */
+/* Gradient text utility — static gradient (no shimmer = premium confidence) */
 .text-gradient {
-  background: linear-gradient(135deg, #DC2626 0%, #F87171 25%, #FCA5A5 50%, #F87171 75%, #DC2626 100%);
-  background-size: 200% 200%;
+  background: linear-gradient(135deg, #DC2626 0%, #F87171 30%, #FCA5A5 50%, #F87171 70%, #DC2626 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-shimmer 6s ease-in-out infinite;
 }
 
 .dark .text-gradient {
-  background: linear-gradient(135deg, #F87171 0%, #FCA5A5 20%, #FFFFFF 45%, #FCA5A5 65%, #F87171 85%, #FCA5A5 100%);
-  background-size: 300% 300%;
+  background: linear-gradient(135deg, #F87171 0%, #FCA5A5 30%, #FECACA 50%, #FCA5A5 70%, #F87171 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-shimmer 5s ease-in-out infinite;
-}
-
-@keyframes gradient-shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
 }
 
 ::selection {
@@ -719,6 +710,37 @@ h6 {
   z-index: 2;
 }
 
+/* Top border light sweep — premium card reveal */
+section[style*="gradient-hero"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.03) 15%,
+    rgba(255,255,255,0.5) 50%,
+    rgba(255,255,255,0.03) 85%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: hero-border-sweep 6s ease-in-out infinite;
+  z-index: 20;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+@keyframes hero-border-sweep {
+  0%   { background-position: 200% 0; opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { background-position: -50% 0; opacity: 1; }
+  60%  { opacity: 0; }
+  100% { opacity: 0; background-position: -50% 0; }
+}
+
 /* ---------------------------------------------------------------------------
  * Concentric rings (hero depth effect)
  * --------------------------------------------------------------------------- */
@@ -879,17 +901,10 @@ h6 {
 
 /* Animated gradient shimmer across the hero number */
 .hero-metric-hero-number span {
-  background: linear-gradient(90deg, #F87171 0%, #FAFAFA 40%, #F87171 80%);
-  background-size: 200% 100%;
+  background: linear-gradient(135deg, #F87171 0%, #FCA5A5 40%, #FECACA 60%, #F87171 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: hero-number-shimmer 4s ease-in-out infinite;
-}
-
-@keyframes hero-number-shimmer {
-  0%, 100% { background-position: 200% 0; }
-  50% { background-position: 0% 0; }
 }
 
 .hero-metric-hero-label {
@@ -1062,10 +1077,10 @@ h6 {
 }
 
 @keyframes hero-word-slide {
-  0%, 18%   { transform: translateY(0); }
-  22%, 43%  { transform: translateY(-25%); }
-  47%, 68%  { transform: translateY(-50%); }
-  72%, 93%  { transform: translateY(-75%); }
+  0%, 20%   { transform: translateY(0); }
+  22%, 45%  { transform: translateY(-25%); }
+  47%, 70%  { transform: translateY(-50%); }
+  72%, 95%  { transform: translateY(-75%); }
   97%, 100% { transform: translateY(0); }
 }
 
@@ -1388,11 +1403,12 @@ button:focus-visible {
   background: #DC2626;
   color: #ffffff;
   box-shadow: none;
+  transition: background 0.2s ease, box-shadow 0.3s ease;
 }
 
 .btn-cta:hover {
   background: #B91C1C;
-  box-shadow: 0 2px 12px rgba(220, 38, 38, 0.35), 0 0 0 1px rgba(220, 38, 38, 0.1);
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.45), 0 0 40px rgba(220, 38, 38, 0.15);
 }
 
 .dark .btn-cta {
@@ -1402,6 +1418,7 @@ button:focus-visible {
 
 .dark .btn-cta:hover {
   background: #FCA5A5;
+  box-shadow: 0 0 20px rgba(248, 113, 113, 0.50), 0 0 50px rgba(248, 113, 113, 0.18);
 }
 
 .btn-cta:active {
@@ -2840,7 +2857,7 @@ footer .footer-link:focus-visible {
   border: 1px solid var(--neutral-stroke);
   background: var(--surface-soft);
   padding: 0.25rem 0.75rem 0.25rem 0.5rem;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.14em;
