@@ -16,7 +16,7 @@ function ParameterTable({ parameters }: { parameters: MCPToolParameter[] }) {
         </thead>
         <tbody>
           {parameters.map((param) => (
-            <tr key={param.name} className="border-b border-zinc-100 dark:border-zinc-700 even:bg-zinc-50 dark:even:bg-zinc-800/30">
+            <tr key={param.name} className="border-b border-zinc-100 dark:border-zinc-800 even:bg-zinc-50 dark:even:bg-zinc-800/30">
               <td className="py-2 pr-3 font-mono text-xs font-semibold text-zinc-900 dark:text-zinc-100">{param.name}</td>
               <td className="py-2 pr-3">
                 <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[0.6875rem] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">{param.type}</span>
@@ -71,7 +71,7 @@ export default function EnrichedToolCard({ tool, index }: { tool: MCPToolSchema;
         )}
       </button>
       {expanded && hasContent && (
-        <div className="px-3.5 pb-3.5 pt-0 border-t border-zinc-100 dark:border-zinc-700">
+        <div className="px-3.5 pb-3.5 pt-0 border-t border-zinc-100 dark:border-zinc-800">
           {tool.description && (
             <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{tool.description}</p>
           )}

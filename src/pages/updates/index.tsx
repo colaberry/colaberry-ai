@@ -154,7 +154,7 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
               {ratings.slice(0, 8).map((item, index) => (
                 <li
                   key={`${item.title}-${item.date || index}`}
-                  className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-500"
+                  className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
@@ -222,7 +222,7 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
               {briefing.items.slice(0, 12).map((item, index) => (
                 <li
                   key={`${item.title}-${index}`}
-                  className="flex items-start gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-500"
+                  className="flex items-start gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600"
                 >
                   <span className="mt-0.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500">
                     {String(index + 1).padStart(2, "0")}

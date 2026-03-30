@@ -36,7 +36,7 @@ export default function PremiumMediaCard({
   const minHeightClass = size === "sm" ? "min-h-[246px]" : "min-h-[286px]";
   const aspectClass = size === "sm" ? "aspect-[16/9]" : "aspect-[16/10]";
   const rootClass = [
-    "surface-panel surface-hover surface-interactive group flex h-full flex-col overflow-hidden border border-zinc-200 bg-white p-0 transition-colors dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-500",
+    "surface-panel surface-hover surface-interactive group flex h-full flex-col overflow-hidden border border-zinc-200 bg-white p-0 dark:border-zinc-800 dark:bg-zinc-900",
     minHeightClass,
     className ?? "",
   ]
@@ -45,7 +45,7 @@ export default function PremiumMediaCard({
 
   const content = (
     <>
-      <div className="media-premium-frame border-0 border-b border-zinc-200 dark:border-zinc-700 rounded-none">
+      <div className="media-premium-frame border-0 border-b border-zinc-200 dark:border-zinc-800 rounded-none">
         <div className={`relative w-full ${aspectClass}`}>
           {icon ? (
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
@@ -55,7 +55,7 @@ export default function PremiumMediaCard({
             </div>
           ) : imgError || !image ? (
             <div className="absolute inset-0 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
-              <svg viewBox="0 0 24 24" className="h-10 w-10 text-zinc-300 dark:text-zinc-400" fill="none" aria-hidden="true">
+              <svg viewBox="0 0 24 24" className="h-10 w-10 text-zinc-300 dark:text-zinc-600" fill="none" aria-hidden="true">
                 <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
                 <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
                 <path d="m6 16 3.5-4.5 2.5 3 3.5-4.5L21 16" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
@@ -94,7 +94,7 @@ export default function PremiumMediaCard({
           <div className="text-base font-semibold leading-tight text-zinc-900 dark:text-zinc-50">{title}</div>
           <div className="mt-1.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</div>
         </div>
-        <div className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-400 transition-colors group-hover:border-zinc-300 group-hover:text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:group-hover:border-zinc-500 dark:group-hover:text-zinc-200">
+        <div className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-400 transition-colors group-hover:border-zinc-300 group-hover:text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:group-hover:text-zinc-200">
           {trailing ?? <span aria-hidden="true">→</span>}
         </div>
       </div>
