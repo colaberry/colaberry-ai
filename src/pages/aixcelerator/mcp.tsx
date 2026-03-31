@@ -3,6 +3,7 @@ import AeoQuickAnswer from "../../components/AeoQuickAnswer";
 import CatalogSnapshot from "../../components/CatalogSnapshot";
 import EnterpriseCtaBand from "../../components/EnterpriseCtaBand";
 import Layout from "../../components/Layout";
+import MiniOntologyDiagram from "../../components/MiniOntologyDiagram";
 import SectionHeader from "../../components/SectionHeader";
 import StatePanel from "../../components/StatePanel";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -12,6 +13,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
+import { MCP_ONTOLOGY_CONFIG } from "../../data/mcp-taxonomy";
 
 const PAGE_SIZE = 24;
 
@@ -66,6 +68,17 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
   const [sourceFilter, setSourceFilter] = useState("all");
   const [tagFilter, setTagFilter] = useState("all");
   const [toolFilter, setToolFilter] = useState("all");
+
+  // Compute category counts for mini ontology diagram
+  const mcpCategoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const mcp of initialMCPs) {
+      const cat = MCP_ONTOLOGY_CONFIG.classifyItem(mcp);
+      counts[cat.slug] = (counts[cat.slug] || 0) + 1;
+    }
+    return counts;
+  }, [initialMCPs]);
+
   const querySearch = useMemo(() => {
     const raw = Array.isArray(router.query.q) ? router.query.q[0] : router.query.q;
     return typeof raw === "string" ? raw : "";
@@ -327,6 +340,13 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
             kicker="MCP library"
             title="MCP Servers"
             description="A curated MCP server library for connecting agents to business apps, data, and developer tools-with public and private options for secure deployment."
+          />
+        </div>
+        <div className="hidden lg:block">
+          <MiniOntologyDiagram
+            config={MCP_ONTOLOGY_CONFIG}
+            categoryCounts={mcpCategoryCounts}
+            totalItems={totalCount || initialMCPs.length}
           />
         </div>
       </div>
