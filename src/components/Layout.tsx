@@ -1557,7 +1557,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <footer role="contentinfo" className="footer-surface mt-6">
         {/* ── Top section: Logo + Newsletter (left) + Link columns (right) ── */}
         <div className="px-4 pt-12 pb-8 sm:px-6 lg:pt-16 lg:pb-10 xl:px-8">
-          <div className="flex flex-col gap-10 lg:flex-row lg:gap-16">
+          <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-16">
             {/* LEFT — Logo + Newsletter */}
             <div className="max-w-sm flex-shrink-0">
               {/* Logo */}
@@ -1621,8 +1621,8 @@ export default function Layout({ children }: { children: ReactNode }) {
             </div>
 
             {/* RIGHT — Link columns + Watermark */}
-            <div className="flex flex-1 flex-col">
-              <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-10 gap-y-8 sm:grid-cols-3 lg:grid-cols-2">
+            <div className="flex flex-1 flex-col lg:items-end">
+              <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-10 gap-y-8 sm:grid-cols-3 lg:grid-cols-2 lg:gap-x-16">
                 {FOOTER_COLUMNS.map((col) => (
                   <div key={col.title}>
                     <h3 className="footer-column-heading">{col.title}</h3>
