@@ -134,6 +134,22 @@ Ten specialized agents in `.claude/agents/` for continuous auditing:
 | Core Web Vitals | `performance-core-web-vitals.md` | LCP, INP, CLS, PageSpeed optimization |
 | API Performance | `api-performance.md` | Response time, Postman collection, best practices |
 
+## Logo Design Multi-Agent Pipeline
+Eight specialized agents + 1 skill for multi-agent logo design:
+
+| Agent | File | Purpose |
+|-------|------|---------|
+| Logo Design Director | `logo-design-director.md` | Orchestrator — coordinates all design agents |
+| Brand Strategist | `brand-strategist.md` | Brand brief, personality, visual identity principles |
+| Canvas Designer | `canvas-designer.md` | Generate 5+ logo concepts with SVG specs |
+| Figma Designer | `figma-designer.md` | Polish vectors in Figma, create all variants |
+| SVG Engineer | `svg-engineer.md` | Production React component + standalone SVGs |
+| Lovable Prototyper | `lovable-prototyper.md` | Live preview mockups at `/brand-preview` |
+| Logo QA | `logo-qa.md` | Quality assurance — 50+ checks, pass/fail report |
+| Competitive Analysis | `competitive-analysis.md` | Competitor logo research, trend analysis |
+
+**Skill:** `/design-logo` — Runs the full 6-phase pipeline (Strategy → Concepts → Figma → Code → Preview → QA)
+
 ## Spec-Driven Development (SDD)
 
 Every non-trivial feature follows a 4-phase workflow: **Specify → Plan → Tasks → Implement**.
@@ -155,6 +171,7 @@ Reusable workflows in `.claude/skills/`:
 | `/release` | Pre-deployment checklist: tsc, lint, build, security |
 | `/security-audit` | Orchestrate all 7 security agents |
 | `/new-page` | Scaffold a new page following all standards |
+| `/design-logo` | Multi-agent logo design pipeline (6 phases, 8 agents) |
 
 ## Git
 - **Branch:** `dev` (main development), `Release-1.0` (production release)
