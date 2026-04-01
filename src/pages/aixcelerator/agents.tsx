@@ -3,6 +3,7 @@ import AeoQuickAnswer from "../../components/AeoQuickAnswer";
 import CatalogSnapshot from "../../components/CatalogSnapshot";
 import EnterpriseCtaBand from "../../components/EnterpriseCtaBand";
 import Layout from "../../components/Layout";
+import MiniOntologyDiagram from "../../components/MiniOntologyDiagram";
 import SectionHeader from "../../components/SectionHeader";
 import StatePanel from "../../components/StatePanel";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -12,6 +13,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
+import { AGENT_ONTOLOGY_CONFIG } from "../../data/agent-taxonomy";
 
 type AgentsPageProps = {
   agents: Agent[];
@@ -55,6 +57,16 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
   const [departmentFilter, setDepartmentFilter] = useState("all");
   const pageSize = 24;
   const [visibleCount, setVisibleCount] = useState(pageSize);
+
+  // Compute category counts for mini ontology diagram
+  const agentCategoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const agent of agents) {
+      const cat = AGENT_ONTOLOGY_CONFIG.classifyItem(agent);
+      counts[cat.slug] = (counts[cat.slug] || 0) + 1;
+    }
+    return counts;
+  }, [agents]);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const querySearch = useMemo(() => {
     const raw = Array.isArray(router.query.q) ? router.query.q[0] : router.query.q;
@@ -212,6 +224,13 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
             kicker="Agents catalog"
             title="AI Agents"
             description="A governed AI marketplace of enterprise agents and assistants-aligned to teams, workflows, and industry context, with public and private listings."
+          />
+        </div>
+        <div className="hidden lg:block">
+          <MiniOntologyDiagram
+            config={AGENT_ONTOLOGY_CONFIG}
+            categoryCounts={agentCategoryCounts}
+            totalItems={agents.length}
           />
         </div>
       </div>

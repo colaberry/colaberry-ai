@@ -3,6 +3,7 @@ import AeoQuickAnswer from "../../../components/AeoQuickAnswer";
 import CatalogSnapshot from "../../../components/CatalogSnapshot";
 import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
 import Layout from "../../../components/Layout";
+import MiniOntologyDiagram from "../../../components/MiniOntologyDiagram";
 import SectionHeader from "../../../components/SectionHeader";
 import StatePanel from "../../../components/StatePanel";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -11,6 +12,7 @@ import { Skill, fetchSkills } from "../../../lib/cms";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../../lib/seo";
+import { SKILL_ONTOLOGY_CONFIG } from "../../../data/skill-taxonomy";
 
 type SkillsPageProps = {
   skills: Skill[];
@@ -53,6 +55,16 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
   const [tagFilter, setTagFilter] = useState("all");
   const pageSize = 24;
   const [visibleCount, setVisibleCount] = useState(pageSize);
+
+  // Compute category counts for mini ontology diagram
+  const skillCategoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const skill of skills) {
+      const cat = SKILL_ONTOLOGY_CONFIG.classifyItem(skill);
+      counts[cat.slug] = (counts[cat.slug] || 0) + 1;
+    }
+    return counts;
+  }, [skills]);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const querySearch = useMemo(() => {
     const raw = Array.isArray(router.query.q) ? router.query.q[0] : router.query.q;
@@ -196,6 +208,13 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
             kicker="Skills catalog"
             title="AI Skills"
             description="A governed catalog of AI skills with structured metadata, lifecycle status, and enterprise-grade discovery for agents and workflows."
+          />
+        </div>
+        <div className="hidden lg:block">
+          <MiniOntologyDiagram
+            config={SKILL_ONTOLOGY_CONFIG}
+            categoryCounts={skillCategoryCounts}
+            totalItems={skills.length}
           />
         </div>
       </div>
