@@ -683,8 +683,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, []);
 
-  /* Scroll-collapse header: compact after 100px scroll down, expand on scroll up.
-     Uses a 10px delta threshold to avoid shaking from micro-scrolls. */
+  /* Scroll-collapse header + homepage transparency — single listener to reduce overhead */
   useEffect(() => {
     let ticking = false;
     const DELTA = 10;
@@ -700,17 +699,11 @@ export default function Layout({ children }: { children: ReactNode }) {
           setHeaderCompact(false);
         }
         lastScrollY.current = y;
+        setHeaderScrolled(y > 20);
         ticking = false;
       });
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  /* Homepage header: transparent → solid at 20px scroll */
-  useEffect(() => {
-    const onScroll = () => setHeaderScrolled(window.scrollY > 20);
-    onScroll();
+    onScroll(); // initialize headerScrolled on mount
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -1066,6 +1059,10 @@ export default function Layout({ children }: { children: ReactNode }) {
           className={`nav-link focus-ring inline-flex items-center gap-1.5 ${isParentActive ? "nav-link-active" : ""}`}
           aria-haspopup={hasChildren ? "menu" : undefined}
           aria-expanded={hasChildren ? isOpen : undefined}
+          onKeyDown={hasChildren ? (e) => {
+            if (e.key === "ArrowDown") { e.preventDefault(); setOpenMenu(menuKey); const first = e.currentTarget.parentElement?.querySelector<HTMLElement>("[role=menuitem]"); first?.focus(); }
+            if (e.key === "Escape") { setOpenMenu(null); }
+          } : undefined}
         >
           {link.label}
           {hasChildren ? (
@@ -1093,6 +1090,13 @@ export default function Layout({ children }: { children: ReactNode }) {
               className={`mega-menu-panel min-w-[15rem] rounded-xl p-2 transition-all duration-200 ${isOpen ? "translate-y-0" : "translate-y-1.5"}`}
               role="menu"
               aria-label={`${link.label} menu`}
+              onKeyDown={(e) => {
+                const items = Array.from(e.currentTarget.querySelectorAll<HTMLElement>("[role=menuitem]"));
+                const idx = items.indexOf(e.target as HTMLElement);
+                if (e.key === "ArrowDown") { e.preventDefault(); items[(idx + 1) % items.length]?.focus(); }
+                if (e.key === "ArrowUp") { e.preventDefault(); items[(idx - 1 + items.length) % items.length]?.focus(); }
+                if (e.key === "Escape") { setOpenMenu(null); (e.currentTarget.closest(".group")?.querySelector<HTMLElement>("a"))?.focus(); }
+              }}
             >
               <div className="px-2.5 pb-2 pt-1 text-label font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
                 {link.label}
@@ -1185,7 +1189,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             </Link>
           </div>
 
-          <nav role="navigation" aria-label="Main navigation" className="hidden min-w-0 items-center gap-1.5 text-sm lg:flex">
+          <nav aria-label="Main navigation" className="hidden min-w-0 items-center gap-1.5 text-sm lg:flex">
             {isCatalogWorkspace ? (
               <>
                 <span className="hidden rounded-md px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400 min-[1560px]:inline-flex dark:text-zinc-500">

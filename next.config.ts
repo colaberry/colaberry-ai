@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false, // Remove X-Powered-By: Next.js (OWASP A05 info disclosure)
   images: {
     qualities: [75, 90],
+    formats: ["image/avif", "image/webp"],
     remotePatterns: cmsRemotePattern ? [cmsRemotePattern] : [],
     localPatterns: [
       {
@@ -87,7 +88,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+            value: "camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
           },
           ...(process.env.NODE_ENV === "production"
             ? [
@@ -95,7 +96,7 @@ const nextConfig: NextConfig = {
                   key: "Content-Security-Policy",
                   value: [
                     "default-src 'self'",
-                    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.buzzsprout.com",
+                    "script-src 'self' 'sha256-CdQGV8nBFFKUGZSKmXZWMSImilQGgmVGWzhkZ5MUiII=' https://www.googletagmanager.com https://www.google-analytics.com https://www.buzzsprout.com",
                     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                     "font-src 'self' https://fonts.gstatic.com data:",
                     `img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com ${cmsUrl ? new URL(cmsUrl).origin : ""}`.trim(),

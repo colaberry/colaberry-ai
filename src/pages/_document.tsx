@@ -25,6 +25,8 @@ export default function Document() {
         {process.env.NEXT_PUBLIC_CMS_URL && (
           <link rel="preconnect" href={process.env.NEXT_PUBLIC_CMS_URL.replace(/\/$/, "")} crossOrigin="anonymous" />
         )}
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </Head>
       <body>

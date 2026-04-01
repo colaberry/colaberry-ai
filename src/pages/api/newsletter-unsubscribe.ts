@@ -1,15 +1,12 @@
 import crypto from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { verifyUnsubscribeToken } from "../../lib/newsletterTokens";
+import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL;
 const CMS_TOKEN = process.env.CMS_API_TOKEN;
 const HASH_SALT = process.env.NEWSLETTER_HASH_SALT || "colaberry-newsletter";
 const REQUEST_TIMEOUT_MS = Number(process.env.NEWSLETTER_API_TIMEOUT_MS || 8000);
-
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_LIMIT_IP = 20;
-const rateBuckets = new Map<string, { count: number; resetAt: number }>();
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
@@ -34,41 +31,12 @@ function normalizeText(value: unknown, maxLength = 200) {
   return value.trim().slice(0, maxLength);
 }
 
-function getClientIp(req: NextApiRequest) {
-  const cfIp = req.headers["cf-connecting-ip"];
-  if (cfIp) return (Array.isArray(cfIp) ? cfIp[0] : cfIp).trim();
-  const realIp = req.headers["x-real-ip"];
-  if (realIp) return (Array.isArray(realIp) ? realIp[0] : realIp).trim();
-  const forwarded = req.headers["x-forwarded-for"];
-  const fromHeader = Array.isArray(forwarded) ? forwarded[0] : forwarded;
-  if (fromHeader) {
-    const ips = fromHeader.split(",").map((s) => s.trim()).filter(Boolean);
-    return ips[ips.length - 1] || "unknown";
-  }
-  return req.socket.remoteAddress || "unknown";
-}
-
 function hashValue(value: string) {
   return crypto
     .createHash("sha256")
     .update(`${HASH_SALT}:${value}`)
     .digest("hex")
     .slice(0, 24);
-}
-
-function isRateLimited(key: string) {
-  const now = Date.now();
-  const current = rateBuckets.get(key);
-  if (!current || current.resetAt <= now) {
-    rateBuckets.set(key, { count: 1, resetAt: now + RATE_WINDOW_MS });
-    return false;
-  }
-  if (current.count >= RATE_LIMIT_IP) {
-    return true;
-  }
-  current.count += 1;
-  rateBuckets.set(key, current);
-  return false;
 }
 
 function parsePayload(req: NextApiRequest): UnsubscribePayload | null {
@@ -141,7 +109,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const ip = getClientIp(req);
   const ipHash = hashValue(ip);
-  if (isRateLimited(ipHash)) {
+  const rl = checkRateLimit("newsletter-unsubscribe", ip, 20, 10 * 60 * 1000);
+  if (rl.limited) {
+    res.setHeader("Retry-After", String(rl.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rl.limit));
+    res.setHeader("X-RateLimit-Remaining", "0");
     return res.status(429).json({ ok: false, message: "Too many requests. Please try again shortly." });
   }
 
