@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { resolveSenderProvider, sendNewsletterEmail } from "../../lib/newsletterSender";
-import { isRateLimited, getClientIp } from "../../lib/rate-limit";
+import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 type DemoRequestPayload = {
   name?: string;
@@ -80,7 +80,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ ok: false, message: "Method not allowed." });
   }
 
-  if (isRateLimited("demo-request", getClientIp(req), 10, 60_000)) {
+  const rl = checkRateLimit("demo-request", getClientIp(req), 10, 60_000);
+  if (rl.limited) {
+    res.setHeader("Retry-After", String(rl.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rl.limit));
+    res.setHeader("X-RateLimit-Remaining", "0");
     return res.status(429).json({ ok: false, message: "Too many requests. Please try again shortly." });
   }
 

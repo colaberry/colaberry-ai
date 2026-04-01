@@ -5,7 +5,7 @@ import {
   type PodcastEpisode,
   type PodcastSortBy,
 } from "../../lib/cms";
-import { isRateLimited, getClientIp } from "../../lib/rate-limit";
+import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 const PAGE_SIZE = 24;
 
@@ -59,7 +59,11 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  if (isRateLimited("podcasts", getClientIp(req), 60, 60_000)) {
+  const rl = checkRateLimit("podcasts", getClientIp(req), 60, 60_000);
+  if (rl.limited) {
+    res.setHeader("Retry-After", String(rl.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rl.limit));
+    res.setHeader("X-RateLimit-Remaining", "0");
     return res.status(429).json({ error: "Too many requests" });
   }
 

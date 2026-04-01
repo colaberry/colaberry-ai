@@ -10,7 +10,7 @@ import {
 } from "../lib/cookieConsent";
 
 const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID || null;
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID || "G-F9YN432TTH";
 
 export default function CookieConsentBanner() {
   const [hasMounted, setHasMounted] = useState(false);
@@ -140,7 +140,7 @@ export default function CookieConsentBanner() {
                 {/* Toggle rows */}
                 <div className="mt-4 flex flex-col gap-2">
                   {/* Necessary */}
-                  <div className="flex items-center justify-between gap-3 rounded-lg bg-amber-50/60 px-3 py-2.5 dark:bg-amber-900/10">
+                  <div className="flex items-center justify-between gap-3 rounded-lg bg-zinc-100/60 px-3 py-2.5 dark:bg-zinc-800/40">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                         Necessary
@@ -167,7 +167,7 @@ export default function CookieConsentBanner() {
                   </div>
 
                   {/* Analytics */}
-                  <div className="flex items-center justify-between gap-3 rounded-lg bg-amber-50/60 px-3 py-2.5 dark:bg-amber-900/10">
+                  <div className="flex items-center justify-between gap-3 rounded-lg bg-zinc-100/60 px-3 py-2.5 dark:bg-zinc-800/40">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                         Analytics
@@ -194,7 +194,7 @@ export default function CookieConsentBanner() {
                   </div>
 
                   {/* Marketing */}
-                  <div className="flex items-center justify-between gap-3 rounded-lg bg-amber-50/60 px-3 py-2.5 dark:bg-amber-900/10">
+                  <div className="flex items-center justify-between gap-3 rounded-lg bg-zinc-100/60 px-3 py-2.5 dark:bg-zinc-800/40">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                         Marketing

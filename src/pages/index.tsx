@@ -130,16 +130,28 @@ export default function Home({
 }: HomeProps) {
   const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k+` : `${n}+`;
 
-  /* ── Mouse-reactive parallax for orbital diagram ── */
+  /* ── Mouse-reactive parallax for orbital diagram (ref-based, no re-renders) ── */
   const heroRef = useRef<HTMLElement>(null);
-  const [mx, setMx] = useState(0);
-  const [my, setMy] = useState(0);
+  const parallaxGlowRef = useRef<HTMLDivElement>(null);
+  const parallaxMetricRef = useRef<HTMLDivElement>(null);
+  const rafId = useRef(0);
   const handleHeroMouse = useCallback((e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    setMx((e.clientX - rect.left) / rect.width - 0.5);
-    setMy((e.clientY - rect.top) / rect.height - 0.5);
+    const nx = (e.clientX - rect.left) / rect.width - 0.5;
+    const ny = (e.clientY - rect.top) / rect.height - 0.5;
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(() => {
+      if (parallaxGlowRef.current) parallaxGlowRef.current.style.transform = `translate(${nx * -6}px, ${ny * -6}px)`;
+      if (parallaxMetricRef.current) parallaxMetricRef.current.style.transform = `translate(${nx * 8}px, ${ny * 8}px)`;
+    });
   }, []);
-  const handleHeroLeave = useCallback(() => { setMx(0); setMy(0); }, []);
+  const handleHeroLeave = useCallback(() => {
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(() => {
+      if (parallaxGlowRef.current) parallaxGlowRef.current.style.transform = "translate(0px, 0px)";
+      if (parallaxMetricRef.current) parallaxMetricRef.current.style.transform = "translate(0px, 0px)";
+    });
+  }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- false positive: used at line ~492
   const industries = [
@@ -451,14 +463,14 @@ export default function Home({
               <div className="hero-grid-dots" aria-hidden="true" />
 
               {/* Atmospheric glow — parallax counter-motion */}
-              <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" style={{ transform: `translate(${mx * -6}px, ${my * -6}px)`, transition: "transform 0.2s ease-out", willChange: "transform" }}>
+              <div ref={parallaxGlowRef} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" style={{ transition: "transform 0.2s ease-out", willChange: "transform" }}>
                 <div className="absolute right-[5%] top-[0%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(220,38,38,0.14)_0%,rgba(220,38,38,0.04)_30%,transparent_55%)] blur-2xl" />
                 <div className="absolute right-[20%] top-[50%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.10)_0%,transparent_55%)] blur-3xl" />
                 <div className="absolute right-[0%] top-[25%] h-[250px] w-[250px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.08)_0%,transparent_55%)] blur-3xl" />
               </div>
 
               {/* Hero metric — one massive number + bar breakdown */}
-              <div className="relative z-10" style={{ transform: `translate(${mx * 8}px, ${my * 8}px)`, transition: "transform 0.15s ease-out", willChange: "transform", maxWidth: 420 }}>
+              <div ref={parallaxMetricRef} className="relative z-10" style={{ transition: "transform 0.15s ease-out", willChange: "transform", maxWidth: 420 }}>
                 {/* The ONE big hero number */}
                 <div className="hero-metric-hero">
                   <div className="hero-metric-hero-number">
@@ -655,13 +667,13 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     fetchOrEmpty("latestPodcasts", () => fetchPodcastEpisodes({ maxRecords: 6, sortBy: "latest" }), [] as PodcastEpisode[]),
     fetchOrEmpty("trendingPodcasts", () => fetchPodcastEpisodes({ maxRecords: 80, sortBy: "trending" }), [] as PodcastEpisode[]),
     fetchOrEmpty("latestAgents", () => fetchAgents(visibilityFilter, { maxRecords: 6, sortBy: "latest" }), [] as Agent[]),
-    fetchOrEmpty("trendingAgents", () => fetchAgents(visibilityFilter, { maxRecords: 300 }), [] as Agent[]),
+    fetchOrEmpty("trendingAgents", () => fetchAgents(visibilityFilter, { maxRecords: 30 }), [] as Agent[]),
     fetchOrEmpty("latestSkills", () => fetchSkills(visibilityFilter, { maxRecords: 6, sortBy: "latest" }), [] as Skill[]),
-    fetchOrEmpty("trendingSkills", () => fetchSkills(visibilityFilter, { maxRecords: 300, sortBy: "latest" }), [] as Skill[]),
+    fetchOrEmpty("trendingSkills", () => fetchSkills(visibilityFilter, { maxRecords: 30, sortBy: "latest" }), [] as Skill[]),
     fetchOrEmpty("latestUseCases", () => fetchUseCases(visibilityFilter, { maxRecords: 6, sortBy: "latest" }), [] as UseCase[]),
-    fetchOrEmpty("trendingUseCases", () => fetchUseCases(visibilityFilter, { maxRecords: 300, sortBy: "latest" }), [] as UseCase[]),
+    fetchOrEmpty("trendingUseCases", () => fetchUseCases(visibilityFilter, { maxRecords: 30, sortBy: "latest" }), [] as UseCase[]),
     fetchOrEmpty("latestMCP", () => fetchMCPServers(visibilityFilter, { maxRecords: 6, sortBy: "latest" }), [] as MCPServer[]),
-    fetchOrEmpty("trendingMCP", () => fetchMCPServers(visibilityFilter, { maxRecords: 300 }), [] as MCPServer[]),
+    fetchOrEmpty("trendingMCP", () => fetchMCPServers(visibilityFilter, { maxRecords: 30 }), [] as MCPServer[]),
     fetchOrEmpty("catalogCounts", () => fetchCatalogCounts(visibilityFilter), { agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0 }),
   ]);
 

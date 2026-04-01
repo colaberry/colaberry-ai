@@ -196,7 +196,7 @@
   --text-inverse: #18181B;
   --stroke: #3F3F46;
   --stroke-strong: rgba(161, 161, 170, 0.15);
-  --stroke-focus: rgba(250, 250, 250, 0.3);
+  --stroke-focus: rgba(250, 250, 250, 0.55);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.03);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05);
@@ -306,6 +306,9 @@ select:disabled {
   color: var(--text-primary);
   font-size: 0.75rem;
   font-weight: 500;
+  min-height: 28px;
+  min-width: 28px;
+  padding-inline: 0.625rem;
   transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease,
               transform 150ms var(--ease-smooth), box-shadow 150ms var(--ease-smooth);
 }
@@ -645,6 +648,11 @@ h6 {
   border-radius: 50%;
   filter: blur(120px);
   opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .hero-orb { filter: blur(60px); opacity: 0.4; }
+  .hero-orb-center { filter: blur(60px); opacity: 0.4; animation: none; }
 }
 
 .hero-orb-1 {

@@ -24,6 +24,7 @@ export default function NewsletterSignup({
   ctaLabel = "Subscribe",
 }: NewsletterSignupProps) {
   const [email, setEmail] = useState("");
+  const [emailTouched, setEmailTouched] = useState(false);
   const [website, setWebsite] = useState("");
   const [consent, setConsent] = useState(false);
   const [state, setState] = useState<SubmissionState>("idle");
@@ -117,11 +118,18 @@ export default function NewsletterSignup({
             type="email"
             autoComplete="email"
             required
+            aria-required="true"
+            aria-invalid={emailTouched && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? "true" : undefined}
+            aria-describedby={emailTouched && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? `newsletter-email-error-${sourcePage}` : undefined}
             value={email}
             onChange={(event) => setEmail(event.target.value)}
+            onBlur={() => setEmailTouched(true)}
             placeholder="Enter work email"
             className="input-premium"
           />
+          {emailTouched && email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && (
+            <p id={`newsletter-email-error-${sourcePage}`} className="text-xs text-red-600" role="alert">Please enter a valid email address.</p>
+          )}
           <label htmlFor={`newsletter-website-${sourcePage}`} className="sr-only">
             Website
           </label>

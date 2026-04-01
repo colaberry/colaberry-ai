@@ -4,6 +4,7 @@ import { defaultNewsletterItems } from "../../lib/newsletterCampaignDefaults";
 import { buildNewsletterTemplate } from "../../lib/newsletterTemplate";
 import { resolveSenderProvider, sendNewsletterEmail, isEmailProviderConfigured } from "../../lib/newsletterSender";
 import { createUnsubscribeToken } from "../../lib/newsletterTokens";
+import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL;
 const CMS_TOKEN = process.env.CMS_API_TOKEN;
@@ -11,11 +12,6 @@ const HASH_SALT = process.env.NEWSLETTER_HASH_SALT || "colaberry-newsletter";
 const REQUEST_TIMEOUT_MS = Number(process.env.NEWSLETTER_API_TIMEOUT_MS || 8000);
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
 const WELCOME_EMAIL_ENABLED = process.env.NEWSLETTER_SEND_WELCOME_ON_SUBSCRIBE !== "false";
-
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_LIMIT_IP = 12;
-const RATE_LIMIT_EMAIL = 6;
-const rateBuckets = new Map<string, { count: number; resetAt: number }>();
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
@@ -58,42 +54,12 @@ function normalizeText(value: unknown, maxLength = 200) {
   return value.trim().slice(0, maxLength);
 }
 
-function getClientIp(req: NextApiRequest) {
-  const cfIp = req.headers["cf-connecting-ip"];
-  if (cfIp) return (Array.isArray(cfIp) ? cfIp[0] : cfIp).trim();
-  const realIp = req.headers["x-real-ip"];
-  if (realIp) return (Array.isArray(realIp) ? realIp[0] : realIp).trim();
-  const forwarded = req.headers["x-forwarded-for"];
-  const fromHeader = Array.isArray(forwarded) ? forwarded[0] : forwarded;
-  if (fromHeader) {
-    const ips = fromHeader.split(",").map((s) => s.trim()).filter(Boolean);
-    return ips[ips.length - 1] || "unknown";
-  }
-  return req.socket.remoteAddress || "unknown";
-}
-
 function hashValue(value: string) {
   return crypto
     .createHash("sha256")
     .update(`${HASH_SALT}:${value}`)
     .digest("hex")
     .slice(0, 24);
-}
-
-function isRateLimited(key: string) {
-  const now = Date.now();
-  const current = rateBuckets.get(key);
-  if (!current || current.resetAt <= now) {
-    rateBuckets.set(key, { count: 1, resetAt: now + RATE_WINDOW_MS });
-    return false;
-  }
-  const limit = key.startsWith("email:") ? RATE_LIMIT_EMAIL : RATE_LIMIT_IP;
-  if (current.count >= limit) {
-    return true;
-  }
-  current.count += 1;
-  rateBuckets.set(key, current);
-  return false;
 }
 
 function parsePayload(req: NextApiRequest): SubscribePayload | null {
@@ -249,7 +215,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const ip = getClientIp(req);
   const ipHash = hashValue(ip);
   const emailHash = hashValue(email);
-  if (isRateLimited(`ip:${ipHash}`) || isRateLimited(`email:${emailHash}`)) {
+  const rlIp = checkRateLimit("newsletter-subscribe-ip", ip, 12, 10 * 60 * 1000);
+  const rlEmail = checkRateLimit("newsletter-subscribe-email", email, 6, 10 * 60 * 1000);
+  if (rlIp.limited || rlEmail.limited) {
+    const rl = rlIp.limited ? rlIp : rlEmail;
+    res.setHeader("Retry-After", String(rl.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rl.limit));
+    res.setHeader("X-RateLimit-Remaining", "0");
     return res.status(429).json({ ok: false, message: "Too many attempts. Please try again shortly." });
   }
 

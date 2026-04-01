@@ -115,6 +115,7 @@ export default function EnterprisePageHero({
                   src={image}
                   alt={alt ?? ""}
                   fill
+                  priority
                   sizes="(min-width: 1920px) 780px, (min-width: 1536px) 680px, (min-width: 1280px) 620px, (min-width: 1024px) 520px, 92vw"
                   quality={90}
                   className="object-cover transition duration-500 ease-out group-hover:scale-[1.02]"
