@@ -1554,10 +1554,10 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       <footer role="contentinfo" className="footer-surface mt-6">
         {/* ── Top section: Logo + Newsletter (left) + Link columns (right) ── */}
-        <div className="mx-auto max-w-7xl px-6 pt-12 pb-8 lg:pt-16 lg:pb-10">
-          <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-16">
-            {/* LEFT — Logo + Newsletter */}
-            <div className="max-w-sm flex-shrink-0">
+        <div className="px-4 pt-14 pb-12 sm:px-6 lg:pt-20 lg:pb-14 xl:px-8">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr] lg:gap-12">
+            {/* COL 1 — Logo + Newsletter */}
+            <div className="sm:col-span-2 lg:col-span-1">
               {/* Logo */}
               <span className="flex items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1618,51 +1618,47 @@ export default function Layout({ children }: { children: ReactNode }) {
               </form>
             </div>
 
-            {/* RIGHT — Link columns + Watermark */}
-            <div className="flex flex-1 flex-col lg:items-end">
-              <nav aria-label="Footer navigation" className="grid w-full grid-cols-2 gap-x-10 gap-y-8 sm:grid-cols-3 lg:max-w-2xl">
-                {FOOTER_COLUMNS.map((col) => (
-                  <div key={col.title}>
-                    <h3 className="footer-column-heading">{col.title}</h3>
-                    <ul className="mt-3 space-y-2">
-                      {col.links.map((link) => (
-                        <li key={link.href}>
-                          <FooterLink href={link.href} className="text-sm font-normal">
-                            {link.label}
-                          </FooterLink>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+            {/* COL 2 & 3 — Link columns */}
+            {FOOTER_COLUMNS.map((col) => (
+              <nav key={col.title} aria-label={`${col.title} links`}>
+                <h3 className="footer-column-heading">{col.title}</h3>
+                <ul className="mt-3 space-y-2">
+                  {col.links.map((link) => (
+                    <li key={link.href}>
+                      <FooterLink href={link.href} className="text-sm font-normal">
+                        {link.label}
+                      </FooterLink>
+                    </li>
+                  ))}
+                </ul>
               </nav>
+            ))}
 
-              {/* ── Watermark logo — right-aligned ── */}
-              <div className="footer-watermark mt-8 w-full max-w-sm lg:max-w-md" aria-hidden="true">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/brand/colaberry-ai-watermark-2.svg"
-                  alt=""
-                  width={2204}
-                  height={476}
-                  className="brand-logo-light h-auto w-full lg:ml-auto"
-                />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/brand/colaberry-ai-watermark-2-dark.svg"
-                  alt=""
-                  width={2204}
-                  height={476}
-                  className="brand-logo-dark h-auto w-full lg:ml-auto"
-                />
-              </div>
+            {/* COL 4 — Watermark logo */}
+            <div className="footer-watermark sm:col-span-2 lg:col-span-1 self-end mt-2 lg:mt-0" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/colaberry-ai-watermark-2.svg"
+                alt=""
+                width={2204}
+                height={476}
+                className="brand-logo-light h-auto w-full"
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/colaberry-ai-watermark-2-dark.svg"
+                alt=""
+                width={2204}
+                height={476}
+                className="brand-logo-dark h-auto w-full"
+              />
             </div>
           </div>
         </div>
 
         {/* ── Bottom bar ── */}
         <div className="border-t border-[#D4D1CA] dark:border-[#4A473F]">
-          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-6 py-6 sm:flex-row sm:justify-between">
+          <div className="flex flex-col items-center gap-4 px-4 py-6 sm:flex-row sm:justify-between sm:px-6 xl:px-8">
             {/* Copyright */}
             <span className="footer-copyright">
               &copy; {new Date().getFullYear()} Colaberry, Inc.
