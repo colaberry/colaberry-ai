@@ -1557,9 +1557,9 @@ export default function Layout({ children }: { children: ReactNode }) {
       <footer role="contentinfo" className="footer-surface mt-6">
         {/* ── Top section: Logo + Newsletter (left) + Link columns (right) ── */}
         <div className="px-4 pt-12 pb-8 sm:px-6 lg:pt-16 lg:pb-10 xl:px-8">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_auto_auto] lg:gap-12 xl:gap-16">
+          <div className="flex flex-col gap-10 lg:flex-row lg:gap-16">
             {/* LEFT — Logo + Newsletter */}
-            <div className="max-w-sm">
+            <div className="max-w-sm flex-shrink-0">
               {/* Logo */}
               <span className="flex items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1620,42 +1620,44 @@ export default function Layout({ children }: { children: ReactNode }) {
               </form>
             </div>
 
-            {/* CENTER — Link columns */}
-            <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-10 gap-y-8 sm:grid-cols-3 lg:grid-cols-2">
-              {FOOTER_COLUMNS.map((col) => (
-                <div key={col.title}>
-                  <h3 className="footer-column-heading">{col.title}</h3>
-                  <ul className="mt-3 space-y-2">
-                    {col.links.map((link) => (
-                      <li key={link.href}>
-                        <FooterLink href={link.href} className="text-sm font-normal">
-                          {link.label}
-                        </FooterLink>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </nav>
+            {/* RIGHT — Link columns + Watermark */}
+            <div className="flex flex-1 flex-col">
+              <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-10 gap-y-8 sm:grid-cols-3 lg:grid-cols-2">
+                {FOOTER_COLUMNS.map((col) => (
+                  <div key={col.title}>
+                    <h3 className="footer-column-heading">{col.title}</h3>
+                    <ul className="mt-3 space-y-2">
+                      {col.links.map((link) => (
+                        <li key={link.href}>
+                          <FooterLink href={link.href} className="text-sm font-normal">
+                            {link.label}
+                          </FooterLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </nav>
 
-            {/* RIGHT — Watermark logo */}
-            <div className="footer-watermark hidden w-64 self-end lg:block xl:w-80" aria-hidden="true">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/brand/colaberry-ai-watermark-2.svg"
-                alt=""
-                width={2204}
-                height={476}
-                className="brand-logo-light h-auto w-full"
-              />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/brand/colaberry-ai-watermark-2-dark.svg"
-                alt=""
-                width={2204}
-                height={476}
-                className="brand-logo-dark h-auto w-full"
-              />
+              {/* ── Watermark logo — right-aligned ── */}
+              <div className="footer-watermark mt-8 w-full max-w-sm lg:ml-auto lg:max-w-md" aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/brand/colaberry-ai-watermark-2.svg"
+                  alt=""
+                  width={2204}
+                  height={476}
+                  className="brand-logo-light h-auto w-full"
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/brand/colaberry-ai-watermark-2-dark.svg"
+                  alt=""
+                  width={2204}
+                  height={476}
+                  className="brand-logo-dark h-auto w-full"
+                />
+              </div>
             </div>
           </div>
         </div>
