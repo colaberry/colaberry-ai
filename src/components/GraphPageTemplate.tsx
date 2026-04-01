@@ -215,7 +215,7 @@ export default function GraphPageTemplate({
           <div className="mx-1 h-5 w-px bg-zinc-700/50" />
 
           {/* Edge type filters */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Edges</span>
             {edgeTypeKeys.map((type) => (
               <button

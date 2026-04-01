@@ -371,7 +371,7 @@ export default function OntologyPageTemplate({
   return (
     <>
       <div className="reveal grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:items-start">
-        <div>
+        <div className="min-w-0">
           <SectionHeader
             as="h1"
             size="xl"
@@ -395,7 +395,7 @@ export default function OntologyPageTemplate({
         </div>
 
         {/* Interactive 3-Layer Architecture Diagram */}
-        <div className="rounded-xl border border-zinc-200 bg-zinc-50 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="min-w-0 rounded-xl border border-zinc-200 bg-zinc-50 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
           <OntologyDiagram
             config={config}
             categoryCounts={categoryCounts}

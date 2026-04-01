@@ -6,7 +6,7 @@ import Layout from "../../../components/Layout";
 import MiniOntologyDiagram from "../../../components/MiniOntologyDiagram";
 import SectionHeader from "../../../components/SectionHeader";
 import StatePanel from "../../../components/StatePanel";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GetStaticProps } from "next";
 import { Skill, fetchSkills } from "../../../lib/cms";
 import { useRouter } from "next/router";
@@ -14,95 +14,134 @@ import Head from "next/head";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../../lib/seo";
 import { SKILL_ONTOLOGY_CONFIG } from "../../../data/skill-taxonomy";
 
+const PAGE_SIZE = 24;
+
 type SkillsPageProps = {
   skills: Skill[];
   allowPrivate: boolean;
   fetchError: boolean;
+  totalCount: number;
+  initialHasMore: boolean;
 };
 
 type SkillSortMode = "alphabetical" | "latest" | "trending";
+
+type Facets = {
+  categories: string[];
+  statuses: string[];
+  sources: string[];
+  tags: { value: string; label: string }[];
+};
 
 export const getStaticProps: GetStaticProps<SkillsPageProps> = async () => {
   const allowPrivate = process.env.NEXT_PUBLIC_SHOW_PRIVATE === "true";
   const visibilityFilter = allowPrivate ? undefined : "public";
 
   try {
-    const skills = (await fetchSkills(visibilityFilter, { maxRecords: 400 })).map(
-      toSkillListItem
-    );
+    const raw = await fetchSkills(visibilityFilter, { maxRecords: PAGE_SIZE + 1 });
+    const skills = raw.slice(0, PAGE_SIZE).map(toSkillListItem);
+    const initialHasMore = raw.length > PAGE_SIZE;
     return {
-      props: { skills, allowPrivate, fetchError: false },
+      props: { skills, allowPrivate, fetchError: false, totalCount: skills.length, initialHasMore },
       revalidate: 600,
     };
   } catch {
     return {
-      props: { skills: [], allowPrivate, fetchError: true },
+      props: { skills: [], allowPrivate, fetchError: true, totalCount: 0, initialHasMore: false },
       revalidate: 120,
     };
   }
 };
 
-export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageProps) {
+export default function Skills({ skills: initialSkills, allowPrivate, fetchError, totalCount, initialHasMore }: SkillsPageProps) {
   const router = useRouter();
   const [visibility, setVisibility] = useState<"all" | "public" | "private">(
     allowPrivate ? "all" : "public"
   );
   const [sortMode, setSortMode] = useState<SkillSortMode>("trending");
   const [search, setSearch] = useState<string | null>(null);
+  const [debouncedSearch, setDebouncedSearch] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [tagFilter, setTagFilter] = useState("all");
-  const pageSize = 24;
-  const [visibleCount, setVisibleCount] = useState(pageSize);
 
   // Compute category counts for mini ontology diagram
   const skillCategoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const skill of skills) {
+    for (const skill of initialSkills) {
       const cat = SKILL_ONTOLOGY_CONFIG.classifyItem(skill);
       counts[cat.slug] = (counts[cat.slug] || 0) + 1;
     }
     return counts;
-  }, [skills]);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  }, [initialSkills]);
+
   const querySearch = useMemo(() => {
     const raw = Array.isArray(router.query.q) ? router.query.q[0] : router.query.q;
     return typeof raw === "string" ? raw : "";
   }, [router.query.q]);
   const effectiveSearch = search ?? querySearch;
-  const categories = useMemo(
-    () =>
-      Array.from(new Set(skills.map((s) => s.category || "Other"))).filter(Boolean).sort(),
-    [skills]
+
+  // Debounce search input (300ms) to avoid excessive API calls
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(effectiveSearch), 300);
+    return () => clearTimeout(timer);
+  }, [effectiveSearch]);
+
+  // All loaded skills (SSR first page + API pages)
+  const [allSkills, setAllSkills] = useState<Skill[]>(initialSkills);
+  const [hasMore, setHasMore] = useState(initialHasMore);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [displayTotal, setDisplayTotal] = useState(totalCount);
+  const [catalogTotal, setCatalogTotal] = useState(totalCount);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  // Refs to avoid stale closures in IntersectionObserver callback
+  const loadingRef = useRef(false);
+  const pageRef = useRef(1);
+
+  // Facets from the API (full dataset)
+  const [facets, setFacets] = useState<Facets | null>(null);
+
+  // Initial facets derived from SSR data (incomplete but immediate)
+  const ssrCategories = useMemo(
+    () => Array.from(new Set(initialSkills.map((s) => s.category || "Other"))).filter(Boolean).sort(),
+    [initialSkills]
   );
-  const statuses = useMemo(() => {
-    const list = Array.from(new Set(skills.map((s) => (s.status || "unknown").toLowerCase())));
-    return list.sort();
-  }, [skills]);
-  const sources = useMemo(() => {
-    const list = Array.from(new Set(skills.map((s) => (s.source || "internal").toLowerCase())));
-    return list.sort();
-  }, [skills]);
-  const tagOptions = useMemo(() => {
+  const ssrStatuses = useMemo(() => {
+    return Array.from(new Set(initialSkills.map((s) => (s.status || "unknown").toLowerCase()))).sort();
+  }, [initialSkills]);
+  const ssrSources = useMemo(() => {
+    return Array.from(new Set(initialSkills.map((s) => (s.source || "internal").toLowerCase()))).sort();
+  }, [initialSkills]);
+  const ssrTags = useMemo(() => {
     const map = new Map<string, string>();
-    skills.forEach((skill) => {
+    initialSkills.forEach((skill) => {
       (skill.tags || []).forEach((tag) => {
         const key = (tag.slug || tag.name || "").toLowerCase();
-        if (key && !map.has(key)) {
-          map.set(key, tag.name || tag.slug || key);
-        }
+        if (key && !map.has(key)) map.set(key, tag.name || tag.slug || key);
       });
     });
     return Array.from(map.entries())
       .map(([value, label]) => ({ value, label }))
       .sort((a, b) => a.label.localeCompare(b.label));
-  }, [skills]);
-  const visibilityCounts = skills.reduce<Record<string, number>>((acc, s) => {
-    const key = (s.visibility || "public").toLowerCase();
-    acc[key] = (acc[key] ?? 0) + 1;
-    return acc;
-  }, {});
+  }, [initialSkills]);
+
+  // Use API facets when available, fall back to SSR-derived facets
+  const categories = facets?.categories ?? ssrCategories;
+  const statuses = facets?.statuses ?? ssrStatuses;
+  const sources = facets?.sources ?? ssrSources;
+  const tagOptions = facets?.tags ?? ssrTags;
+
+  const visibilityCounts = useMemo(() => {
+    return allSkills.reduce<Record<string, number>>((acc, s) => {
+      const key = (s.visibility || "public").toLowerCase();
+      acc[key] = (acc[key] ?? 0) + 1;
+      return acc;
+    }, {});
+  }, [allSkills]);
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
   const metaTitle = "16,900+ AI Skills — Reusable Capability Library | Colaberry AI";
   const metaDescription =
@@ -121,7 +160,7 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
     name: "Colaberry AI Skills Catalog",
     url: canonicalUrl,
     description: metaDescription,
-    itemListElement: skills.slice(0, 12).map((skill, index) => ({
+    itemListElement: allSkills.slice(0, 12).map((skill, index) => ({
       "@type": "ListItem",
       position: index + 1,
       item: {
@@ -133,43 +172,120 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
       },
     })),
   };
-  const filteredSkills = useMemo(() => {
-    const query = effectiveSearch.trim().toLowerCase();
-    return filterByVisibility(skills, allowPrivate, visibility).filter((skill) =>
-      matchesFilters(skill, query, categoryFilter, statusFilter, sourceFilter, tagFilter)
-    );
-  }, [skills, allowPrivate, visibility, effectiveSearch, categoryFilter, statusFilter, sourceFilter, tagFilter]);
-  const sortedSkills = useMemo(
-    () => sortSkills(filteredSkills, sortMode),
-    [filteredSkills, sortMode]
-  );
-  const scopedSkills = useMemo(
-    () => filterByVisibility(skills, allowPrivate, visibility),
-    [skills, allowPrivate, visibility]
-  );
-  const shownCount = Math.min(visibleCount, sortedSkills.length);
-  const visibleSkills = useMemo(
-    () => sortedSkills.slice(0, shownCount),
-    [sortedSkills, shownCount]
-  );
-  const hasMore = shownCount < sortedSkills.length;
-  const hasResults = sortedSkills.length > 0;
 
+  const hasResults = allSkills.length > 0;
+  const shownCount = allSkills.length;
+
+  // Build API query params from current filters
+  const buildParams = useCallback(
+    (page: number) => {
+      const params = new URLSearchParams({ page: String(page), sort: sortMode });
+      const q = (debouncedSearch ?? "").trim();
+      if (q) params.set("q", q);
+      if (categoryFilter !== "all") params.set("category", categoryFilter);
+      if (statusFilter !== "all") params.set("status", statusFilter);
+      if (sourceFilter !== "all") params.set("source", sourceFilter);
+      if (tagFilter !== "all") params.set("tag", tagFilter);
+      if (visibility !== "all") params.set("visibility", visibility);
+      return params;
+    },
+    [sortMode, debouncedSearch, categoryFilter, statusFilter, sourceFilter, tagFilter, visibility]
+  );
+
+  // When any filter/sort changes, reset and fetch page 1 from API
+  const filterKey = `${sortMode}|${debouncedSearch}|${categoryFilter}|${statusFilter}|${sourceFilter}|${tagFilter}|${visibility}`;
+  const prevFilterKey = useRef(filterKey);
+  const initialMount = useRef(true);
+
+  useEffect(() => {
+    // On initial mount, fetch page 1 to get full facets and real total
+    if (initialMount.current) {
+      initialMount.current = false;
+      const params = buildParams(1);
+      fetch(`/api/skills?${params}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) {
+            setAllSkills(data.skills);
+            setHasMore(data.hasMore);
+            setCurrentPage(1);
+            setDisplayTotal(data.total);
+            setCatalogTotal(data.catalogTotal);
+            setFacets(data.facets);
+            pageRef.current = 1;
+            loadingRef.current = false;
+          }
+        })
+        .catch(() => {});
+      return;
+    }
+
+    // On subsequent filter changes, reset and fetch page 1
+    if (prevFilterKey.current !== filterKey) {
+      prevFilterKey.current = filterKey;
+      loadingRef.current = true;
+      const params = buildParams(1);
+      fetch(`/api/skills?${params}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) {
+            setAllSkills(data.skills);
+            setHasMore(data.hasMore);
+            setCurrentPage(1);
+            setDisplayTotal(data.total);
+            setCatalogTotal(data.catalogTotal);
+            setFacets(data.facets);
+            pageRef.current = 1;
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          loadingRef.current = false;
+          setLoadingMore(false);
+        });
+    }
+  }, [filterKey, buildParams]);
+
+  // Fetch next page on scroll
+  const fetchNextPage = useCallback(() => {
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+    setLoadingMore(true);
+    const nextPage = pageRef.current + 1;
+    const params = buildParams(nextPage);
+    fetch(`/api/skills?${params}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setAllSkills((prev) => [...prev, ...data.skills]);
+          setHasMore(data.hasMore);
+          setCurrentPage(nextPage);
+          setDisplayTotal(data.total);
+          pageRef.current = nextPage;
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        loadingRef.current = false;
+        setLoadingMore(false);
+      });
+  }, [buildParams]);
+
+  // IntersectionObserver for infinite scroll
   useEffect(() => {
     if (!hasMore) return;
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
+    const handler = fetchNextPage;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setVisibleCount((prev) => Math.min(prev + pageSize, sortedSkills.length));
-        }
+        if (entries[0]?.isIntersecting) handler();
       },
-      { rootMargin: "300px" }
+      { rootMargin: "400px" }
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [sortedSkills.length, hasMore, pageSize]);
+  }, [hasMore, currentPage, fetchNextPage]);
 
   return (
     <Layout>
@@ -214,21 +330,21 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
           <MiniOntologyDiagram
             config={SKILL_ONTOLOGY_CONFIG}
             categoryCounts={skillCategoryCounts}
-            totalItems={skills.length}
+            totalItems={catalogTotal}
           />
         </div>
       </div>
 
       <AeoQuickAnswer
         question="What AI skills are available for enterprise agents and workflows?"
-        answer={`Colaberry AI indexes ${skills.length.toLocaleString()} reusable AI skills across ${new Set(skills.map((s) => s.category)).size} categories including workflow automation, domain-specific intelligence, and orchestration patterns. Skills are structured capability units that AI agents consume — each with metadata on prerequisites, supported models, provider details, and linked agents/MCP servers. The catalog supports enterprise-grade discovery with filtering by category, status, and provider.`}
-        facts={[`${skills.length.toLocaleString()} skills`, `${new Set(skills.map((s) => s.category)).size} categories`, "Agent-consumable", "Structured metadata"]}
+        answer={`Colaberry AI indexes ${catalogTotal.toLocaleString()} reusable AI skills across ${categories.length} categories including workflow automation, domain-specific intelligence, and orchestration patterns. Skills are structured capability units that AI agents consume — each with metadata on prerequisites, supported models, provider details, and linked agents/MCP servers. The catalog supports enterprise-grade discovery with filtering by category, status, and provider.`}
+        facts={[`${catalogTotal.toLocaleString()} skills`, `${categories.length} categories`, "Agent-consumable", "Structured metadata"]}
       />
 
       <CatalogSnapshot
         stats={[
-          { label: "Skills", value: skills.length.toLocaleString(), note: "Versioned catalog" },
-          { label: "Categories", value: String(new Set(skills.map((s) => s.category)).size), note: "Domain-aligned" },
+          { label: "Skills", value: catalogTotal.toLocaleString(), note: "Versioned catalog" },
+          { label: "Categories", value: String(categories.length), note: "Domain-aligned" },
           { label: "Visibility", value: `${visibilityCounts.public ?? 0} public`, note: allowPrivate ? `${visibilityCounts.private ?? 0} private` : "Private hidden" },
         ]}
       />
@@ -254,7 +370,6 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
                 value={effectiveSearch}
                 onChange={(event) => {
                   setSearch(event.target.value);
-                  setVisibleCount(pageSize);
                 }}
                 className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2 pr-11 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 dark:placeholder:text-zinc-500"
               />
@@ -287,7 +402,6 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
               value={categoryFilter}
               onChange={(event) => {
                 setCategoryFilter(event.target.value);
-                setVisibleCount(pageSize);
               }}
               className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             >
@@ -308,7 +422,6 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
               value={statusFilter}
               onChange={(event) => {
                 setStatusFilter(event.target.value);
-                setVisibleCount(pageSize);
               }}
               className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             >
@@ -329,7 +442,6 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
               value={sourceFilter}
               onChange={(event) => {
                 setSourceFilter(event.target.value);
-                setVisibleCount(pageSize);
               }}
               className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             >
@@ -351,7 +463,6 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
                 value={tagFilter}
                 onChange={(event) => {
                   setTagFilter(event.target.value);
-                  setVisibleCount(pageSize);
                 }}
                 className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
               >
@@ -383,7 +494,6 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
                 type="button"
                 onClick={() => {
                   setSortMode(option.value);
-                  setVisibleCount(pageSize);
                 }}
                 aria-pressed={active}
                 className={`chip focus-ring rounded-md px-3 py-1 text-xs font-semibold ${
@@ -405,7 +515,6 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
                   type="button"
                   onClick={() => {
                     setVisibility(option);
-                    setVisibleCount(pageSize);
                   }}
                   aria-pressed={active}
                   className={`chip focus-ring rounded-md px-3 py-1 text-xs font-semibold ${
@@ -419,12 +528,12 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
           </div>
         )}
         <div className="mt-4 text-xs font-semibold uppercase tracking-wide text-zinc-500" aria-live="polite">
-          Showing {shownCount} of {sortedSkills.length} (catalog {scopedSkills.length})
+          Showing {shownCount} of {displayTotal.toLocaleString()} (catalog {catalogTotal.toLocaleString()})
         </div>
       </section>
 
       <div className="stagger-grid mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
-        {visibleSkills.map((s) => (
+        {allSkills.map((s) => (
           <SkillCard key={s.slug || String(s.id)} skill={s} />
         ))}
       </div>
@@ -444,10 +553,11 @@ export default function Skills({ skills, allowPrivate, fetchError }: SkillsPageP
           hasMore ? (
             <button
               type="button"
-              onClick={() => setVisibleCount((prev) => Math.min(prev + pageSize, sortedSkills.length))}
+              onClick={fetchNextPage}
               className="btn btn-secondary"
+              disabled={loadingMore}
             >
-              Load more skills
+              {loadingMore ? "Loading..." : "Load more skills"}
             </button>
           ) : (
             <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
@@ -503,115 +613,4 @@ function clipText(value?: string | null, limit = 220) {
   const normalized = value.replace(/\s+/g, " ").trim();
   if (normalized.length <= limit) return normalized;
   return `${normalized.slice(0, limit - 1).trimEnd()}...`;
-}
-
-function matchesFilters(
-  skill: Skill,
-  query: string,
-  categoryFilter?: string,
-  statusFilter?: string,
-  sourceFilter?: string,
-  tagFilter?: string
-) {
-  const categoryMatch =
-    !categoryFilter || categoryFilter === "all"
-      ? true
-      : (skill.category || "").toLowerCase() === categoryFilter;
-  const statusMatch =
-    !statusFilter || statusFilter === "all"
-      ? true
-      : (skill.status || "unknown").toLowerCase() === statusFilter;
-  const sourceMatch =
-    !sourceFilter || sourceFilter === "all"
-      ? true
-      : (skill.source || "internal").toLowerCase() === sourceFilter;
-  const tagMatch =
-    !tagFilter || tagFilter === "all"
-      ? true
-      : (skill.tags || []).some(
-          (tag) => (tag.slug || tag.name || "").toLowerCase() === tagFilter
-        );
-  if (!categoryMatch || !statusMatch || !sourceMatch || !tagMatch) {
-    return false;
-  }
-  if (!query) {
-    return true;
-  }
-  const haystack = [
-    skill.name,
-    skill.summary,
-    skill.category,
-    skill.provider,
-    ...(skill.tags || []).map((tag) => tag.name),
-    ...(skill.companies || []).map((company) => company.name),
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-  return haystack.includes(query);
-}
-
-function filterByVisibility(
-  skills: Skill[],
-  allowPrivate: boolean,
-  visibility: "all" | "public" | "private"
-) {
-  if (!allowPrivate) {
-    return skills.filter((skill) => (skill.visibility || "public").toLowerCase() === "public");
-  }
-  if (visibility === "all") {
-    return skills;
-  }
-  return skills.filter((skill) => (skill.visibility || "public").toLowerCase() === visibility);
-}
-
-function sortSkills(skills: Skill[], mode: SkillSortMode) {
-  const sorted = [...skills];
-  if (mode === "alphabetical") {
-    return sorted.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  if (mode === "latest") {
-    return sorted.sort((a, b) => compareDatesDesc(a.lastUpdated, b.lastUpdated) || a.name.localeCompare(b.name));
-  }
-  return sorted.sort((a, b) => {
-    const scoreDelta = scoreTrendingSkill(b) - scoreTrendingSkill(a);
-    if (scoreDelta !== 0) return scoreDelta;
-    return compareDatesDesc(a.lastUpdated, b.lastUpdated) || a.name.localeCompare(b.name);
-  });
-}
-
-function compareDatesDesc(a?: string | null, b?: string | null) {
-  const left = toTimestamp(a);
-  const right = toTimestamp(b);
-  return right - left;
-}
-
-function toTimestamp(value?: string | null) {
-  if (!value) return 0;
-  const parsed = new Date(value).getTime();
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function scoreTrendingSkill(skill: Skill) {
-  const ratingScore = typeof skill.rating === "number" ? Math.max(skill.rating, 0) * 18 : 0;
-  const usageScore =
-    typeof skill.usageCount === "number" && skill.usageCount > 0
-      ? Math.log10(skill.usageCount + 1) * 25
-      : 0;
-  const verifiedScore = skill.verified ? 8 : 0;
-  const freshnessScore = getFreshnessScore(skill.lastUpdated);
-  const relationScore =
-    ((skill.agents?.length || 0) + (skill.mcpServers?.length || 0) + (skill.useCases?.length || 0)) * 2;
-  return ratingScore + usageScore + verifiedScore + freshnessScore + relationScore;
-}
-
-function getFreshnessScore(value?: string | null) {
-  if (!value) return 0;
-  const timestamp = toTimestamp(value);
-  if (!timestamp) return 0;
-  const days = (Date.now() - timestamp) / (1000 * 60 * 60 * 24);
-  if (days <= 14) return 12;
-  if (days <= 45) return 8;
-  if (days <= 90) return 4;
-  return 0;
 }
