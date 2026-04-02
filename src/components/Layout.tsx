@@ -618,7 +618,6 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [allowBackdropClose, setAllowBackdropClose] = useState(true);
   const [demoWizardOpen, setDemoWizardOpen] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
-  const [headerScrolled, setHeaderScrolled] = useState(false);
   // Footer newsletter state
   const [footerEmail, setFooterEmail] = useState("");
   const [footerHoneypot, setFooterHoneypot] = useState("");
@@ -699,11 +698,10 @@ export default function Layout({ children }: { children: ReactNode }) {
           setHeaderCompact(false);
         }
         lastScrollY.current = y;
-        setHeaderScrolled(y > 20);
         ticking = false;
       });
     };
-    onScroll(); // initialize headerScrolled on mount
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
