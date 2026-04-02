@@ -56,6 +56,8 @@ export default function DemoLens() {
             }),
           }}
         />
+        <link rel="preconnect" href={VTON_DEMO_URL} crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href={VTON_DEMO_URL} />
       </Head>
 
       {/* Compact title bar — keeps branding without eating viewport */}
@@ -88,7 +90,7 @@ export default function DemoLens() {
                 className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-300 border-t-[#DC2626] dark:border-zinc-600 dark:border-t-[#F87171]"
                 aria-hidden="true"
               />
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 Loading demo&hellip;
               </p>
             </div>
@@ -96,16 +98,16 @@ export default function DemoLens() {
         )}
 
         {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-zinc-50 dark:bg-zinc-900">
+          <div role="alert" className="absolute inset-0 flex items-center justify-center bg-zinc-50 dark:bg-zinc-900">
             <div className="flex flex-col items-center gap-3 text-center">
               <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Demo temporarily unavailable
               </p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 Please try again later or{" "}
                 <a
                   href="/request-demo"
-                  className="text-[#DC2626] underline dark:text-[#F87171]"
+                  className="text-[#B91C1C] underline dark:text-[#EF4444]"
                 >
                   request a live walkthrough
                 </a>
