@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import Layout from "../../components/Layout";
 import SectionHeader from "../../components/SectionHeader";
@@ -11,6 +11,18 @@ const VTON_DEMO_URL =
 export default function DemoLens() {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains("dark");
+    setTheme(isDark ? "dark" : "light");
+
+    const observer = new MutationObserver(() => {
+      setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   const seoMeta: SeoMeta = {
     title: "Virtual Lens Try-On Demo | Colaberry AI",
@@ -19,7 +31,7 @@ export default function DemoLens() {
     canonical: buildCanonical("/demo/lens"),
   };
 
-  const iframeSrc = `${VTON_DEMO_URL}?embedded=true&theme=dark`;
+  const iframeSrc = `${VTON_DEMO_URL}?embedded=true&theme=${theme}`;
 
   return (
     <Layout>
@@ -61,9 +73,16 @@ export default function DemoLens() {
       <div className="reveal mt-8">
         <div className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-700">
           {!loaded && !error && (
-            <div className="absolute inset-0 flex items-center justify-center bg-zinc-50 dark:bg-zinc-900">
+            <div
+              role="status"
+              aria-live="polite"
+              className="absolute inset-0 flex items-center justify-center bg-zinc-50 dark:bg-zinc-900"
+            >
               <div className="flex flex-col items-center gap-3">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-300 border-t-[#DC2626] dark:border-zinc-600 dark:border-t-[#F87171]" />
+                <div
+                  className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-300 border-t-[#DC2626] dark:border-zinc-600 dark:border-t-[#F87171]"
+                  aria-hidden="true"
+                />
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">
                   Loading demo&hellip;
                 </p>
@@ -96,12 +115,12 @@ export default function DemoLens() {
               src={iframeSrc}
               allow="camera; microphone"
               title="Virtual Lens Try-On Demo"
+              aria-hidden={!loaded}
               className="w-full"
               style={{
                 height: "calc(100vh - 280px)",
                 minHeight: "600px",
                 border: "none",
-                display: loaded ? "block" : "block",
                 opacity: loaded ? 1 : 0,
               }}
               onLoad={() => setLoaded(true)}
