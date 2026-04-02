@@ -88,7 +88,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(self), microphone=(self), geolocation=(), interest-cohort=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
+            value: "camera=(self \"https://vton-demo-ucwuixvwga-ue.a.run.app\" \"https://vton-demo-956818257204.us-east1.run.app\"), microphone=(self \"https://vton-demo-ucwuixvwga-ue.a.run.app\" \"https://vton-demo-956818257204.us-east1.run.app\"), geolocation=(), interest-cohort=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
           },
           ...(process.env.NODE_ENV === "production"
             ? [
