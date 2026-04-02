@@ -88,7 +88,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
+            value: "camera=(self \"https://vton-demo-ucwuixvwga-ue.a.run.app\" \"https://vton-demo-956818257204.us-east1.run.app\"), microphone=(self \"https://vton-demo-ucwuixvwga-ue.a.run.app\" \"https://vton-demo-956818257204.us-east1.run.app\"), geolocation=(), interest-cohort=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
           },
           ...(process.env.NODE_ENV === "production"
             ? [
@@ -102,7 +102,7 @@ const nextConfig: NextConfig = {
                     `img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com ${cmsUrl ? new URL(cmsUrl).origin : ""}`.trim(),
                     `connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://www.buzzsprout.com https://*.buzzsprout.com ${cmsUrl || ""}`.trim(),
                     "media-src 'self' https://www.buzzsprout.com https://*.buzzsprout.com",
-                    "frame-src 'self' https://www.buzzsprout.com https://*.substack.com https://www.colaberry.online",
+                    "frame-src 'self' https://www.buzzsprout.com https://*.substack.com https://www.colaberry.online https://*.run.app",
                     "frame-ancestors 'self'",
                     "base-uri 'self'",
                     "form-action 'self'",

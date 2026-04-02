@@ -697,11 +697,10 @@ export default function Layout({ children }: { children: ReactNode }) {
           setHeaderCompact(false);
         }
         lastScrollY.current = y;
-        setHeaderScrolled(y > 20);
         ticking = false;
       });
     };
-    onScroll(); // initialize headerScrolled on mount
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);

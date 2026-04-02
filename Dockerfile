@@ -12,9 +12,11 @@ COPY . .
 
 # NEXT_PUBLIC_* vars must be available at build time for Next.js to inline them
 ARG NEXT_PUBLIC_CMS_URL=https://colaberry-ai-cms-prod-956818257204.us-east1.run.app/
-ARG NEXT_PUBLIC_SITE_URL=https://colaberry.ai
+ARG NEXT_PUBLIC_SITE_URL=https://www.colaberry.ai
+ARG NEXT_PUBLIC_VTON_DEMO_URL=https://vton-demo-956818257204.us-east1.run.app
 ENV NEXT_PUBLIC_CMS_URL=$NEXT_PUBLIC_CMS_URL
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_VTON_DEMO_URL=$NEXT_PUBLIC_VTON_DEMO_URL
 
 RUN npm run build
 
