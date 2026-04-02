@@ -1,43 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Colaberry AI
 
-## Getting Started
+Enterprise AI platform built with Next.js 16, React 19, and Tailwind CSS 4. Deployed on GCP Cloud Run.
 
-First, run the development server:
+## Prerequisites
+
+- Node.js 20+
+- Docker (optional, for containerized development)
+
+## Quick Start
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `NEXT_PUBLIC_CMS_URL` | — | Strapi CMS URL (e.g. `http://localhost:1337`) |
+| `NEXT_PUBLIC_SITE_URL` | `https://colaberry.ai` | Public site URL for canonical links |
+| `NEXT_PUBLIC_VTON_DEMO_URL` | `http://localhost:5173` | Virtual try-on demo service URL |
 
-## Learn More
+## Docker
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Frontend only (uses cloud CMS URL or set NEXT_PUBLIC_CMS_URL)
+docker compose up frontend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Full stack with local CMS
+docker compose --profile with-cms up
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Branch Strategy
 
-## Deploy on Vercel
+| Branch | Deploys to | Service |
+|--------|-----------|---------|
+| `Release-1.0.beta` | dev.colaberry.ai | `colaberry-ai` |
+| `Release-1.0` | www.colaberry.ai | `colaberry-ai-prod` |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Pushes to these branches trigger Cloud Build automatically.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Build & Validation
+
+```bash
+npm run build        # Production build
+npm run lint         # ESLint
+npx tsc --noEmit     # TypeScript check
+```
+
+## Demo Pages
+
+Interactive demos are embedded at `/demo/*`. Each demo runs as a separate Cloud Run service and is embedded via iframe.
+
+| Route | Demo | Service |
+|-------|------|---------|
+| `/demo/lens` | Virtual Lens Try-On | goggles-vton-poc |
+
+To add a new demo, create `src/pages/demo/<slug>.tsx` and add an entry to the `demos` array in `src/pages/demo/index.tsx`.
 
 ## Podcast CSV Import
 
-You can bulk import podcast episodes into Strapi from CSV.
+Bulk import podcast episodes into Strapi from CSV.
 
 ### 1. Prepare CSV
 
@@ -82,7 +108,7 @@ Optional threshold overrides:
 npm run audit:data -- --min-podcasts 200 --min-agents 40 --min-mcp 40 --min-use-cases 30 --verbose true
 ```
 
-This verifies: 
+This verifies:
 
 - published counts for podcasts, agents, MCP servers, and use cases
 - podcast playability coverage (audio/embed presence)
