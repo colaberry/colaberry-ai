@@ -1030,7 +1030,11 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, [currentPath]);
 
   const desktopHeaderItems = globalNav.headerLinks.map((link) => {
-    const hasChildren = !!link.children?.length;
+    // Skip dropdown if only child links to same URL as parent (e.g. Industries, Updates)
+    const meaningfulChildren = (link.children || []).filter(
+      (child) => normalizePath(child.href) !== normalizePath(link.href)
+    );
+    const hasChildren = meaningfulChildren.length > 0;
     const isParentActive = isActiveNavPath(currentPath, link.href, headerNavPaths);
     const childNavPaths = (link.children || [])
       .map((child) => normalizePath(child.href))
@@ -1100,7 +1104,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 {link.label}
               </div>
               <div className="grid gap-0.5">
-                {link.children?.map((child) => {
+                {meaningfulChildren.map((child) => {
                   const isChildActive = isActiveNavPath(currentPath, child.href, childNavPaths);
                   return (
                     <Link
@@ -1348,7 +1352,11 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="mt-4 flex-1 overflow-y-auto pb-3">
               <div className="grid gap-2">
                 {globalNav.headerLinks.map((link) => {
-                  const hasChildren = !!link.children?.length;
+                  // Skip dropdown if only child links to same URL as parent
+                  const mobileChildren = (link.children || []).filter(
+                    (child) => normalizePath(child.href) !== normalizePath(link.href)
+                  );
+                  const hasChildren = mobileChildren.length > 0;
                   const isParentActive = isActiveNavPath(currentPath, link.href, headerNavPaths);
                   const childNavPaths = (link.children || [])
                     .map((child) => normalizePath(child.href))
@@ -1371,7 +1379,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                       </MobileLink>
                       {hasChildren ? (
                         <div className="mx-3 mb-2 mt-1 grid gap-1 border-l border-zinc-200/80 pl-3 dark:border-zinc-700/80">
-                          {link.children?.map((child) => (
+                          {mobileChildren.map((child) => (
                             <MobileLink
                               key={`${child.label}-${child.href}`}
                               href={child.href}
