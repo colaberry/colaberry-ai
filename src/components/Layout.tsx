@@ -47,9 +47,6 @@ const fallbackNavigation: GlobalNavigation = {
       href: "/industries",
       order: 2,
       group: "header",
-      children: [
-        { label: "All Industries", href: "/industries", order: 1 },
-      ],
     },
     {
       label: "Resources",
@@ -66,7 +63,6 @@ const fallbackNavigation: GlobalNavigation = {
       href: "/updates",
       order: 4,
       group: "header",
-      children: [{ label: "News & Product", href: "/updates", order: 1 }],
     },
   ],
   footerColumns: [
@@ -86,7 +82,7 @@ const fallbackNavigation: GlobalNavigation = {
       links: [
         { label: "Resources hub", href: "/resources", order: 1, group: "Resources" },
         { label: "Podcasts", href: "/resources/podcasts", order: 2, group: "Resources" },
-        { label: "White papers", href: "/resources/white-papers", order: 3, group: "Resources" },
+        { label: "Books & White Papers", href: "/resources/books", order: 3, group: "Resources" },
         { label: "News & product", href: "/updates", order: 5, group: "Resources" },
       ],
     },
@@ -140,25 +136,7 @@ const fallbackNavigation: GlobalNavigation = {
   ],
 };
 
-const FOOTER_COLUMNS = [
-  {
-    title: "Platform",
-    links: [
-      { label: "Agents", href: "/aixcelerator/agents" },
-      { label: "MCP Servers", href: "/aixcelerator/mcp" },
-      { label: "Skills", href: "/aixcelerator/skills" },
-      { label: "Industries", href: "/industries" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Podcasts", href: "/resources/podcasts" },
-      { label: "Updates", href: "/updates" },
-      { label: "Contact", href: "/request-demo" },
-    ],
-  },
-] as const;
+/* Footer columns now sourced from globalNav.footerColumns (falls back to fallbackNavigation) */
 
 const SOCIAL_ICON_PATHS: Record<string, ReactNode> = {
   linkedin: (
@@ -278,6 +256,9 @@ const PLATFORM_CHILD_BLUEPRINT = [
   { label: "Agents", href: "/aixcelerator/agents" },
   { label: "MCP servers", href: "/aixcelerator/mcp" },
   { label: "Skills", href: "/aixcelerator/skills" },
+  { label: "Platform Ontology", href: "/aixcelerator/ontology" },
+  { label: "Ecosystem Graph", href: "/aixcelerator/ecosystem" },
+  { label: "Solution Stacks", href: "/aixcelerator/solution-stacks" },
   { label: "Discovery assistant", href: "/assistant" },
 ];
 
@@ -292,6 +273,12 @@ const PLATFORM_CHILD_ALIASES: Record<string, string> = {
   tool: "/aixcelerator/tools",
   "use cases": "/use-cases",
   "use case": "/use-cases",
+  "platform ontology": "/aixcelerator/ontology",
+  ontology: "/aixcelerator/ontology",
+  "ecosystem graph": "/aixcelerator/ecosystem",
+  ecosystem: "/aixcelerator/ecosystem",
+  "solution stacks": "/aixcelerator/solution-stacks",
+  solutions: "/aixcelerator/solution-stacks",
   "discovery assistant": "/assistant",
 };
 
@@ -475,6 +462,9 @@ function getSidebarIcon(href: string): ReactNode {
   if (p === "/resources") return <svg {...sidebarIconProps}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>;
   if (p.startsWith("/updates")) return <svg {...sidebarIconProps}><path d="M4 22V4c0-.5.2-1 .6-1.4C5 2.2 5.5 2 6 2h8.5L20 7.5V22z" /><polyline points="14 2 14 8 20 8" /><path d="M8 12h8" /><path d="M8 16h5" /></svg>;
   if (p.startsWith("/industries")) return <svg {...sidebarIconProps}><rect x="4" y="2" width="16" height="20" rx="2" /><line x1="9" y1="22" x2="9" y2="12" /><line x1="15" y1="22" x2="15" y2="12" /><line x1="4" y1="12" x2="20" y2="12" /></svg>;
+  if (p.startsWith("/aixcelerator/ontology")) return <svg {...sidebarIconProps}><circle cx="12" cy="12" r="3" /><circle cx="5" cy="6" r="2" /><circle cx="19" cy="6" r="2" /><circle cx="5" cy="18" r="2" /><circle cx="19" cy="18" r="2" /><line x1="9.5" y1="10.5" x2="6.5" y2="7.5" /><line x1="14.5" y1="10.5" x2="17.5" y2="7.5" /><line x1="9.5" y1="13.5" x2="6.5" y2="16.5" /><line x1="14.5" y1="13.5" x2="17.5" y2="16.5" /></svg>;
+  if (p.startsWith("/aixcelerator/ecosystem")) return <svg {...sidebarIconProps}><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20" /><path d="M12 2a14.5 14.5 0 0 1 0 20" /><line x1="2" y1="12" x2="22" y2="12" /></svg>;
+  if (p.startsWith("/aixcelerator/solution-stacks")) return <svg {...sidebarIconProps}><rect x="4" y="2" width="16" height="6" rx="1" /><rect x="4" y="10" width="16" height="6" rx="1" /><rect x="4" y="18" width="16" height="4" rx="1" /></svg>;
   if (p.startsWith("/solutions")) return <svg {...sidebarIconProps}><line x1="12" y1="2" x2="12" y2="6" /><circle cx="12" cy="14" r="8" /><path d="M12 6a6 6 0 0 0-4.24 10.24" /><path d="M12 6a6 6 0 0 1 4.24 10.24" /><line x1="12" y1="18" x2="12" y2="22" /></svg>;
   // fallback: use first letters
   return null;
@@ -615,6 +605,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [workspaceRailCollapsed, setWorkspaceRailCollapsed] = useState(false);
   const [workspaceMobileRailOpen, setWorkspaceMobileRailOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const closeMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [allowBackdropClose, setAllowBackdropClose] = useState(true);
   const [demoWizardOpen, setDemoWizardOpen] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
@@ -1044,8 +1035,15 @@ export default function Layout({ children }: { children: ReactNode }) {
       <div
         key={menuKey}
         className="relative group"
-        onMouseEnter={() => setOpenMenu(menuKey)}
-        onMouseLeave={() => setOpenMenu((current) => (current === menuKey ? null : current))}
+        onMouseEnter={() => {
+          if (closeMenuTimeoutRef.current) { clearTimeout(closeMenuTimeoutRef.current); closeMenuTimeoutRef.current = null; }
+          setOpenMenu(menuKey);
+        }}
+        onMouseLeave={() => {
+          closeMenuTimeoutRef.current = setTimeout(() => {
+            setOpenMenu((current) => (current === menuKey ? null : current));
+          }, 180);
+        }}
         onFocusCapture={() => setOpenMenu(menuKey)}
         onBlurCapture={(event) => {
           if (!event.currentTarget.contains(event.relatedTarget as Node)) {
@@ -1108,9 +1106,12 @@ export default function Layout({ children }: { children: ReactNode }) {
                       href={child.href}
                       target={child.target ?? undefined}
                       rel={getLinkRel(child.target)}
-                      className={`nav-dropdown-link focus-ring flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isChildActive ? "nav-dropdown-link-active" : ""}`}
+                      className={`nav-dropdown-link focus-ring flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isChildActive ? "nav-dropdown-link-active" : ""}`}
                       role="menuitem"
                     >
+                      {getSidebarIcon(child.href) ? (
+                        <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center text-zinc-400 dark:text-zinc-500">{getSidebarIcon(child.href)}</span>
+                      ) : null}
                       <span>{child.label}</span>
                     </Link>
                   );
@@ -1623,7 +1624,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             </div>
 
             {/* COL 2 & 3 — Link columns */}
-            {FOOTER_COLUMNS.map((col) => (
+            {globalNav.footerColumns.map((col) => (
               <nav key={col.title} aria-label={`${col.title} links`}>
                 <h3 className="footer-column-heading">{col.title}</h3>
                 <ul className="mt-3 space-y-2">
