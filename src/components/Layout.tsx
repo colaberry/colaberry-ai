@@ -1170,7 +1170,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   src="/brand/colaberry-ai-research-labs-v60-light.svg"
                   alt="ColaberryAI Research Labs"
                   width={2204}
-                  height={600}
+                  height={520}
                   className="brand-logo-light h-12 w-auto sm:h-14 lg:h-16"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1179,7 +1179,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   alt=""
                   aria-hidden="true"
                   width={2204}
-                  height={600}
+                  height={520}
                   className="brand-logo-dark h-12 w-auto sm:h-14 lg:h-16"
                 />
               </span>
@@ -1564,7 +1564,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   src="/brand/colaberry-ai-research-labs-v60-light.svg"
                   alt="ColaberryAI Research Labs"
                   width={2204}
-                  height={600}
+                  height={520}
                   className="brand-logo-light h-12 w-auto sm:h-14"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1573,7 +1573,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   alt=""
                   aria-hidden="true"
                   width={2204}
-                  height={600}
+                  height={520}
                   className="brand-logo-dark h-12 w-auto sm:h-14"
                 />
               </span>
