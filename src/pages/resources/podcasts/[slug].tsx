@@ -114,12 +114,38 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
   const [sidebarSubState, setSidebarSubState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [sidebarSubMessage, setSidebarSubMessage] = useState("");
 
+  /** POST email to Substack via hidden iframe (no redirect, no popup) */
+  function postToSubstack(email: string) {
+    const SUBSTACK_URL = "https://www.colaberry.online/api/v1/free?nojs=true";
+    const iframeName = "substack-subscribe-iframe";
+    let iframe = document.querySelector<HTMLIFrameElement>(`iframe[name="${iframeName}"]`);
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.name = iframeName;
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = SUBSTACK_URL;
+    form.target = iframeName;
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "email";
+    input.value = email;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  }
+
   const handleSidebarSubscribe = async (e: FormEvent) => {
     e.preventDefault();
     if (sidebarHoneypot) return;
     setSidebarSubState("submitting");
     setSidebarSubMessage("");
     try {
+      // 1. Save to CMS (internal tracking)
       const res = await fetch("/api/newsletter-subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -132,6 +158,8 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
         }),
       });
       if (!res.ok) throw new Error("Subscribe failed");
+      // 2. Also subscribe via Substack (podcast email delivery)
+      postToSubstack(sidebarEmail);
       setSidebarSubState("success");
       setSidebarSubMessage("You\u2019re subscribed!");
       setSidebarEmail("");

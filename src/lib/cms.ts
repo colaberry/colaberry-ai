@@ -2937,6 +2937,21 @@ export async function fetchAllAgentTags(): Promise<{ name: string; slug: string;
 }
 
 /**
+ * Fetch total podcast episode count from CMS (lightweight — pageSize=1 query).
+ */
+export async function fetchPodcastTotalCount(): Promise<number> {
+  try {
+    const res = await fetchCMSJson<CMSCollectionResponse>(
+      `${CMS_URL}/api/podcast-episodes?pagination[pageSize]=1`,
+      { allowStaleOnError: true },
+    );
+    return res?.meta?.pagination?.total ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * Compute category counts for podcast episodes using the podcast taxonomy.
  */
 export async function fetchPodcastCategoryCounts(): Promise<Record<string, number>> {

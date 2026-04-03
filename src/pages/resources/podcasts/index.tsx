@@ -9,6 +9,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import StatePanel from "../../../components/StatePanel";
 import {
   fetchPodcastEpisodes,
+  fetchPodcastTotalCount,
   getPodcastTrendingScore,
   type PodcastEpisode,
   type PodcastSortBy,
@@ -74,12 +75,38 @@ export default function Podcasts({
   const [sidebarSubMessage, setSidebarSubMessage] = useState<string | null>(null);
   const sidebarTracking = useMemo(() => getTrackingContext(), []);
 
+  /** POST email to Substack via hidden iframe (no redirect, no popup) */
+  function postToSubstack(email: string) {
+    const SUBSTACK_URL = "https://www.colaberry.online/api/v1/free?nojs=true";
+    const iframeName = "substack-subscribe-iframe";
+    let iframe = document.querySelector<HTMLIFrameElement>(`iframe[name="${iframeName}"]`);
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.name = iframeName;
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = SUBSTACK_URL;
+    form.target = iframeName;
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "email";
+    input.value = email;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  }
+
   async function handleSidebarSubscribe(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (sidebarSubState === "submitting") return;
     setSidebarSubState("submitting");
     setSidebarSubMessage(null);
     try {
+      // 1. Save to CMS (internal tracking)
       const res = await fetch("/api/newsletter-subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -103,6 +130,8 @@ export default function Podcasts({
         setSidebarSubMessage(payload?.message || "Unable to subscribe right now.");
         return;
       }
+      // 2. Also subscribe via Substack (podcast email delivery)
+      postToSubstack(sidebarEmail);
       setSidebarSubState("success");
       setSidebarSubMessage(payload?.message || "Subscription confirmed.");
       setSidebarEmail("");
@@ -844,8 +873,11 @@ export const getServerSideProps: GetServerSideProps<PodcastsPageProps> = async (
   const canonicalPath = canonicalQs ? `/resources/podcasts?${canonicalQs}` : "/resources/podcasts";
 
   try {
-    // Fetch only the first page for fast initial render
-    const firstPageEpisodes = await fetchPodcastEpisodes({ maxRecords: PAGE_SIZE + 1 });
+    // Fetch only the first page for fast initial render + real total from CMS
+    const [firstPageEpisodes, cmsTotalCount] = await Promise.all([
+      fetchPodcastEpisodes({ maxRecords: PAGE_SIZE + 1 }),
+      fetchPodcastTotalCount(),
+    ]);
     const now = Date.now();
 
     const companyMap = new Map<string, PodcastCompanyFacet>();
@@ -900,7 +932,7 @@ export const getServerSideProps: GetServerSideProps<PodcastsPageProps> = async (
         activeType,
         searchQuery,
         canonicalPath,
-        totalEpisodes: sorted.length,
+        totalEpisodes: cmsTotalCount || sorted.length,
         initialHasMore,
       },
     };
