@@ -1167,20 +1167,20 @@ export default function Layout({ children }: { children: ReactNode }) {
               <span className="inline-flex items-center justify-center px-1">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-logo%202.svg"
-                  alt="ColaberryAI"
-                  width={260}
-                  height={60}
-                  className="brand-logo-light h-8 w-auto sm:h-9 lg:h-10"
+                  src="/brand/colaberry-ai-research-labs-v60-light.svg"
+                  alt="ColaberryAI Research Labs"
+                  width={2204}
+                  height={600}
+                  className="brand-logo-light h-12 w-auto sm:h-14 lg:h-16"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/Colaberry.AI_Logo_Dark.svg"
+                  src="/brand/colaberry-ai-research-labs-v60-dark.svg"
                   alt=""
                   aria-hidden="true"
-                  width={260}
-                  height={60}
-                  className="brand-logo-dark h-8 w-auto sm:h-9 lg:h-10"
+                  width={2204}
+                  height={600}
+                  className="brand-logo-dark h-12 w-auto sm:h-14 lg:h-16"
                 />
               </span>
             </Link>
@@ -1561,20 +1561,20 @@ export default function Layout({ children }: { children: ReactNode }) {
               <span className="flex items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/colaberry-ai-logo%202.svg"
-                  alt="ColaberryAI"
-                  width={130}
-                  height={28}
-                  className="brand-logo-light h-7 w-auto"
+                  src="/brand/colaberry-ai-research-labs-v60-light.svg"
+                  alt="ColaberryAI Research Labs"
+                  width={2204}
+                  height={600}
+                  className="brand-logo-light h-12 w-auto sm:h-14"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/brand/Colaberry.AI_Logo_Dark.svg"
+                  src="/brand/colaberry-ai-research-labs-v60-dark.svg"
                   alt=""
                   aria-hidden="true"
-                  width={130}
-                  height={28}
-                  className="brand-logo-dark h-7 w-auto"
+                  width={2204}
+                  height={600}
+                  className="brand-logo-dark h-12 w-auto sm:h-14"
                 />
               </span>
 
@@ -1637,18 +1637,18 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="footer-watermark sm:col-span-2 lg:col-span-1 self-end mt-2 lg:mt-0" aria-hidden="true">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/brand/colaberry-ai-watermark-2.svg"
+                src="/brand/colaberry-ai-research-labs-v60-watermark-light.svg"
                 alt=""
                 width={2204}
-                height={476}
+                height={560}
                 className="brand-logo-light h-auto w-full"
               />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/brand/colaberry-ai-watermark-2-dark.svg"
+                src="/brand/colaberry-ai-research-labs-v60-watermark-dark.svg"
                 alt=""
                 width={2204}
-                height={476}
+                height={560}
                 className="brand-logo-dark h-auto w-full"
               />
             </div>
