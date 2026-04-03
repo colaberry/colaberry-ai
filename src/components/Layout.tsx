@@ -1100,9 +1100,6 @@ export default function Layout({ children }: { children: ReactNode }) {
                 if (e.key === "Escape") { setOpenMenu(null); (e.currentTarget.closest(".group")?.querySelector<HTMLElement>("a"))?.focus(); }
               }}
             >
-              <div className="px-2.5 pb-2 pt-1 text-label font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
-                {link.label}
-              </div>
               <div className="grid gap-0.5">
                 {meaningfulChildren.map((child) => {
                   const isChildActive = isActiveNavPath(currentPath, child.href, childNavPaths);
