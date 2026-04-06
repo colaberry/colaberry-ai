@@ -2394,6 +2394,15 @@ footer .footer-link:focus-visible {
   box-shadow: inset 3px 0 0 #F87171;
 }
 
+/* Sidebar scrollbar — hidden until hover, thin track */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.sidebar-scroll:hover {
+  scrollbar-color: var(--border) transparent;
+}
+
 /* Enterprise CTA band */
 .cta-band-enterprise {
   position: relative;
