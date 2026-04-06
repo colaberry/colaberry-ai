@@ -1634,7 +1634,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               </span>
 
               {/* Newsletter — premium form → Substack API */}
-              <h2 className="mt-8 text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">
+              <h2 className="mt-8 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 Subscribe to newsletter
               </h2>
               <form
@@ -1656,7 +1656,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   <button
                     type="submit"
                     aria-label="Subscribe"
-                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#18181B] text-white transition-transform hover:scale-105 dark:bg-[#FAFAFA] dark:text-[#18181B]"
+                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white transition-transform hover:scale-105 dark:bg-zinc-50 dark:text-zinc-900"
                   >
                     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M5 12h14M12 5l7 7-7 7" />
@@ -1711,7 +1711,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
 
         {/* ── Bottom bar ── */}
-        <div className="border-t border-[#D4D1CA] dark:border-[#4A473F]">
+        <div className="border-t border-zinc-200 dark:border-zinc-700">
           <div className="flex flex-col items-center gap-4 px-4 py-6 sm:flex-row sm:justify-between sm:px-6 xl:px-8">
             {/* Copyright */}
             <span className="footer-copyright">
@@ -1743,7 +1743,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   target={link.target ?? "_blank"}
                   rel="noopener noreferrer"
                   aria-label={link.label}
-                  className="text-[#71717A] transition-colors hover:text-[#18181B] dark:text-[#A1A1AA] dark:hover:text-white"
+                  className="text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
                 >
                   <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
                     {resolveSocialIcon(link.icon, link.label)}
