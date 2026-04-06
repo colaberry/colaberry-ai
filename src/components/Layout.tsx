@@ -1710,7 +1710,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
 
         {/* ── Bottom bar ── */}
-        <div className="border-t border-zinc-200 dark:border-zinc-700">
+        <div className="border-t border-[#D4D1CA] dark:border-[#4A473F]">
           <div className="flex flex-col items-center gap-4 px-4 py-6 sm:flex-row sm:justify-between sm:px-6 xl:px-8">
             {/* Copyright */}
             <span className="footer-copyright">
