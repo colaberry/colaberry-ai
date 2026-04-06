@@ -33,6 +33,10 @@
 
 Per-type ontology/graph/collections pages are thin wrappers around generic templates from `src/components/`. They import the type's `ContentOntologyConfig` and pass it to the template.
 
+**Exception — Skills Ontology:** `/aixcelerator/skills/ontology` has a custom inline `OntologyDiagram` component (not the shared template) with its own SVG layout. Uses the same flat enterprise design system: dynamic category sizing, `var(--font-inter)` font, `useState(false)` hydration-safe dark mode.
+
+**Exception — Platform Ontology:** `/aixcelerator/ontology` has a custom `PlatformDiagram` showing cross-type relationships (Agents, Skills, MCP Servers, Podcasts as interactive nodes). Flat enterprise style with solid zinc palette, no feDropShadow/blur/glow.
+
 ## AIXcelerator Overview (`/aixcelerator`)
 
 The platform overview page uses live CMS data and static registry data:
