@@ -1570,7 +1570,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                             rel={getLinkRel(link.target)}
                             title={workspaceRailCollapsed ? link.label : undefined}
                             aria-current={isActive ? "page" : undefined}
-                            className={`focus-ring flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors duration-150 ${
+                            className={`focus-ring flex items-center gap-2 rounded-md px-2.5 py-2 text-sm transition-colors duration-150 ${
                               isActive
                                 ? "nav-active-indicator bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50"
                                 : "font-normal text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-200"
