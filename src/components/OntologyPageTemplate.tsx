@@ -29,9 +29,7 @@ export type OntologyPageTemplateProps = {
 /* ── Dark mode detection for SVG inline colors ──────────────────────── */
 
 function useIsDark() {
-  const [dark, setDark] = useState(() =>
-    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
-  );
+  const [dark, setDark] = useState(false);
   useEffect(() => {
     const el = document.documentElement;
     const obs = new MutationObserver(() => setDark(el.classList.contains("dark")));
@@ -41,21 +39,24 @@ function useIsDark() {
   return dark;
 }
 
-/** SVG color tokens that swap between light and dark */
+/** SVG color tokens — solid zinc values, no rgba */
 function svgColors(dark: boolean) {
   return {
-    nodeFill: dark ? "#3f3f46" : "#3f3f46",       // zinc-700
-    nodeFillOpacity: dark ? 0.35 : 0.12,
-    nodeStroke: dark ? "#a1a1aa" : "#52525b",      // zinc-400 / zinc-600
-    nodeText: dark ? "#e4e4e7" : "#52525b",        // zinc-200 / zinc-600
-    nodeTextMuted: dark ? "#a1a1aa" : "#71717a",   // zinc-400 / zinc-500
-    edgeStroke: dark ? "#a1a1aa" : "#52525b",      // zinc-400 / zinc-600
-    edgeOpacity: dark ? 0.5 : 0.35,
-    legendFill: dark ? "#71717a" : "#52525b",
+    bg: dark ? "#18181b" : "#ffffff",
+    surface: dark ? "#27272a" : "#f4f4f5",
+    surfaceAlt: dark ? "#1f1f23" : "#fafafa",
+    border: dark ? "#3f3f46" : "#e4e4e7",
+    borderMuted: dark ? "#27272a" : "#f4f4f5",
+    textPrimary: dark ? "#fafafa" : "#18181b",
+    textSecondary: dark ? "#a1a1aa" : "#71717a",
+    textTertiary: dark ? "#71717a" : "#a1a1aa",
+    lineStroke: dark ? "#3f3f46" : "#d4d4d8",
+    hubFill: dark ? "#fafafa" : "#18181b",
+    hubText: dark ? "#18181b" : "#ffffff",
   };
 }
 
-/* ── SVG Ontology Diagram ─────────────────────────────────────────────── */
+/* ── SVG Ontology Diagram — Clean flat enterprise style ──────────────── */
 
 function OntologyDiagram({
   config,
@@ -80,16 +81,70 @@ function OntologyDiagram({
   const [hoveredCollection, setHoveredCollection] = useState<string | null>(null);
 
   const isDark = useIsDark();
-  const c = svgColors(isDark);
+  const cl = svgColors(isDark);
   const categories = config.categories.filter((c) => c.slug !== "other").slice(0, 6);
   const topCollections = collections.slice(0, 6);
   const relTypes = config.relationTypes;
 
-  const catWidth = 140;
-  const catSpacing = 150;
-  const catStartX = 20;
+  /* ── Layout constants ── */
   const svgWidth = 940;
-  const svgHeight = 680;
+  const svgHeight = 650;
+  const margin = 20;
+  const layerPad = 12;
+
+  /* Category node dynamic sizing */
+  const catCharW = 6.2;
+  const catPadX = 24;
+  const catH = 32;
+  const catGap = 10;
+  const catWidths = categories.map((cat) => Math.max(cat.label.length * catCharW + catPadX, 100));
+  const catTotalW = catWidths.reduce((s, w) => s + w, 0) + (categories.length - 1) * catGap;
+  let catRunX = (svgWidth - catTotalW) / 2;
+  const catPositions = catWidths.map((w) => {
+    const x = catRunX;
+    catRunX += w + catGap;
+    return x;
+  });
+
+  /* Tag row */
+  const tagCharW = 6;
+  const tagPadX = 16;
+  const tagH = 20;
+  const tagGap = 6;
+  const visibleTags = topTags.slice(0, 7);
+  const tagWidths = visibleTags.map((t) => Math.max(t.name.length * tagCharW + tagPadX, 48));
+  const tagTotalW = tagWidths.reduce((s, w) => s + w, 0) + (visibleTags.length - 1) * tagGap;
+  let tagRunX = (svgWidth - tagTotalW) / 2;
+  const tagPositions = tagWidths.map((w) => {
+    const x = tagRunX;
+    tagRunX += w + tagGap;
+    return x;
+  });
+
+  /* Collection layout */
+  const colW = 140;
+  const colGap = 8;
+  const colTotalW = topCollections.length * colW + (topCollections.length - 1) * colGap;
+  const colStartX = (svgWidth - colTotalW) / 2;
+
+  /* Layer Y positions */
+  const l1Y = 10;
+  const l1H = 210;
+  const hubY = l1Y + 52;
+  const hubW = 110;
+  const hubH = 36;
+  const catY = l1Y + 115;
+  const tagY = l1Y + 174;
+
+  const l2Y = l1Y + l1H + 16;
+  const l2H = 150;
+  const l2ItemBaseY = l2Y + 44;
+
+  const l3Y = l2Y + l2H + 16;
+  const l3H = 120;
+  const colY = l3Y + 40;
+
+  const legendY = l3Y + l3H + 14;
 
   const handleCategoryClick = useCallback(
     (slug: string) => router.push(`${config.catalogPath}?category=${slug}`),
@@ -101,57 +156,55 @@ function OntologyDiagram({
       <svg
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         className="w-full min-w-[700px]"
-        style={{ maxHeight: `${svgHeight}px`, fontFamily: "Inter, system-ui, -apple-system, sans-serif" }}
+        style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}
       >
-        <defs>
-          <filter id="nodeShadow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.06" />
-          </filter>
-          <filter id="centralShadow" x="-40%" y="-40%" width="180%" height="180%">
-            <feDropShadow dx="0" dy="3" stdDeviation="8" floodOpacity="0.12" />
-          </filter>
-          <filter id="layerShadow" x="-5%" y="-5%" width="110%" height="110%">
-            <feDropShadow dx="0" dy="1" stdDeviation="3" floodOpacity="0.04" />
-          </filter>
-          <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
-            <path d="M0 0 L10 4 L0 8 Z" fill="#DC2626" opacity="0.4" />
-          </marker>
-          <style>{`
-            @keyframes dashMove { to { stroke-dashoffset: -24; } }
-            .animated-edge { animation: dashMove 2s linear infinite; }
-          `}</style>
-        </defs>
-
         {/* Background */}
-        <rect width={svgWidth} height={svgHeight} rx="16" className="fill-white dark:fill-zinc-900" />
-        {/* Dark mode: subtle lighter overlay so content is distinguishable from page bg */}
-        <rect width={svgWidth} height={svgHeight} rx="16" className="fill-transparent dark:fill-zinc-800/30" />
+        <rect width={svgWidth} height={svgHeight} rx="12" fill={cl.bg} />
 
         {/* ─── LAYER 1: TAXONOMY ─── */}
-        <rect x="16" y="12" width={svgWidth - 32} height="220" rx="12" className="fill-zinc-50/80 dark:fill-zinc-700/25" filter="url(#layerShadow)" />
-        <rect x="16" y="12" width={svgWidth - 32} height="220" rx="12" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-600/40" strokeWidth="1" />
+        <rect x={margin} y={l1Y} width={svgWidth - margin * 2} height={l1H} rx="10" fill={cl.surfaceAlt} stroke={cl.border} strokeWidth="1" />
 
-        {/* Layer label */}
-        <rect x="28" y="22" width={config.label.length * 8.5 + 100} height="22" rx="11" className="fill-zinc-100 dark:fill-zinc-700/40" />
-        <text x="40" y="37" className="fill-zinc-500 dark:fill-zinc-400" fontSize="11" fontWeight="700" letterSpacing="0.08em">
+        {/* Layer header */}
+        <text x={margin + layerPad} y={l1Y + 24} fontSize="10" fontWeight="600" letterSpacing="0.08em" fill={cl.textTertiary}>
           {config.label.toUpperCase()} TAXONOMY
         </text>
+        <line x1={margin + layerPad} y1={l1Y + 32} x2={svgWidth - margin - layerPad} y2={l1Y + 32} stroke={cl.border} strokeWidth="0.5" />
 
-        {/* Central node — large premium pill */}
-        <rect x={svgWidth / 2 - 60} y="52" width="120" height="38" rx="19" className="fill-zinc-900 dark:fill-zinc-100" filter="url(#centralShadow)" />
-        <text x={svgWidth / 2} y="76" textAnchor="middle" className="fill-white dark:fill-zinc-900" fontSize="14" fontWeight="700" letterSpacing="-0.02em">{config.label}</text>
-        <text x={svgWidth / 2} y="98" textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="11" fontWeight="500">
-          {totalItems.toLocaleString()} total
-        </text>
+        {/* Central hub pill */}
+        <rect x={svgWidth / 2 - hubW / 2} y={hubY} width={hubW} height={hubH} rx={hubH / 2} fill={cl.hubFill} />
+        <text x={svgWidth / 2} y={hubY + hubH / 2 - 1} textAnchor="middle" dominantBaseline="middle" fontSize="13" fontWeight="700" letterSpacing="-0.02em" fill={cl.hubText}>{config.label}</text>
+        <text x={svgWidth / 2} y={hubY + hubH + 14} textAnchor="middle" fontSize="10" fontWeight="500" fill={cl.textTertiary}>{totalItems.toLocaleString()} total</text>
 
-        <text x={svgWidth / 2} y="118" textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="9.5" fontWeight="500" fontStyle="italic">has_category</text>
+        {/* Connection lines — hub to categories */}
+        {catPositions.map((x, i) => {
+          const cat = categories[i];
+          const w = catWidths[i];
+          const isHovered = hoveredCategory === cat.slug;
+          const catColor = config.categoryColors[cat.slug] || cl.textTertiary;
+          const endX = x + w / 2;
+          const startY = hubY + hubH + 2;
+          const endY = catY;
+          const cp1Y = startY + (endY - startY) * 0.35;
+          const cp2Y = startY + (endY - startY) * 0.65;
+          return (
+            <path
+              key={`line-${cat.slug}`}
+              d={`M${svgWidth / 2},${startY} C${svgWidth / 2},${cp1Y} ${endX},${cp2Y} ${endX},${endY}`}
+              fill="none"
+              stroke={isHovered ? catColor : cl.lineStroke}
+              strokeWidth={isHovered ? 1.5 : 0.75}
+              style={{ transition: "stroke 0.15s, stroke-width 0.15s" }}
+            />
+          );
+        })}
 
-        {/* Category nodes — large, rounded, with accent fills */}
+        {/* Category nodes */}
         {categories.map((cat, i) => {
-          const x = catStartX + i * catSpacing;
-          const y = 128;
+          const x = catPositions[i];
+          const w = catWidths[i];
           const count = categoryCounts[cat.slug] || 0;
           const isHovered = hoveredCategory === cat.slug;
+          const catColor = config.categoryColors[cat.slug] || cl.textTertiary;
 
           return (
             <g
@@ -161,70 +214,68 @@ function OntologyDiagram({
               onMouseLeave={() => setHoveredCategory(null)}
               style={{ cursor: "pointer" }}
             >
-              <line x1={svgWidth / 2} y1="90" x2={x + catWidth / 2} y2={y} stroke={isHovered ? "#DC2626" : c.nodeStroke} strokeWidth="1" strokeDasharray="4,3" opacity={isHovered ? 0.5 : 0.3} />
-              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill={isHovered ? "#DC2626" : c.nodeFill} opacity={isHovered ? 0.12 : c.nodeFillOpacity} />
-              <rect x={x} y={y} width={catWidth} height="36" rx="10" fill="none" stroke={isHovered ? "#DC2626" : c.nodeStroke} strokeWidth={isHovered ? 1.5 : 1} filter="url(#nodeShadow)" />
-              <text x={x + catWidth / 2} y={y + 20} textAnchor="middle" dominantBaseline="middle" fontSize="11.5" fontWeight="600" fill={isHovered ? "#DC2626" : c.nodeText}>{cat.label}</text>
-              <text x={x + catWidth / 2} y={y + 50} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="10" fontWeight="500">{count.toLocaleString()}</text>
+              <rect
+                x={x} y={catY} width={w} height={catH} rx="6"
+                fill={isHovered ? (isDark ? `${catColor}15` : `${catColor}0A`) : cl.surface}
+                stroke={isHovered ? catColor : cl.border}
+                strokeWidth={isHovered ? 1 : 0.5}
+                style={{ transition: "stroke 0.15s, fill 0.15s" }}
+              />
+              <circle cx={x + 12} cy={catY + catH / 2} r="3" fill={catColor} opacity={isHovered ? 1 : 0.65} style={{ transition: "opacity 0.15s" }} />
+              <text x={x + 22} y={catY + catH / 2 + 0.5} dominantBaseline="middle" fontSize="10.5" fontWeight="500" fill={isHovered ? cl.textPrimary : cl.textSecondary} style={{ transition: "fill 0.15s" }}>{cat.label}</text>
+              <text x={x + w / 2} y={catY + catH + 14} textAnchor="middle" fontSize="9" fontWeight="500" fill={cl.textTertiary}>{count.toLocaleString()}</text>
             </g>
           );
         })}
 
-        {/* Top tags row */}
-        <text x={svgWidth / 2} y="192" textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="9.5" fontWeight="500" fontStyle="italic">has_tag</text>
-        {topTags.slice(0, 7).map((tag, i) => {
-          const tagWidth = tag.name.length * 6.5 + 18;
-          const totalTagWidth = topTags.slice(0, 7).reduce((s, t) => s + t.name.length * 6.5 + 24, 0);
-          let x = (svgWidth - totalTagWidth) / 2;
-          for (let j = 0; j < i; j++) {
-            x += topTags[j].name.length * 6.5 + 24;
-          }
+        {/* Tags row */}
+        {visibleTags.map((tag, i) => {
+          const x = tagPositions[i];
+          const w = tagWidths[i];
           return (
             <g key={tag.slug}>
-              <rect x={x} y="200" width={tagWidth} height="22" rx="11" className="fill-zinc-100 dark:fill-zinc-800/60" />
-              <text x={x + tagWidth / 2} y="214" textAnchor="middle" className="fill-zinc-500 dark:fill-zinc-400" fontSize="9.5" fontWeight="500">{tag.name}</text>
+              <rect x={x} y={tagY} width={w} height={tagH} rx={tagH / 2} fill={cl.surface} stroke={cl.border} strokeWidth="0.5" />
+              <text x={x + w / 2} y={tagY + tagH / 2 + 0.5} textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="500" fill={cl.textTertiary}>{tag.name}</text>
             </g>
           );
         })}
 
-        {/* Arrow between Layer 1 and 2 */}
-        <line x1={svgWidth / 2} y1="234" x2={svgWidth / 2} y2="260" stroke="#DC2626" opacity="0.3" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
+        {/* ─── Layer transition arrow ─── */}
+        <line x1={svgWidth / 2} y1={l1Y + l1H + 2} x2={svgWidth / 2} y2={l2Y - 2} stroke={cl.lineStroke} strokeWidth="1" />
+        <path d={`M${svgWidth / 2 - 4},${l2Y - 6} L${svgWidth / 2},${l2Y - 1} L${svgWidth / 2 + 4},${l2Y - 6}`} fill="none" stroke={cl.lineStroke} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
 
         {/* ─── LAYER 2: RELATION GRAPH ─── */}
-        <rect x="16" y="264" width={svgWidth - 32} height="160" rx="12" className="fill-zinc-50/80 dark:fill-zinc-700/25" filter="url(#layerShadow)" />
-        <rect x="16" y="264" width={svgWidth - 32} height="160" rx="12" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-600/40" strokeWidth="1" />
+        <rect x={margin} y={l2Y} width={svgWidth - margin * 2} height={l2H} rx="10" fill={cl.surfaceAlt} stroke={cl.border} strokeWidth="1" />
 
-        {/* Layer label pill */}
-        <rect x="28" y="274" width={config.labelSingular.length * 8.5 + 140} height="22" rx="11" className="fill-zinc-100 dark:fill-zinc-700/40" />
-        <text x="40" y="289" className="fill-zinc-500 dark:fill-zinc-400" fontSize="11" fontWeight="700" letterSpacing="0.08em">
+        {/* Layer header */}
+        <text x={margin + layerPad} y={l2Y + 24} fontSize="10" fontWeight="600" letterSpacing="0.08em" fill={cl.textTertiary}>
           {config.labelSingular.toUpperCase()} RELATION GRAPH
         </text>
+        <line x1={margin + layerPad} y1={l2Y + 32} x2={svgWidth - margin - layerPad} y2={l2Y + 32} stroke={cl.border} strokeWidth="0.5" />
 
-        {/* Edge legend — right-aligned */}
+        {/* Relation legend — inline right of header */}
         {relTypes.slice(0, 4).map((rel, i) => (
           <g key={rel.type}>
-            <line x1={490 + i * 115} y1="284" x2={514 + i * 115} y2="284" stroke={c.edgeStroke} strokeWidth="2" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} opacity="0.6" />
-            <text x={519 + i * 115} y="288" fontSize="9.5" fontWeight="500" className="fill-zinc-500 dark:fill-zinc-400">{rel.label}</text>
+            <line x1={480 + i * 115} y1={l2Y + 24} x2={500 + i * 115} y2={l2Y + 24} stroke={cl.textTertiary} strokeWidth="1.5" strokeLinecap="round" />
+            <text x={505 + i * 115} y={l2Y + 27} fontSize="9" fontWeight="500" fill={cl.textTertiary}>{rel.label}</text>
           </g>
         ))}
 
-        {/* Representative edges */}
+        {/* Representative edges — solid lines */}
         {representativeEdges.map((edge, i) => {
           const from = representativeItems[edge.from];
           const to = representativeItems[edge.to];
           if (!from || !to) return null;
-          const rel = relTypes.find((r) => r.type === edge.type);
+          const fromW = from.name.length * 7 + 20;
+          const toW = to.name.length * 7 + 20;
           return (
             <line
               key={i}
-              x1={from.x + 55} y1={from.y + 310}
-              x2={to.x + 55} y2={to.y + 310}
-              stroke={c.edgeStroke}
-              strokeWidth="1.5"
+              x1={from.x + fromW / 2} y1={from.y + l2ItemBaseY + 13}
+              x2={to.x + toW / 2} y2={to.y + l2ItemBaseY + 13}
+              stroke={cl.lineStroke}
+              strokeWidth="0.75"
               strokeLinecap="round"
-              strokeDasharray={rel?.directional ? "6,4" : "none"}
-              opacity={c.edgeOpacity}
-              className={rel?.directional ? "animated-edge" : undefined}
             />
           );
         })}
@@ -232,8 +283,9 @@ function OntologyDiagram({
         {/* Representative item nodes */}
         {representativeItems.map((item, i) => {
           const isHovered = hoveredItem === i;
-          const nodeWidth = item.name.length * 8 + 24;
-          const nodeColor = isHovered ? "#DC2626" : c.nodeTextMuted;
+          const nodeWidth = item.name.length * 7 + 20;
+          const nodeH = 26;
+          const ny = item.y + l2ItemBaseY;
           return (
             <g
               key={item.slug}
@@ -243,45 +295,40 @@ function OntologyDiagram({
               style={{ cursor: "pointer" }}
             >
               <rect
-                x={item.x} y={item.y + 300}
-                width={nodeWidth} height="30" rx="8"
-                fill={nodeColor}
-                opacity={isHovered ? 0.15 : (isDark ? 0.12 : 0.04)}
-              />
-              <rect
-                x={item.x} y={item.y + 300}
-                width={nodeWidth} height="30" rx="8"
-                fill="none"
-                stroke={nodeColor} strokeWidth={isHovered ? 2 : 1.2}
-                filter="url(#nodeShadow)"
+                x={item.x} y={ny}
+                width={nodeWidth} height={nodeH} rx="6"
+                fill={isHovered ? (isDark ? "#DC262615" : "#DC26260A") : cl.surface}
+                stroke={isHovered ? "#DC2626" : cl.border}
+                strokeWidth={isHovered ? 1 : 0.5}
+                style={{ transition: "stroke 0.15s, fill 0.15s" }}
               />
               <text
-                x={item.x + nodeWidth / 2} y={item.y + 319}
-                textAnchor="middle" fontSize="11.5" fontWeight="600"
-                className="fill-zinc-700 dark:fill-zinc-300"
+                x={item.x + nodeWidth / 2} y={ny + nodeH / 2 + 0.5}
+                textAnchor="middle" dominantBaseline="middle"
+                fontSize="10" fontWeight="500"
+                fill={isHovered ? cl.textPrimary : cl.textSecondary}
+                style={{ transition: "fill 0.15s" }}
               >{item.name}</text>
             </g>
           );
         })}
 
-        {/* Arrow between Layer 2 and 3 */}
-        <line x1={svgWidth / 2} y1="426" x2={svgWidth / 2} y2="452" stroke="#DC2626" opacity="0.3" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
+        {/* ─── Layer transition arrow ─── */}
+        <line x1={svgWidth / 2} y1={l2Y + l2H + 2} x2={svgWidth / 2} y2={l3Y - 2} stroke={cl.lineStroke} strokeWidth="1" />
+        <path d={`M${svgWidth / 2 - 4},${l3Y - 6} L${svgWidth / 2},${l3Y - 1} L${svgWidth / 2 + 4},${l3Y - 6}`} fill="none" stroke={cl.lineStroke} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
 
         {/* ─── LAYER 3: COLLECTION LIBRARY ─── */}
-        <rect x="16" y="456" width={svgWidth - 32} height="130" rx="12" className="fill-zinc-50/80 dark:fill-zinc-700/25" filter="url(#layerShadow)" />
-        <rect x="16" y="456" width={svgWidth - 32} height="130" rx="12" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-600/40" strokeWidth="1" />
+        <rect x={margin} y={l3Y} width={svgWidth - margin * 2} height={l3H} rx="10" fill={cl.surfaceAlt} stroke={cl.border} strokeWidth="1" />
 
-        {/* Layer label pill */}
-        <rect x="28" y="466" width={config.labelSingular.length * 8.5 + 150} height="22" rx="11" className="fill-zinc-100 dark:fill-zinc-700/40" />
-        <text x="40" y="481" className="fill-zinc-500 dark:fill-zinc-400" fontSize="11" fontWeight="700" letterSpacing="0.08em">
+        {/* Layer header */}
+        <text x={margin + layerPad} y={l3Y + 24} fontSize="10" fontWeight="600" letterSpacing="0.08em" fill={cl.textTertiary}>
           {config.labelSingular.toUpperCase()} COLLECTION LIBRARY
         </text>
+        <line x1={margin + layerPad} y1={l3Y + 32} x2={svgWidth - margin - layerPad} y2={l3Y + 32} stroke={cl.border} strokeWidth="0.5" />
 
+        {/* Collection cards */}
         {topCollections.map((col, i) => {
-          const colWidth = 140;
-          const colSpacing = 148;
-          const x = 28 + i * colSpacing;
-          const y = 496;
+          const x = colStartX + i * (colW + colGap);
           const isHovered = hoveredCollection === col.slug;
 
           return (
@@ -292,33 +339,35 @@ function OntologyDiagram({
               onMouseLeave={() => setHoveredCollection(null)}
               style={{ cursor: "pointer" }}
             >
-              <rect x={x} y={y} width={colWidth} height="68" rx="10" className={isHovered ? "fill-zinc-100 dark:fill-zinc-800" : "fill-white dark:fill-zinc-800/40"} filter="url(#nodeShadow)" />
-              <rect x={x} y={y} width={colWidth} height="68" rx="10" fill="none" stroke={isHovered ? "#DC2626" : undefined} className={isHovered ? undefined : "stroke-zinc-200 dark:stroke-zinc-700"} strokeWidth={isHovered ? 1.5 : 0.8} opacity={isHovered ? 0.6 : 1} />
-              <text x={x + colWidth / 2} y={y + 28} textAnchor="middle" fontSize="11.5" fontWeight="700" className="fill-zinc-800 dark:fill-zinc-200">{col.slug}</text>
-              <text x={x + colWidth / 2} y={y + 48} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-500" fontSize="10" fontWeight="500">{col.itemSlugs.length} items</text>
+              <rect x={x} y={colY} width={colW} height="60" rx="6"
+                fill={isHovered ? (isDark ? "#DC262610" : "#DC262606") : cl.surface}
+                stroke={isHovered ? "#DC2626" : cl.border}
+                strokeWidth={isHovered ? 1 : 0.5}
+                style={{ transition: "stroke 0.15s, fill 0.15s" }}
+              />
+              <text x={x + colW / 2} y={colY + 24} textAnchor="middle" fontSize="10.5" fontWeight="600" fill={isHovered ? cl.textPrimary : cl.textSecondary} style={{ transition: "fill 0.15s" }}>{col.slug}</text>
+              <text x={x + colW / 2} y={colY + 42} textAnchor="middle" fontSize="9" fontWeight="500" fill={cl.textTertiary}>{col.itemSlugs.length} items</text>
             </g>
           );
         })}
 
-        {/* Legend — premium floating card */}
-        <rect x="16" y="598" width="240" height="72" rx="10" className="fill-white dark:fill-zinc-800/50" filter="url(#layerShadow)" />
-        <rect x="16" y="598" width="240" height="72" rx="10" fill="none" className="stroke-zinc-200/50 dark:stroke-zinc-700/40" strokeWidth="0.8" />
+        {/* ─── Legend ─── */}
+        <text x={margin + layerPad} y={legendY + 12} fontSize="9" fontWeight="600" letterSpacing="0.06em" fill={cl.textTertiary}>LEGEND</text>
+        <line x1={margin + layerPad} y1={legendY + 18} x2={margin + layerPad + 50} y2={legendY + 18} stroke={cl.border} strokeWidth="0.5" />
         {[
-          { shape: "circle" as const, label: "Category", fill: c.legendFill },
-          { shape: "rect" as const, label: config.labelSingular, fill: c.legendFill },
-          { shape: "dashed-rect" as const, label: "Collection", fill: c.nodeTextMuted },
+          { label: "Category", cx: margin + layerPad + 6, cy: legendY + 32 },
+          { label: config.labelSingular, cx: margin + layerPad + 6, cy: legendY + 48 },
+          { label: "Collection", cx: margin + layerPad + 6, cy: legendY + 64 },
         ].map((item, i) => (
           <g key={item.label}>
-            {item.shape === "circle" && <circle cx="34" cy={616 + i * 18} r="5" fill={item.fill} opacity="0.6" />}
-            {item.shape === "rect" && <rect x="29" y={611 + i * 18} width="10" height="10" rx="3" fill={item.fill} opacity="0.6" />}
-            {item.shape === "dashed-rect" && <rect x="29" y={611 + i * 18} width="10" height="10" rx="3" fill="none" stroke={item.fill} strokeWidth="1.5" strokeDasharray="2,2" opacity="0.5" />}
-            <text x="50" y={620 + i * 18} fontSize="10.5" fontWeight="500" className="fill-zinc-500 dark:fill-zinc-400">{item.label}</text>
+            <rect x={item.cx - 5} y={item.cy - 5} width="10" height="10" rx="2" fill={cl.surface} stroke={cl.border} strokeWidth="0.5" />
+            <text x={item.cx + 12} y={item.cy + 1} dominantBaseline="middle" fontSize="9.5" fontWeight="500" fill={cl.textSecondary}>{item.label}</text>
           </g>
         ))}
         {relTypes.slice(0, 4).map((rel, i) => (
-          <g key={rel.type}>
-            <line x1="140" y1={616 + i * 18} x2="164" y2={616 + i * 18} stroke={c.edgeStroke} strokeWidth="2" strokeLinecap="round" strokeDasharray={rel.directional ? "5,4" : "none"} opacity="0.6" />
-            <text x="172" y={620 + i * 18} fontSize="10.5" fontWeight="500" className="fill-zinc-500 dark:fill-zinc-400">{rel.label}</text>
+          <g key={`legend-${rel.type}`}>
+            <line x1={200 + i * 120} y1={legendY + 32} x2={220 + i * 120} y2={legendY + 32} stroke={cl.textTertiary} strokeWidth="1.5" strokeLinecap="round" />
+            <text x={226 + i * 120} y={legendY + 35} fontSize="9.5" fontWeight="500" fill={cl.textSecondary}>{rel.label}</text>
           </g>
         ))}
       </svg>
