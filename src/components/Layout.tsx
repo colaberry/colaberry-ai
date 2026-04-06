@@ -1514,7 +1514,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
             <div className="mt-4 flex-1 overflow-y-auto">
               {workspaceSections.map((section) => (
-                <div key={section.title} className="mb-1.5 mt-7 first:mt-0">
+                <div key={section.title} className="mt-7 first:mt-0">
                   <div role="heading" aria-level={2} className="px-2.5 pb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     {section.title}
                   </div>
@@ -1555,7 +1555,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="sidebar-scroll sticky max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto pb-6 will-change-[transform]" style={{ top: "var(--site-header-height)" }}>
               <div className="px-5 py-5">
                 {workspaceSections.map((section) => (
-                  <div key={section.title} className="mb-1.5 mt-7 first:mt-0">
+                  <div key={section.title} className="mt-7 first:mt-0">
                     <div role="heading" aria-level={2} aria-label={section.title} className={`px-2.5 pb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 ${workspaceRailCollapsed ? "text-center" : ""}`}>
                       <span aria-hidden={workspaceRailCollapsed ? "true" : undefined}>{workspaceRailCollapsed ? section.title.charAt(0) : section.title}</span>
                     </div>
