@@ -2386,6 +2386,14 @@ footer .footer-link:focus-visible {
   margin-top: 1rem;
 }
 
+/* Sidebar active nav indicator — coral inset left bar */
+.nav-active-indicator {
+  box-shadow: inset 3px 0 0 #DC2626;
+}
+.dark .nav-active-indicator {
+  box-shadow: inset 3px 0 0 #F87171;
+}
+
 /* Enterprise CTA band */
 .cta-band-enterprise {
   position: relative;
