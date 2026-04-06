@@ -41,7 +41,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router]);
 
   return (
-    <div className={inter.variable}>
+    <div className={`${inter.variable} font-sans`}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
