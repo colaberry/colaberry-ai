@@ -45,10 +45,13 @@ All 5 content types use these templates with a `ContentOntologyConfig`:
 ## SVG Ontology Diagrams
 
 **Full-page ontology** (`OntologyPageTemplate`):
-- viewBox `940x680`, category nodes `140x36`, central pill `120x38`
-- `feDropShadow` filters for node shadows
-- Font scale: layer labels 11px/700, category nodes 11.5px/600, minimum 9.5px (tags only)
+- Dynamic viewBox width computed from widest category row; height auto from layer count
+- Flat enterprise design — NO feDropShadow, no blur, no glow, no animated dashes
+- Three layers: Taxonomy → Relation Graph → Collections, separated by text+line headers with chevron arrows
+- Dynamic category node sizing: `charWidth=6.2, padX=24, height=32, gap=10`
 - Category nodes use `config.categoryColors` with opacity fills (0.06 default, 0.15 hover)
+- Font: `var(--font-inter), Inter, system-ui, sans-serif` for SSR-safe Next.js font inheritance
+- `useIsDark()` initializes with `useState(false)` to prevent SSR hydration mismatch
 
 **Mini taxonomy diagram** (`MiniOntologyDiagram`):
 - Flat bordered card — no glassmorphism, no backdrop-blur, no feDropShadow
