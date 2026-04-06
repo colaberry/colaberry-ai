@@ -443,7 +443,7 @@ type WorkspaceSection = {
   links: WorkspaceLink[];
 };
 
-const sidebarIconProps = { width: 16, height: 16, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.75, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+const sidebarIconProps = { width: 16, height: 16, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
 
 function getSidebarIcon(href: string): ReactNode {
   const p = normalizePath(href);
@@ -1456,7 +1456,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={() => setWorkspaceMobileRailOpen(false)}
-                className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
                 aria-label="Close catalog sidebar"
               >
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
@@ -1467,11 +1467,11 @@ export default function Layout({ children }: { children: ReactNode }) {
 
             <div className="mt-4 flex-1 overflow-y-auto">
               {workspaceSections.map((section) => (
-                <div key={section.title} className="mb-4">
-                  <div className="px-1 text-label font-semibold uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-300">
+                <div key={section.title} className="mb-1.5 mt-6 first:mt-0">
+                  <div className="px-2.5 pb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400 dark:text-zinc-500">
                     {section.title}
                   </div>
-                  <div className="mt-2 grid gap-1">
+                  <div className="mt-1 grid gap-0.5">
                     {section.links.map((link) => {
                       const isActive = isActiveNavPath(currentPath, link.href, workspaceNavPaths);
                       return (
@@ -1481,7 +1481,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                           target={link.target}
                           active={isActive}
                           onClick={() => setWorkspaceMobileRailOpen(false)}
-                          className="text-sm font-semibold"
+                          className="text-[13px] font-medium"
                         >
                           {link.label}
                         </MobileLink>
@@ -1506,13 +1506,13 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="w-full flex-1 lg:grid lg:grid-cols-[var(--workspace-rail-width)_minmax(0,1fr)] lg:gap-6 lg:px-8" style={workspaceGridStyle}>
           <aside className="hidden lg:block" aria-label="Catalog navigation">
             <div className="sticky pb-6" style={{ top: "var(--site-header-height)", height: "calc(100dvh - var(--site-header-height))" }}>
-              <div className="surface-panel h-full overflow-y-auto p-3" style={{ maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)" }}>
+              <div className="h-full overflow-y-auto px-3 py-4" style={{ maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)" }}>
                 {workspaceSections.map((section) => (
-                  <div key={section.title} className="mb-4">
-                    <div className={`px-2 text-label font-semibold uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-300 ${workspaceRailCollapsed ? "text-center" : ""}`}>
+                  <div key={section.title} className="mb-1.5 mt-6 first:mt-0">
+                    <div className={`px-2.5 pb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400 dark:text-zinc-500 ${workspaceRailCollapsed ? "text-center" : ""}`}>
                       {workspaceRailCollapsed ? section.title.charAt(0) : section.title}
                     </div>
-                    <div className="mt-2 grid gap-1">
+                    <div className="mt-1 grid gap-0.5">
                       {section.links.map((link) => {
                         const isActive = isActiveNavPath(currentPath, link.href, workspaceNavPaths);
                         return (
@@ -1522,14 +1522,14 @@ export default function Layout({ children }: { children: ReactNode }) {
                             target={link.target ?? undefined}
                             rel={getLinkRel(link.target)}
                             title={workspaceRailCollapsed ? link.label : undefined}
-                            className={`focus-ring flex items-center gap-2 rounded-xl border px-2.5 py-2 text-sm font-semibold transition ${
+                            className={`focus-ring flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] transition-colors ${
                               isActive
-                                ? "border-[#DC2626]/40 bg-[#DC2626]/10 text-[#18181B] dark:border-[#F87171]/55 dark:bg-[#F87171]/25 dark:text-[#FAFAFA]"
-                                : "border-zinc-200/70 bg-white/80 text-zinc-700 hover:border-[#DC2626]/35 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/75 dark:text-zinc-200 dark:hover:border-[#F87171]/45 dark:hover:text-[#FAFAFA]"
+                                ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50"
+                                : "font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-200"
                             } ${workspaceRailCollapsed ? "justify-center" : ""}`}
                           >
-                            <span className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border ${isActive ? "border-[#DC2626]/45 bg-white/90 text-[#18181B] dark:border-[#F87171]/60 dark:bg-[#3F3F46]/85 dark:text-[#FAFAFA]" : "border-zinc-200/80 bg-white/90 text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900/80 dark:text-zinc-300"}`}>
-                              {getSidebarIcon(link.href) ?? <span className="text-label font-semibold">{link.label.split(" ").map((t) => t[0]).join("").slice(0, 2).toUpperCase()}</span>}
+                            <span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center ${isActive ? "text-zinc-900 dark:text-zinc-50" : "text-zinc-400 dark:text-zinc-500"}`}>
+                              {getSidebarIcon(link.href) ?? <span className="text-[10px] font-semibold">{link.label.split(" ").map((t) => t[0]).join("").slice(0, 2).toUpperCase()}</span>}
                             </span>
                             {!workspaceRailCollapsed ? <span className="line-clamp-1">{link.label}</span> : null}
                           </Link>
@@ -1935,7 +1935,7 @@ function MobileLink({
     "hover:bg-zinc-50",
     "dark:text-zinc-200",
     "dark:hover:bg-zinc-800/70",
-    active ? "bg-[#DC2626]/10 text-[#18181B] dark:bg-[#F87171]/15 dark:text-[#FAFAFA]" : "",
+    active ? "bg-zinc-100 font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50" : "",
     className,
   ]
     .filter(Boolean)
