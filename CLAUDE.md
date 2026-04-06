@@ -34,6 +34,7 @@
 - Toggle: `.dark` class on `<html>`, persisted in localStorage
 - CSS vars swap between `:root` and `.dark` blocks in `globals.css`
 - Components use `dark:` Tailwind variants for additional overrides
+- **Safety net conflict:** `globals.css` has `.dark .bg-zinc-900` and `.dark .bg-white` overrides that can clobber `dark:` Tailwind variants with the same specificity. When you need inverted color pairs (e.g., dark bg in light → light bg in dark), use `bg-zinc-950` instead of `bg-zinc-900` — no safety net exists for zinc-950.
 
 ### Locked Theming Standard (MUST follow for ALL pages)
 
