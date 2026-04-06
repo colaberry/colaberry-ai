@@ -12,9 +12,7 @@ import type { ContentOntologyConfig } from "../lib/ontologyTypes";
 /* ── Dark mode detection ─────────────────────────────────────────────── */
 
 function useIsDark() {
-  const [dark, setDark] = useState(() =>
-    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
-  );
+  const [dark, setDark] = useState(false);
   useEffect(() => {
     const el = document.documentElement;
     const obs = new MutationObserver(() => setDark(el.classList.contains("dark")));
@@ -126,7 +124,7 @@ export default function MiniOntologyDiagram({
       <svg
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         className="w-full"
-        style={{ fontFamily: "Inter, system-ui, -apple-system, sans-serif" }}
+        style={{ fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}
       >
         {/* ── Header label ── */}
         <text x={svgMargin} y="22" fontSize="9" fontWeight="600" letterSpacing="0.08em"

@@ -2,7 +2,7 @@ import type { GetStaticProps, InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Layout from "../../../components/Layout";
 import SectionHeader from "../../../components/SectionHeader";
 import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
@@ -87,7 +87,21 @@ export const getStaticProps: GetStaticProps<OntologyProps> = async () => {
   }
 };
 
-/* ── Interactive SVG Ontology Diagram ──────────────────────────────── */
+/* ── Dark mode detection ────────────────────────────────────────────── */
+
+function useIsDark() {
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    const el = document.documentElement;
+    setDark(el.classList.contains("dark"));
+    const obs = new MutationObserver(() => setDark(el.classList.contains("dark")));
+    obs.observe(el, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
+  return dark;
+}
+
+/* ── Interactive SVG Ontology Diagram — Clean flat style ─────────────── */
 
 function OntologyDiagram({
   categoryCounts,
@@ -102,27 +116,71 @@ function OntologyDiagram({
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [hoveredSkill, setHoveredSkill] = useState<number | null>(null);
   const [hoveredCollection, setHoveredCollection] = useState<string | null>(null);
+  const isDark = useIsDark();
 
   const categories = SKILL_CATEGORIES.filter((c) => c.slug !== "other").slice(0, 6);
   const collections = SKILL_COLLECTIONS.slice(0, 6);
 
   const catColors: Record<string, string> = {
-    development: "#60a5fa",
-    "ai-generation": "#f87171",
-    research: "#a78bfa",
-    "data-science": "#34d399",
-    business: "#fbbf24",
-    testing: "#fb923c",
-    productivity: "#38bdf8",
-    security: "#f472b6",
-    infrastructure: "#a3e635",
-    other: "#94a3b8",
+    development: "#60a5fa", "ai-generation": "#f87171", research: "#a78bfa",
+    "data-science": "#34d399", business: "#fbbf24", testing: "#fb923c",
+    productivity: "#38bdf8", security: "#f472b6", infrastructure: "#a3e635", other: "#94a3b8",
   };
 
-  const catWidth = 120;
-  const catSpacing = 145;
-  const catStartX = 40;
+  /* Color tokens */
+  const bg = isDark ? "#18181b" : "#ffffff";
+  const surface = isDark ? "#27272a" : "#f4f4f5";
+  const surfaceAlt = isDark ? "#1f1f23" : "#fafafa";
+  const border = isDark ? "#3f3f46" : "#e4e4e7";
+  const textPrimary = isDark ? "#fafafa" : "#18181b";
+  const textSecondary = isDark ? "#a1a1aa" : "#71717a";
+  const textTertiary = isDark ? "#71717a" : "#a1a1aa";
+  const lineStroke = isDark ? "#3f3f46" : "#d4d4d8";
+  const hubFill = isDark ? "#fafafa" : "#18181b";
+  const hubText = isDark ? "#18181b" : "#ffffff";
+
+  /* Layout */
   const svgWidth = 920;
+  const margin = 16;
+  const pad = 12;
+
+  /* Category sizing */
+  const catCharW = 6.2;
+  const catPadX = 24;
+  const catH = 30;
+  const catGap = 8;
+  const catWidths = categories.map((cat) => Math.max(cat.label.length * catCharW + catPadX, 96));
+  const catTotalW = catWidths.reduce((s, w) => s + w, 0) + (categories.length - 1) * catGap;
+  let catRunX = (svgWidth - catTotalW) / 2;
+  const catPositions = catWidths.map((w) => { const x = catRunX; catRunX += w + catGap; return x; });
+
+  /* Tags */
+  const visibleTags = topTags.slice(0, 8);
+  const tagCharW = 5.5;
+  const tagPadX = 14;
+  const tagH = 18;
+  const tagGap = 5;
+  const tagWidths = visibleTags.map((t) => Math.max(t.name.length * tagCharW + tagPadX, 40));
+  const tagTotalW = tagWidths.reduce((s, w) => s + w, 0) + (visibleTags.length - 1) * tagGap;
+  let tagRunX = (svgWidth - tagTotalW) / 2;
+  const tagPositions = tagWidths.map((w) => { const x = tagRunX; tagRunX += w + tagGap; return x; });
+
+  /* Layer Y positions */
+  const l1Y = 8; const l1H = 190;
+  const hubY = l1Y + 44; const hubW = 90; const hubH = 32;
+  const catY = l1Y + 100; const tagY = l1Y + 156;
+  const l2Y = l1Y + l1H + 14; const l2H = 130;
+  const l2BaseY = l2Y + 40;
+  const l3Y = l2Y + l2H + 14; const l3H = 108;
+  const colY = l3Y + 38;
+  const legendY = l3Y + l3H + 10;
+  const svgHeight = legendY + 36;
+
+  /* Collections */
+  const colW = 130;
+  const colGap = 8;
+  const colTotalW = collections.length * colW + (collections.length - 1) * colGap;
+  const colStartX = (svgWidth - colTotalW) / 2;
 
   const handleCategoryClick = useCallback(
     (slug: string) => router.push(`/aixcelerator/skills?category=${slug}`),
@@ -131,294 +189,129 @@ function OntologyDiagram({
 
   return (
     <div className="overflow-x-auto">
-      <svg
-        viewBox={`0 0 ${svgWidth} 520`}
-        className="w-full min-w-[700px]"
-        style={{ maxHeight: "520px" }}
-      >
-        {/* Background */}
-        <rect width={svgWidth} height="520" rx="12" className="fill-white dark:fill-zinc-900" />
+      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[700px]" style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}>
+        <rect width={svgWidth} height={svgHeight} rx="12" fill={bg} />
 
-        {/* ─── LAYER 1: SKILL TAXONOMY ─── */}
-        <rect x="12" y="8" width={svgWidth - 24} height="170" rx="8" fill="none" className="stroke-zinc-200 dark:stroke-zinc-700" strokeWidth="1" strokeDasharray="6,3" />
-        <text x="24" y="28" className="fill-zinc-400 dark:fill-zinc-500" fontSize="9" fontWeight="700" letterSpacing="0.12em">SKILL TAXONOMY</text>
+        {/* ─── LAYER 1: TAXONOMY ─── */}
+        <rect x={margin} y={l1Y} width={svgWidth - margin * 2} height={l1H} rx="10" fill={surfaceAlt} stroke={border} strokeWidth="1" />
+        <text x={margin + pad} y={l1Y + 22} fontSize="10" fontWeight="600" letterSpacing="0.08em" fill={textTertiary}>SKILL TAXONOMY</text>
+        <line x1={margin + pad} y1={l1Y + 30} x2={svgWidth - margin - pad} y2={l1Y + 30} stroke={border} strokeWidth="0.5" />
 
-        {/* Central Skills node */}
-        <rect x={svgWidth / 2 - 40} y="38" width="80" height="28" rx="14" className="fill-zinc-900 dark:fill-zinc-100" />
-        <text x={svgWidth / 2} y="56" textAnchor="middle" className="fill-white dark:fill-zinc-900" fontSize="11" fontWeight="700">Skills</text>
-        <text x={svgWidth / 2} y="70" textAnchor="middle" className="fill-zinc-400" fontSize="8">
-          {totalSkills.toLocaleString()} total
-        </text>
+        {/* Hub */}
+        <rect x={svgWidth / 2 - hubW / 2} y={hubY} width={hubW} height={hubH} rx={hubH / 2} fill={hubFill} />
+        <text x={svgWidth / 2} y={hubY + hubH / 2 - 1} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill={hubText}>Skills</text>
+        <text x={svgWidth / 2} y={hubY + hubH + 12} textAnchor="middle" fontSize="9" fontWeight="500" fill={textTertiary}>{totalSkills.toLocaleString()} total</text>
 
-        {/* has_category label */}
-        <text x={svgWidth / 2} y="86" textAnchor="middle" className="fill-zinc-400" fontSize="8" fontStyle="italic">has_category</text>
+        {/* Connection curves */}
+        {catPositions.map((x, i) => {
+          const cat = categories[i];
+          const w = catWidths[i];
+          const isHovered = hoveredCategory === cat.slug;
+          const color = catColors[cat.slug] || textTertiary;
+          const endX = x + w / 2;
+          const startY = hubY + hubH + 2;
+          const cp1Y = startY + (catY - startY) * 0.35;
+          const cp2Y = startY + (catY - startY) * 0.65;
+          return <path key={`l-${cat.slug}`} d={`M${svgWidth / 2},${startY} C${svgWidth / 2},${cp1Y} ${endX},${cp2Y} ${endX},${catY}`} fill="none" stroke={isHovered ? color : lineStroke} strokeWidth={isHovered ? 1.5 : 0.75} style={{ transition: "stroke 0.15s" }} />;
+        })}
 
         {/* Category nodes */}
         {categories.map((cat, i) => {
-          const x = catStartX + i * catSpacing;
-          const y = 96;
+          const x = catPositions[i]; const w = catWidths[i];
           const count = categoryCounts[cat.slug] || 0;
           const isHovered = hoveredCategory === cat.slug;
-
+          const color = catColors[cat.slug] || textTertiary;
           return (
-            <g
-              key={cat.slug}
-              onClick={() => handleCategoryClick(cat.slug)}
-              onMouseEnter={() => setHoveredCategory(cat.slug)}
-              onMouseLeave={() => setHoveredCategory(null)}
-              style={{ cursor: "pointer" }}
-            >
-              {/* Line from Skills to category */}
-              <line
-                x1={svgWidth / 2}
-                y1="66"
-                x2={x + catWidth / 2}
-                y2={y}
-                className="stroke-zinc-300 dark:stroke-zinc-600"
-                strokeWidth="0.8"
-                strokeDasharray="3,2"
-              />
-              {/* Category pill */}
-              <rect
-                x={x}
-                y={y}
-                width={catWidth}
-                height="26"
-                rx="6"
-                fill={isHovered ? catColors[cat.slug] : "transparent"}
-                stroke={catColors[cat.slug]}
-                strokeWidth="1.5"
-                opacity={isHovered ? 0.15 : 1}
-              />
-              <rect
-                x={x}
-                y={y}
-                width={catWidth}
-                height="26"
-                rx="6"
-                fill="none"
-                stroke={catColors[cat.slug]}
-                strokeWidth={isHovered ? 2 : 1.5}
-              />
-              <text
-                x={x + catWidth / 2}
-                y={y + 14}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fontSize="9"
-                fontWeight="600"
-                fill={catColors[cat.slug]}
-              >
-                {cat.label}
-              </text>
-              {/* Count badge */}
-              <text
-                x={x + catWidth / 2}
-                y={y + 36}
-                textAnchor="middle"
-                className="fill-zinc-400"
-                fontSize="8"
-              >
-                {count.toLocaleString()}
-              </text>
+            <g key={cat.slug} onClick={() => handleCategoryClick(cat.slug)} onMouseEnter={() => setHoveredCategory(cat.slug)} onMouseLeave={() => setHoveredCategory(null)} style={{ cursor: "pointer" }}>
+              <rect x={x} y={catY} width={w} height={catH} rx="6" fill={isHovered ? (isDark ? `${color}15` : `${color}0A`) : surface} stroke={isHovered ? color : border} strokeWidth={isHovered ? 1 : 0.5} style={{ transition: "stroke 0.15s, fill 0.15s" }} />
+              <circle cx={x + 11} cy={catY + catH / 2} r="2.5" fill={color} opacity={isHovered ? 1 : 0.65} />
+              <text x={x + 20} y={catY + catH / 2 + 0.5} dominantBaseline="middle" fontSize="10" fontWeight="500" fill={isHovered ? textPrimary : textSecondary} style={{ transition: "fill 0.15s" }}>{cat.label}</text>
+              <text x={x + w / 2} y={catY + catH + 13} textAnchor="middle" fontSize="9" fontWeight="500" fill={textTertiary}>{count.toLocaleString()}</text>
             </g>
           );
         })}
 
-        {/* Top tags row */}
-        <text x={svgWidth / 2} y="148" textAnchor="middle" className="fill-zinc-400" fontSize="8" fontStyle="italic">has_tag</text>
-        {topTags.slice(0, 8).map((tag, i) => {
-          const tagWidth = tag.name.length * 5.5 + 12;
-          const totalTagWidth = topTags.slice(0, 8).reduce((s, t) => s + t.name.length * 5.5 + 16, 0);
-          let x = (svgWidth - totalTagWidth) / 2;
-          for (let j = 0; j < i; j++) {
-            x += topTags[j].name.length * 5.5 + 16;
-          }
+        {/* Tags */}
+        {visibleTags.map((tag, i) => {
+          const x = tagPositions[i]; const w = tagWidths[i];
           return (
             <g key={tag.slug}>
-              <rect x={x} y="155" width={tagWidth} height="16" rx="8" className="fill-zinc-100 dark:fill-zinc-800" />
-              <text x={x + tagWidth / 2} y="166" textAnchor="middle" className="fill-zinc-500 dark:fill-zinc-400" fontSize="7.5">{tag.name}</text>
+              <rect x={x} y={tagY} width={w} height={tagH} rx={tagH / 2} fill={surface} stroke={border} strokeWidth="0.5" />
+              <text x={x + w / 2} y={tagY + tagH / 2 + 0.5} textAnchor="middle" dominantBaseline="middle" fontSize="8.5" fontWeight="500" fill={textTertiary}>{tag.name}</text>
             </g>
           );
         })}
 
-        {/* ─── Arrow between Layer 1 and 2 ─── */}
-        <line x1={svgWidth / 2} y1="180" x2={svgWidth / 2} y2="198" className="stroke-zinc-400 dark:stroke-zinc-500" strokeWidth="1" markerEnd="url(#arrowhead)" />
+        {/* Arrow */}
+        <line x1={svgWidth / 2} y1={l1Y + l1H + 2} x2={svgWidth / 2} y2={l2Y - 2} stroke={lineStroke} strokeWidth="1" />
+        <path d={`M${svgWidth / 2 - 4},${l2Y - 6} L${svgWidth / 2},${l2Y - 1} L${svgWidth / 2 + 4},${l2Y - 6}`} fill="none" stroke={lineStroke} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
 
-        {/* ─── LAYER 2: SKILL RELATION GRAPH ─── */}
-        <rect x="12" y="200" width={svgWidth - 24} height="120" rx="8" fill="none" className="stroke-zinc-200 dark:stroke-zinc-700" strokeWidth="1" strokeDasharray="6,3" />
-        <text x="24" y="218" className="fill-zinc-400 dark:fill-zinc-500" fontSize="9" fontWeight="700" letterSpacing="0.12em">SKILL RELATION GRAPH</text>
+        {/* ─── LAYER 2: RELATION GRAPH ─── */}
+        <rect x={margin} y={l2Y} width={svgWidth - margin * 2} height={l2H} rx="10" fill={surfaceAlt} stroke={border} strokeWidth="1" />
+        <text x={margin + pad} y={l2Y + 22} fontSize="10" fontWeight="600" letterSpacing="0.08em" fill={textTertiary}>SKILL RELATION GRAPH</text>
+        <line x1={margin + pad} y1={l2Y + 30} x2={svgWidth - margin - pad} y2={l2Y + 30} stroke={border} strokeWidth="0.5" />
 
-        {/* Edge legend */}
+        {/* Relation legend inline */}
         {RELATIONSHIP_TYPES.map((rel, i) => (
           <g key={rel.type}>
-            <line
-              x1={520 + i * 100}
-              y1="214"
-              x2={540 + i * 100}
-              y2="214"
-              className="stroke-zinc-400 dark:stroke-zinc-500"
-              strokeWidth="1.5"
-              strokeDasharray={rel.dash || "none"}
-            />
-            <text x={544 + i * 100} y="217" fontSize="7" className="fill-zinc-500 dark:fill-zinc-400">{rel.label}</text>
+            <line x1={500 + i * 108} y1={l2Y + 22} x2={518 + i * 108} y2={l2Y + 22} stroke={textTertiary} strokeWidth="1.5" strokeLinecap="round" />
+            <text x={523 + i * 108} y={l2Y + 25} fontSize="8.5" fontWeight="500" fill={textTertiary}>{rel.label}</text>
           </g>
         ))}
 
-        {/* Representative skill nodes + edges */}
+        {/* Edges */}
         {REPRESENTATIVE_EDGES.map((edge, i) => {
           const from = REPRESENTATIVE_SKILLS[edge.from];
           const to = REPRESENTATIVE_SKILLS[edge.to];
-          const rel = RELATIONSHIP_TYPES.find((r) => r.type === edge.type);
-          return (
-            <line
-              key={i}
-              x1={from.x + 50}
-              y1={from.y + 234}
-              x2={to.x + 50}
-              y2={to.y + 234}
-              className="stroke-zinc-400 dark:stroke-zinc-500"
-              strokeWidth="1"
-              strokeDasharray={rel?.dash || "none"}
-              opacity="0.6"
-            />
-          );
+          const fW = from.name.length * 6.5 + 18;
+          const tW = to.name.length * 6.5 + 18;
+          return <line key={i} x1={from.x + fW / 2} y1={from.y + l2BaseY + 12} x2={to.x + tW / 2} y2={to.y + l2BaseY + 12} stroke={lineStroke} strokeWidth="0.75" />;
         })}
 
+        {/* Skill nodes */}
         {REPRESENTATIVE_SKILLS.map((skill, i) => {
           const isHovered = hoveredSkill === i;
+          const nW = skill.name.length * 6.5 + 18;
+          const nH = 24;
+          const ny = skill.y + l2BaseY;
           return (
-            <g
-              key={skill.slug}
-              onMouseEnter={() => setHoveredSkill(i)}
-              onMouseLeave={() => setHoveredSkill(null)}
-              onClick={() => router.push(`/aixcelerator/skills/${skill.slug}`)}
-              style={{ cursor: "pointer" }}
-            >
-              <rect
-                x={skill.x}
-                y={skill.y + 228}
-                width={skill.name.length * 7 + 16}
-                height="22"
-                rx="4"
-                fill={isHovered ? "#34d399" : "transparent"}
-                opacity={isHovered ? 0.15 : 1}
-                stroke="#34d399"
-                strokeWidth={isHovered ? 1.5 : 1}
-              />
-              <text
-                x={skill.x + (skill.name.length * 7 + 16) / 2}
-                y={skill.y + 242}
-                textAnchor="middle"
-                fontSize="9"
-                fontWeight="500"
-                className="fill-zinc-700 dark:fill-zinc-300"
-              >
-                {skill.name}
-              </text>
+            <g key={skill.slug} onMouseEnter={() => setHoveredSkill(i)} onMouseLeave={() => setHoveredSkill(null)} onClick={() => router.push(`/aixcelerator/skills/${skill.slug}`)} style={{ cursor: "pointer" }}>
+              <rect x={skill.x} y={ny} width={nW} height={nH} rx="6" fill={isHovered ? (isDark ? "#DC262615" : "#DC26260A") : surface} stroke={isHovered ? "#DC2626" : border} strokeWidth={isHovered ? 1 : 0.5} style={{ transition: "stroke 0.15s, fill 0.15s" }} />
+              <text x={skill.x + nW / 2} y={ny + nH / 2 + 0.5} textAnchor="middle" dominantBaseline="middle" fontSize="9.5" fontWeight="500" fill={isHovered ? textPrimary : textSecondary} style={{ transition: "fill 0.15s" }}>{skill.name}</text>
             </g>
           );
         })}
 
-        {/* ─── Arrow between Layer 2 and 3 ─── */}
-        <line x1={svgWidth / 2} y1="322" x2={svgWidth / 2} y2="340" className="stroke-zinc-400 dark:stroke-zinc-500" strokeWidth="1" markerEnd="url(#arrowhead)" />
+        {/* Arrow */}
+        <line x1={svgWidth / 2} y1={l2Y + l2H + 2} x2={svgWidth / 2} y2={l3Y - 2} stroke={lineStroke} strokeWidth="1" />
+        <path d={`M${svgWidth / 2 - 4},${l3Y - 6} L${svgWidth / 2},${l3Y - 1} L${svgWidth / 2 + 4},${l3Y - 6}`} fill="none" stroke={lineStroke} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
 
-        {/* ─── LAYER 3: SKILL PACKAGE LIBRARY ─── */}
-        <rect x="12" y="342" width={svgWidth - 24} height="100" rx="8" fill="none" className="stroke-zinc-200 dark:stroke-zinc-700" strokeWidth="1" strokeDasharray="6,3" />
-        <text x="24" y="362" className="fill-zinc-400 dark:fill-zinc-500" fontSize="9" fontWeight="700" letterSpacing="0.12em">SKILL PACKAGE LIBRARY</text>
+        {/* ─── LAYER 3: COLLECTION LIBRARY ─── */}
+        <rect x={margin} y={l3Y} width={svgWidth - margin * 2} height={l3H} rx="10" fill={surfaceAlt} stroke={border} strokeWidth="1" />
+        <text x={margin + pad} y={l3Y + 22} fontSize="10" fontWeight="600" letterSpacing="0.08em" fill={textTertiary}>SKILL COLLECTION LIBRARY</text>
+        <line x1={margin + pad} y1={l3Y + 30} x2={svgWidth - margin - pad} y2={l3Y + 30} stroke={border} strokeWidth="0.5" />
 
         {collections.map((col, i) => {
-          const colWidth = 130;
-          const colSpacing = 143;
-          const x = 25 + i * colSpacing;
-          const y = 372;
+          const x = colStartX + i * (colW + colGap);
           const isHovered = hoveredCollection === col.slug;
-
           return (
-            <g
-              key={col.slug}
-              onClick={() => router.push(`/aixcelerator/skills/collections/${col.slug}`)}
-              onMouseEnter={() => setHoveredCollection(col.slug)}
-              onMouseLeave={() => setHoveredCollection(null)}
-              style={{ cursor: "pointer" }}
-            >
-              <rect
-                x={x}
-                y={y}
-                width={colWidth}
-                height="52"
-                rx="6"
-                className={isHovered ? "fill-zinc-100 dark:fill-zinc-800" : "fill-zinc-50 dark:fill-zinc-800/50"}
-                stroke={isHovered ? "#71717a" : ""}
-                strokeWidth={isHovered ? 1.5 : 0}
-              />
-              <rect
-                x={x}
-                y={y}
-                width={colWidth}
-                height="52"
-                rx="6"
-                fill="none"
-                className="stroke-zinc-200 dark:stroke-zinc-700"
-                strokeWidth="1"
-                strokeDasharray="4,2"
-              />
-              <text
-                x={x + colWidth / 2}
-                y={y + 20}
-                textAnchor="middle"
-                fontSize="9"
-                fontWeight="700"
-                className="fill-zinc-700 dark:fill-zinc-300"
-              >
-                {col.slug}
-              </text>
-              <text
-                x={x + colWidth / 2}
-                y={y + 36}
-                textAnchor="middle"
-                fontSize="8"
-                className="fill-zinc-400"
-              >
-                {col.skillSlugs.length} skills
-              </text>
+            <g key={col.slug} onClick={() => router.push(`/aixcelerator/skills/collections/${col.slug}`)} onMouseEnter={() => setHoveredCollection(col.slug)} onMouseLeave={() => setHoveredCollection(null)} style={{ cursor: "pointer" }}>
+              <rect x={x} y={colY} width={colW} height="52" rx="6" fill={isHovered ? (isDark ? "#DC262610" : "#DC262606") : surface} stroke={isHovered ? "#DC2626" : border} strokeWidth={isHovered ? 1 : 0.5} style={{ transition: "stroke 0.15s, fill 0.15s" }} />
+              <text x={x + colW / 2} y={colY + 20} textAnchor="middle" fontSize="10" fontWeight="600" fill={isHovered ? textPrimary : textSecondary} style={{ transition: "fill 0.15s" }}>{col.slug}</text>
+              <text x={x + colW / 2} y={colY + 38} textAnchor="middle" fontSize="8.5" fontWeight="500" fill={textTertiary}>{col.skillSlugs.length} skills</text>
             </g>
           );
         })}
 
-        {/* Legend box */}
-        <rect x="12" y="454" width="200" height="58" rx="6" className="fill-zinc-50 dark:fill-zinc-800/50" />
-        <rect x="12" y="454" width="200" height="58" rx="6" fill="none" className="stroke-zinc-200 dark:stroke-zinc-700" strokeWidth="0.5" />
-        {[
-          { shape: "circle", label: "Category", fill: "#71717a" },
-          { shape: "rect", label: "Skill", fill: "#71717a" },
-          { shape: "dashed-rect", label: "Package", fill: "#a1a1aa" },
-        ].map((item, i) => (
+        {/* Legend */}
+        <text x={margin + pad} y={legendY + 12} fontSize="9" fontWeight="600" letterSpacing="0.06em" fill={textTertiary}>LEGEND</text>
+        <line x1={margin + pad} y1={legendY + 18} x2={margin + pad + 50} y2={legendY + 18} stroke={border} strokeWidth="0.5" />
+        {[{ label: "Category" }, { label: "Skill" }, { label: "Collection" }].map((item, i) => (
           <g key={item.label}>
-            {item.shape === "circle" && <circle cx="28" cy={470 + i * 14} r="4" fill={item.fill} />}
-            {item.shape === "rect" && <rect x="24" y={466 + i * 14} width="8" height="8" rx="2" fill={item.fill} />}
-            {item.shape === "dashed-rect" && <rect x="24" y={466 + i * 14} width="8" height="8" rx="2" fill="none" stroke={item.fill} strokeDasharray="2,1" />}
-            <text x="40" y={473 + i * 14} fontSize="8" className="fill-zinc-600 dark:fill-zinc-400">{item.label}</text>
+            <rect x={margin + pad + 1} y={legendY + 26 + i * 16 - 5} width="10" height="10" rx="2" fill={surface} stroke={border} strokeWidth="0.5" />
+            <text x={margin + pad + 18} y={legendY + 26 + i * 16 + 1} dominantBaseline="middle" fontSize="9" fontWeight="500" fill={textSecondary}>{item.label}</text>
           </g>
         ))}
-        {RELATIONSHIP_TYPES.map((rel, i) => (
-          <g key={rel.type}>
-            <line x1="120" y1={470 + i * 14} x2="138" y2={470 + i * 14} className="stroke-zinc-400 dark:stroke-zinc-500" strokeWidth="1.2" strokeDasharray={rel.dash || "none"} />
-            <text x="144" y={473 + i * 14} fontSize="8" className="fill-zinc-600 dark:fill-zinc-400">{rel.label}</text>
-          </g>
-        ))}
-
-        {/* Arrowhead marker definition */}
-        <defs>
-          <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-            <path d="M0 0 L8 3 L0 6 Z" className="fill-zinc-400 dark:fill-zinc-500" />
-          </marker>
-          {/* Animated dash for edges */}
-          <style>{`
-            @keyframes dashMove { to { stroke-dashoffset: -20; } }
-            .animated-edge { animation: dashMove 2s linear infinite; }
-          `}</style>
-        </defs>
       </svg>
     </div>
   );
@@ -468,7 +361,7 @@ export default function OntologyPage({
         </div>
 
         {/* Interactive 3-Layer Architecture Diagram */}
-        <div className="reveal-scale min-w-0 rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="min-w-0 rounded-xl border border-zinc-200 bg-zinc-50 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
           <OntologyDiagram
             categoryCounts={categoryCounts}
             totalSkills={totalSkills}
@@ -480,7 +373,7 @@ export default function OntologyPage({
       {/* Architecture Explanation Cards */}
       <section className="reveal mt-12">
         <SectionHeader size="md" kicker="Architecture" title="Three-Layer Design" description="How skills are organized from abstract taxonomy to deployable packages." />
-        <div className="mt-6 stagger-grid grid gap-4 sm:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
           <div className="catalog-card p-6">
             <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">1. Skill Taxonomy</h3>
             <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Abstraction Layer</div>
@@ -541,7 +434,7 @@ export default function OntologyPage({
         <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
           Relationship Types
         </h2>
-        <div className="mt-4 stagger-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {RELATIONSHIP_TYPES.map((rel) => (
             <div key={rel.type} className="catalog-card p-5">
               <div className="flex items-center gap-2">
@@ -556,7 +449,7 @@ export default function OntologyPage({
       </section>
 
       {/* Quick links */}
-      <section className="reveal mt-12 stagger-grid grid gap-4 sm:grid-cols-3">
+      <section className="reveal mt-12 grid gap-4 sm:grid-cols-3">
         <Link href="/aixcelerator/skills/graph" className="group catalog-card p-5 text-center">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="mx-auto text-zinc-500 dark:text-zinc-400" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
           <div className="mt-2 text-sm font-bold text-zinc-900 dark:text-zinc-50">Skill Graph</div>
