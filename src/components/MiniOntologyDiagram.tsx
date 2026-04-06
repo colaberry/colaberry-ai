@@ -46,24 +46,39 @@ export default function MiniOntologyDiagram({
   const categories = config.categories.filter((c) => c.slug !== "other").slice(0, 6);
 
   /* ── SVG layout constants ── */
-  const svgWidth = 420;
-  const centerX = svgWidth / 2;
-  const hubY = 62;
-  const hubW = 120;
-  const hubH = 44;
-  const catHeight = 30;
-  const nodeGapX = 8;
-  const nodeGapY = 10;
-  const catStartY = 148;
-  const charWidth = 6.4;
-  const dotSpace = 18;
+  const hubY = 58;
+  const hubW = 110;
+  const hubH = 40;
+  const catHeight = 26;
+  const nodeGapX = 6;
+  const nodeGapY = 8;
+  const catStartY = 130;
+  const charWidth = 5.6;
+  const nodePadX = 28; // dot (10) + gap (4) + left pad (6) + right pad (8)
+  const svgMargin = 16;
 
   const catWidths = categories.map((cat) => {
     const textW = cat.label.length * charWidth;
-    return Math.max(textW + dotSpace + 18, 90);
+    return Math.max(textW + nodePadX, 80);
   });
 
   const cols = Math.min(categories.length, 3);
+  const totalRows = Math.ceil(categories.length / cols);
+
+  /* Compute row widths to derive dynamic SVG width */
+  const rowWidths: number[] = [];
+  for (let r = 0; r < totalRows; r++) {
+    const rs = r * cols;
+    const re = Math.min(rs + cols, categories.length);
+    let w = 0;
+    for (let j = rs; j < re; j++) w += catWidths[j];
+    w += (re - rs - 1) * nodeGapX;
+    rowWidths.push(w);
+  }
+  const maxRowWidth = Math.max(...rowWidths, 0);
+  const svgWidth = Math.max(maxRowWidth + svgMargin * 2, hubW + svgMargin * 2, 340);
+  const centerX = svgWidth / 2;
+
   const catPositions = categories.map((_, i) => {
     const row = Math.floor(i / cols);
     const col = i % cols;
@@ -79,8 +94,7 @@ export default function MiniOntologyDiagram({
     return { x, y };
   });
 
-  const totalRows = Math.ceil(categories.length / cols);
-  const svgHeight = catStartY + totalRows * (catHeight + nodeGapY) + 8;
+  const svgHeight = catStartY + totalRows * (catHeight + nodeGapY) + 6;
 
   /* ── Colors ── */
   const bg = isDark ? "#18181b" : "#ffffff";
@@ -115,11 +129,11 @@ export default function MiniOntologyDiagram({
         style={{ fontFamily: "Inter, system-ui, -apple-system, sans-serif" }}
       >
         {/* ── Header label ── */}
-        <text x="20" y="24" fontSize="10" fontWeight="600" letterSpacing="0.08em"
+        <text x={svgMargin} y="22" fontSize="9" fontWeight="600" letterSpacing="0.08em"
           fill={textSecondary}>
           {config.label.toUpperCase()} TAXONOMY
         </text>
-        <line x1="20" y1="34" x2={svgWidth - 20} y2="34" stroke={stroke} strokeWidth="0.5" />
+        <line x1={svgMargin} y1="30" x2={svgWidth - svgMargin} y2="30" stroke={stroke} strokeWidth="0.5" />
 
         {/* ── Connection lines — clean solid curves ── */}
         {catPositions.map((pos, i) => {
@@ -153,13 +167,13 @@ export default function MiniOntologyDiagram({
           stroke={stroke}
           strokeWidth="1"
         />
-        <text x={centerX} y={hubY - 4} textAnchor="middle" dominantBaseline="middle"
-          fontSize="14" fontWeight="700" letterSpacing="-0.02em"
+        <text x={centerX} y={hubY - 3} textAnchor="middle" dominantBaseline="middle"
+          fontSize="12" fontWeight="700" letterSpacing="-0.02em"
           fill={textPrimary}>
           {config.label}
         </text>
-        <text x={centerX} y={hubY + 12} textAnchor="middle" dominantBaseline="middle"
-          fontSize="10" fontWeight="500"
+        <text x={centerX} y={hubY + 10} textAnchor="middle" dominantBaseline="middle"
+          fontSize="9" fontWeight="500"
           fill={textSecondary}>
           {totalItems.toLocaleString()} cataloged
         </text>
@@ -192,17 +206,17 @@ export default function MiniOntologyDiagram({
               />
               {/* Category color accent dot */}
               <circle
-                cx={pos.x + 12} cy={pos.y + catHeight / 2}
-                r="3"
+                cx={pos.x + 10} cy={pos.y + catHeight / 2}
+                r="2.5"
                 fill={catColor}
                 opacity={isHovered ? 1 : 0.65}
                 style={{ transition: "opacity 0.15s" }}
               />
               {/* Label */}
               <text
-                x={pos.x + 22} y={pos.y + catHeight / 2 + 0.5}
+                x={pos.x + 18} y={pos.y + catHeight / 2 + 0.5}
                 dominantBaseline="middle"
-                fontSize="11" fontWeight="500"
+                fontSize="10" fontWeight="500"
                 fill={isHovered ? textPrimary : textSecondary}
                 style={{ transition: "fill 0.15s" }}
               >
