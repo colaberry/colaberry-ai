@@ -1515,8 +1515,8 @@ export default function Layout({ children }: { children: ReactNode }) {
 
             <div className="mt-4 flex-1 overflow-y-auto">
               {workspaceSections.map((section) => (
-                <div key={section.title} className="mb-1.5 mt-6 first:mt-0">
-                  <div role="heading" aria-level={2} className="px-2.5 pb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400">
+                <div key={section.title} className="mb-1.5 mt-7 first:mt-0">
+                  <div role="heading" aria-level={2} className="px-2.5 pb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     {section.title}
                   </div>
                   <div className="mt-1 grid gap-1">
@@ -1529,7 +1529,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                           target={link.target}
                           active={isActive}
                           onClick={() => setWorkspaceMobileRailOpen(false)}
-                          className="text-[13px] font-medium"
+                          className="text-sm font-normal"
                         >
                           {link.label}
                         </MobileLink>
@@ -1552,12 +1552,12 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {isCatalogWorkspace ? (
         <div className="w-full flex-1 transition-[grid-template-columns] duration-200 lg:grid lg:grid-cols-[var(--workspace-rail-width)_minmax(0,1fr)] lg:gap-6 lg:px-8" style={workspaceGridStyle}>
-          <aside className="hidden border-r border-zinc-200/60 dark:border-zinc-800 lg:block" aria-label="Catalog navigation">
-            <div className="sticky max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto pb-6 will-change-[transform]" style={{ top: "var(--site-header-height)" }}>
-              <div className="px-4 py-5 pr-5">
+          <aside className="hidden border-r border-zinc-200 dark:border-zinc-800 lg:block" aria-label="Catalog navigation">
+            <div className="sidebar-scroll sticky max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto pb-6 will-change-[transform]" style={{ top: "var(--site-header-height)" }}>
+              <div className="px-5 py-5">
                 {workspaceSections.map((section) => (
-                  <div key={section.title} className="mb-1.5 mt-6 first:mt-0">
-                    <div role="heading" aria-level={2} aria-label={section.title} className={`px-2.5 pb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400 ${workspaceRailCollapsed ? "text-center" : ""}`}>
+                  <div key={section.title} className="mb-1.5 mt-7 first:mt-0">
+                    <div role="heading" aria-level={2} aria-label={section.title} className={`px-2.5 pb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 ${workspaceRailCollapsed ? "text-center" : ""}`}>
                       <span aria-hidden={workspaceRailCollapsed ? "true" : undefined}>{workspaceRailCollapsed ? section.title.charAt(0) : section.title}</span>
                     </div>
                     <div className="mt-1 grid gap-1">
@@ -1571,10 +1571,10 @@ export default function Layout({ children }: { children: ReactNode }) {
                             rel={getLinkRel(link.target)}
                             title={workspaceRailCollapsed ? link.label : undefined}
                             aria-current={isActive ? "page" : undefined}
-                            className={`focus-ring flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] transition-colors duration-150 ${
+                            className={`focus-ring flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors duration-150 ${
                               isActive
-                                ? "nav-active-indicator bg-zinc-100 font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50"
-                                : "font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-200"
+                                ? "nav-active-indicator bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50"
+                                : "font-normal text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-200"
                             } ${workspaceRailCollapsed ? "justify-center" : ""}`}
                           >
                             <span aria-hidden="true" className={`inline-flex h-5 w-5 shrink-0 items-center justify-center ${isActive ? "text-zinc-900 dark:text-zinc-50" : "text-zinc-500 dark:text-zinc-400"}`}>
@@ -1986,7 +1986,7 @@ function MobileLink({
     "hover:bg-zinc-50",
     "dark:text-zinc-200",
     "dark:hover:bg-zinc-800/70",
-    active ? "nav-active-indicator bg-zinc-100 font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50" : "",
+    active ? "nav-active-indicator bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50" : "",
     className,
   ]
     .filter(Boolean)
