@@ -44,10 +44,20 @@ All 5 content types use these templates with a `ContentOntologyConfig`:
 
 ## SVG Ontology Diagrams
 
+**Full-page ontology** (`OntologyPageTemplate`):
 - viewBox `940x680`, category nodes `140x36`, central pill `120x38`
 - `feDropShadow` filters for node shadows
 - Font scale: layer labels 11px/700, category nodes 11.5px/600, minimum 9.5px (tags only)
 - Category nodes use `config.categoryColors` with opacity fills (0.06 default, 0.15 hover)
+
+**Mini taxonomy diagram** (`MiniOntologyDiagram`):
+- Flat bordered card — no glassmorphism, no backdrop-blur, no feDropShadow
+- viewBox `420×dynamic`, hub pill `120x44`, category nodes `30px` height
+- Solid thin bezier connection lines (0.75px default, 1.5px hover)
+- Zinc-monochrome palette: `surfaceFill` for nodes, `lineStroke` for connections
+- Category color accent dots (3px radius) with `config.categoryColors`
+- CSS: `.mini-ontology-card` (flat bordered card), `.mini-ontology-explore-link` (hover-reveal pill)
+- Hover: category color tint fill + highlighted connection line
 
 ---
 
