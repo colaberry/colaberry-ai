@@ -352,11 +352,18 @@ export default function OntologyPage({
             title="Skill Ontology"
             description="Skill Ontology organizes individual skills into a structured, composable network, enabling agents to reason, plan, and execute complex tasks as an extensible, maintainable capability system."
           />
-          <div className="mt-6 rounded-xl border border-zinc-200/80 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
-            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              <span className="mr-1.5 inline-block rounded bg-[#DC2626]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#DC2626] dark:text-[#F87171]">How it works</span>
-              When querying for a task, the system traverses this graph to identify the necessary collections and skills to construct a capable agent.
-            </p>
+          <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-zinc-950/30">
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-[#DC2626]/10 dark:bg-[#DC2626]/15">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-[#DC2626] dark:text-[#F87171]" aria-hidden="true"><path d="M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </span>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#DC2626] dark:text-[#F87171]">How it works</span>
+                <p className="mt-1 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  When querying for a task, the system traverses this graph to identify the necessary collections and skills to construct a capable agent.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -374,56 +381,89 @@ export default function OntologyPage({
       <section className="reveal mt-12">
         <SectionHeader size="md" kicker="Architecture" title="Three-Layer Design" description="How skills are organized from abstract taxonomy to deployable packages." />
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <div className="catalog-card p-6">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">1. Skill Taxonomy</h3>
-            <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Abstraction Layer</div>
-            <p className="mt-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-              The top layer defines the broad categorization and detailed tags of skills. It organizes capabilities into categories such as:
-            </p>
-            <ul className="mt-2 space-y-1 text-xs text-zinc-500 dark:text-zinc-400">
-              <li>Development, AI & Generation, Testing</li>
-              <li>Research, Data & Science</li>
-              <li>Business, Productivity, Security</li>
-            </ul>
-            <div className="mt-3 text-[10px] text-zinc-400">
-              Purpose: Classification & Vocabulary — <span className="font-semibold">{catCount} categories</span>, <span className="font-semibold">{topTags.length}+ tags</span>
+          <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
+            <div className="p-6">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">1</span>
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">Skill Taxonomy</h3>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Abstraction Layer</div>
+                </div>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                The top layer defines the broad categorization and detailed tags of skills. It organizes capabilities into categories such as:
+              </p>
+              <ul className="mt-2 space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                {SKILL_CATEGORIES.filter((c) => c.slug !== "other").slice(0, 3).map((cat) => (
+                  <li key={cat.slug} className="flex items-center gap-2">
+                    <span className="h-1 w-1 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+                    {cat.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="border-t border-zinc-200/60 bg-zinc-50/80 px-6 py-2.5 dark:border-zinc-700/50 dark:bg-zinc-800/30">
+              <div className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                Classification & Vocabulary — <span className="font-semibold text-zinc-700 dark:text-zinc-300">{catCount} categories</span>, <span className="font-semibold text-zinc-700 dark:text-zinc-300">{topTags.length}+ tags</span>
+              </div>
             </div>
           </div>
 
-          <div className="catalog-card p-6">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">2. Skill Relation Graph</h3>
-            <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Semantic Layer</div>
-            <p className="mt-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-              The middle layer instantiates specific skills and defines how they interact. It maps relationships using edges like:
-            </p>
-            <ul className="mt-2 space-y-1 text-xs text-zinc-500 dark:text-zinc-400">
-              <li>compose_with: Combining patterns</li>
-              <li>similar_to: Mapping alternatives</li>
-              <li>depend_on: Establishing prerequisites</li>
-              <li>belong_to: Sub-component within a larger skill</li>
-            </ul>
-            <div className="mt-3 text-[10px] text-zinc-400">
-              Purpose: Reasoning & Composition — <span className="font-semibold">{totalSkills.toLocaleString()} skills</span>, <span className="font-semibold">4 relationship types</span>
+          <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
+            <div className="p-6">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">2</span>
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">Skill Relation Graph</h3>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Semantic Layer</div>
+                </div>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                The middle layer instantiates specific skills and defines how they interact. It maps relationships using edges like:
+              </p>
+              <ul className="mt-2 space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                {RELATIONSHIP_TYPES.map((rel) => (
+                  <li key={rel.type} className="flex items-center gap-2">
+                    <span className="h-1 w-1 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+                    {rel.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="border-t border-zinc-200/60 bg-zinc-50/80 px-6 py-2.5 dark:border-zinc-700/50 dark:bg-zinc-800/30">
+              <div className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                Reasoning & Composition — <span className="font-semibold text-zinc-700 dark:text-zinc-300">{totalSkills.toLocaleString()} skills</span>, <span className="font-semibold text-zinc-700 dark:text-zinc-300">4 relationship types</span>
+              </div>
             </div>
           </div>
 
-          <div className="catalog-card p-6">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">3. Skill Collection</h3>
-            <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Execution Layer</div>
-            <p className="mt-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-              Groups related skills into deployable units. These are the actual functional toolkits agents load at runtime. Examples:
-            </p>
-            <ul className="mt-2 space-y-1 text-xs text-zinc-500 dark:text-zinc-400">
-              {SKILL_COLLECTIONS.slice(0, 4).map((col) => (
-                <li key={col.slug}>
-                  <Link href={`/aixcelerator/skills/collections/${col.slug}`} className="hover:text-zinc-900 dark:hover:text-zinc-200">
-                    {col.slug}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-3 text-[10px] text-zinc-400">
-              Purpose: Deployment & Execution — <span className="font-semibold">{totalCollections} collections</span>, <span className="font-semibold">{totalCollectionSkills} skills</span>
+          <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
+            <div className="p-6">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">3</span>
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">Skill Collection</h3>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Execution Layer</div>
+                </div>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                Groups related skills into deployable units. These are the actual functional toolkits agents load at runtime:
+              </p>
+              <ul className="mt-2 space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                {SKILL_COLLECTIONS.slice(0, 4).map((col) => (
+                  <li key={col.slug} className="flex items-center gap-2">
+                    <span className="h-1 w-1 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+                    <Link href={`/aixcelerator/skills/collections/${col.slug}`} className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-200">
+                      {col.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="border-t border-zinc-200/60 bg-zinc-50/80 px-6 py-2.5 dark:border-zinc-700/50 dark:bg-zinc-800/30">
+              <div className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                Deployment & Execution — <span className="font-semibold text-zinc-700 dark:text-zinc-300">{totalCollections} collections</span>, <span className="font-semibold text-zinc-700 dark:text-zinc-300">{totalCollectionSkills} skills</span>
+              </div>
             </div>
           </div>
         </div>
@@ -431,18 +471,21 @@ export default function OntologyPage({
 
       {/* Relationship Types Section */}
       <section className="reveal mt-12">
-        <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-          Relationship Types
-        </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <SectionHeader size="md" kicker="Edges" title="Relationship Types" description="How skills connect and depend on each other within the ontology." />
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {RELATIONSHIP_TYPES.map((rel) => (
-            <div key={rel.type} className="catalog-card p-5">
-              <div className="flex items-center gap-2">
-                <span className="inline-block h-3 w-3 rounded-full bg-zinc-400 dark:bg-zinc-500" />
-                <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{rel.label}</span>
+            <div key={rel.type} className="catalog-card overflow-hidden p-0">
+              <div className="h-0.5 bg-[#DC2626]/30 dark:bg-[#F87171]/20" />
+              <div className="p-5">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-zinc-500 dark:text-zinc-400" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </span>
+                  <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{rel.label}</span>
+                </div>
+                <code className="mt-2 inline-block rounded bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">{rel.type}</code>
+                <p className="mt-2.5 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{rel.description}</p>
               </div>
-              <code className="mt-1 block text-xs text-zinc-500 dark:text-zinc-400">{rel.type}</code>
-              <p className="mt-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{rel.description}</p>
             </div>
           ))}
         </div>
