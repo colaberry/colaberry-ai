@@ -1505,9 +1505,9 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {isCatalogWorkspace ? (
         <div className="w-full flex-1 lg:grid lg:grid-cols-[var(--workspace-rail-width)_minmax(0,1fr)] lg:gap-6 lg:px-8" style={workspaceGridStyle}>
-          <aside className="hidden lg:block" aria-label="Catalog navigation">
-            <div className="sticky pb-6" style={{ top: "var(--site-header-height)", height: "calc(100dvh - var(--site-header-height))" }}>
-              <div className="h-full overflow-y-auto px-3 py-4" style={{ maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)" }}>
+          <aside className="hidden border-r border-zinc-200/60 dark:border-zinc-800 lg:block" aria-label="Catalog navigation">
+            <div className="sticky max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto pb-6" style={{ top: "var(--site-header-height)" }}>
+              <div className="px-4 py-5 pr-5">
                 {workspaceSections.map((section) => (
                   <div key={section.title} className="mb-1.5 mt-6 first:mt-0">
                     <div className={`px-2.5 pb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400 dark:text-zinc-500 ${workspaceRailCollapsed ? "text-center" : ""}`}>
