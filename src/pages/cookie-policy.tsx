@@ -23,7 +23,7 @@ export default function CookiePolicyPage() {
           "description": "Colaberry AI cookie policy with cookie categories and user preference controls.",
           "url": buildCanonical("/cookie-policy"),
           "publisher": { "@type": "Organization", "name": "Colaberry AI" },
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       <section className="mx-auto w-full max-w-4xl">

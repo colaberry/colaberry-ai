@@ -59,6 +59,15 @@ export default function PodcastPlayer({
     const inject = () => {
       if (!containerRef.current) return;
 
+      // Security: only allow Buzzsprout embed HTML — reject anything else
+      const BUZZSPROUT_EMBED_RE =
+        /^<div\s[^>]*id=["']buzzsprout-player-[^"']+["'][^>]*><\/div>[\s\S]*<script\s[^>]*src=["']https:\/\/www\.buzzsprout\.com\/[^"']+["'][^>]*><\/script>\s*$/;
+      if (!BUZZSPROUT_EMBED_RE.test(embedCode.trim())) {
+        console.warn("PodcastPlayer: rejected non-Buzzsprout embed code");
+        setLoading(false);
+        return;
+      }
+
       containerRef.current.innerHTML = embedCode;
 
       const scripts = Array.from(containerRef.current.querySelectorAll("script"));

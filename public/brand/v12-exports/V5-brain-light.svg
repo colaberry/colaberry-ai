@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 80" width="380" height="80">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&amp;display=swap');
+    text { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+  <!-- V5 Brain (Light) -->
+  <text x="0" y="48" font-size="48" font-weight="600" fill="#357895" letter-spacing="-0.03em">C</text>
+  <circle cx="24" cy="30" r="7" fill="#357895"/>
+  <line x1="24" y1="23" x2="24" y2="19" stroke="#18181B" stroke-width="1.3" stroke-linecap="round"/>
+  <circle cx="50" cy="36" r="11" fill="#357895"/>
+  <line x1="50" y1="25" x2="50" y2="19" stroke="#18181B" stroke-width="1.8" stroke-linecap="round"/>
+  <text x="64" y="48" font-size="48" font-weight="600" fill="#357895" letter-spacing="-0.03em">laberry</text>
+  <!-- A with EEG brainwave crossbar -->
+  <text x="198" y="48" font-size="48" font-weight="800" fill="#18181B" letter-spacing="-0.03em">A</text>
+  <path d="M254 28 L258 28 L260 23 L262 33 L264 25 L266 30 L268 26 L270 28 L274 28 L276 24 L278 31 L280 28 L284 28" stroke="#357895" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.6"/>
+  <!-- I with brain-node tittle -->
+  <text x="236" y="48" font-size="48" font-weight="800" fill="#18181B" letter-spacing="-0.03em">I</text>
+  <circle cx="296" cy="4" r="6" fill="#357895" opacity="0.15"/>
+  <circle cx="296" cy="4" r="4" fill="#357895" opacity="0.7"/>
+  <line x1="292" y1="0" x2="288" y2="-3" stroke="#357895" stroke-width="1" opacity="0.4"/>
+  <line x1="300" y1="0" x2="304" y2="-3" stroke="#357895" stroke-width="1" opacity="0.4"/>
+  <!-- Research [DNA helix] Labs -->
+  <text x="0" y="74" font-size="11" font-weight="500" fill="#A1A1AA" letter-spacing="0.2em">RESEARCH</text>
+  <path d="M84 64 Q92 69 100 64" stroke="#357895" stroke-width="1.2" fill="none" opacity="0.5"/>
+  <path d="M84 64 Q92 59 100 64" stroke="#357895" stroke-width="1.2" fill="none" opacity="0.5"/>
+  <line x1="84" y1="64" x2="84" y2="76" stroke="#357895" stroke-width="0.8" opacity="0.3"/>
+  <line x1="100" y1="64" x2="100" y2="76" stroke="#357895" stroke-width="0.8" opacity="0.3"/>
+  <text x="106" y="74" font-size="11" font-weight="500" fill="#A1A1AA" letter-spacing="0.2em">LABS</text>
+</svg>

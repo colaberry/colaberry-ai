@@ -53,7 +53,7 @@ export default function DemoLens() {
               url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/demo/lens`,
               applicationCategory: "BusinessApplication",
               operatingSystem: "Web",
-            }),
+            }).replace(/</g, "\\u003c"),
           }}
         />
         <link rel="preconnect" href={VTON_DEMO_URL} crossOrigin="anonymous" />

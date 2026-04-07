@@ -1,3 +1,9 @@
+---
+name: refactor
+description: Safe refactoring workflow that reads before writing, plans before editing, and verifies after each change
+user-invocable: true
+---
+
 # Safe Refactor
 
 Safe refactoring workflow that reads before writing, plans before editing, and verifies after each change.

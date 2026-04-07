@@ -1,0 +1,18 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- V32R: The Kola Brain — Refined Mark (Dark) -->
+
+  <!-- Outer circle -->
+  <circle cx="24" cy="24" r="19" fill="none" stroke="#FAFAFA" stroke-width="2.5"/>
+
+  <!-- Vertical S-curve division — thickened -->
+  <path d="M 24 5.5 Q 21.5 14, 24 24 Q 26.5 34, 24 42.5" fill="none" stroke="#FAFAFA" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- Horizontal S-curve division — thickened -->
+  <path d="M 5.5 24 Q 14 21.5, 24 24 Q 34 26.5, 42.5 24" fill="none" stroke="#FAFAFA" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- Calyx/stem nub -->
+  <path d="M 24 5 L 23.5 2.5 Q 24 1.5, 25 2.8" fill="none" stroke="#FAFAFA" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Neural spark — coral accent -->
+  <circle cx="31" cy="15" r="2.5" fill="#F87171"/>
+</svg>

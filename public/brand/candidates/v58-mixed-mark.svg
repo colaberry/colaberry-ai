@@ -1,0 +1,47 @@
+<!-- V58 Mixed Mark — ColaberryAI Research Labs -->
+<!-- Large C-berry: OUTLINED with brain segments | Small o-berry: SOLID CORAL FILLED -->
+<!-- Light variant — #18181B strokes, #DC2626 fill accent -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+
+  <!-- ─── Large C-berry: Outlined circle with kola brain divisions ─── -->
+  <circle cx="16" cy="24" r="13" stroke="#18181B" stroke-width="2.6" fill="none"/>
+
+  <!-- Brain division: vertical S-curve -->
+  <path d="M16 11.5 C12 17, 20 21, 16 24 C12 27, 20 31, 16 36.5"
+        stroke="#18181B" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+
+  <!-- Brain division: horizontal S-curve -->
+  <path d="M3.5 24 C9 20, 13 28, 16 24 C19 20, 23 28, 28.5 24"
+        stroke="#18181B" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+
+  <!-- Calyx detail: large berry top -->
+  <line x1="14.5" y1="11.2" x2="13.8" y2="9" stroke="#18181B" stroke-width="1" stroke-linecap="round"/>
+  <line x1="17.5" y1="11.2" x2="18.2" y2="9" stroke="#18181B" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- Coral highlight dot on large berry — warmth accent -->
+  <circle cx="21" cy="19" r="1.8" fill="#DC2626"/>
+
+  <!-- ─── Small o-berry: Solid coral filled ─── -->
+  <circle cx="36" cy="28" r="8" fill="#DC2626"/>
+
+  <!-- Calyx detail: small berry top -->
+  <line x1="35" y1="20.2" x2="34.4" y2="18.5" stroke="#18181B" stroke-width="0.9" stroke-linecap="round"/>
+  <line x1="37" y1="20.2" x2="37.6" y2="18.5" stroke="#18181B" stroke-width="0.9" stroke-linecap="round"/>
+
+  <!-- ─── Connecting stem: doubles as neural pathway ─── -->
+  <path d="M18 11 C20 5, 30 5, 34 18.5"
+        stroke="#18181B" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+
+  <!-- Neural dash segment on stem — AI network clue -->
+  <path d="M22 6.5 C24 4.5, 27 4.5, 29 6"
+        stroke="#18181B" stroke-width="1.2" fill="none"
+        stroke-dasharray="2 2" stroke-linecap="round"/>
+
+  <!-- Small leaf at stem midpoint -->
+  <path d="M26 7 C24 4, 27 2, 29 5 C27 5.5, 25.5 6, 26 7Z"
+        fill="#18181B"/>
+
+  <!-- Steel blue AI node on stem -->
+  <circle cx="26" cy="13" r="1.5" fill="#357895"/>
+
+</svg>

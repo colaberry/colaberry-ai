@@ -74,7 +74,7 @@ export default function Industry({ industrySlug, industryName, agentCount, useCa
               "name": `${industryName} AI Platform | Colaberry AI`,
               "description": `${industryName} AI workspace with curated agents, MCP servers, playbooks, and case studies for enterprise teams.`,
               "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/industries/${industrySlug}`,
-            }),
+            }).replace(/</g, "\\u003c"),
           }}
         />
       </Head>

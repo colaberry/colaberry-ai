@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" width="400" height="80">
+  <!-- V24 — "Berry Dots"
+       Pure wordmark. 3 coral dots in triangular cluster replace the
+       tittle (dot) of the 'i' in "AI". At small sizes reads as a
+       single dot; at large sizes reveals a berry cluster. -->
+
+  <!-- "Colaberry" — Inter SemiBold 600 -->
+  <text x="12" y="48" font-family="Inter, system-ui, sans-serif"
+        font-weight="600" font-size="36" fill="#18181B">Colaberry</text>
+
+  <!-- "A" of AI — Inter ExtraBold 800, steel blue -->
+  <text x="225" y="48" font-family="Inter, system-ui, sans-serif"
+        font-weight="800" font-size="36" fill="#357895">A</text>
+
+  <!-- "I" of AI — rendered WITHOUT the tittle (dot) via a custom rect
+       acting as the stroke of 'I', so we can replace the dot with berries -->
+  <!-- I-stroke (vertical bar) -->
+  <rect x="252" y="22" width="4.5" height="26" rx="0.5" fill="#357895"/>
+
+  <!-- Berry cluster replacing the i-tittle — triangular arrangement -->
+  <circle cx="251.5" cy="15.5" r="2.5" fill="#DC2626"/>
+  <circle cx="256.5" cy="15.5" r="2"   fill="#DC2626"/>
+  <circle cx="254"   cy="11.5" r="2"   fill="#DC2626"/>
+
+  <!-- "RESEARCH LABS" subtitle -->
+  <text x="12" y="68" font-family="Inter, system-ui, sans-serif"
+        font-weight="500" font-size="11" letter-spacing="3" fill="#A1A1AA">RESEARCH LABS</text>
+</svg>

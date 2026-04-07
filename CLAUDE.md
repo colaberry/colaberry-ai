@@ -173,6 +173,9 @@ Reusable workflows in `.claude/skills/`:
 | `/security-audit` | Orchestrate all 7 security agents |
 | `/new-page` | Scaffold a new page following all standards |
 | `/design-logo` | Multi-agent logo design pipeline (6 phases, 8 agents) |
+| `/prd` | Brainstorm requirements, create sprint PRDs with atomic tasks |
+| `/dev` | Pick highest-priority sprint task, implement with TDD + E2E |
+| `/walkthrough` | Generate sprint review report: architecture, code walkthrough, data flow |
 
 ## Git
 - **Branch:** `dev` (main development), `Release-1.0` (production release)

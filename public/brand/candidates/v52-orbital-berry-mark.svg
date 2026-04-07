@@ -1,0 +1,42 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- V52: The Orbital Berry — Berry with scientific orbit ring (Light) -->
+  <!-- "A kola berry cradled by a C-leaf, with an atom-like orbit = Research Labs." -->
+  <!-- Discovery: 0s="sleek science mark" → 5s="the orbit wraps a berry, the C is a leaf" → 10s="berry segments = brain, orbit = atom = labs" -->
+  <!-- Triple clue: C-leaf=colaberry, brain-berry=AI/knowledge, orbit=research/science -->
+  <!-- 10 SVG elements. Enterprise-luxury. -->
+
+  <!-- 1. C-leaf arc — protective curve, thicker at base -->
+  <path d="M 32 6 C 18 2, 3 12, 3 24 C 3 36, 14 46, 30 43"
+        fill="none" stroke="#18181B" stroke-width="3.2" stroke-linecap="round"/>
+
+  <!-- 2. Berry body — the "o", center of composition -->
+  <circle cx="23" cy="24" r="12" fill="none" stroke="#18181B" stroke-width="2.4"/>
+
+  <!-- 3. Kola nut vertical division — brain hemisphere clue -->
+  <path d="M 23 12.5 Q 21 18, 23 24 Q 25 30, 23 35.5"
+        fill="none" stroke="#18181B" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- 4. Kola nut horizontal division — brain quadrants -->
+  <path d="M 11.5 24 Q 17 22, 23 24 Q 29 26, 34.5 24"
+        fill="none" stroke="#18181B" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- 5. Orbital ring — tilted ellipse around berry (atom = Research Labs clue) -->
+  <!-- 30° tilt creates dynamic energy, echoes scientific diagrams -->
+  <ellipse cx="23" cy="24" rx="18" ry="7" transform="rotate(-30 23 24)"
+           fill="none" stroke="#18181B" stroke-width="1.2" stroke-opacity="0.6"/>
+
+  <!-- 6. Electron dot A — on orbit path (upper-right) -->
+  <circle cx="38" cy="13" r="2" fill="#357895"/>
+
+  <!-- 7. Electron dot B — on orbit path (lower-left) -->
+  <circle cx="8" cy="35" r="2" fill="#357895"/>
+
+  <!-- 8. Stem — short, from berry top -->
+  <path d="M 23 12 L 25.5 7" fill="none" stroke="#18181B" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- 9. Leaf at stem tip -->
+  <ellipse cx="27.5" cy="6.5" rx="3" ry="1.2" transform="rotate(20 27.5 6.5)" fill="#18181B"/>
+
+  <!-- 10. Coral highlight — berry sheen / knowledge spark -->
+  <circle cx="28.5" cy="19" r="2.2" fill="#DC2626"/>
+</svg>

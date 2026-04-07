@@ -1,0 +1,78 @@
+<!-- V58 Mixed Lockup Dark — ColaberryAI Research Labs -->
+<!-- Dark variant — Full wordmark with mark + text -->
+<!-- Large C-berry OUTLINED #FAFAFA, small o-berry SOLID #F87171, steel blue AI -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 80" fill="none">
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  MARK — scaled to ~60px height, offset from left   -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <g transform="translate(8, 8) scale(1.3)">
+
+    <!-- Large C-berry: Outlined circle with kola brain divisions -->
+    <circle cx="16" cy="24" r="13" stroke="#FAFAFA" stroke-width="2.6" fill="none"/>
+
+    <!-- Brain division: vertical S-curve -->
+    <path d="M16 11.5 C12 17, 20 21, 16 24 C12 27, 20 31, 16 36.5"
+          stroke="#FAFAFA" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+
+    <!-- Brain division: horizontal S-curve -->
+    <path d="M3.5 24 C9 20, 13 28, 16 24 C19 20, 23 28, 28.5 24"
+          stroke="#FAFAFA" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+
+    <!-- Calyx detail: large berry -->
+    <line x1="14.5" y1="11.2" x2="13.8" y2="9" stroke="#FAFAFA" stroke-width="1" stroke-linecap="round"/>
+    <line x1="17.5" y1="11.2" x2="18.2" y2="9" stroke="#FAFAFA" stroke-width="1" stroke-linecap="round"/>
+
+    <!-- Coral highlight dot on large berry -->
+    <circle cx="21" cy="19" r="1.8" fill="#F87171"/>
+
+    <!-- Small o-berry: Solid coral filled -->
+    <circle cx="36" cy="28" r="8" fill="#F87171"/>
+
+    <!-- Calyx detail: small berry -->
+    <line x1="35" y1="20.2" x2="34.4" y2="18.5" stroke="#FAFAFA" stroke-width="0.9" stroke-linecap="round"/>
+    <line x1="37" y1="20.2" x2="37.6" y2="18.5" stroke="#FAFAFA" stroke-width="0.9" stroke-linecap="round"/>
+
+    <!-- Connecting stem / neural pathway -->
+    <path d="M18 11 C20 5, 30 5, 34 18.5"
+          stroke="#FAFAFA" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+
+    <!-- Neural dash segment -->
+    <path d="M22 6.5 C24 4.5, 27 4.5, 29 6"
+          stroke="#FAFAFA" stroke-width="1.2" fill="none"
+          stroke-dasharray="2 2" stroke-linecap="round"/>
+
+    <!-- Leaf at stem midpoint -->
+    <path d="M26 7 C24 4, 27 2, 29 5 C27 5.5, 25.5 6, 26 7Z"
+          fill="#FAFAFA"/>
+
+    <!-- Steel blue AI node -->
+    <circle cx="26" cy="13" r="1.5" fill="#357895"/>
+
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  WORDMARK — "laberry" in zinc-50, "AI" steel blue  -->
+  <!-- ═══════════════════════════════════════════════════ -->
+
+  <!-- "laberry" — continues from the mark's C and o -->
+  <text x="78" y="50"
+        font-family="'Inter', system-ui, -apple-system, sans-serif"
+        font-weight="600" font-size="38" fill="#FAFAFA"
+        letter-spacing="-0.5">laberry</text>
+
+  <!-- "AI" — steel blue accent -->
+  <text x="248" y="50"
+        font-family="'Inter', system-ui, -apple-system, sans-serif"
+        font-weight="800" font-size="38" fill="#357895"
+        letter-spacing="-0.3">AI</text>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  SUBTITLE — "RESEARCH LABS" spaced caps             -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <text x="80" y="70"
+        font-family="'Inter', system-ui, -apple-system, sans-serif"
+        font-weight="400" font-size="13" fill="#A1A1AA"
+        letter-spacing="3.5">RESEARCH LABS</text>
+
+</svg>

@@ -1,0 +1,89 @@
+<!--
+  V57 Scientific — ColaberryAI Research Labs Mark (Dark Mode)
+
+  Concept: Two kola nut berries as letterform replacements.
+  Large berry = C (left), small berry = o (right).
+  Connected by curved stem with leaf at midpoint.
+  Internal S-curve segmentation lines evoke kola nut cotyledon
+  divisions (brain hemisphere pattern = AI).
+
+  NEW: A tilted elliptical orbit ring encircles the large C-berry,
+  evoking an atom orbital. Two steel blue electron dots ride the
+  orbit path. This adds the "Research Labs = science" visual clue.
+
+  Triple-read: berries = colaberry, brain segments = AI, atom orbit = labs.
+
+  Colors: #FAFAFA white strokes, orbit at 0.4 opacity,
+          #F87171 coral accent, #357895 steel blue electrons
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" fill="none">
+
+  <!-- ============================================
+       ORBITAL RING (behind berry, rendered first)
+       Tilted ellipse around large C-berry center
+       ============================================ -->
+  <ellipse
+    cx="18" cy="26" rx="17" ry="6"
+    transform="rotate(-25 18 26)"
+    stroke="#FAFAFA" stroke-width="1" stroke-opacity="0.4"
+    stroke-linecap="round" fill="none"/>
+
+  <!-- ============================================
+       LARGE C-BERRY: outer circle
+       ============================================ -->
+  <circle cx="18" cy="26" r="12"
+    stroke="#FAFAFA" stroke-width="2.4" stroke-linecap="round"/>
+
+  <!-- Large C-berry: vertical cotyledon division (S-curve) -->
+  <path d="M18 14 C16 19.5, 20 32.5, 18 38"
+    stroke="#FAFAFA" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+
+  <!-- Large C-berry: horizontal cotyledon division (S-curve) -->
+  <path d="M6 26 C11 24, 25 28, 30 26"
+    stroke="#FAFAFA" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+
+  <!-- ============================================
+       SMALL O-BERRY: outer circle
+       ============================================ -->
+  <circle cx="38" cy="30" r="7.5"
+    stroke="#FAFAFA" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- ============================================
+       CURVED STEM connecting berries at top
+       ============================================ -->
+  <path d="M18 14 C20 7, 32 10, 38 22.5"
+    stroke="#FAFAFA" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+
+  <!-- Leaf at stem midpoint -->
+  <ellipse cx="28" cy="11" rx="3.5" ry="1.5"
+    transform="rotate(-30 28 11)" fill="#FAFAFA"/>
+
+  <!-- ============================================
+       CALYX MARKS: large berry (top)
+       ============================================ -->
+  <path d="M16 14.5 L16.5 12 M18 14 L18 11.5 M20 14.5 L19.5 12"
+    stroke="#FAFAFA" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- Calyx marks: small berry (top) -->
+  <path d="M37 23 L37 21 M39 23 L39 21"
+    stroke="#FAFAFA" stroke-width="0.9" stroke-linecap="round"/>
+
+  <!-- ============================================
+       ELECTRON DOTS on orbital path
+       Positioned at approximate orbit extremes
+       ============================================ -->
+
+  <!-- Electron A: upper-right region of orbit -->
+  <circle cx="32" cy="18" r="2" fill="#357895"/>
+
+  <!-- Electron B: lower-left region of orbit -->
+  <circle cx="4" cy="34" r="2" fill="#357895"/>
+
+  <!-- ============================================
+       ACCENT DOTS
+       ============================================ -->
+
+  <!-- Coral accent dot on large berry (upper-right quadrant) -->
+  <circle cx="23" cy="21" r="1.8" fill="#F87171"/>
+
+</svg>

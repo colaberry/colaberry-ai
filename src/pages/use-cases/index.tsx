@@ -166,7 +166,7 @@ export default function UseCasesPage({ useCases, allowPrivate, fetchError }: Use
               "name": "Colaberry AI Use Cases",
               "description": "Discover enterprise AI use cases with structured context across industries, outcomes, and implementation patterns.",
               "url": canonicalUrl,
-            }),
+            }).replace(/</g, "\\u003c"),
           }}
         />
       </Head>

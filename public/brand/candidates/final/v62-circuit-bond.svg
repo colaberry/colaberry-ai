@@ -1,0 +1,62 @@
+<svg width="720" height="210" viewBox="0 0 720 210" xmlns="http://www.w3.org/2000/svg">
+  <!-- V62: Circuit Bond — AI as circuit trace between berries -->
+  <!-- Aha: "The bond between the berries is a circuit — they're computing together" -->
+  <!-- Research Labs: signal bars + molecular-style o-berry -->
+
+  <!-- C-berry (open ring) -->
+  <circle cx="78" cy="88" r="42" fill="none" stroke="#357895" stroke-width="10"
+    stroke-linecap="round"
+    stroke-dasharray="220 48" stroke-dashoffset="16"/>
+
+  <!-- o-berry (closed ring) with subtle inner dot (atom/node) -->
+  <circle cx="138" cy="100" r="20" fill="none" stroke="#357895" stroke-width="10"/>
+  <circle cx="138" cy="100" r="3" fill="#357895"/>
+
+  <!-- Stem: clean engineered Bezier -->
+  <path d="M65 55 C 85 22, 125 22, 145 68" fill="none" stroke="#357895" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Leaf -->
+  <path d="M102 24 C 110 14, 126 18, 120 30 C 114 40, 98 36, 102 24 Z" fill="#357895"/>
+
+  <!-- AI circuit trace: connects from C-berry right gap to o-berry -->
+  <!-- This is the "aha" — a clean circuit path linking the two berries at their junction -->
+  <path d="M118 82 L126 82 L126 88 L130 88" stroke="#357895" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="118" cy="82" r="2" fill="#357895"/>
+  <circle cx="130" cy="88" r="2" fill="#357895"/>
+
+  <!-- Tiny pulse dot on C-berry (inner, at 2 o'clock) — "data flowing" -->
+  <circle cx="108" cy="62" r="2.5" fill="#357895" opacity="0.6"/>
+
+  <!-- "laberry" -->
+  <text x="172" y="118" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="62" font-weight="400" letter-spacing="-0.5" fill="#357895">laberry</text>
+
+  <!-- "AI" -->
+  <text x="444" y="118" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="62" font-weight="700" letter-spacing="-2" fill="#357895">AI</text>
+
+  <!-- Divider -->
+  <line x1="120" y1="155" x2="540" y2="155" stroke="#E4E4E7" stroke-width="1"/>
+
+  <!-- Left signal bars -->
+  <g transform="translate(148, 145)">
+    <rect x="0" y="7" width="1.5" height="3" rx="0.5" fill="#357895"/>
+    <rect x="4" y="4" width="1.5" height="6" rx="0.5" fill="#357895"/>
+    <rect x="8" y="1" width="1.5" height="9" rx="0.5" fill="#357895"/>
+    <rect x="12" y="4" width="1.5" height="6" rx="0.5" fill="#357895"/>
+    <circle cx="19" cy="7.5" r="1.5" fill="#357895"/>
+  </g>
+
+  <!-- "RESEARCH LABS" -->
+  <text x="188" y="160" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="22" font-weight="300" letter-spacing="5.5" fill="#52525B">RESEARCH LABS</text>
+
+  <!-- Right signal bars -->
+  <g transform="translate(478, 145)">
+    <circle cx="0" cy="7.5" r="1.5" fill="#357895"/>
+    <rect x="5" y="4" width="1.5" height="6" rx="0.5" fill="#357895"/>
+    <rect x="9" y="1" width="1.5" height="9" rx="0.5" fill="#357895"/>
+    <rect x="13" y="4" width="1.5" height="6" rx="0.5" fill="#357895"/>
+    <rect x="17" y="7" width="1.5" height="3" rx="0.5" fill="#357895"/>
+  </g>
+</svg>

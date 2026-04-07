@@ -8,7 +8,7 @@ import SectionHeader from "../../../components/SectionHeader";
 import StatePanel from "../../../components/StatePanel";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GetStaticProps } from "next";
-import { Skill, fetchSkills } from "../../../lib/cms";
+import { Skill, fetchSkills, fetchCatalogCounts } from "../../../lib/cms";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../../lib/seo";
@@ -38,11 +38,14 @@ export const getStaticProps: GetStaticProps<SkillsPageProps> = async () => {
   const visibilityFilter = allowPrivate ? undefined : "public";
 
   try {
-    const raw = await fetchSkills(visibilityFilter, { maxRecords: PAGE_SIZE + 1 });
+    const [raw, counts] = await Promise.all([
+      fetchSkills(visibilityFilter, { maxRecords: PAGE_SIZE + 1 }),
+      fetchCatalogCounts(visibilityFilter).catch(() => ({ agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0 })),
+    ]);
     const skills = raw.slice(0, PAGE_SIZE).map(toSkillListItem);
     const initialHasMore = raw.length > PAGE_SIZE;
     return {
-      props: { skills, allowPrivate, fetchError: false, totalCount: skills.length, initialHasMore },
+      props: { skills, allowPrivate, fetchError: false, totalCount: counts.skills || skills.length, initialHasMore },
       revalidate: 600,
     };
   } catch {
@@ -143,15 +146,15 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
   }, [allSkills]);
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
-  const metaTitle = "16,900+ AI Skills — Reusable Capability Library | Colaberry AI";
-  const metaDescription =
-    "Explore 16,900+ reusable AI skills across workflow, domain, and orchestration categories. Enterprise-grade discovery with structured metadata for agents and LLMs.";
+  const countLabel = catalogTotal > 0 ? `${catalogTotal.toLocaleString()}+` : "";
+  const metaTitle = `${countLabel} AI Skills — Reusable Capability Library | Colaberry AI`;
+  const metaDescription = `Explore ${countLabel} reusable AI skills across workflow, domain, and orchestration categories. Enterprise-grade discovery with structured metadata for agents and LLMs.`;
   const seoMeta: SeoMeta = {
     title: metaTitle,
     description: metaDescription,
     canonical: buildCanonical("/aixcelerator/skills"),
     ogImage: "/og/skills.png",
-    ogImageAlt: "Colaberry AI — 16,900+ reusable AI skills library",
+    ogImageAlt: `Colaberry AI — ${countLabel} reusable AI skills library`,
   };
   const canonicalUrl = seoMeta.canonical!;
   const jsonLd = {
@@ -294,7 +297,7 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
         {seoTags(seoMeta).map(({ key, ...props }) => (
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
 
       {fetchError && (

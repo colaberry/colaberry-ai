@@ -1,0 +1,17 @@
+<svg viewBox="0 0 520 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- V39: The Segmented O — Dark Mode Lockup -->
+  <rect width="520" height="80" fill="#09090B"/>
+
+  <text x="0" y="48" font-family="Inter, sans-serif" font-weight="600" font-size="42" fill="#FAFAFA">C</text>
+
+  <!-- Segmented Berry "o" -->
+  <g>
+    <circle cx="52" cy="36" r="11" fill="none" stroke="#F87171" stroke-width="2.5"/>
+    <path d="M 52 27 Q 50.5 32, 52 36 Q 53.5 40, 52 45" fill="none" stroke="#F87171" stroke-width="0.9" stroke-linecap="round"/>
+    <path d="M 43 36 Q 48 34.5, 52 36 Q 56 37.5, 61 36" fill="none" stroke="#F87171" stroke-width="0.9" stroke-linecap="round"/>
+  </g>
+
+  <text x="66" y="48" font-family="Inter, sans-serif" font-weight="600" font-size="42" fill="#FAFAFA">laberry</text>
+  <text x="295" y="48" font-family="Inter, sans-serif" font-weight="800" font-size="42" fill="#357895">AI</text>
+  <text x="350" y="48" font-family="Inter, sans-serif" font-weight="400" font-size="14" fill="#A1A1AA" letter-spacing="3">RESEARCH LABS</text>
+</svg>

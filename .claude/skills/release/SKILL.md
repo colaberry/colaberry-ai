@@ -1,3 +1,9 @@
+---
+name: release
+description: Pre-deployment verification including tsc, lint, build, security scan, and console.log cleanup
+user-invocable: true
+---
+
 # Release Checklist
 
 Pre-deployment verification checklist. Run this before pushing to `dev` or merging to `main`.

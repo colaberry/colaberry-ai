@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@700;800&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- Letter C — rounded geometric -->
+  <text x="6" y="36"
+        font-family="'Nunito Sans', 'Inter', system-ui, sans-serif"
+        font-weight="800"
+        font-size="32"
+        fill="#18181B">C</text>
+
+  <!-- Letter o — overlapping inside the C opening -->
+  <text x="22" y="34"
+        font-family="'Nunito Sans', 'Inter', system-ui, sans-serif"
+        font-weight="700"
+        font-size="22"
+        fill="#357895">o</text>
+
+  <!-- Berry detail: two small berries at the top of the "o" -->
+  <circle cx="30" cy="13" r="2" fill="#DC2626"/>
+  <circle cx="34.5" cy="11.5" r="2" fill="#DC2626"/>
+
+  <!-- Berry leaf -->
+  <path d="M32 12 C32 8, 36 7, 36 7 C36 7, 34 10, 32 12Z"
+        fill="#357895"/>
+
+  <!-- Tiny stem connecting berries to leaf -->
+  <line x1="32" y1="12" x2="31" y2="15" stroke="#357895" stroke-width="0.8" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,28 @@
+<svg viewBox="0 0 540 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- V32R: The Kola Brain — Refined Lockup (Light) -->
+
+  <!-- Mark at left, vertically centered -->
+  <g transform="translate(8, 16)">
+    <!-- Outer circle -->
+    <circle cx="24" cy="24" r="19" fill="none" stroke="#18181B" stroke-width="2.5"/>
+
+    <!-- Vertical S-curve — thickened -->
+    <path d="M 24 5.5 Q 21.5 14, 24 24 Q 26.5 34, 24 42.5" fill="none" stroke="#18181B" stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- Horizontal S-curve — thickened -->
+    <path d="M 5.5 24 Q 14 21.5, 24 24 Q 34 26.5, 42.5 24" fill="none" stroke="#18181B" stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- Calyx/stem nub -->
+    <path d="M 24 5 L 23.5 2.5 Q 24 1.5, 25 2.8" fill="none" stroke="#18181B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Neural spark -->
+    <circle cx="31" cy="15" r="2.5" fill="#DC2626"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="62" y="48" font-family="Inter, sans-serif" font-weight="600" font-size="36" fill="#18181B">Colaberry</text>
+  <text x="300" y="48" font-family="Inter, sans-serif" font-weight="800" font-size="36" fill="#357895">AI</text>
+
+  <!-- Subtitle -->
+  <text x="348" y="48" font-family="Inter, sans-serif" font-weight="400" font-size="11" fill="#52525B" letter-spacing="3">RESEARCH LABS</text>
+</svg>

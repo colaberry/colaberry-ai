@@ -1,0 +1,47 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- V51: The Berry Branch — Two berries on a C-shaped branch (Light) -->
+  <!-- "A branch that curves like a C, bearing two kola berries — parent and child." -->
+  <!-- Discovery: 0s="elegant botanical mark" → 5s="the branch is a C, the big berry is an o" → 10s="berries have brain segments inside" -->
+  <!-- Berry cluster solves the "bomb" problem — multiple berries = clearly fruit, not projectile -->
+  <!-- 11 SVG elements. Enterprise-luxury. -->
+
+  <!-- 1. C-branch — thick organic curve from top-right sweeping down and around -->
+  <!-- This IS the letter C and a botanical branch simultaneously -->
+  <path d="M 34 6 C 20 2, 5 10, 3 24 C 1 38, 12 46, 26 44"
+        fill="none" stroke="#18181B" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- 2. Primary berry (the "o") — large, center of composition -->
+  <circle cx="22" cy="26" r="11" fill="none" stroke="#18181B" stroke-width="2.4"/>
+
+  <!-- 3. Secondary berry — smaller, above-right, on the branch -->
+  <circle cx="34" cy="14" r="6.5" fill="none" stroke="#18181B" stroke-width="2"/>
+
+  <!-- 4. Primary berry kola division — vertical S-curve (brain hemisphere) -->
+  <path d="M 22 15.5 Q 20 21, 22 26 Q 24 31, 22 36.5"
+        fill="none" stroke="#18181B" stroke-width="1.6" stroke-linecap="round"/>
+
+  <!-- 5. Primary berry kola division — horizontal S-curve (brain quadrants) -->
+  <path d="M 11.5 26 Q 17 24, 22 26 Q 27 28, 32.5 26"
+        fill="none" stroke="#18181B" stroke-width="1.6" stroke-linecap="round"/>
+
+  <!-- 6. Secondary berry kola division — vertical (smaller, simpler) -->
+  <path d="M 34 8 Q 33 11, 34 14 Q 35 17, 34 20"
+        fill="none" stroke="#18181B" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- 7. Branch connector — short spur from main C-branch to primary berry top -->
+  <path d="M 12 11 Q 15 13, 18 15.5"
+        fill="none" stroke="#18181B" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- 8. Neural link — thin line connecting the two berries (AI/network clue) -->
+  <path d="M 29 19 Q 31 22, 32 18"
+        fill="none" stroke="#18181B" stroke-width="0.9" stroke-linecap="round" stroke-dasharray="1.5 1.5"/>
+
+  <!-- 9. Leaf on branch — small, organic, at the curve apex -->
+  <ellipse cx="8" cy="7.5" rx="3.5" ry="1.5" transform="rotate(-30 8 7.5)" fill="#18181B"/>
+
+  <!-- 10. Coral highlight — on primary berry (knowledge spark) -->
+  <circle cx="27" cy="21" r="2.2" fill="#DC2626"/>
+
+  <!-- 11. Steel blue AI node — on secondary berry (intelligence signal) -->
+  <circle cx="37" cy="11.5" r="1.6" fill="#357895"/>
+</svg>

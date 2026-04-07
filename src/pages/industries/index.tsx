@@ -110,7 +110,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
               description:
                 "Industry-specific AI workspaces for agents, MCP patterns, use cases, and measurable outcomes.",
               url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/industries`,
-            }),
+            }).replace(/</g, "\\u003c"),
           }}
         />
       </Head>

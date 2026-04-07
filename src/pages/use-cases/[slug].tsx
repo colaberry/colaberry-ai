@@ -128,9 +128,9 @@ export default function UseCaseDetailPage({ useCase, allowPrivate }: UseCaseDeta
         {seoTags(seoMeta).map(({ key, ...props }) => (
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle).replace(/</g, "\\u003c") }} />
         {jsonLdHowTo && (
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdHowTo) }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdHowTo).replace(/</g, "\\u003c") }} />
         )}
       </Head>
 

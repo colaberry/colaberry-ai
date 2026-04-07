@@ -88,7 +88,7 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
           "name": "Colaberry AI Solutions",
           "description": "Packaged offerings and reusable solution patterns for enterprise AI deployment.",
           "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/solutions`,
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
       <EnterprisePageHero
         kicker="Solutions"

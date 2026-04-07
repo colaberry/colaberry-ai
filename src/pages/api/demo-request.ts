@@ -35,6 +35,7 @@ function normalizeEmail(value: string | undefined) {
   return String(value).trim().toLowerCase();
 }
 
+// nosemgrep: javascript.audit.detect-replaceall-sanitization — complete 5-entity HTML escape, safe for email body context
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")

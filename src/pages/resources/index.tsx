@@ -92,7 +92,7 @@ export default function Resources({ counts }: ResourcesProps) {
           "name": "Colaberry AI Resources",
           "description": "Enterprise AI knowledge resources: podcasts, books, white papers, case studies, and articles.",
           "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/resources`,
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
       <EnterprisePageHero
         kicker="Modular layer"

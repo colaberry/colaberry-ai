@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" width="56" height="56" fill="none">
+  <!-- Mark 3 / V19: "Pixel Berry" — MIT-style grid mark
+       C-shape made of geometric blocks with berry circle in the counter.
+       Inspired by MIT Media Lab's modular grid identity system.
+       Clue: C = container, berry = accent circle, together = Colaberry -->
+  <!-- C-shape: top bar -->
+  <rect x="2" y="2" width="42" height="8" fill="#18181B"/>
+  <!-- C-shape: left stem -->
+  <rect x="2" y="2" width="8" height="52" fill="#18181B"/>
+  <!-- C-shape: bottom bar -->
+  <rect x="2" y="46" width="42" height="8" fill="#18181B"/>
+  <!-- Berry circle in C's counter (the "o" = berry visual clue) -->
+  <circle cx="32" cy="28" r="10" fill="#357895"/>
+  <!-- Berry stem — tiny vertical line above berry -->
+  <line x1="32" y1="18" x2="32" y2="14" stroke="#18181B" stroke-width="2" stroke-linecap="round"/>
+  <!-- Berry leaf hint -->
+  <path d="M32,16 Q36,12 37,15" stroke="#18181B" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.5"/>
+</svg>

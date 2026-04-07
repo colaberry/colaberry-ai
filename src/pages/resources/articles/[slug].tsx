@@ -72,7 +72,7 @@ export default function ArticleDetailPage({ article }: ArticleDetailProps) {
           ...(article.updatedAt ? { "dateModified": article.updatedAt } : {}),
           ...(article.author?.name ? { "author": { "@type": "Person", "name": article.author.name } } : {}),
           "publisher": { "@type": "Organization", "name": "Colaberry AI" },
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       <nav className="flex flex-wrap items-center gap-2 text-xs text-zinc-500" aria-label="Breadcrumb">

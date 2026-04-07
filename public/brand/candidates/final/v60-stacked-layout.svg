@@ -1,0 +1,31 @@
+<svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- V60 Variation #4: Stacked Layout — Narrow-width contexts -->
+  <!-- Line 1: ColaberryAI, Line 2: RESEARCH LABS at 0.55-0.65 of main x-height -->
+  <!-- Left-aligned block -->
+
+  <!-- C-berry (open ring) -->
+  <circle cx="58" cy="62" r="32" fill="none" stroke="#357895" stroke-width="8"
+    stroke-linecap="round"
+    stroke-dasharray="168 38" stroke-dashoffset="12"/>
+
+  <!-- o-berry (closed ring) -->
+  <circle cx="104" cy="72" r="15" fill="none" stroke="#357895" stroke-width="8"/>
+
+  <!-- Stem -->
+  <path d="M48 38 C 62 14, 94 14, 108 52" fill="none" stroke="#357895" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Leaf -->
+  <path d="M76 24 C 82 16, 94 19, 90 28 C 86 36, 72 32, 76 24 Z" fill="#357895"/>
+
+  <!-- "laberry" — Line 1 -->
+  <text x="130" y="84" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="48" font-weight="400" letter-spacing="-0.5" fill="#357895">laberry</text>
+
+  <!-- "AI" — Bold, same line -->
+  <text x="340" y="84" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="48" font-weight="700" letter-spacing="-1.5" fill="#357895">AI</text>
+
+  <!-- Line 2: "RESEARCH LABS" — 0.60 of main x-height, left-aligned -->
+  <text x="30" y="130" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="20" font-weight="300" letter-spacing="5" fill="#52525B">RESEARCH LABS</text>
+</svg>
