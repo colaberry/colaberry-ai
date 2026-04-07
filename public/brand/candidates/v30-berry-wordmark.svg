@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 100" width="520" height="100">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700;800;900&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- "C" character -->
+  <text x="12" y="62" font-family="'Nunito Sans', Inter, system-ui, sans-serif" font-size="48" font-weight="800" fill="#18181B">C</text>
+
+  <!-- Berry stem + leaves between C and o -->
+  <g transform="translate(37, 18)">
+    <!-- Stem: curved line going up -->
+    <path d="M0,8 Q-1,4 0,0" stroke="#357895" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Left leaf -->
+    <path d="M0,2 Q-4,-1 -6,-4 Q-3,-3 0,0" fill="#357895"/>
+    <!-- Right leaf -->
+    <path d="M0,2 Q4,-1 6,-4 Q3,-3 0,0" fill="#357895"/>
+  </g>
+
+  <!-- "o" character -->
+  <text x="38" y="62" font-family="'Nunito Sans', Inter, system-ui, sans-serif" font-size="48" font-weight="800" fill="#18181B">o</text>
+
+  <!-- "laberry" continues -->
+  <text x="67" y="62" font-family="'Nunito Sans', Inter, system-ui, sans-serif" font-size="48" font-weight="800" fill="#18181B">laberry</text>
+
+  <!-- "AI" in accent color -->
+  <text x="300" y="62" font-family="'Nunito Sans', Inter, system-ui, sans-serif" font-size="48" font-weight="900" fill="#357895">AI</text>
+
+  <!-- Subtitle "RESEARCH LABS" -->
+  <g transform="translate(0, 0)">
+    <!-- Left signal wave decoration -->
+    <path d="M120,82 Q126,78 132,82 Q138,86 144,82" stroke="#357895" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+    <text x="152" y="86" font-family="'Nunito Sans', Inter, system-ui, sans-serif" font-size="13" font-weight="700" fill="#52525B" letter-spacing="4">RESEARCH LABS</text>
+
+    <!-- Right signal wave decoration -->
+    <path d="M340,82 Q346,78 352,82 Q358,86 364,82" stroke="#357895" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.5"/>
+  </g>
+</svg>

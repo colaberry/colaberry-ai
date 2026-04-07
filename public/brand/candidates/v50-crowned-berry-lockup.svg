@@ -1,0 +1,41 @@
+<svg viewBox="0 0 560 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- V50: The Crowned Berry — Full Lockup (Light) -->
+  <!-- Mark + ColaberryAI + RESEARCH LABS -->
+
+  <!-- === MARK (scaled from 48x48 to fit 60x60 area, offset y=10) === -->
+  <g transform="translate(4, 8) scale(1.25)">
+    <!-- C-calyx arc -->
+    <path d="M 33 7 C 22 3, 8 8, 4 18 C 0 28, 4 38, 14 44 Q 20 47, 28 44"
+          fill="none" stroke="#18181B" stroke-width="3.4" stroke-linecap="round"/>
+    <!-- Berry body -->
+    <ellipse cx="24" cy="25" rx="13.5" ry="14" fill="none" stroke="#18181B" stroke-width="2.4"/>
+    <!-- Vertical division -->
+    <path d="M 24 11.5 Q 21.5 18, 24 25 Q 26.5 32, 24 38.5"
+          fill="none" stroke="#18181B" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Horizontal division -->
+    <path d="M 11 25 Q 17.5 22.5, 24 25 Q 30.5 27.5, 37 25"
+          fill="none" stroke="#18181B" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- Calyx sepals -->
+    <path d="M 19 12.5 Q 20 9, 18 7" fill="none" stroke="#18181B" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M 24 11 L 24 7.5" fill="none" stroke="#18181B" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M 29 12.5 Q 28 9, 30 7" fill="none" stroke="#18181B" stroke-width="1.4" stroke-linecap="round"/>
+    <!-- Stem -->
+    <path d="M 24 7.5 L 26 4" fill="none" stroke="#18181B" stroke-width="1.6" stroke-linecap="round"/>
+    <!-- Leaf -->
+    <ellipse cx="28" cy="3.8" rx="3.2" ry="1.3" transform="rotate(20 28 3.8)" fill="#18181B"/>
+    <!-- Coral highlight -->
+    <circle cx="30" cy="19" r="2.4" fill="#DC2626"/>
+    <!-- Steel blue node -->
+    <circle cx="5.5" cy="33" r="1.7" fill="#357895"/>
+  </g>
+
+  <!-- === WORDMARK === -->
+  <!-- "Colaberry" — Inter SemiBold -->
+  <text x="78" y="50" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="38" fill="#18181B" letter-spacing="-0.5">Colaberry</text>
+
+  <!-- "AI" — Inter ExtraBold, steel blue -->
+  <text x="318" y="50" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="38" fill="#357895" letter-spacing="-0.5">AI</text>
+
+  <!-- "RESEARCH LABS" — Inter Regular, spaced, muted -->
+  <text x="370" y="50" font-family="Inter, system-ui, sans-serif" font-weight="400" font-size="13" fill="#52525B" letter-spacing="3.5">RESEARCH LABS</text>
+</svg>

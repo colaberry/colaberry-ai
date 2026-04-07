@@ -1,0 +1,16 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- V35: The Berry Constellation — Favicon Mark -->
+  <!-- 3 connected berry-dots in triangular arrangement -->
+
+  <!-- Edges -->
+  <line x1="7" y1="8" x2="25" y2="6" stroke="#A1A1AA" stroke-width="1"/>
+  <line x1="25" y1="6" x2="15" y2="26" stroke="#A1A1AA" stroke-width="1"/>
+  <line x1="7" y1="8" x2="15" y2="26" stroke="#A1A1AA" stroke-width="1"/>
+
+  <!-- Berry A -->
+  <circle cx="7" cy="8" r="4" fill="#18181B"/>
+  <!-- Berry B -->
+  <circle cx="25" cy="6" r="3" fill="#18181B"/>
+  <!-- Berry C (primary) -->
+  <circle cx="15" cy="26" r="5" fill="#DC2626"/>
+</svg>

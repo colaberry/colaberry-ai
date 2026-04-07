@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1584, height=396">
+<title>LinkedIn Cover - Tejesh Kowtharapu</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1584px;
+    height: 396px;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .banner {
+    width: 1584px;
+    height: 396px;
+    background: #050507;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* Premium gradient mesh */
+  .banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse 800px 400px at 15% 50%, rgba(220,38,38,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 600px 300px at 85% 30%, rgba(99,102,241,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 400px 400px at 60% 80%, rgba(220,38,38,0.04) 0%, transparent 60%);
+    z-index: 0;
+  }
+
+  /* Subtle dot grid */
+  .banner::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+    z-index: 0;
+  }
+
+  /* Left content */
+  .left-content {
+    position: relative;
+    z-index: 2;
+    padding-left: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 820px;
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(220,38,38,0.9);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .kicker::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1.5px;
+    background: #DC2626;
+  }
+
+  .name {
+    font-size: 52px;
+    font-weight: 800;
+    color: #FAFAFA;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+
+  .title-line {
+    font-size: 18px;
+    font-weight: 400;
+    color: #A1A1AA;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+  }
+
+  .title-line strong {
+    color: #E4E4E7;
+    font-weight: 600;
+  }
+
+  .divider {
+    width: 48px;
+    height: 2px;
+    background: linear-gradient(90deg, #DC2626, transparent);
+    margin: 2px 0;
+  }
+
+  /* Headline formula as visual layout */
+  .headline-formula {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+  }
+
+  .formula-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .formula-item.role {
+    background: rgba(220,38,38,0.12);
+    border: 1px solid rgba(220,38,38,0.25);
+    color: #F87171;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .formula-item.skill {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #A1A1AA;
+  }
+
+  .formula-item.achievement {
+    background: rgba(220,38,38,0.06);
+    border: 1px solid rgba(220,38,38,0.15);
+    color: #E4E4E7;
+    font-weight: 600;
+  }
+
+  .formula-item.brand {
+    background: rgba(99,102,241,0.06);
+    border: 1px solid rgba(99,102,241,0.15);
+    color: #A5B4FC;
+  }
+
+  .formula-pipe {
+    color: #3F3F46;
+    font-size: 16px;
+    font-weight: 300;
+  }
+
+  /* Right side - stats + tech */
+  .right-panel {
+    position: absolute;
+    right: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 32px;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+    font-weight: 800;
+    color: #FAFAFA;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .stat-number .accent {
+    color: #DC2626;
+  }
+
+  .stat-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: #52525B;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .tech-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+    max-width: 400px;
+  }
+
+  .tech-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 4px;
+    color: #52525B;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+
+  .tech-tag .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #DC2626;
+    opacity: 0.6;
+  }
+
+  /* Decorations */
+  .accent-line-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(220,38,38,0.3) 20%, rgba(220,38,38,0.1) 50%, transparent 80%);
+    z-index: 3;
+  }
+
+  .accent-line-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #DC2626 15%, #DC2626 25%, transparent 50%);
+    z-index: 3;
+  }
+
+  .separator {
+    position: absolute;
+    left: 880px;
+    top: 40px; bottom: 40px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.06) 70%, transparent 100%);
+    z-index: 2;
+  }
+
+  .corner-tl, .corner-br {
+    position: absolute;
+    width: 24px; height: 24px;
+    z-index: 3;
+  }
+
+  .corner-tl {
+    top: 16px; left: 16px;
+    border-top: 1.5px solid rgba(220,38,38,0.4);
+    border-left: 1.5px solid rgba(220,38,38,0.4);
+  }
+
+  .corner-br {
+    bottom: 16px; right: 16px;
+    border-bottom: 1.5px solid rgba(220,38,38,0.4);
+    border-right: 1.5px solid rgba(220,38,38,0.4);
+  }
+
+  /* Hex nodes */
+  .hex-grid {
+    position: absolute;
+    right: 40px; top: 50%;
+    transform: translateY(-50%);
+    width: 560px; height: 340px;
+    z-index: 0;
+  }
+
+  .hex-node {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(220,38,38,0.2);
+    box-shadow: 0 0 16px rgba(220,38,38,0.1);
+  }
+
+  .hex-node.active {
+    background: #DC2626;
+    box-shadow: 0 0 20px rgba(220,38,38,0.3), 0 0 40px rgba(220,38,38,0.08);
+    width: 10px; height: 10px;
+  }
+
+  .hex-node.dim {
+    background: rgba(255,255,255,0.04);
+    box-shadow: none;
+    width: 5px; height: 5px;
+  }
+
+  .hex-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(220,38,38,0.15), rgba(220,38,38,0.03));
+    transform-origin: left center;
+  }
+
+  .code-whisper {
+    position: absolute;
+    right: 460px; bottom: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.05);
+    letter-spacing: 0.5px;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+<div class="banner">
+  <div class="accent-line-top"></div>
+  <div class="accent-line-bottom"></div>
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+  <div class="separator"></div>
+
+  <!-- Left: Identity + Headline Formula -->
+  <div class="left-content">
+    <div class="kicker">Enterprise AI Infrastructure</div>
+    <div class="name">Tejesh Kowtharapu</div>
+    <div class="title-line"><strong>AI Platform Engineer</strong> &nbsp;&middot;&nbsp; Full Stack Developer</div>
+    <div class="divider"></div>
+
+    <!-- Headline formula as visual tags -->
+    <div class="headline-formula">
+      <span class="formula-item role">AI/ML Engineering</span>
+      <span class="formula-pipe">|</span>
+      <span class="formula-item role">Multi-Agent Systems</span>
+      <span class="formula-pipe">|</span>
+      <span class="formula-item achievement">16,000+ Skill Catalog</span>
+      <span class="formula-pipe">|</span>
+      <span class="formula-item brand">Colaberry Inc</span>
+      <span class="formula-pipe">|</span>
+      <span class="formula-item skill">GCP & Docker</span>
+    </div>
+  </div>
+
+  <!-- Right: Stats + Tech -->
+  <div class="right-panel">
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-number">16<span class="accent">,</span>000<span class="accent">+</span></div>
+        <div class="stat-label">AI Skills</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">200<span class="accent">+</span></div>
+        <div class="stat-label">MCP Servers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">7</div>
+        <div class="stat-label">Security Agents</div>
+      </div>
+    </div>
+
+    <div class="tech-grid">
+      <span class="tech-tag"><span class="dot"></span>Next.js 16</span>
+      <span class="tech-tag"><span class="dot"></span>React 19</span>
+      <span class="tech-tag"><span class="dot"></span>TypeScript 5</span>
+      <span class="tech-tag"><span class="dot"></span>Node.js</span>
+      <span class="tech-tag"><span class="dot"></span>Strapi v5</span>
+      <span class="tech-tag"><span class="dot"></span>Tailwind CSS</span>
+      <span class="tech-tag"><span class="dot"></span>Google Cloud</span>
+      <span class="tech-tag"><span class="dot"></span>Docker</span>
+      <span class="tech-tag"><span class="dot"></span>GitHub Actions</span>
+    </div>
+  </div>
+
+  <!-- Hex decoration -->
+  <div class="hex-grid">
+    <div class="hex-node active" style="top: 40px; left: 80px;"></div>
+    <div class="hex-node" style="top: 80px; left: 160px;"></div>
+    <div class="hex-node dim" style="top: 30px; left: 240px;"></div>
+    <div class="hex-node" style="top: 120px; left: 60px;"></div>
+    <div class="hex-node dim" style="top: 160px; left: 180px;"></div>
+    <div class="hex-node active" style="top: 200px; left: 100px;"></div>
+    <div class="hex-node dim" style="top: 240px; left: 220px;"></div>
+    <div class="hex-node" style="top: 280px; left: 80px;"></div>
+    <div class="hex-node dim" style="top: 60px; left: 400px;"></div>
+    <div class="hex-node" style="top: 300px; left: 160px;"></div>
+    <div class="hex-line" style="top: 46px; left: 92px; width: 68px; transform: rotate(30deg);"></div>
+    <div class="hex-line" style="top: 126px; left: 72px; width: 80px; transform: rotate(65deg);"></div>
+    <div class="hex-line" style="top: 206px; left: 112px; width: 60px; transform: rotate(-20deg);"></div>
+  </div>
+
+  <div class="code-whisper">catalog.deploy() // colaberry.ai</div>
+</div>
+</body>
+</html>

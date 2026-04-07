@@ -28,7 +28,7 @@ export default function WhitePapers() {
               "name": "White Papers | Colaberry AI",
               "description": "Technical deep-dives, POVs, and reference architectures for enterprise teams deploying AI at scale.",
               "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/resources/white-papers`,
-            }),
+            }).replace(/</g, "\\u003c"),
           }}
         />
       </Head>

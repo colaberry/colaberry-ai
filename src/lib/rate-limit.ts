@@ -90,6 +90,8 @@ export function checkRateLimit(
 
   if (current.count >= limit) {
     const retryAfterSec = Math.ceil((current.resetAt - now) / 1000);
+    // A09: Log rate limit events for security monitoring
+    console.warn(`[rate-limit] ${prefix} limit=${limit} ip=${hashIp(ip)} retryAfter=${retryAfterSec}s`);
     return { limited: true, limit, remaining: 0, retryAfterSec };
   }
 

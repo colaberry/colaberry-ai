@@ -1,0 +1,20 @@
+<svg viewBox="0 0 560 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- V35: The Berry Constellation — Dark Mode Lockup -->
+  <rect width="560" height="80" fill="#09090B"/>
+
+  <g transform="translate(4, 10)">
+    <line x1="10" y1="12" x2="36" y2="8" stroke="#52525B" stroke-width="1"/>
+    <line x1="36" y1="8" x2="22" y2="42" stroke="#52525B" stroke-width="1"/>
+    <line x1="10" y1="12" x2="22" y2="42" stroke="#52525B" stroke-width="1"/>
+
+    <ellipse cx="10" cy="12" rx="5.5" ry="5" fill="#FAFAFA"/>
+    <line x1="9" y1="6.5" x2="8" y2="4" stroke="#FAFAFA" stroke-width="1.2" stroke-linecap="round"/>
+    <circle cx="36" cy="8" r="4" fill="#FAFAFA"/>
+    <ellipse cx="22" cy="42" rx="6.5" ry="6" fill="#F87171"/>
+    <circle cx="19" cy="39" r="1.5" fill="#FCA5A5" opacity="0.6"/>
+  </g>
+
+  <text x="58" y="44" font-family="Inter, sans-serif" font-weight="600" font-size="38" fill="#FAFAFA">Colaberry</text>
+  <text x="310" y="44" font-family="Inter, sans-serif" font-weight="800" font-size="38" fill="#357895">AI</text>
+  <text x="358" y="44" font-family="Inter, sans-serif" font-weight="400" font-size="12" fill="#A1A1AA" letter-spacing="3">RESEARCH LABS</text>
+</svg>

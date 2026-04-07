@@ -24,7 +24,7 @@ export default function AssistantPage() {
           "description": "Start from guided prompts to discover agents, MCP servers, use cases, and updates.",
           "url": buildCanonical("/assistant"),
           "publisher": { "@type": "Organization", "name": "Colaberry AI" },
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       <EnterprisePageHero

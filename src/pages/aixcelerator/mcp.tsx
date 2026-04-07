@@ -310,7 +310,7 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
         {seoTags(seoMeta).map(({ key, ...props }) => (
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
 
       {fetchError && (

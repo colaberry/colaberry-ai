@@ -1,3 +1,9 @@
+---
+name: new-page
+description: Scaffold a new page following all Colaberry AI platform standards including locked theming and page structure
+user-invocable: true
+---
+
 # New Page
 
 Scaffold a new page following all Colaberry AI platform standards — locked theming, page structure, and the SkillNet pattern.

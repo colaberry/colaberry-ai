@@ -1,0 +1,7 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- V31: The Berry O — Favicon Mark -->
+  <!-- Single berry: circle + stem + leaf -->
+  <circle cx="16" cy="18" r="10" fill="#DC2626"/>
+  <line x1="12" y1="10" x2="10" y2="5" stroke="#18181B" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="11" cy="5" rx="3.5" ry="1.8" transform="rotate(-25 11 5)" fill="#18181B"/>
+</svg>

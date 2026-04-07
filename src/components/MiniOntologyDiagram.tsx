@@ -96,12 +96,12 @@ export default function MiniOntologyDiagram({
 
   /* ── Colors ── */
   const bg = isDark ? "#18181b" : "#ffffff";
-  const surfaceFill = isDark ? "#27272a" : "#f4f4f5";
-  const stroke = isDark ? "#3f3f46" : "#e4e4e7";
+  const surfaceFill = isDark ? "#3f3f46" : "#f4f4f5";
+  const stroke = isDark ? "#52525b" : "#e4e4e7";
   const textPrimary = isDark ? "#fafafa" : "#18181b";
   const textSecondary = isDark ? "#a1a1aa" : "#71717a";
   const textTertiary = isDark ? "#71717a" : "#a1a1aa";
-  const lineStroke = isDark ? "#3f3f46" : "#d4d4d8";
+  const lineStroke = isDark ? "#52525b" : "#d4d4d8";
 
   const handleCategoryClick = useCallback(
     (slug: string) => router.push(`${config.catalogPath}?category=${slug}`),

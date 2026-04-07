@@ -43,10 +43,10 @@ function useIsDark() {
 function svgColors(dark: boolean) {
   return {
     bg: dark ? "#18181b" : "#ffffff",
-    surface: dark ? "#27272a" : "#f4f4f5",
-    surfaceAlt: dark ? "#1f1f23" : "#fafafa",
-    border: dark ? "#3f3f46" : "#e4e4e7",
-    borderMuted: dark ? "#27272a" : "#f4f4f5",
+    surface: dark ? "#3f3f46" : "#f4f4f5",
+    surfaceAlt: dark ? "#27272a" : "#fafafa",
+    border: dark ? "#52525b" : "#e4e4e7",
+    borderMuted: dark ? "#3f3f46" : "#f4f4f5",
     textPrimary: dark ? "#fafafa" : "#18181b",
     textSecondary: dark ? "#a1a1aa" : "#71717a",
     textTertiary: dark ? "#71717a" : "#a1a1aa",

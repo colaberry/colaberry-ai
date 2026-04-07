@@ -1,0 +1,31 @@
+<svg width="720" height="200" viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- V60 Variation #3: Refined Geometry — "40 hours of optical polish" -->
+  <!-- Tighter C/o spacing (-0.04X), engineered stem, geometric leaf -->
+  <!-- Optional refined palette: #2F6F8F -->
+
+  <!-- C-berry (open ring): tightened spacing -->
+  <circle cx="78" cy="88" r="42" fill="none" stroke="#2F6F8F" stroke-width="10"
+    stroke-linecap="round"
+    stroke-dasharray="220 48" stroke-dashoffset="16"/>
+
+  <!-- o-berry (closed ring): moved 0.04X closer to C -->
+  <circle cx="134" cy="100" r="20" fill="none" stroke="#2F6F8F" stroke-width="10"/>
+
+  <!-- Stem: more engineered Bézier (tighter tension, less whimsical) -->
+  <path d="M64 54 C 82 26, 122 26, 140 70" fill="none" stroke="#2F6F8F" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Leaf: simplified geometric teardrop, optically centered -->
+  <path d="M100 33 C 107 22, 124 26, 118 38 C 112 48, 96 44, 100 33 Z" fill="#2F6F8F"/>
+
+  <!-- "laberry" — Medium 500 -->
+  <text x="168" y="118" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="62" font-weight="500" letter-spacing="-0.5" fill="#2F6F8F">laberry</text>
+
+  <!-- "AI" — Bold 700, tighter kerning (-4%) -->
+  <text x="440" y="118" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="62" font-weight="700" letter-spacing="-2.5" fill="#2F6F8F">AI</text>
+
+  <!-- "RESEARCH LABS" -->
+  <text x="214" y="160" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="22" font-weight="300" letter-spacing="5.5" fill="#52525B">RESEARCH LABS</text>
+</svg>

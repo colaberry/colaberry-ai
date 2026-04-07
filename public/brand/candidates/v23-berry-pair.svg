@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" width="400" height="80">
+  <!-- V23 — "Berry Pair" -->
+  <!-- The 'o' in "Cola" and first 'r' area of "berry" each get a berry circle -->
+  <!-- Connected by a vine stem with leaf between them -->
+
+  <!-- "C" -->
+  <text x="12" y="48" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="36" fill="#18181B">C</text>
+
+  <!-- First berry replacing 'o' — slightly larger -->
+  <circle cx="44" cy="37" r="6" fill="#DC2626"/>
+  <!-- Berry highlight dot for dimension -->
+  <circle cx="41.5" cy="34.5" r="1.5" fill="#EF4444" opacity="0.6"/>
+
+  <!-- Vine/stem connecting the two berries -->
+  <path d="M50 34 Q58 22 72 24 Q86 22 94 34" stroke="#357895" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+
+  <!-- Leaf pair at the midpoint of vine -->
+  <path d="M72 23 Q68 17 63 18" stroke="#357895" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="66" cy="19" rx="4" ry="2" transform="rotate(-25 66 19)" fill="#357895" opacity="0.25"/>
+  <path d="M72 23 Q76 17 81 18" stroke="#357895" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="78" cy="19" rx="4" ry="2" transform="rotate(25 78 19)" fill="#357895" opacity="0.25"/>
+
+  <!-- Second berry (in the 'e' of berry area) — slightly smaller -->
+  <circle cx="97" cy="37" r="5.2" fill="#B91C1C"/>
+  <!-- Berry highlight dot -->
+  <circle cx="95" cy="34.8" r="1.3" fill="#EF4444" opacity="0.6"/>
+
+  <!-- "la" between first berry and second -->
+  <text x="55" y="48" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="36" fill="#18181B">la</text>
+
+  <!-- "b" before second berry area -->
+  <text x="90" y="48" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="36" fill="#18181B">b</text>
+
+  <!-- "rry" after second berry -->
+  <text x="111" y="48" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="36" fill="#18181B">rry</text>
+
+  <!-- Cluster detail on first berry: 3 tiny sub-circles to avoid bomb look -->
+  <circle cx="41" cy="39" r="2.8" fill="#B91C1C" opacity="0.5"/>
+  <circle cx="47" cy="39" r="2.8" fill="#B91C1C" opacity="0.5"/>
+  <circle cx="44" cy="34" r="2.8" fill="#EF4444" opacity="0.4"/>
+
+  <!-- Cluster detail on second berry -->
+  <circle cx="94.5" cy="39" r="2.3" fill="#991B1B" opacity="0.5"/>
+  <circle cx="99.5" cy="39" r="2.3" fill="#991B1B" opacity="0.5"/>
+  <circle cx="97" cy="34.5" r="2.3" fill="#DC2626" opacity="0.4"/>
+
+  <!-- "AI" in steel blue -->
+  <text x="225" y="48" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="36" fill="#357895">AI</text>
+
+  <!-- "RESEARCH LABS" subtitle -->
+  <text x="12" y="68" font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="11" letter-spacing="3" fill="#A1A1AA">RESEARCH LABS</text>
+</svg>

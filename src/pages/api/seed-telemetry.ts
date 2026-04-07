@@ -39,6 +39,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!slug) {
     return res.status(400).json({ error: "slug is required (query param or body)" });
   }
+  if (!/^[a-z0-9][a-z0-9-]{0,158}[a-z0-9]$/.test(slug) && !/^[a-z0-9]$/.test(slug)) {
+    return res.status(400).json({ error: "Invalid slug format" });
+  }
 
   const tools: string[] = req.body?.tools || TOOLS_FALLBACK;
   const days = Math.min(Number(req.body?.days) || 30, 90);

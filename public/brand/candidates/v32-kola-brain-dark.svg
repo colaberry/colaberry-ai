@@ -1,0 +1,9 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- V32: The Kola Brain — Standalone Mark (Dark) -->
+  <rect width="48" height="48" fill="#09090B"/>
+
+  <circle cx="24" cy="24" r="19" fill="none" stroke="#FAFAFA" stroke-width="2.5"/>
+  <path d="M 24 7 Q 22 16, 24 24 Q 26 32, 24 41" fill="none" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 7 24 Q 16 22, 24 24 Q 32 26, 41 24" fill="none" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="31" cy="15" r="2.5" fill="#F87171"/>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" width="400" height="80">
+  <!-- V26 — "The Berry Counter"
+       3 tiny coral dots hidden inside the counter (enclosed space)
+       of the first 'a' in "Colaberry". A hidden visual clue visible
+       only at larger sizes — like the FedEx arrow. -->
+
+  <!-- "Colaberry" — Inter SemiBold 600 -->
+  <text x="12" y="48" font-family="Inter, system-ui, sans-serif"
+        font-weight="600" font-size="36" fill="#18181B">Colaberry</text>
+
+  <!-- 3 micro berry dots inside the counter of the first 'a'
+       The 'a' counter center is approximately at x=68, y=42
+       at 36px Inter. Dots are tiny (1.5-2px radius) so they
+       sit comfortably inside the counter space. -->
+  <circle cx="66"   cy="41"   r="1.8" fill="#DC2626"/>
+  <circle cx="70.5" cy="41"   r="1.5" fill="#DC2626"/>
+  <circle cx="68"   cy="37.5" r="1.5" fill="#DC2626"/>
+
+  <!-- "AI" in steel blue -->
+  <text x="225" y="48" font-family="Inter, system-ui, sans-serif"
+        font-weight="800" font-size="36" fill="#357895">AI</text>
+
+  <!-- "RESEARCH LABS" subtitle -->
+  <text x="12" y="68" font-family="Inter, system-ui, sans-serif"
+        font-weight="500" font-size="11" letter-spacing="3" fill="#A1A1AA">RESEARCH LABS</text>
+</svg>

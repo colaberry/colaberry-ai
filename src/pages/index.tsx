@@ -200,8 +200,8 @@ export default function Home({
     {
       href: "/aixcelerator/skills",
       title: "AI Skills",
-      description: "16,900+ reusable capability units across workflow, domain, and orchestration categories.",
-      meta: "16.9k+ skills",
+      description: `${(catalogCounts.skills || 500).toLocaleString()}+ reusable capability units across workflow, domain, and orchestration categories.`,
+      meta: `${fmt(catalogCounts.skills || 500)} skills`,
       iconType: "skill",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
       accentColor: "#f59e0b",
@@ -393,7 +393,7 @@ export default function Home({
         {seoTags(seoMeta).map(({ key, ...props }) => (
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
       {/* ---- Hero (dark animated hero) ---- */}
       <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="-mx-4 sm:mx-0 relative overflow-hidden rounded-none sm:rounded-2xl" style={{ background: "var(--gradient-hero)" }}>

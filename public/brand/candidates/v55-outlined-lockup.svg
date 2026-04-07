@@ -1,0 +1,57 @@
+<!--
+  V55 Outlined — ColaberryAI Research Labs Lockup (Light Mode)
+
+  Full wordmark lockup. The two kola nut berries (C + o) sit at left,
+  followed by "laberry" to complete the word "Colaberry", then "AI"
+  in steel blue, then "RESEARCH LABS" in muted zinc.
+
+  The large berry replaces "C", the small berry replaces "o".
+  All strokes, no fills except accent dots and text.
+
+  Colors: #18181B charcoal, #DC2626 coral, #357895 steel blue, #52525B muted
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 80" fill="none">
+  <!-- === MARK: Two-berry icon scaled to ~60px height === -->
+  <g transform="translate(6, 8) scale(1.33)">
+    <!-- Large C-berry: outer circle -->
+    <circle cx="16" cy="24" r="13" stroke="#18181B" stroke-width="2.6" stroke-linecap="round"/>
+
+    <!-- Large C-berry: vertical cotyledon division -->
+    <path d="M16 11 C14 17, 18 31, 16 37" stroke="#18181B" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+
+    <!-- Large C-berry: horizontal cotyledon division -->
+    <path d="M3 24 C9 22, 23 26, 29 24" stroke="#18181B" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+
+    <!-- Small o-berry: outer circle -->
+    <circle cx="36" cy="28" r="8" stroke="#18181B" stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- Curved stem connecting berries -->
+    <path d="M16 11 C18 5, 30 8, 36 20" stroke="#18181B" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+
+    <!-- Leaf at stem midpoint -->
+    <ellipse cx="26" cy="10" rx="3.5" ry="1.5" transform="rotate(-30 26 10)" fill="#18181B"/>
+
+    <!-- Calyx marks: large berry -->
+    <path d="M14 11.5 L14.5 9 M16 11 L16 8.5 M18 11.5 L17.5 9" stroke="#18181B" stroke-width="1" stroke-linecap="round"/>
+
+    <!-- Calyx marks: small berry -->
+    <path d="M35 20.5 L35 18.5 M37 20.5 L37 18.5" stroke="#18181B" stroke-width="0.9" stroke-linecap="round"/>
+
+    <!-- Coral accent dot -->
+    <circle cx="21" cy="19" r="1.8" fill="#DC2626"/>
+
+    <!-- Steel blue AI dot -->
+    <circle cx="26" cy="12" r="1.5" fill="#357895"/>
+  </g>
+
+  <!-- === WORDMARK TEXT === -->
+
+  <!-- "laberry" continues after the berry icons (C + o are the berries) -->
+  <text x="95" y="52" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="600" font-size="38" fill="#18181B" letter-spacing="-0.5">laberry</text>
+
+  <!-- "AI" in steel blue -->
+  <text x="275" y="52" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="800" font-size="38" fill="#357895" letter-spacing="-0.5">AI</text>
+
+  <!-- "RESEARCH LABS" in muted zinc -->
+  <text x="330" y="52" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="400" font-size="13" fill="#52525B" letter-spacing="3.5">RESEARCH LABS</text>
+</svg>

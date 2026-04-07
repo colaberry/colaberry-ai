@@ -216,6 +216,7 @@ function buildSitemapXml(items: SitemapUrl[]) {
     `</urlset>`;
 }
 
+// nosemgrep: javascript.audit.detect-replaceall-sanitization — complete 5-entity XML escape, safe for sitemap URL context
 function escapeXml(value: string) {
   return value
     .replaceAll("&", "&amp;")

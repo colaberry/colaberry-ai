@@ -183,6 +183,9 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   if (!slug || !toolName) {
     return res.status(400).json({ error: "slug and toolName are required" });
   }
+  if (typeof slug === "string" && !/^[a-z0-9][a-z0-9-]{0,158}[a-z0-9]$/.test(slug) && !/^[a-z0-9]$/.test(slug)) {
+    return res.status(400).json({ error: "Invalid slug format" });
+  }
 
   // Input sanitization: enforce type + length limits to prevent injection
   const sanitizeStr = (v: unknown, max = 200): string =>
@@ -219,7 +222,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Invalidate cache for this slug
-  cache.delete(slug);
+  cache.delete(safeSlug);
 
   return res.status(201).json({ success: true });
 }
@@ -239,6 +242,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const slug = req.query.slug as string;
   if (!slug) {
     return res.status(400).json({ error: "slug query parameter is required" });
+  }
+  if (!/^[a-z0-9][a-z0-9-]{0,158}[a-z0-9]$/.test(slug) && !/^[a-z0-9]$/.test(slug)) {
+    return res.status(400).json({ error: "Invalid slug format" });
   }
 
   // Check cache

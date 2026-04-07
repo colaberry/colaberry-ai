@@ -9,6 +9,7 @@ import {
   fetchBooks,
   fetchCaseStudies,
 } from "../lib/cms";
+import { sanitizeForAEO } from "../lib/aeoSanitize";
 
 type CmsItem = { name?: string | null; title?: string | null; slug?: string | null; description?: string | null; summary?: string | null };
 
@@ -51,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   for (const a of agents as CmsItem[]) {
     const name = a.name || a.title || "Untitled";
     const slug = a.slug || "";
-    const desc = (a.description || a.summary || "").replace(/\n/g, " ").slice(0, 200);
+    const desc = sanitizeForAEO((a.description || a.summary || "").replace(/\n/g, " ").slice(0, 200));
     lines.push(`- ${name} | ${SITE}/aixcelerator/agents/${slug} | ${desc}`);
   }
 
@@ -59,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   for (const m of mcpServers as CmsItem[]) {
     const name = m.name || m.title || "Untitled";
     const slug = m.slug || "";
-    const desc = (m.description || m.summary || "").replace(/\n/g, " ").slice(0, 200);
+    const desc = sanitizeForAEO((m.description || m.summary || "").replace(/\n/g, " ").slice(0, 200));
     lines.push(`- ${name} | ${SITE}/aixcelerator/mcp/${slug} | ${desc}`);
   }
 
@@ -67,7 +68,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   for (const s of skills as CmsItem[]) {
     const name = s.name || s.title || "Untitled";
     const slug = s.slug || "";
-    const desc = (s.description || s.summary || "").replace(/\n/g, " ").slice(0, 200);
+    const desc = sanitizeForAEO((s.description || s.summary || "").replace(/\n/g, " ").slice(0, 200));
     lines.push(`- ${name} | ${SITE}/aixcelerator/skills/${slug} | ${desc}`);
   }
 
@@ -76,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     lines.push("", `## Use Cases (${useCases.length}) — coming soon`, "");
     for (const u of useCases as CmsItem[]) {
       const name = u.name || u.title || "Untitled";
-      const desc = (u.description || u.summary || "").replace(/\n/g, " ").slice(0, 200);
+      const desc = sanitizeForAEO((u.description || u.summary || "").replace(/\n/g, " ").slice(0, 200));
       lines.push(`- ${name} | ${desc}`);
     }
   }
@@ -85,7 +86,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   for (const p of podcasts as CmsItem[]) {
     const title = p.title || "Untitled";
     const slug = p.slug || "";
-    const desc = (p.description || p.summary || "").replace(/\n/g, " ").slice(0, 200);
+    const desc = sanitizeForAEO((p.description || p.summary || "").replace(/\n/g, " ").slice(0, 200));
     lines.push(`- ${title} | ${SITE}/resources/podcasts/${slug} | ${desc}`);
   }
 
@@ -94,7 +95,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     lines.push("", `## Articles (${articles.length}) — coming soon`, "");
     for (const a of articles as CmsItem[]) {
       const title = a.title || "Untitled";
-      const desc = (a.description || a.summary || "").replace(/\n/g, " ").slice(0, 200);
+      const desc = sanitizeForAEO((a.description || a.summary || "").replace(/\n/g, " ").slice(0, 200));
       lines.push(`- ${title} | ${desc}`);
     }
   }
@@ -102,7 +103,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   lines.push("", `## Books (${books.length})`, "");
   for (const b of books as CmsItem[]) {
     const title = b.title || "Untitled";
-    const desc = (b.description || b.summary || "").replace(/\n/g, " ").slice(0, 200);
+    const desc = sanitizeForAEO((b.description || b.summary || "").replace(/\n/g, " ").slice(0, 200));
     lines.push(`- ${title} | ${SITE}/resources/books | ${desc}`);
   }
 
@@ -111,7 +112,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     lines.push("", `## Case Studies (${caseStudies.length}) — coming soon`, "");
     for (const c of caseStudies as CmsItem[]) {
       const title = c.title || "Untitled";
-      const desc = (c.description || c.summary || "").replace(/\n/g, " ").slice(0, 200);
+      const desc = sanitizeForAEO((c.description || c.summary || "").replace(/\n/g, " ").slice(0, 200));
       lines.push(`- ${title} | ${desc}`);
     }
   }

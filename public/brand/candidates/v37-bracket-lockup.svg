@@ -1,0 +1,19 @@
+<svg viewBox="0 0 580 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- V37: The Bracket Mark — Full Lockup (Light) -->
+
+  <!-- Bracket mark -->
+  <g transform="translate(0, 4)">
+    <path d="M 10 4 L 4 4 L 4 48 L 10 48" fill="none" stroke="#18181B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 42 4 L 48 4 L 48 48 L 42 48" fill="none" stroke="#18181B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="26" cy="28" r="9" fill="#DC2626"/>
+    <line x1="23" y1="19" x2="21" y2="13" stroke="#18181B" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="22.5" cy="13" rx="3.2" ry="1.4" transform="rotate(-20 22.5 13)" fill="#18181B"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="62" y="40" font-family="Inter, sans-serif" font-weight="600" font-size="36" fill="#18181B">Colaberry</text>
+  <text x="312" y="40" font-family="Inter, sans-serif" font-weight="800" font-size="36" fill="#357895">AI</text>
+
+  <!-- Subtitle -->
+  <text x="362" y="40" font-family="Inter, sans-serif" font-weight="400" font-size="12" fill="#52525B" letter-spacing="3">RESEARCH LABS</text>
+</svg>

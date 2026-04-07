@@ -7,7 +7,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
   res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=7200");
 
-  let counts = { agents: 29, mcpServers: 1500, skills: 16900 };
+  let counts = { agents: 160, mcpServers: 1500, skills: 500 };
   try {
     const live = await fetchCatalogCounts("public");
     if (live.agents > 0) counts = live;

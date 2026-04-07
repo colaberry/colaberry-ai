@@ -1,0 +1,59 @@
+<svg width="720" height="210" viewBox="0 0 720 210" xmlns="http://www.w3.org/2000/svg">
+  <!-- V63: Flask Leaf — Research Labs cue in the leaf shape -->
+  <!-- Aha #1: "The leaf is actually shaped like an Erlenmeyer flask" (Research Labs) -->
+  <!-- Aha #2: "The stem has neural nodes" (AI) -->
+  <!-- Aha #3: "C and o ARE berries" (Colaberry heritage) -->
+
+  <!-- C-berry (open ring) -->
+  <circle cx="78" cy="88" r="42" fill="none" stroke="#357895" stroke-width="10"
+    stroke-linecap="round"
+    stroke-dasharray="220 48" stroke-dashoffset="16"/>
+
+  <!-- o-berry (closed ring) -->
+  <circle cx="138" cy="100" r="20" fill="none" stroke="#357895" stroke-width="10"/>
+
+  <!-- Stem with 2 subtle neural nodes -->
+  <path d="M65 55 C 85 22, 125 22, 145 68" fill="none" stroke="#357895" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="90" cy="32" r="3" fill="#357895"/>
+  <circle cx="118" cy="32" r="3" fill="#357895"/>
+
+  <!-- Flask-leaf: teardrop shape that subtly echoes an Erlenmeyer flask -->
+  <!-- Wider at bottom (flask body), narrow neck at top connecting to stem -->
+  <path d="M104 20 L101 16 L101 12 C104 8, 112 8, 115 12 L115 16 L112 20 C114 28, 114 34, 108 38 C102 34, 102 28, 104 20 Z"
+    fill="#357895"/>
+  <!-- Tiny "liquid level" line inside flask-leaf (very subtle) -->
+  <line x1="104" y1="28" x2="112" y2="28" stroke="white" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- "laberry" -->
+  <text x="172" y="118" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="62" font-weight="400" letter-spacing="-0.5" fill="#357895">laberry</text>
+
+  <!-- "AI" -->
+  <text x="444" y="118" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="62" font-weight="700" letter-spacing="-2" fill="#357895">AI</text>
+
+  <!-- Divider -->
+  <line x1="120" y1="155" x2="540" y2="155" stroke="#E4E4E7" stroke-width="1"/>
+
+  <!-- Left signal bars -->
+  <g transform="translate(148, 145)">
+    <rect x="0" y="7" width="1.5" height="3" rx="0.5" fill="#357895"/>
+    <rect x="4" y="4" width="1.5" height="6" rx="0.5" fill="#357895"/>
+    <rect x="8" y="1" width="1.5" height="9" rx="0.5" fill="#357895"/>
+    <rect x="12" y="4" width="1.5" height="6" rx="0.5" fill="#357895"/>
+    <circle cx="19" cy="7.5" r="1.5" fill="#357895"/>
+  </g>
+
+  <!-- "RESEARCH LABS" -->
+  <text x="188" y="160" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="22" font-weight="300" letter-spacing="5.5" fill="#52525B">RESEARCH LABS</text>
+
+  <!-- Right signal bars -->
+  <g transform="translate(478, 145)">
+    <circle cx="0" cy="7.5" r="1.5" fill="#357895"/>
+    <rect x="5" y="4" width="1.5" height="6" rx="0.5" fill="#357895"/>
+    <rect x="9" y="1" width="1.5" height="9" rx="0.5" fill="#357895"/>
+    <rect x="13" y="4" width="1.5" height="6" rx="0.5" fill="#357895"/>
+    <rect x="17" y="7" width="1.5" height="3" rx="0.5" fill="#357895"/>
+  </g>
+</svg>

@@ -1,0 +1,15 @@
+<svg viewBox="0 0 520 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- V31: The Berry O — Dark Mode Lockup -->
+  <rect width="520" height="80" fill="#09090B"/>
+
+  <text x="0" y="48" font-family="Inter, sans-serif" font-weight="600" font-size="42" fill="#FAFAFA">C</text>
+
+  <!-- Berry "o" -->
+  <circle cx="52" cy="36" r="11" fill="#F87171"/>
+  <line x1="46" y1="27" x2="43" y2="22" stroke="#FAFAFA" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="45.5" cy="21" rx="3" ry="1.5" transform="rotate(-30 45.5 21)" fill="#FAFAFA"/>
+
+  <text x="66" y="48" font-family="Inter, sans-serif" font-weight="600" font-size="42" fill="#FAFAFA">laberry</text>
+  <text x="295" y="48" font-family="Inter, sans-serif" font-weight="800" font-size="42" fill="#357895">AI</text>
+  <text x="350" y="48" font-family="Inter, sans-serif" font-weight="400" font-size="14" fill="#A1A1AA" letter-spacing="3">RESEARCH LABS</text>
+</svg>

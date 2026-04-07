@@ -47,9 +47,15 @@ export function validateBotToken(
   minAgeMs = 3000, // Minimum 3 seconds to fill form (human speed)
   maxAgeMs = 3600_000, // Maximum 1 hour (form not stale)
 ): { valid: boolean; reason?: string } {
-  // If no secret configured, skip token validation (allow through but log)
+  // Fail closed: if no secret configured, reject the request
   if (!hasSecret()) {
-    return { valid: true, reason: "no_secret_configured" };
+    if (process.env.NODE_ENV !== "production") {
+      // In development, warn but allow through for local testing
+      console.warn("[bot-defense] BOT_TOKEN_SECRET not set — skipping token validation in dev mode");
+      return { valid: true, reason: "no_secret_dev_bypass" };
+    }
+    console.error("[bot-defense] BOT_TOKEN_SECRET not set in production — rejecting request");
+    return { valid: false, reason: "no_secret_configured" };
   }
 
   if (!token || typeof token !== "string") {

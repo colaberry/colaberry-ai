@@ -1,0 +1,23 @@
+<svg viewBox="0 0 520 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- V31: The Berry O — Light Mode Lockup -->
+  <!-- Only the "o" is modified: berry circle + micro-stem at 11 o'clock + micro-leaf -->
+
+  <!-- "C" -->
+  <text x="0" y="48" font-family="Inter, sans-serif" font-weight="600" font-size="42" fill="#18181B">C</text>
+
+  <!-- Berry "o" — the modified letter -->
+  <circle cx="52" cy="36" r="11" fill="#DC2626"/>
+  <!-- Micro-stem at 11 o'clock -->
+  <line x1="46" y1="27" x2="43" y2="22" stroke="#18181B" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Micro-leaf -->
+  <ellipse cx="45.5" cy="21" rx="3" ry="1.5" transform="rotate(-30 45.5 21)" fill="#18181B"/>
+
+  <!-- "laberry" -->
+  <text x="66" y="48" font-family="Inter, sans-serif" font-weight="600" font-size="42" fill="#18181B">laberry</text>
+
+  <!-- "AI" in steel blue -->
+  <text x="295" y="48" font-family="Inter, sans-serif" font-weight="800" font-size="42" fill="#357895">AI</text>
+
+  <!-- "RESEARCH LABS" -->
+  <text x="350" y="48" font-family="Inter, sans-serif" font-weight="400" font-size="14" fill="#52525B" letter-spacing="3">RESEARCH LABS</text>
+</svg>

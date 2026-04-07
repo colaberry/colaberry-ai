@@ -42,7 +42,7 @@ export const getStaticProps: GetStaticProps<AIXceleratorProps> = async () => {
   } catch {
     return {
       props: {
-        counts: { agents: 160, mcpServers: 1500, skills: 16900, tools: 400, podcasts: 246 },
+        counts: { agents: 160, mcpServers: 1500, skills: 500, tools: 400, podcasts: 246 },
         fetchError: true,
       },
       revalidate: 120,
@@ -127,7 +127,7 @@ export default function AIXcelerator({ counts }: AIXceleratorProps) {
           "description": "Core platform for governed AI agent delivery, observability, and evaluation.",
           "url": buildCanonical("/aixcelerator"),
           "provider": { "@type": "Organization", "name": "Colaberry AI" },
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
