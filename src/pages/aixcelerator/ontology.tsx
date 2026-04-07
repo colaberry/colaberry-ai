@@ -62,18 +62,67 @@ function useIsDark() {
   return dark;
 }
 
+function useWindowWidth() {
+  const [w, setW] = useState(720);
+  useEffect(() => {
+    const update = () => setW(window.innerWidth);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  return w;
+}
+
 function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, number> }) {
   const [hoveredType, setHoveredType] = useState<ContentTypeName | null>(null);
   const [hoveredEdge, setHoveredEdge] = useState<number | null>(null);
   const isDark = useIsDark();
 
   const bg = isDark ? "#18181b" : "#ffffff";
-  const surface = isDark ? "#27272a" : "#f4f4f5";
-  const border = isDark ? "#3f3f46" : "#e4e4e7";
+  const surface = isDark ? "#3f3f46" : "#f4f4f5";
+  const border = isDark ? "#52525b" : "#e4e4e7";
   const textPrimary = isDark ? "#fafafa" : "#18181b";
   const textSecondary = isDark ? "#a1a1aa" : "#71717a";
   const textTertiary = isDark ? "#71717a" : "#a1a1aa";
-  const lineStroke = isDark ? "#3f3f46" : "#d4d4d8";
+  const lineStroke = isDark ? "#52525b" : "#d4d4d8";
+
+  const windowWidth = useWindowWidth();
+  const isMobile = windowWidth < 640;
+
+  /* ── Mobile card layout ── */
+  if (isMobile) {
+    const typeEntries = (Object.entries(CONTENT_TYPE_META) as [ContentTypeName, typeof CONTENT_TYPE_META[ContentTypeName]][]).filter(([type]) => type in NODE_POSITIONS);
+    const config: Record<string, string> = { skill: "/aixcelerator/skills/ontology", agent: "/aixcelerator/agents/ontology", mcp: "/aixcelerator/mcp/ontology", podcast: "/resources/podcasts/ontology" };
+
+    return (
+      <div className="p-4">
+        <div className="text-center text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">Colaberry AI Knowledge Graph</div>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {typeEntries.map(([type, meta]) => {
+            const count = typeCounts[type] || 0;
+            return (
+              <button key={type} onClick={() => { window.location.href = config[type]; }} className="group rounded-xl border border-zinc-200 bg-white p-3 text-center transition-colors active:border-[#DC2626] dark:border-zinc-700 dark:bg-zinc-800">
+                <ContentTypeIconSvg type={type} x={0} y={0} size={0} fill="none" />
+                <ContentTypeIcon type={type as ContentTypeName} size={22} className="mx-auto text-zinc-400 transition-colors group-active:text-[#DC2626] dark:text-zinc-500" />
+                <div className="mt-1.5 text-xs font-bold text-zinc-700 dark:text-zinc-200">{meta.label}</div>
+                {count > 0 && <div className="mt-0.5 text-[10px] text-zinc-400 dark:text-zinc-500">{count.toLocaleString()}+</div>}
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-3 space-y-1.5">
+          {CROSS_TYPE_RELATIONS.slice(0, 4).map((rel, i) => (
+            <div key={i} className="flex items-center gap-2 rounded-md border border-zinc-100 bg-zinc-50/50 px-3 py-1.5 dark:border-zinc-700/50 dark:bg-zinc-800/30">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#DC2626]" />
+              <span className="text-[10px] font-semibold text-zinc-600 dark:text-zinc-300">{rel.label}</span>
+              <span className="text-[9px] text-zinc-400 dark:text-zinc-500">{CONTENT_TYPE_META[rel.sourceType].label} → {CONTENT_TYPE_META[rel.targetType].label}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 text-center text-[10px] text-zinc-400 dark:text-zinc-500">Tap a node to explore its ontology</div>
+      </div>
+    );
+  }
 
   const svgWidth = 720;
   const svgHeight = 480;
