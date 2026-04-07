@@ -534,7 +534,7 @@ export default function Home({
         </div>
       </section>
 
-      <hr className="section-divider" />
+      {/* divider line removed */}
 
       <section className="section-spacing">
         <div className="reveal">
