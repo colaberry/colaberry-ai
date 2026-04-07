@@ -39,6 +39,17 @@ function useIsDark() {
   return dark;
 }
 
+function useWindowWidth() {
+  const [w, setW] = useState(940);
+  useEffect(() => {
+    const update = () => setW(window.innerWidth);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  return w;
+}
+
 /** SVG color tokens — solid zinc values, no rgba */
 function svgColors(dark: boolean) {
   return {
@@ -85,6 +96,80 @@ function OntologyDiagram({
   const categories = config.categories.filter((c) => c.slug !== "other").slice(0, 6);
   const topCollections = collections.slice(0, 6);
   const relTypes = config.relationTypes;
+
+  /* ── Hooks that must be called unconditionally ── */
+  const windowWidth = useWindowWidth();
+  const isMobile = windowWidth < 640;
+  const handleCategoryClick = useCallback(
+    (slug: string) => router.push(`${config.catalogPath}?category=${slug}`),
+    [router, config.catalogPath],
+  );
+
+  /* ── Mobile card layout — replaces SVG on small screens ── */
+  if (isMobile) {
+    const DownArrow = () => (
+      <div className="flex justify-center py-0.5">
+        <svg width="12" height="16" viewBox="0 0 12 16" fill="none"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" className="text-zinc-300 dark:text-zinc-600" strokeWidth="1" /><path d="M3 10l3 4 3-4" stroke="currentColor" className="text-zinc-300 dark:text-zinc-600" strokeWidth="1" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </div>
+    );
+    return (
+      <div className="space-y-2 p-3">
+        {/* Layer 1: Taxonomy */}
+        <div className="rounded-lg border border-zinc-200/60 bg-zinc-50/50 p-3 dark:border-zinc-700/60 dark:bg-zinc-800/30">
+          <div className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">{config.label} Taxonomy</div>
+          <div className="mt-2 flex justify-center">
+            <span className="rounded-full bg-zinc-900 px-3 py-1 text-[11px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">{config.label} · {totalItems.toLocaleString()}</span>
+          </div>
+          <div className="mt-2.5 flex flex-wrap justify-center gap-1.5">
+            {categories.map((cat) => (
+              <button key={cat.slug} onClick={() => router.push(`${config.catalogPath}?category=${cat.slug}`)} className="flex items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 py-1 text-[10px] font-medium text-zinc-600 active:border-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: config.categoryColors[cat.slug] || "#a1a1aa" }} />
+                {cat.label}
+                <span className="ml-0.5 text-zinc-400 dark:text-zinc-500">{(categoryCounts[cat.slug] || 0).toLocaleString()}</span>
+              </button>
+            ))}
+          </div>
+          {topTags.length > 0 && (
+            <div className="mt-2 flex flex-wrap justify-center gap-1">
+              {topTags.slice(0, 6).map((tag) => (
+                <span key={tag.slug} className="rounded-full border border-zinc-200 px-1.5 py-0.5 text-[9px] text-zinc-400 dark:border-zinc-700 dark:text-zinc-500">{tag.name}</span>
+              ))}
+            </div>
+          )}
+        </div>
+        <DownArrow />
+        {/* Layer 2: Relation Graph */}
+        <div className="rounded-lg border border-zinc-200/60 bg-zinc-50/50 p-3 dark:border-zinc-700/60 dark:bg-zinc-800/30">
+          <div className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">{config.labelSingular} Relation Graph</div>
+          <div className="mt-2 flex flex-wrap justify-center gap-1.5">
+            {representativeItems.slice(0, 4).map((item) => (
+              <button key={item.slug} onClick={() => router.push(`${config.basePath}/${item.slug}`)} className="rounded-md border border-zinc-200 bg-white px-2 py-1 text-[10px] font-medium text-zinc-600 active:border-[#DC2626] active:text-[#DC2626] dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{item.name}</button>
+            ))}
+          </div>
+          {relTypes.length > 0 && (
+            <div className="mt-2 flex flex-wrap justify-center gap-2.5">
+              {relTypes.slice(0, 3).map((rel) => (
+                <span key={rel.type} className="flex items-center gap-1 text-[9px] text-zinc-400 dark:text-zinc-500"><span className="h-px w-2.5 bg-zinc-300 dark:bg-zinc-600" />{rel.label}</span>
+              ))}
+            </div>
+          )}
+        </div>
+        <DownArrow />
+        {/* Layer 3: Collections */}
+        <div className="rounded-lg border border-zinc-200/60 bg-zinc-50/50 p-3 dark:border-zinc-700/60 dark:bg-zinc-800/30">
+          <div className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">{config.labelSingular} Collection Library</div>
+          <div className="mt-2 grid grid-cols-2 gap-1.5">
+            {topCollections.map((col) => (
+              <button key={col.slug} onClick={() => router.push(`${config.basePath}/collections/${col.slug}`)} className="rounded-md border border-zinc-200 bg-white p-2 text-center active:border-[#DC2626] dark:border-zinc-600 dark:bg-zinc-800">
+                <div className="truncate text-[10px] font-semibold text-zinc-600 dark:text-zinc-300">{col.slug}</div>
+                <div className="text-[9px] text-zinc-400 dark:text-zinc-500">{col.itemSlugs.length} items</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   /* ── Layout constants ── */
   const svgWidth = 940;
@@ -145,11 +230,6 @@ function OntologyDiagram({
   const colY = l3Y + 40;
 
   const legendY = l3Y + l3H + 14;
-
-  const handleCategoryClick = useCallback(
-    (slug: string) => router.push(`${config.catalogPath}?category=${slug}`),
-    [router, config.catalogPath],
-  );
 
   return (
     <div className="overflow-x-auto">
