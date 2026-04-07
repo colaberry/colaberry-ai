@@ -639,13 +639,17 @@ export default function Home({
 }
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+  const cmsUrl = process.env.CMS_URL || process.env.NEXT_PUBLIC_CMS_URL || "";
+  const hasToken = !!(process.env.CMS_API_TOKEN || "").trim();
+  console.log(`[home:getStaticProps] CMS_URL=${cmsUrl ? "set" : "MISSING"} CMS_API_TOKEN=${hasToken ? "set" : "MISSING"}`);
+
   const allowPrivate = process.env.NEXT_PUBLIC_SHOW_PRIVATE === "true";
   const visibilityFilter = allowPrivate ? undefined : "public";
   const fetchOrEmpty = async <T,>(label: string, task: () => Promise<T>, fallback: T): Promise<T> => {
     try {
       return await task();
     } catch (error) {
-      console.error(`[home:getStaticProps] ${label} failed`, error);
+      console.error(`[home:getStaticProps] ${label} failed:`, error instanceof Error ? error.message : error);
       return fallback;
     }
   };
