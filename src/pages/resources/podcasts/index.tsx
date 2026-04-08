@@ -143,10 +143,14 @@ export default function Podcasts({
 
   const handlePlay = (episode: PodcastEpisode, source: string) => {
     if (!episode.audioUrl) return;
+    // Proxy Buzzsprout URLs to bypass Cloudflare JS challenges on <audio> elements
+    const proxyUrl = episode.audioUrl.includes("buzzsprout.com/")
+      ? `/api/audio-stream?url=${encodeURIComponent(episode.audioUrl)}`
+      : episode.audioUrl;
     globalPlay({
       slug: episode.slug,
       title: episode.title,
-      audioUrl: episode.audioUrl,
+      audioUrl: proxyUrl,
       coverImageUrl: episode.coverImageUrl,
       coverImageAlt: episode.coverImageAlt,
       duration: episode.duration,

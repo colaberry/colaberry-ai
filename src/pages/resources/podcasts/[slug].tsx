@@ -86,7 +86,12 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
   };
   const preferNative = Boolean(episode.useNativePlayer && episode.audioUrl);
   const embedCode = preferNative ? null : episode.buzzsproutEmbedCode;
-  const audioUrl = episode.audioUrl;
+  // Proxy Buzzsprout audio through our API to bypass Cloudflare JS challenges
+  // that block <audio> element requests (503). Server-side fetch passes fine.
+  const rawAudioUrl = episode.audioUrl;
+  const audioUrl = rawAudioUrl?.includes("buzzsprout.com/")
+    ? `/api/audio-stream?url=${encodeURIComponent(rawAudioUrl)}`
+    : rawAudioUrl;
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai").replace(/\/$/, "");
   const canonicalUrl = `${siteUrl}/resources/podcasts/${episode.slug}`;
   const metaDescription =
