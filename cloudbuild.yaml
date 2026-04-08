@@ -48,7 +48,7 @@ steps:
       - "--timeout"
       - "300"
       - "--allow-unauthenticated"
-      - "--set-env-vars"
+      - "--update-env-vars"
       - "NODE_ENV=production"
 
 substitutions:
