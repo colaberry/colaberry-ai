@@ -47,7 +47,7 @@ export default function SectionHeader({
   const rd3 = animate ? "reveal reveal-delay-3" : "";
 
   return (
-    <div className={`flex w-full max-w-4xl flex-col ${spacingClass} ${alignClass}`}>
+    <div className={`flex w-full flex-col ${spacingClass} ${alignClass}`}>
       {kicker ? (
         <div
           className={`${r} inline-flex w-fit items-center gap-2 rounded-full border border-zinc-200 bg-zinc-100 px-3 py-1 text-label font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 ${kickerAlign}`}
