@@ -178,9 +178,12 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
   }, [episode.slug, episode.title]);
 
   // Auto-load this episode into the global player when visiting the detail page
-  // (only if it's not already the current episode)
+  // (only if it's not already the current episode).
+  // Skip for Buzzsprout-hosted episodes — their CDN blocks direct MP3 hotlinks (403),
+  // so the global <audio> element can't play them. The Buzzsprout embed handles playback.
+  const hasBuzzsproutEmbed = Boolean(episode.buzzsproutEmbedCode);
   useEffect(() => {
-    if (audioUrl && !isCurrentEpisode(episode.slug)) {
+    if (audioUrl && !hasBuzzsproutEmbed && !isCurrentEpisode(episode.slug)) {
       globalPlay({
         slug: episode.slug,
         title: episode.title,
@@ -192,7 +195,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
     }
     // Only on mount / episode change
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [episode.slug, audioUrl]);
+  }, [episode.slug, audioUrl, hasBuzzsproutEmbed]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -242,7 +245,10 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
   const [contentTab, setContentTab] = useState<"description" | "transcript">(
     hasTimedTranscript ? "transcript" : "description"
   );
-  const shouldForceNative = hasTimedTranscript && audioUrl;
+  // Only force native player when there's NO Buzzsprout embed available.
+  // Buzzsprout's CDN blocks direct MP3 hotlinking (403), so the native <audio>
+  // element cannot play Buzzsprout-hosted files — use their embed widget instead.
+  const shouldForceNative = hasTimedTranscript && audioUrl && !episode.buzzsproutEmbedCode;
   const usesNativePlayer = Boolean(audioUrl && (shouldForceNative || preferNative));
   const subscribeLinks = (episode.platformLinks || []).filter(
     (link): link is PlatformLink & { url: string } => Boolean(link?.url)
