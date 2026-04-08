@@ -84,7 +84,7 @@ type HomeProps = {
   trendingUseCases: HomeUseCaseSignal[];
   latestMCPs: HomeMcpSignal[];
   trendingMCPs: HomeMcpSignal[];
-  catalogCounts: { agents: number; mcpServers: number; skills: number };
+  catalogCounts: { agents: number; mcpServers: number; skills: number; tools: number; podcasts: number };
 };
 
 /* ── Integration chip logos (20×20 official brand SVGs from Simple Icons / CDN) ── */
@@ -129,6 +129,15 @@ export default function Home({
   trendingMCPs,
   catalogCounts,
 }: HomeProps) {
+  // Hardcoded minimums so metrics never show "0+" when CMS is unreachable during ISR
+  const FALLBACK_COUNTS = { agents: 160, mcpServers: 1500, skills: 500, tools: 0, podcasts: 246 };
+  const safeCounts = {
+    agents: catalogCounts.agents || FALLBACK_COUNTS.agents,
+    mcpServers: catalogCounts.mcpServers || FALLBACK_COUNTS.mcpServers,
+    skills: catalogCounts.skills || FALLBACK_COUNTS.skills,
+    tools: catalogCounts.tools || FALLBACK_COUNTS.tools,
+    podcasts: catalogCounts.podcasts || FALLBACK_COUNTS.podcasts,
+  };
   const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k+` : `${n}+`;
 
   /* ── Mouse-reactive parallax for orbital diagram (ref-based, no re-renders) ── */
@@ -183,8 +192,8 @@ export default function Home({
     {
       href: "/aixcelerator/agents",
       title: "AI Agents",
-      description: `${catalogCounts.agents || 160}+ enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.`,
-      meta: `${fmt(catalogCounts.agents || 160)} agents`,
+      description: `${safeCounts.agents}+ enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.`,
+      meta: `${fmt(safeCounts.agents)} agents`,
       iconType: "agent",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
       accentColor: "#ef4444",
@@ -201,8 +210,8 @@ export default function Home({
     {
       href: "/aixcelerator/skills",
       title: "AI Skills",
-      description: `${(catalogCounts.skills || 500).toLocaleString()}+ reusable capability units across workflow, domain, and orchestration categories.`,
-      meta: `${fmt(catalogCounts.skills || 500)} skills`,
+      description: `${safeCounts.skills.toLocaleString()}+ reusable capability units across workflow, domain, and orchestration categories.`,
+      meta: `${fmt(safeCounts.skills)} skills`,
       iconType: "skill",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
       accentColor: "#f59e0b",
@@ -246,9 +255,9 @@ export default function Home({
       description: "Adopt agents with clear ownership, status, and workflow alignment — ready for rollout. Browse by industry, deployment stage, and readiness level.",
       href: "/aixcelerator/agents",
       metrics: [
-        { value: fmt(catalogCounts.agents), label: "Agent profiles" },
+        { value: fmt(safeCounts.agents), label: "Agent profiles" },
         { value: "14", label: "Industries" },
-        { value: fmt(catalogCounts.agents), label: "Public agents" },
+        { value: fmt(safeCounts.agents), label: "Public agents" },
       ],
     },
     {
@@ -258,7 +267,7 @@ export default function Home({
       description: "Standardize tool access via MCP with integration-ready server patterns and endpoints. Connect your existing stack with governed, tested connectors.",
       href: "/aixcelerator/mcp",
       metrics: [
-        { value: fmt(catalogCounts.mcpServers), label: "MCP servers" },
+        { value: fmt(safeCounts.mcpServers), label: "MCP servers" },
         { value: "12", label: "Tool categories" },
         { value: "100%", label: "Tested connectors" },
       ],
@@ -270,7 +279,7 @@ export default function Home({
       description: "Discover modular, composable skills that agents use to execute tasks — from data extraction to code generation. Browse by category, source, and compatibility.",
       href: "/aixcelerator/skills",
       metrics: [
-        { value: fmt(catalogCounts.skills), label: "Skills indexed" },
+        { value: fmt(safeCounts.skills), label: "Skills indexed" },
         { value: "10", label: "Categories" },
         { value: "Composable", label: "Architecture" },
       ],
@@ -364,7 +373,7 @@ export default function Home({
           name: "What is Colaberry AI?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: `Colaberry AI is an enterprise platform for discovering, evaluating, and deploying AI agents, MCP servers, skills, and research. It catalogs ${catalogCounts.agents}+ AI agents, ${catalogCounts.mcpServers.toLocaleString()}+ MCP servers, and ${catalogCounts.skills.toLocaleString()}+ reusable AI skills — all structured for both human teams and LLM-based discovery.`,
+            text: `Colaberry AI is an enterprise platform for discovering, evaluating, and deploying AI agents, MCP servers, skills, and research. It catalogs ${safeCounts.agents}+ AI agents, ${safeCounts.mcpServers.toLocaleString()}+ MCP servers, and ${safeCounts.skills.toLocaleString()}+ reusable AI skills — all structured for both human teams and LLM-based discovery.`,
           },
         },
         {
@@ -372,7 +381,7 @@ export default function Home({
           name: "What are MCP servers and why do enterprises need them?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: `Model Context Protocol (MCP) servers provide standardized tool access and integration templates for AI agents. Colaberry AI catalogs ${catalogCounts.mcpServers.toLocaleString()}+ MCP servers across categories like Slack, Salesforce, GitHub, and AWS — enabling enterprises to connect AI agents to their existing tool stack through a unified protocol.`,
+            text: `Model Context Protocol (MCP) servers provide standardized tool access and integration templates for AI agents. Colaberry AI catalogs ${safeCounts.mcpServers.toLocaleString()}+ MCP servers across categories like Slack, Salesforce, GitHub, and AWS — enabling enterprises to connect AI agents to their existing tool stack through a unified protocol.`,
           },
         },
         {
@@ -475,7 +484,7 @@ export default function Home({
                 {/* The ONE big hero number */}
                 <div className="hero-metric-hero">
                   <div className="hero-metric-hero-number">
-                    <span>{fmt(catalogCounts.agents + catalogCounts.mcpServers + catalogCounts.skills + 246)}</span>
+                    <span>{fmt(safeCounts.agents + safeCounts.mcpServers + safeCounts.skills + safeCounts.podcasts)}</span>
                   </div>
                   <div className="hero-metric-hero-label">AI resources cataloged</div>
                 </div>
@@ -488,7 +497,7 @@ export default function Home({
                       Podcasts
                     </div>
                     <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "40%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">246</div>
+                    <div className="hero-bar-count">{fmt(safeCounts.podcasts)}</div>
                   </Link>
 
                   <Link href="/aixcelerator/agents" className="hero-bar-row" style={{ "--mc": "245, 158, 11" } as React.CSSProperties}>
@@ -497,7 +506,7 @@ export default function Home({
                       Agents
                     </div>
                     <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "35%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(catalogCounts.agents)}</div>
+                    <div className="hero-bar-count">{fmt(safeCounts.agents)}</div>
                   </Link>
 
                   <Link href="/aixcelerator/mcp" className="hero-bar-row" style={{ "--mc": "6, 182, 212" } as React.CSSProperties}>
@@ -506,7 +515,7 @@ export default function Home({
                       MCP Servers
                     </div>
                     <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "55%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(catalogCounts.mcpServers)}</div>
+                    <div className="hero-bar-count">{fmt(safeCounts.mcpServers)}</div>
                   </Link>
 
                   <Link href="/aixcelerator/skills" className="hero-bar-row" style={{ "--mc": "139, 92, 246" } as React.CSSProperties}>
@@ -515,7 +524,7 @@ export default function Home({
                       Skills
                     </div>
                     <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "95%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(catalogCounts.skills)}</div>
+                    <div className="hero-bar-count">{fmt(safeCounts.skills)}</div>
                   </Link>
                 </div>
               </div>
@@ -529,23 +538,27 @@ export default function Home({
       {/* ---- Trust metrics ---- */}
       <section className="reveal section-spacing">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <PodcastPromoCard episodeCount={246} delay={0} />
+          <PodcastPromoCard episodeCount={safeCounts.podcasts} delay={0} />
           <AnimatedMetric value="8+" label="Industries served" note="Agriculture to fintech" delay={150} />
-          <AnimatedMetric value={fmt(catalogCounts.agents)} label="Agent profiles" note="Cataloged and governed" delay={300} />
-          <AnimatedMetric value={fmt(catalogCounts.mcpServers)} label="MCP servers" note="Integration-ready connectors" delay={450} />
-          <AnimatedMetric value={fmt(catalogCounts.skills)} label="Skills indexed" note="Reusable capability units" delay={600} />
+          <AnimatedMetric value={fmt(safeCounts.agents)} label="Agent profiles" note="Cataloged and governed" delay={300} />
+          <AnimatedMetric value={fmt(safeCounts.mcpServers)} label="MCP servers" note="Integration-ready connectors" delay={450} />
+          <AnimatedMetric value={fmt(safeCounts.skills)} label="Skills indexed" note="Reusable capability units" delay={600} />
         </div>
       </section>
 
       {/* divider line removed */}
 
       <section className="section-spacing">
-        <div className="reveal">
+        <div className="reveal flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
             kicker="Explore the catalog"
             title="A structured destination for agents, MCPs, podcasts, and research"
             description="Give teams and LLMs a single place to discover, compare, and deploy intelligence."
+            animate={false}
           />
+          <Link href="/aixcelerator/ontology" className="btn btn-secondary shrink-0">
+            View knowledge graph
+          </Link>
         </div>
         <div className="stagger-grid mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tour="catalog-grid">
           {catalogs.map((catalog) => (
@@ -745,11 +758,17 @@ function SignalDashboard({
 
   return (
     <section className="reveal section-spacing">
-      <SectionHeader
-        kicker="Platform signals"
-        title="Latest and trending across the catalog"
-        description="Fresh profiles and high-interest items across agents, skills, MCP servers, podcasts, and use cases."
-      />
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <SectionHeader
+          kicker="Platform signals"
+          title="Latest and trending across the catalog"
+          description="Fresh profiles and high-interest items across agents, skills, MCP servers, podcasts, and use cases."
+          animate={false}
+        />
+        <Link href="/aixcelerator/ecosystem" className="btn btn-secondary shrink-0">
+          View ecosystem
+        </Link>
+      </div>
 
       {/* Tab bar */}
       <div
@@ -1880,11 +1899,17 @@ function PlatformTabsSection({ tabs }: { tabs: PlatformTab[] }) {
 
   return (
     <section className="reveal section-spacing">
-      <SectionHeader
-        kicker="Platform capabilities"
-        title="Everything teams need to build, govern, and scale AI"
-        description="From cataloging agents to evaluating outcomes, the platform supports full lifecycle delivery."
-      />
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <SectionHeader
+          kicker="Platform capabilities"
+          title="Everything teams need to build, govern, and scale AI"
+          description="From cataloging agents to evaluating outcomes, the platform supports full lifecycle delivery."
+          animate={false}
+        />
+        <Link href="/aixcelerator" className="btn btn-primary shrink-0">
+          Explore AIXcelerator
+        </Link>
+      </div>
 
       {/* Tab bar */}
       <div className="mt-6 flex flex-wrap gap-1 border-b border-[var(--stroke)]" role="tablist" aria-label="Platform capability tabs">
