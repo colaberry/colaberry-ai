@@ -21,6 +21,8 @@ import {
 } from "../lib/cms";
 // heroImage available from ../lib/media if needed
 import { seoTags, type SeoMeta } from "../lib/seo";
+import PodcastSignup from "../components/PodcastSignup";
+import NewsletterSignup from "../components/NewsletterSignup";
 
 type HomePodcastSignal = {
   id: number;
@@ -519,6 +521,49 @@ export default function Home({
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---- Stay in the loop ---- */}
+      <section className="reveal section-spacing">
+        <SectionHeader
+          kicker="Stay in the loop"
+          title="Never miss an update"
+          description="Subscribe to our podcast feed or newsletter for the latest in enterprise AI."
+        />
+        <div className="mt-8 grid gap-6 sm:grid-cols-2">
+          {/* Podcast subscription card */}
+          <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5 text-zinc-700 dark:text-zinc-300">
+                  <path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Podcast</span>
+            </div>
+            <PodcastSignup
+              sourcePage="homepage-signup"
+              title="Subscribe to Podcast"
+              description="Get notified when new episodes drop."
+            />
+          </div>
+          {/* Newsletter subscription card */}
+          <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5 text-zinc-700 dark:text-zinc-300">
+                  <path d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Newsletter</span>
+            </div>
+            <NewsletterSignup
+              sourcePage="homepage-signup"
+              title="Subscribe to Newsletter"
+              description="Product updates and enterprise AI signals."
+            />
           </div>
         </div>
       </section>

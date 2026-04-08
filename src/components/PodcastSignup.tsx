@@ -1,7 +1,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import { getTrackingContext } from "../lib/tracking";
 
-type NewsletterSignupProps = {
+type PodcastSignupProps = {
   sourcePath?: string;
   sourcePage?: string;
   compact?: boolean;
@@ -12,17 +12,17 @@ type NewsletterSignupProps = {
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
 
-const DEFAULT_TITLE = "Newsletter";
-const DEFAULT_DESCRIPTION = "Get product updates and enterprise AI implementation signals.";
+const DEFAULT_TITLE = "Subscribe to Podcast";
+const DEFAULT_DESCRIPTION = "Get notified when new episodes drop.";
 
-export default function NewsletterSignup({
+export default function PodcastSignup({
   sourcePath,
   sourcePage = "unknown",
   compact = false,
   title = DEFAULT_TITLE,
   description = DEFAULT_DESCRIPTION,
   ctaLabel = "Subscribe",
-}: NewsletterSignupProps) {
+}: PodcastSignupProps) {
   const [email, setEmail] = useState("");
   const [emailTouched, setEmailTouched] = useState(false);
   const [website, setWebsite] = useState("");
@@ -41,7 +41,7 @@ export default function NewsletterSignup({
   /** POST email to Substack via hidden iframe (no redirect, no popup) */
   function postToSubstack(emailAddress: string) {
     const SUBSTACK_URL = "https://www.colaberry.online/api/v1/free?nojs=true";
-    const iframeName = "substack-newsletter-subscribe-iframe";
+    const iframeName = "substack-podcast-subscribe-iframe";
     let iframe = document.querySelector<HTMLIFrameElement>(`iframe[name="${iframeName}"]`);
     if (!iframe) {
       iframe = document.createElement("iframe");
@@ -73,7 +73,7 @@ export default function NewsletterSignup({
     setUnsubscribeUrl(null);
 
     try {
-      const response = await fetch("/api/newsletter-subscribe", {
+      const response = await fetch("/api/podcast-subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -107,7 +107,7 @@ export default function NewsletterSignup({
       setState("success");
       // Also subscribe via Substack for email delivery
       postToSubstack(email);
-      setMessage(payload?.message || "Subscription confirmed.");
+      setMessage(payload?.message || "Podcast subscription confirmed.");
       setUnsubscribeUrl(payload?.unsubscribeUrl || null);
       setEmail("");
       setWebsite("");
@@ -125,7 +125,7 @@ export default function NewsletterSignup({
       ? "text-[var(--failure-text)] dark:text-[var(--failure-text)]"
       : "text-zinc-500 dark:text-zinc-400";
 
-  const consentId = `newsletter-consent-${sourcePage}`;
+  const consentId = `podcast-consent-${sourcePage}`;
 
   return (
     <div className={compact ? "rounded-lg border border-zinc-200/80 bg-white/80 p-3 dark:border-zinc-700/80 dark:bg-zinc-900/70" : ""}>
@@ -137,32 +137,32 @@ export default function NewsletterSignup({
       </p>
       <form onSubmit={onSubmit} className={compact ? "mt-3 flex flex-col gap-2" : "mt-3 flex flex-col gap-2"}>
         <div className={compact ? "flex flex-col gap-2" : "flex flex-col gap-2 sm:flex-row"}>
-          <label htmlFor={`newsletter-email-${sourcePage}`} className="sr-only">
+          <label htmlFor={`podcast-email-${sourcePage}`} className="sr-only">
             Email
           </label>
           <input
-            id={`newsletter-email-${sourcePage}`}
+            id={`podcast-email-${sourcePage}`}
             name="email"
             type="email"
             autoComplete="email"
             required
             aria-required="true"
             aria-invalid={emailTouched && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? "true" : undefined}
-            aria-describedby={emailTouched && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? `newsletter-email-error-${sourcePage}` : undefined}
+            aria-describedby={emailTouched && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? `podcast-email-error-${sourcePage}` : undefined}
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             onBlur={() => setEmailTouched(true)}
-            placeholder="Enter work email"
+            placeholder="Email address"
             className="input-premium"
           />
           {emailTouched && email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && (
-            <p id={`newsletter-email-error-${sourcePage}`} className="text-xs text-red-600" role="alert">Please enter a valid email address.</p>
+            <p id={`podcast-email-error-${sourcePage}`} className="text-xs text-red-600" role="alert">Please enter a valid email address.</p>
           )}
-          <label htmlFor={`newsletter-website-${sourcePage}`} className="sr-only">
+          <label htmlFor={`podcast-website-${sourcePage}`} className="sr-only">
             Website
           </label>
           <input
-            id={`newsletter-website-${sourcePage}`}
+            id={`podcast-website-${sourcePage}`}
             name="website"
             value={website}
             onChange={(event) => setWebsite(event.target.value)}
@@ -192,7 +192,7 @@ export default function NewsletterSignup({
             className="mt-0.5 h-4 w-4 shrink-0 rounded border-zinc-300 text-brand-purple-600 focus:ring-2 focus:ring-brand-purple-600/25 dark:border-zinc-600"
           />
           <span className="text-xs text-zinc-500 dark:text-zinc-400 leading-snug">
-            I agree to receive marketing communications from Colaberry AI
+            I agree to receive podcast notifications from Colaberry AI
           </span>
         </label>
       </form>

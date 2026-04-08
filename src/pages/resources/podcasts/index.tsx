@@ -67,7 +67,7 @@ export default function Podcasts({
   const loadingRef = useRef(false);
   const pageRef = useRef(1);
 
-  // Sidebar newsletter state
+  // Sidebar podcast subscribe state
   const [sidebarEmail, setSidebarEmail] = useState("");
   const [sidebarHoneypot, setSidebarHoneypot] = useState("");
 
@@ -106,8 +106,7 @@ export default function Podcasts({
     setSidebarSubState("submitting");
     setSidebarSubMessage(null);
     try {
-      // 1. Save to CMS (internal tracking)
-      const res = await fetch("/api/newsletter-subscribe", {
+      const res = await fetch("/api/podcast-subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -133,7 +132,7 @@ export default function Podcasts({
       // 2. Also subscribe via Substack (podcast email delivery)
       postToSubstack(sidebarEmail);
       setSidebarSubState("success");
-      setSidebarSubMessage(payload?.message || "Subscription confirmed.");
+      setSidebarSubMessage(payload?.message || "Podcast subscription confirmed.");
       setSidebarEmail("");
       setSidebarHoneypot("");
     } catch {
@@ -668,7 +667,7 @@ export default function Podcasts({
               Colaberry AI Podcast explores the latest in AI, Data Science, and Emerging Tech. From cutting-edge research to real-world impact, we break down how AI is shaping industries, careers, and the future of work.
             </p>
 
-            {/* Newsletter subscribe */}
+            {/* Podcast subscribe */}
             <div className="mt-6">
               <h4 className="text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">Subscribe</h4>
               <p className="mt-1 text-xs text-[#71717A] dark:text-[#A1A1AA]">Get notified when new episodes drop.</p>
