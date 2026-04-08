@@ -104,8 +104,8 @@ async function sendWelcomeEmail(email: string): Promise<DeliveryResult> {
     ctaLabel: "Browse episodes",
     ctaHref: `${siteBase.replace(/\/$/, "")}/resources/podcasts`,
     items: [
-      { title: "Latest episodes", label: "Latest episodes", href: `${siteBase.replace(/\/$/, "")}/resources/podcasts` },
-      { title: "Platform overview", label: "Platform overview", href: `${siteBase.replace(/\/$/, "")}/platform` },
+      { label: "Latest episodes", href: `${siteBase.replace(/\/$/, "")}/resources/podcasts` },
+      { label: "Platform overview", href: `${siteBase.replace(/\/$/, "")}/platform` },
     ],
   });
 
