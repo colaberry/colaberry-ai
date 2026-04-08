@@ -67,7 +67,7 @@ export default function Podcasts({
   const loadingRef = useRef(false);
   const pageRef = useRef(1);
 
-  // Sidebar newsletter state
+  // Sidebar podcast subscribe state
   const [sidebarEmail, setSidebarEmail] = useState("");
   const [sidebarHoneypot, setSidebarHoneypot] = useState("");
 
@@ -75,39 +75,13 @@ export default function Podcasts({
   const [sidebarSubMessage, setSidebarSubMessage] = useState<string | null>(null);
   const sidebarTracking = useMemo(() => getTrackingContext(), []);
 
-  /** POST email to Substack via hidden iframe (no redirect, no popup) */
-  function postToSubstack(email: string) {
-    const SUBSTACK_URL = "https://www.colaberry.online/api/v1/free?nojs=true";
-    const iframeName = "substack-subscribe-iframe";
-    let iframe = document.querySelector<HTMLIFrameElement>(`iframe[name="${iframeName}"]`);
-    if (!iframe) {
-      iframe = document.createElement("iframe");
-      iframe.name = iframeName;
-      iframe.style.display = "none";
-      document.body.appendChild(iframe);
-    }
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = SUBSTACK_URL;
-    form.target = iframeName;
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = "email";
-    input.value = email;
-    form.appendChild(input);
-    document.body.appendChild(form);
-    form.submit();
-    form.remove();
-  }
-
   async function handleSidebarSubscribe(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (sidebarSubState === "submitting") return;
     setSidebarSubState("submitting");
     setSidebarSubMessage(null);
     try {
-      // 1. Save to CMS (internal tracking)
-      const res = await fetch("/api/newsletter-subscribe", {
+      const res = await fetch("/api/podcast-subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -130,10 +104,8 @@ export default function Podcasts({
         setSidebarSubMessage(payload?.message || "Unable to subscribe right now.");
         return;
       }
-      // 2. Also subscribe via Substack (podcast email delivery)
-      postToSubstack(sidebarEmail);
       setSidebarSubState("success");
-      setSidebarSubMessage(payload?.message || "Subscription confirmed.");
+      setSidebarSubMessage(payload?.message || "Podcast subscription confirmed.");
       setSidebarEmail("");
       setSidebarHoneypot("");
     } catch {
@@ -668,7 +640,7 @@ export default function Podcasts({
               Colaberry AI Podcast explores the latest in AI, Data Science, and Emerging Tech. From cutting-edge research to real-world impact, we break down how AI is shaping industries, careers, and the future of work.
             </p>
 
-            {/* Newsletter subscribe */}
+            {/* Podcast subscribe */}
             <div className="mt-6">
               <h4 className="text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">Subscribe</h4>
               <p className="mt-1 text-xs text-[#71717A] dark:text-[#A1A1AA]">Get notified when new episodes drop.</p>
