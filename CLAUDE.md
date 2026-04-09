@@ -90,6 +90,7 @@ src/
 - `tailwind.config.ts` — Zinc color scale, Inter fonts, animation keyframes
 - `src/pages/_app.tsx` — Font loading (Inter), global layout wrapper
 - `src/lib/cms.ts` — CMS fetch functions, TypeScript types, per-type helpers
+- `src/lib/demoRequestStore.ts` — Strapi-write layer for `DemoRequest` leads (create + delivery-status update, bearer auth, abort-controller timeout). Handler calls this BEFORE `sendNewsletterEmail` so leads are durable even if email bounces.
 - `src/lib/ontologyTypes.ts` — Shared type system: ContentOntologyConfig, ContentCollection, SolutionStack
 - `src/lib/ontologyRegistry.ts` — Central registry + cross-type relation definitions
 - `src/lib/graphUtils.ts` — Generic graph utilities: `buildGraphData()`, colors, topology

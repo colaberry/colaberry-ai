@@ -1,6 +1,14 @@
+import crypto from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { resolveSenderProvider, sendNewsletterEmail } from "../../lib/newsletterSender";
 import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
+import {
+  createDemoRequest,
+  isDemoRequestStoreConfigured,
+  updateDemoRequestDelivery,
+  CmsWriteError,
+  type CreateDemoRequestInput,
+} from "../../lib/demoRequestStore";
 
 type DemoRequestPayload = {
   name?: string;
@@ -24,6 +32,15 @@ type DemoRequestPayload = {
 const TO_EMAIL = process.env.DEMO_REQUEST_TO_EMAIL || process.env.NEWSLETTER_REPLY_TO_EMAIL || "info@colaberry.com";
 const REQUEST_TIMEOUT_MS = Number(process.env.DEMO_REQUEST_TIMEOUT_MS || 8000);
 const MAX_MESSAGE_LENGTH = Number(process.env.DEMO_REQUEST_MAX_MESSAGE || 4000);
+const HASH_SALT = process.env.DEMO_REQUEST_HASH_SALT || process.env.NEWSLETTER_HASH_SALT || "colaberry-demo-request";
+
+function hashValue(value: string) {
+  return crypto
+    .createHash("sha256")
+    .update(`${HASH_SALT}:${value}`)
+    .digest("hex")
+    .slice(0, 24);
+}
 
 function normalizeText(value: string | undefined, max = 240) {
   if (!value) return "";
@@ -191,6 +208,57 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     </div>
   `;
 
+  // Step 1 — persist the lead to Strapi BEFORE attempting email delivery.
+  // This makes the lead durable even if the email provider drops the
+  // message. If Strapi is unreachable we still continue to the email
+  // step (degraded — logged — but user still gets a response).
+  const requestId = crypto.randomUUID();
+  const ip = getClientIp(req);
+  const userAgentHeader = String(req.headers["user-agent"] || "").slice(0, 500);
+  const createInput: CreateDemoRequestInput = {
+    name,
+    email,
+    company,
+    role,
+    teamSize,
+    timeline,
+    message,
+    sourcePage,
+    sourcePath,
+    requestId,
+    ipHash: hashValue(ip),
+    userAgentHash: hashValue(userAgentHeader || "unknown"),
+    metadata: {
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      utmTerm,
+      utmContent,
+      referrer,
+      userAgent: userAgentHeader,
+    },
+  };
+
+  let documentId: string | null = null;
+  if (isDemoRequestStoreConfigured()) {
+    try {
+      const record = await createDemoRequest(createInput);
+      documentId = record.documentId;
+    } catch (error) {
+      const message = error instanceof CmsWriteError ? error.message : "unknown CMS error";
+      console.error(`[demo-request] ${requestId} CMS write failed: ${message}`);
+      // Deliberately swallow — the email path is still attempted so
+      // we never fail a user submission because of a CMS outage.
+    }
+  } else {
+    console.warn(`[demo-request] ${requestId} CMS not configured — lead will only be emailed`);
+  }
+
+  // Step 2 — attempt email delivery.
+  let emailOk = false;
+  let emailError: string | null = null;
+  const provider = resolveSenderProvider();
+
   try {
     const delivery = await withTimeout(
       sendNewsletterEmail({
@@ -203,31 +271,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       REQUEST_TIMEOUT_MS
     );
 
+    emailOk = delivery.ok;
     if (!delivery.ok) {
-      console.error("[demo-request] send failed", delivery.error);
-      return res.status(200).json({
-        ok: true,
-        message:
-          "Thanks! Your request was received. We will follow up shortly.",
-        delivery: {
-          attempted: true,
-          sent: false,
-          provider: resolveSenderProvider(),
-        },
-      });
+      emailError = delivery.error ?? "unknown delivery error";
+      console.error(`[demo-request] ${requestId} send failed: ${emailError}`);
     }
-
-    return res.status(200).json({
-      ok: true,
-      message: "Thanks! We will reach out shortly to schedule a demo.",
-      delivery: {
-        attempted: true,
-        sent: true,
-        provider: resolveSenderProvider(),
-      },
-    });
   } catch (error) {
-    console.error("[demo-request] error", error instanceof Error ? error.message : "unknown error");
-    return res.status(500).json({ ok: false, message: "Unable to send request right now." });
+    emailError = error instanceof Error ? error.message : "unknown error";
+    console.error(`[demo-request] ${requestId} send threw: ${emailError}`);
   }
+
+  // Step 3 — annotate the CMS record with the delivery outcome so
+  // sales-ops can see which leads delivered and which need manual
+  // follow-up. Fire-and-forget: never fails the user response.
+  if (documentId) {
+    try {
+      await updateDemoRequestDelivery(documentId, {
+        emailDelivered: emailOk,
+        emailProvider: provider,
+        emailError,
+        deliveryAttemptedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      const message = error instanceof CmsWriteError ? error.message : "unknown CMS error";
+      console.error(`[demo-request] ${requestId} delivery-update failed: ${message}`);
+    }
+  }
+
+  // Always return 200 to the user — the lead is either in Strapi or
+  // has been logged. Never leak CMS/email internal state to the client.
+  return res.status(200).json({
+    ok: true,
+    message: emailOk
+      ? "Thanks! We will reach out shortly to schedule a demo."
+      : "Thanks! Your request was received. We will follow up shortly.",
+    delivery: {
+      attempted: true,
+      sent: emailOk,
+      provider,
+    },
+  });
 }
