@@ -5,6 +5,7 @@ import {
   hasRealBrowserHeaders,
   isAllowedOrigin,
   isKnownBot,
+  validateBotToken,
   validateEmail as strictValidateEmail,
 } from "../../lib/bot-defense";
 import {
@@ -34,12 +35,29 @@ type DemoRequestPayload = {
   utmContent?: string;
   referrer?: string;
   website?: string;
+  consent?: boolean | string;
+  _bt?: string;
 };
 
 const TO_EMAIL = process.env.DEMO_REQUEST_TO_EMAIL || process.env.NEWSLETTER_REPLY_TO_EMAIL || "info@colaberry.com";
 const REQUEST_TIMEOUT_MS = Number(process.env.DEMO_REQUEST_TIMEOUT_MS || 8000);
 const MAX_MESSAGE_LENGTH = Number(process.env.DEMO_REQUEST_MAX_MESSAGE || 4000);
 const HASH_SALT = process.env.DEMO_REQUEST_HASH_SALT || process.env.NEWSLETTER_HASH_SALT || "colaberry-demo-request";
+
+/**
+ * P1 feature flag — HMAC timing-token enforcement.
+ *
+ * When this flag is `"true"` AND `BOT_TOKEN_SECRET` is set on the runtime
+ * environment, every POST must include a server-signed `_bt` token that:
+ *   - was issued by GET /api/bot-token
+ *   - is at least 5 s old (humans fill forms slower than that)
+ *   - is at most 1 h old (limits replay window)
+ * Blocked requests get a silent fake-success so bots cannot enumerate.
+ *
+ * Default OFF so the code can ship without a behaviour change. Flip on via
+ * a single `gcloud run services update` once `BOT_TOKEN_SECRET` is set.
+ */
+const REQUIRE_BOT_TOKEN = process.env.DEMO_REQUEST_REQUIRE_BOT_TOKEN === "true";
 
 function hashValue(value: string) {
   return crypto
@@ -76,15 +94,17 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
 /**
  * Silent fake-success response used when any bot-defense layer blocks the
- * submission. Anti-enumeration pattern: the response is indistinguishable
- * from a real success so bots cannot probe which layer caught them (matches
- * podcast-subscribe + newsletter-subscribe behaviour per CLAUDE.md).
+ * submission. Anti-enumeration pattern: the response is byte-for-byte
+ * indistinguishable from a real success so bots cannot probe which layer
+ * caught them (closes the `delivery.attempted=false` enumeration leak
+ * from the P0 implementation — the delivery block now mirrors a real
+ * success, including the live sender provider).
  */
 function silentSuccess(res: NextApiResponse) {
   return res.status(200).json({
     ok: true,
     message: "Thanks! We will reach out shortly to schedule a demo.",
-    delivery: { attempted: false, sent: false, provider: "" },
+    delivery: { attempted: true, sent: true, provider: resolveSenderProvider() },
   });
 }
 
@@ -203,6 +223,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader("X-RateLimit-Limit", String(rlEmail.limit));
     res.setHeader("X-RateLimit-Remaining", "0");
     return res.status(429).json({ ok: false, message: "Too many requests. Please try again shortly." });
+  }
+
+  // Layer 9 — P1: HMAC timing token. Feature-flagged so the code can ship
+  // inert until BOT_TOKEN_SECRET is set on Cloud Run. When enforced, the
+  // token must be >=5 s old and <=1 h old, signed with BOT_TOKEN_SECRET.
+  // Silent fake-success on any failure (missing / expired / too-fast /
+  // invalid signature) so bots cannot enumerate the layer.
+  if (REQUIRE_BOT_TOKEN) {
+    const tokenResult = validateBotToken(payload._bt, 5000);
+    if (!tokenResult.valid) {
+      return silentSuccess(res);
+    }
+  }
+
+  // Layer 10 — P2: explicit consent to be contacted. Matches the pattern
+  // in podcast-subscribe / newsletter-subscribe. Real users see a 400
+  // with a corrective message; bots that scrape the form definition and
+  // submit without ticking the box get the same 400.
+  const consent = payload.consent === true || payload.consent === "true";
+  if (!consent) {
+    return res.status(400).json({
+      ok: false,
+      message: "Please confirm you agree to be contacted about your request.",
+    });
   }
 
   const name = normalizeText(payload.name, 120);
