@@ -406,7 +406,7 @@ export default function Home({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
       {/* ---- Hero (dark animated hero) ---- */}
-      <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="-mx-4 sm:mx-0 relative overflow-hidden rounded-none sm:rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
+      <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="relative overflow-hidden rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
         {/* Animated gradient mesh background */}
         <div className="hero-gradient-mesh" aria-hidden="true">
           <div className="hero-orb hero-orb-1" />
