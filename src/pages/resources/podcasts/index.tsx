@@ -1,11 +1,12 @@
 import Layout from "../../../components/Layout";
 import AeoQuickAnswer from "../../../components/AeoQuickAnswer";
 import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
+import SubstackEmbedSignup from "../../../components/SubstackEmbedSignup";
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
 import type { GetServerSideProps } from "next";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StatePanel from "../../../components/StatePanel";
 import {
   fetchPodcastEpisodes,
@@ -17,7 +18,6 @@ import {
 import { heroImage } from "../../../lib/media";
 import { logPodcastEvent } from "../../../lib/podcastTelemetry";
 import { seoTags, type SeoMeta } from "../../../lib/seo";
-import { getTrackingContext } from "../../../lib/tracking";
 import { usePodcastPlayer } from "../../../contexts/PodcastPlayerContext";
 
 const PAGE_SIZE = 24;
@@ -66,80 +66,6 @@ export default function Podcasts({
   // Refs to avoid stale closures in IntersectionObserver callback
   const loadingRef = useRef(false);
   const pageRef = useRef(1);
-
-  // Sidebar podcast subscribe state
-  const [sidebarEmail, setSidebarEmail] = useState("");
-  const [sidebarHoneypot, setSidebarHoneypot] = useState("");
-
-  const [sidebarSubState, setSidebarSubState] = useState<"idle" | "submitting" | "success" | "error">("idle");
-  const [sidebarSubMessage, setSidebarSubMessage] = useState<string | null>(null);
-  const sidebarTracking = useMemo(() => getTrackingContext(), []);
-
-  /** POST email to Substack via hidden iframe (no redirect, no popup) */
-  function postToSubstack(email: string) {
-    const SUBSTACK_URL = "https://www.colaberry.online/api/v1/free?nojs=true";
-    const iframeName = "substack-subscribe-iframe";
-    let iframe = document.querySelector<HTMLIFrameElement>(`iframe[name="${iframeName}"]`);
-    if (!iframe) {
-      iframe = document.createElement("iframe");
-      iframe.name = iframeName;
-      iframe.style.display = "none";
-      document.body.appendChild(iframe);
-    }
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = SUBSTACK_URL;
-    form.target = iframeName;
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = "email";
-    input.value = email;
-    form.appendChild(input);
-    document.body.appendChild(form);
-    form.submit();
-    form.remove();
-  }
-
-  async function handleSidebarSubscribe(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (sidebarSubState === "submitting") return;
-    setSidebarSubState("submitting");
-    setSidebarSubMessage(null);
-    try {
-      const res = await fetch("/api/podcast-subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: sidebarEmail,
-          website: sidebarHoneypot,
-          consent: true,
-          sourcePath: canonicalPath,
-          sourcePage: "podcast-listing-sidebar",
-          utmSource: sidebarTracking.utmSource,
-          utmMedium: sidebarTracking.utmMedium,
-          utmCampaign: sidebarTracking.utmCampaign,
-          utmTerm: sidebarTracking.utmTerm,
-          utmContent: sidebarTracking.utmContent,
-          referrer: sidebarTracking.referrer,
-        }),
-      });
-      const payload = (await res.json()) as { ok?: boolean; message?: string };
-      if (!res.ok || !payload?.ok) {
-        setSidebarSubState("error");
-        setSidebarSubMessage(payload?.message || "Unable to subscribe right now.");
-        return;
-      }
-      // 2. Also subscribe via Substack (podcast email delivery)
-      postToSubstack(sidebarEmail);
-      setSidebarSubState("success");
-      setSidebarSubMessage(payload?.message || "Podcast subscription confirmed.");
-      setSidebarEmail("");
-      setSidebarHoneypot("");
-    } catch {
-      setSidebarSubState("error");
-      setSidebarSubMessage("Unable to subscribe right now.");
-    }
-  }
 
   const handlePlay = (episode: PodcastEpisode, source: string) => {
     if (!episode.audioUrl) return;
@@ -671,51 +597,14 @@ export default function Podcasts({
               Colaberry AI Podcast explores the latest in AI, Data Science, and Emerging Tech. From cutting-edge research to real-world impact, we break down how AI is shaping industries, careers, and the future of work.
             </p>
 
-            {/* Podcast subscribe */}
+            {/* Podcast subscribe — on-brand native form, hands off to Substack */}
             <div className="mt-6">
-              <h4 className="text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">Subscribe</h4>
-              <p className="mt-1 text-xs text-[#71717A] dark:text-[#A1A1AA]">Get notified when new episodes drop.</p>
-              <form onSubmit={handleSidebarSubscribe} className="mt-3">
-                <input
-                  type="text"
-                  name="website"
-                  value={sidebarHoneypot}
-                  onChange={(e) => setSidebarHoneypot(e.target.value)}
-                  autoComplete="off"
-                  tabIndex={-1}
-                  className="absolute -left-[9999px] h-0 w-0 opacity-0"
-                  aria-hidden="true"
-                />
-                <div className="flex items-center gap-2">
-                  <input
-                    type="email"
-                    required
-                    placeholder="Email address"
-                    value={sidebarEmail}
-                    onChange={(e) => setSidebarEmail(e.target.value)}
-                    disabled={sidebarSubState === "submitting"}
-                    className="footer-input-underline flex-1 text-sm"
-                  />
-                  <button
-                    type="submit"
-                    disabled={sidebarSubState === "submitting"}
-                    aria-label="Subscribe"
-                    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#18181B] text-white transition-transform hover:scale-105 disabled:opacity-40 dark:bg-[#FAFAFA] dark:text-[#18181B]"
-                  >
-                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-                <p className="mt-3 text-xs leading-relaxed text-[#71717A] dark:text-[#A1A1AA]">
-                  By subscribing you agree to receive podcast notifications from Colaberry AI.
-                </p>
-                {sidebarSubMessage ? (
-                  <p className={`mt-2 text-xs ${sidebarSubState === "error" ? "text-red-600" : "text-zinc-600 dark:text-zinc-400"}`}>
-                    {sidebarSubMessage}
-                  </p>
-                ) : null}
-              </form>
+              <SubstackEmbedSignup
+                variant="sidebar"
+                listKind="podcast"
+                title="Subscribe to the Colaberry AI Podcast"
+                description="Get every new episode delivered free to your inbox — enterprise AI agents, MCP servers, skills, and tools."
+              />
             </div>
 
             {/* Company tags */}

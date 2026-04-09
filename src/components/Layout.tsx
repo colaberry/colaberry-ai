@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { GlobalNavigation } from "../lib/cms";
 import { captureUtmContextFromLocation, getTrackingContext } from "../lib/tracking";
 import AnimatedSignalBanner from "./AnimatedSignalBanner";
+import SubstackEmbedSignup from "./SubstackEmbedSignup";
 import { usePodcastPlayer } from "../contexts/PodcastPlayerContext";
 
 const CookieConsentBanner = dynamic(() => import("./CookieConsentBanner"), {
@@ -1632,43 +1633,16 @@ export default function Layout({ children }: { children: ReactNode }) {
                 />
               </span>
 
-              {/* Newsletter — premium form → Substack API */}
-              <h2 className="mt-8 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                Subscribe to newsletter
-              </h2>
-              <form
-                action="https://www.colaberry.online/api/v1/free?nojs=true"
-                method="POST"
-                target="_blank"
-                className="mt-4"
-              >
-                <div className="flex items-center gap-3">
-                  <label htmlFor="footer-newsletter-email" className="sr-only">Email address</label>
-                  <input
-                    id="footer-newsletter-email"
-                    type="email"
-                    name="email"
-                    required
-                    placeholder="Email address"
-                    className="footer-input-underline flex-1 text-sm"
-                  />
-                  <button
-                    type="submit"
-                    aria-label="Subscribe"
-                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white transition-transform hover:scale-105 dark:bg-zinc-50 dark:text-zinc-900"
-                  >
-                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-                <p className="mt-3 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-                  Free. No spam. Unsubscribe anytime.{" "}
-                  <Link href="/privacy-policy" className="underline hover:text-[#18181B] dark:hover:text-white">
-                    Privacy Policy
-                  </Link>
-                </p>
-              </form>
+              {/* Newsletter — on-brand native form, hands off to Substack */}
+              <div className="mt-8">
+                <SubstackEmbedSignup
+                  variant="footer"
+                  listKind="newsletter"
+                  headingLevel="h3"
+                  title="Subscribe to the Colaberry AI Newsletter"
+                  description="Daily AI podcast episodes and enterprise AI implementation signals — agents, MCP servers, skills, and tools."
+                />
+              </div>
             </div>
 
             {/* COL 2 & 3 — Link columns */}

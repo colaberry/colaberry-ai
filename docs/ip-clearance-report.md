@@ -138,6 +138,41 @@ All competitor attribution comments removed from source code to eliminate paper 
 
 ---
 
+## AI DEVELOPMENT TOOLCHAIN — Evolution
+
+Development of colaberry.ai maps directly to Colaberry's Modern Software Engineer program framework, which defines 5 eras of software development:
+
+| Era | Name | Tools | Developer Role |
+|-----|------|-------|----------------|
+| Dev 1.0 | Manual Coding | Text editor, compiler, man pages | Write everything by hand |
+| Dev 1.2 | Google It | VS Code, Git, StackOverflow | Search, copy, adapt |
+| Dev 1.5 | Ask ChatGPT | VS Code + ChatGPT/Claude in browser | Paste code, get answers, copy back |
+| Dev 1.8 | AI in the Editor | Cursor, GitHub Copilot, Windsurf | Accept/reject autocomplete, apply diffs |
+| Dev 2.0 | Agentic Coding | Claude Code, Devin, OpenAI Codex | Write specs, review output, deploy |
+
+Reference: [VizuaraAI/modern-software-developer-bootcamp](https://github.com/VizuaraAI/modern-software-developer-bootcamp/blob/main/day-1/lecture-notes/evolution-of-software-development.md)
+
+### Phase 1: Dev 1.8 — AI in the Editor (Project Start)
+Initial development started from scratch using Dev 1.8 era tools:
+- **Cursor IDE** — AI-powered code editor with codebase-aware autocomplete and inline suggestions
+- **GitHub Copilot** — AI pair-programming assistant for code completion
+- **GPT-5.3 Codex** — OpenAI's code generation model for scaffolding and prototyping
+
+At Dev 1.8, AI is embedded in the editor and sees your files — but you're still the architect. AI is a fast typist. Development was faster than manual coding but remained developer-driven.
+
+### Phase 2: Dev 2.0 — Agentic Coding with Claude Code + Opus 4.6 (Current)
+After completing the Modern Software Engineer program, development transitioned to Dev 2.0 — fully agentic workflow:
+- **Claude Code by Anthropic** — CLI-based AI engineering tool running specialized agents
+- **Claude Opus 4.6** — Anthropic's most capable model, powering all 37 AI agents and 9 reusable skills
+- **Spec-Driven Development (SDD)** — Specify → Plan → Tasks → Implement methodology
+
+The key shift: from "writing code" to "writing specs" and "reviewing code." Every feature is specified as a PRD, broken into tasks by planning agents, implemented by dev agents with TDD, verified by security and quality agents, and deployed through governed pipelines — all orchestrated through Claude Code with Opus 4.6.
+
+### IP Implications
+All AI-generated code across both phases (Dev 1.8 tools: Cursor, Copilot, GPT-5.3 Codex; Dev 2.0 tool: Claude Code with Opus 4.6) was reviewed, modified, and approved by the developer (Sai Tejesh Kowtharapu) before commit. No AI tool output was committed verbatim without human review. The project asserts full copyright ownership over all original code, components, and architectural designs.
+
+---
+
 ## SIGN-OFF
 
 | Role | Name | Date | Signature |

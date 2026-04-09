@@ -1,16 +1,35 @@
 import crypto from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { buildNewsletterTemplate } from "../../lib/newsletterTemplate";
-import { resolveSenderProvider, sendNewsletterEmail, isEmailProviderConfigured } from "../../lib/newsletterSender";
 import { createUnsubscribeToken } from "../../lib/newsletterTokens";
 import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
+import {
+  isKnownBot,
+  hasRealBrowserHeaders,
+  isAllowedOrigin,
+  hasJsonContentType,
+  validateEmail,
+} from "../../lib/bot-defense";
+
+/**
+ * Podcast subscribe API
+ *
+ * This endpoint is now CMS-write + telemetry only. Email delivery is handled
+ * by Substack's native daily podcast broadcast to every subscriber. The
+ * frontend renders a Substack `/embed` iframe inside the Hybrid
+ * `SubstackEmbedSignup` wrapper, so humans subscribe directly on
+ * colaberry.online without this API touching the Substack list at all.
+ *
+ * Rationale: `docs/email-delivery-test-report-2026-04-09.md` documents why
+ * every previous attempt to bridge this API to Substack (`/api/v1/free?nojs=true`)
+ * was silently dropped by Cloudflare. Dropping Resend/SendGrid from the
+ * signup path removes a whole class of configuration drift.
+ */
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL;
 const CMS_TOKEN = process.env.CMS_API_TOKEN;
 const HASH_SALT = process.env.NEWSLETTER_HASH_SALT || "colaberry-newsletter";
 const REQUEST_TIMEOUT_MS = Number(process.env.NEWSLETTER_API_TIMEOUT_MS || 8000);
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
-const WELCOME_EMAIL_ENABLED = process.env.NEWSLETTER_SEND_WELCOME_ON_SUBSCRIBE !== "false";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
@@ -39,13 +58,6 @@ type CMSCollectionResponse = {
     email?: string | null;
     status?: string | null;
   }>;
-};
-
-type DeliveryResult = {
-  attempted: boolean;
-  sent: boolean;
-  provider: "resend" | "sendgrid" | "console";
-  error?: string;
 };
 
 function normalizeText(value: unknown, maxLength = 200) {
@@ -81,63 +93,6 @@ function buildUnsubscribeUrl(email: string) {
   return token && SITE_URL
     ? `${SITE_URL.replace(/\/$/, "")}/unsubscribe?token=${encodeURIComponent(token)}&list=podcast`
     : null;
-}
-
-async function sendWelcomeEmail(email: string): Promise<DeliveryResult> {
-  const provider = resolveSenderProvider();
-  if (!WELCOME_EMAIL_ENABLED) {
-    return { attempted: false, sent: false, provider };
-  }
-  if (!isEmailProviderConfigured()) {
-    return { attempted: false, sent: false, provider };
-  }
-
-  const siteBase = SITE_URL || "https://colaberry.ai";
-  const template = buildNewsletterTemplate({
-    recipientEmail: email,
-    siteUrl: siteBase,
-    subject: "Welcome to the Colaberry AI Podcast",
-    preheader: "You will be notified when new podcast episodes drop.",
-    heading: "Podcast subscription confirmed",
-    intro:
-      "You are now subscribed to the Colaberry AI Podcast. We will notify you when new episodes are published — covering AI trends, enterprise deployment insights, and research deep-dives.",
-    ctaLabel: "Browse episodes",
-    ctaHref: `${siteBase.replace(/\/$/, "")}/resources/podcasts`,
-    items: [
-      { title: "Latest episodes", label: "Latest episodes", href: `${siteBase.replace(/\/$/, "")}/resources/podcasts` },
-      { title: "Platform overview", label: "Platform overview", href: `${siteBase.replace(/\/$/, "")}/platform` },
-    ],
-  });
-
-  try {
-    const result = await sendNewsletterEmail({
-      to: email,
-      subject: template.subject,
-      html: template.html,
-      text: template.text,
-    });
-    if (!result.ok) {
-      return {
-        attempted: true,
-        sent: false,
-        provider,
-        error: result.error || "send failed",
-      };
-    }
-    return {
-      attempted: true,
-      sent: true,
-      provider,
-    };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "send failed";
-    return {
-      attempted: true,
-      sent: false,
-      provider,
-      error: message,
-    };
-  }
 }
 
 async function cmsFetch<T>(path: string, init: RequestInit = {}) {
@@ -177,9 +132,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .json({ ok: false, message: "Subscription service is temporarily unavailable." });
   }
 
-  // Bot defense: block known bots on form POST
-  const { isKnownBot } = await import("../../lib/bot-defense");
-  if (isKnownBot(req)) {
+  // Bot defense: every layer that fails silently fake-succeeds with a 200 —
+  // this is deliberate (OWASP A01: never leak which layer caught the bot).
+  //  Layer 1  — known-bot UA / too-short UA
+  //  Layer 2  — missing real-browser headers (accept, accept-language, user-agent)
+  //  Layer 3  — origin/referer must be one of our hosts
+  //  Layer 4  — content-type must be application/json
+  if (
+    isKnownBot(req) ||
+    !hasRealBrowserHeaders(req) ||
+    !isAllowedOrigin(req) ||
+    !hasJsonContentType(req)
+  ) {
     return res.status(200).json({ ok: true, message: "Subscribed." });
   }
 
@@ -204,7 +168,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ ok: true, message: "Subscribed." });
   }
 
-  if (!EMAIL_PATTERN.test(email) || /[\r\n]/.test(email)) {
+  // Strict email validation: length, CRLF, consecutive dots, disposable domains
+  const emailResult = validateEmail(email);
+  if (!emailResult.valid || !EMAIL_PATTERN.test(email)) {
     return res.status(400).json({ ok: false, message: "Enter a valid email address." });
   }
 
@@ -261,17 +227,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (entryId) {
       if (status === "subscribed") {
         // SECURITY: Return same message as new subscription to prevent email enumeration (OWASP A01)
-        return res
-          .status(200)
-          .json({
-            ok: true,
-            message: "Podcast subscription confirmed.",
-            delivery: {
-              attempted: false,
-              sent: false,
-              provider: resolveSenderProvider(),
-            },
-          });
+        return res.status(200).json({
+          ok: true,
+          message: "Podcast subscription confirmed.",
+        });
       }
 
       await cmsFetch(`/api/podcast-subscribers/${encodeURIComponent(String(entryId))}`, {
@@ -284,25 +243,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }),
       });
 
-      const delivery = await sendWelcomeEmail(email);
       const unsubscribeUrl = buildUnsubscribeUrl(email);
-      if (!delivery.sent && delivery.error) {
-        console.warn(`[podcast-subscribe] ${requestId} welcome email skipped: ${delivery.error}`);
-      }
-
-      const message = delivery.sent
-        ? "Podcast subscription reactivated. Welcome email sent."
-        : delivery.attempted
-          ? "Podcast subscription reactivated. We could not deliver the welcome email right now."
-          : "Podcast subscription reactivated.";
       return res.status(200).json({
         ok: true,
-        message,
+        message: "Podcast subscription reactivated.",
         unsubscribeUrl,
-        delivery: {
-          attempted: delivery.attempted,
-          sent: delivery.sent,
-        },
       });
     }
 
@@ -316,25 +261,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }),
     });
 
-    const delivery = await sendWelcomeEmail(email);
     const unsubscribeUrl = buildUnsubscribeUrl(email);
-    if (!delivery.sent && delivery.error) {
-      console.warn(`[podcast-subscribe] ${requestId} welcome email skipped: ${delivery.error}`);
-    }
-
-    const message = delivery.sent
-      ? "Podcast subscription confirmed. Welcome email sent."
-      : delivery.attempted
-        ? "Podcast subscription confirmed. We could not deliver the welcome email right now."
-        : "Podcast subscription confirmed.";
     return res.status(200).json({
       ok: true,
-      message,
+      message: "Podcast subscription confirmed.",
       unsubscribeUrl,
-      delivery: {
-        attempted: delivery.attempted,
-        sent: delivery.sent,
-      },
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "unknown error";

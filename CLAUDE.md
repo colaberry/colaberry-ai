@@ -7,7 +7,7 @@
 - **Fonts:** Inter via `next/font/google` (variable `--font-inter`)
 - **CMS:** Strapi v5 headless — fetched via `src/lib/cms.ts` using `NEXT_PUBLIC_CMS_URL`
 - **Deployment:** Docker + GCP Cloud Run (prod: `colaberry-ai-prod`, CMS: `colaberry-ai-cms-prod`)
-- **Newsletter:** Substack integration (colaberry.online) — form POSTs to Substack API
+- **Newsletter / Podcast email:** Substack native delivery via the official `/embed` iframe (colaberry.online). All 5 signup touchpoints render `SubstackEmbedSignup` — the "Hybrid" component: indexable wrapper (schema.org `SubscribeAction` + heading + description + consent copy) with Substack's embed iframe inside. Subscribe APIs write to Strapi for internal telemetry only; email delivery is 100% Substack (no Resend / SendGrid on the signup path). Rationale: `docs/email-delivery-test-report-2026-04-09.md`.
 - **Podcast Transcripts:** Deepgram API (free Pay-As-You-Go, $200 credit)
 - **Default Theme:** Dark mode (enterprise standard)
 - **Domain:** colaberry.ai (live, Cloud Run prod)
@@ -114,7 +114,7 @@ colaberry.ai is built for AEO — optimized for AI answer engines (ChatGPT, Clau
 | `robots.txt` | `src/pages/robots.txt.ts` | Explicitly welcomes GPTBot, ClaudeBot, PerplexityBot |
 | FAQ Schema | `src/pages/index.tsx` | FAQPage JSON-LD for direct AI citation |
 | Quick Answer blocks | `src/components/AeoQuickAnswer.tsx` | Answer-optimized paragraphs on catalog pages |
-| Bot Defense | `src/lib/bot-defense.ts` | Multi-layer protection for forms (AEO-safe) |
+| Bot Defense | `src/lib/bot-defense.ts` | 9-layer form protection (AEO-safe): UA filter (blocks curl/wget/headless/scrapy/okhttp/java — allows crawlers on GET), min UA length, required browser headers (accept, accept-language, user-agent), origin/referer host allowlist, `application/json` content-type enforcement, honeypot, 5s-min HMAC timing token, strict email validator w/ disposable-domain blocklist, per-IP + per-email rate limits. All failures silently fake-succeed with 200 (anti-enumeration). |
 | Category metadata | `src/pages/index.tsx` | Homepage signal cards show category for structured AI parsing |
 | Industries | `src/pages/industries/` | 8 domain-specific workspaces with agent/use-case counts |
 
