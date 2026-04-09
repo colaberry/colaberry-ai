@@ -1,7 +1,12 @@
 import crypto from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { resolveSenderProvider, sendNewsletterEmail } from "../../lib/newsletterSender";
-import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
+import {
+  hasJsonContentType,
+  hasRealBrowserHeaders,
+  isAllowedOrigin,
+  isKnownBot,
+  validateEmail as strictValidateEmail,
+} from "../../lib/bot-defense";
 import {
   createDemoRequest,
   isDemoRequestStoreConfigured,
@@ -9,6 +14,8 @@ import {
   CmsWriteError,
   type CreateDemoRequestInput,
 } from "../../lib/demoRequestStore";
+import { resolveSenderProvider, sendNewsletterEmail } from "../../lib/newsletterSender";
+import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 type DemoRequestPayload = {
   name?: string;
@@ -62,8 +69,23 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#39;");
 }
 
-function isValidEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+// Belt-and-suspenders regex sanity check run alongside the strict
+// validateEmail() from bot-defense (disposable-domain blocklist,
+// consecutive-dots check, local-part length cap, multi-plus guard).
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+/**
+ * Silent fake-success response used when any bot-defense layer blocks the
+ * submission. Anti-enumeration pattern: the response is indistinguishable
+ * from a real success so bots cannot probe which layer caught them (matches
+ * podcast-subscribe + newsletter-subscribe behaviour per CLAUDE.md).
+ */
+function silentSuccess(res: NextApiResponse) {
+  return res.status(200).json({
+    ok: true,
+    message: "Thanks! We will reach out shortly to schedule a demo.",
+    delivery: { attempted: false, sent: false, provider: "" },
+  });
 }
 
 function parsePayload(req: NextApiRequest): DemoRequestPayload | null {
@@ -98,19 +120,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ ok: false, message: "Method not allowed." });
   }
 
-  const rl = checkRateLimit("demo-request", getClientIp(req), 10, 60_000);
-  if (rl.limited) {
-    res.setHeader("Retry-After", String(rl.retryAfterSec));
-    res.setHeader("X-RateLimit-Limit", String(rl.limit));
+  // Per-IP flood guard — runs BEFORE any parsing so abusers get throttled
+  // even if they never send valid JSON. Tightened from 10/60s → 12/10min
+  // to match the podcast-subscribe + newsletter-subscribe envelope.
+  const ip = getClientIp(req);
+  const rlIp = checkRateLimit("demo-request-ip", ip, 12, 10 * 60_000);
+  if (rlIp.limited) {
+    res.setHeader("Retry-After", String(rlIp.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rlIp.limit));
     res.setHeader("X-RateLimit-Remaining", "0");
     return res.status(429).json({ ok: false, message: "Too many requests. Please try again shortly." });
   }
 
-  // Bot defense: block known bots + validate timing token
-  const { checkBotDefense } = await import("../../lib/bot-defense");
-  const botBlock = checkBotDefense(req);
-  if (botBlock) {
-    return res.status(403).json({ ok: false, message: botBlock });
+  // Bot defense layers 1-4 — silent fake-success on any block so bots
+  // cannot enumerate which layer caught them (OWASP A01, matches
+  // podcast-subscribe + newsletter-subscribe pattern per CLAUDE.md).
+  //  Layer 1  — known-bot UA / too-short UA
+  //  Layer 2  — missing real-browser headers (accept, accept-language, user-agent)
+  //  Layer 3  — origin/referer must be one of our hosts
+  //  Layer 4  — content-type must be application/json
+  if (
+    isKnownBot(req) ||
+    !hasRealBrowserHeaders(req) ||
+    !isAllowedOrigin(req) ||
+    !hasJsonContentType(req)
+  ) {
+    return silentSuccess(res);
   }
 
   const payload = parsePayload(req);
@@ -118,18 +153,56 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ ok: false, message: "Invalid request payload." });
   }
 
-  const email = normalizeEmail(payload.email);
-  if (!email || !isValidEmail(email)) {
-    return res.status(400).json({ ok: false, message: "A valid email is required." });
-  }
-
-  // Prevent email header injection
-  if (/[\r\n]/.test(email) || /[\r\n]/.test(payload.name || "")) {
-    return res.status(400).json({ ok: false, message: "Invalid input." });
-  }
-
+  // Layer 5 — Honeypot: a real browser never touches this hidden field.
+  // Silent fake-success so the bot believes it worked and moves on.
   if (payload.website && String(payload.website).trim().length > 0) {
-    return res.status(200).json({ ok: true, message: "Thanks! We will be in touch." });
+    return silentSuccess(res);
+  }
+
+  // Layer 6 — CRLF header-injection guard across every text field. Only
+  // header-injecting bots produce \r\n in form fields, so silent fake-success
+  // is safe (no real user ever sees this path).
+  const textFieldsForCrlfCheck = [
+    payload.name,
+    payload.email,
+    payload.company,
+    payload.role,
+    payload.teamSize,
+    payload.timeline,
+    payload.message,
+    payload.sourcePage,
+    payload.sourcePath,
+    payload.utmSource,
+    payload.utmMedium,
+    payload.utmCampaign,
+    payload.utmTerm,
+    payload.utmContent,
+    payload.referrer,
+  ];
+  if (textFieldsForCrlfCheck.some((v) => typeof v === "string" && /[\r\n]/.test(v))) {
+    return silentSuccess(res);
+  }
+
+  const email = normalizeEmail(payload.email);
+
+  // Layer 7 — Strict email validator: 254-char cap, CRLF, consecutive-dots,
+  // local-part length, multi-plus, disposable-domain blocklist — plus a
+  // regex sanity check. Returns 400 on bad format so real users with a
+  // typo get corrective feedback (bots do not iterate the demo-request
+  // form the way they scrape signup endpoints, so enumeration risk is low).
+  const emailResult = strictValidateEmail(email);
+  if (!emailResult.valid || !EMAIL_PATTERN.test(email)) {
+    return res.status(400).json({ ok: false, message: "A valid work email is required." });
+  }
+
+  // Layer 8 — Per-email rate limit (now that the email is parsed).
+  // 6 attempts per 10 min per email, matching the subscribe endpoints.
+  const rlEmail = checkRateLimit("demo-request-email", email, 6, 10 * 60_000);
+  if (rlEmail.limited) {
+    res.setHeader("Retry-After", String(rlEmail.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rlEmail.limit));
+    res.setHeader("X-RateLimit-Remaining", "0");
+    return res.status(429).json({ ok: false, message: "Too many requests. Please try again shortly." });
   }
 
   const name = normalizeText(payload.name, 120);
@@ -213,7 +286,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // message. If Strapi is unreachable we still continue to the email
   // step (degraded — logged — but user still gets a response).
   const requestId = crypto.randomUUID();
-  const ip = getClientIp(req);
   const userAgentHeader = String(req.headers["user-agent"] || "").slice(0, 500);
   const createInput: CreateDemoRequestInput = {
     name,
