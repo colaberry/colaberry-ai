@@ -19,6 +19,15 @@ Utility modules, all camelCase `.ts` files. Every function must be typed — no 
 | `api-auth.ts` | Admin auth with timing-safe comparisons |
 | `rate-limit.ts` | Shared rate limiter for API routes |
 
+## Lead Capture Modules
+
+| Module | Purpose |
+|--------|---------|
+| `demoRequestStore.ts` | Strapi `demo-request` write layer — `createDemoRequest()` + `updateDemoRequestDelivery()`. Bearer-token auth via `CMS_API_TOKEN`, per-request `AbortController` timeout, throws `CmsWriteError` on failure so the handler can degrade gracefully. Pure helpers (`buildCreatePayload`, `buildDeliveryUpdatePayload`) exported for `scripts/verify-demo-request-store.mjs`. |
+| `newsletterSender.ts` | Email provider abstraction (Resend / SendGrid / console). Used by demo-request + contact + subscribe handlers. |
+
+**Demo-request durability pattern:** `/api/demo-request` writes the lead to Strapi **before** calling `sendNewsletterEmail`, then updates the record with the delivery outcome (`emailDelivered`, `emailProvider`, `emailError`, `deliveryAttemptedAt`) after. Even if email bounces, the lead is durable in Strapi and visible in `/admin/content-manager/collection-types/api::demo-request.demo-request`.
+
 ## CMS Fetch Patterns
 
 Per-type helpers follow naming convention:
