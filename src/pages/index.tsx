@@ -21,6 +21,7 @@ import {
 } from "../lib/cms";
 // heroImage available from ../lib/media if needed
 import { seoTags, type SeoMeta } from "../lib/seo";
+// PodcastSignup and NewsletterSignup removed from homepage per Ram's feedback
 
 type HomePodcastSignal = {
   id: number;
@@ -83,7 +84,7 @@ type HomeProps = {
   trendingUseCases: HomeUseCaseSignal[];
   latestMCPs: HomeMcpSignal[];
   trendingMCPs: HomeMcpSignal[];
-  catalogCounts: { agents: number; mcpServers: number; skills: number };
+  catalogCounts: { agents: number; mcpServers: number; skills: number; tools: number; podcasts: number };
 };
 
 /* ── Integration chip logos (20×20 official brand SVGs from Simple Icons / CDN) ── */
@@ -128,7 +129,39 @@ export default function Home({
   trendingMCPs,
   catalogCounts,
 }: HomeProps) {
+  // Hardcoded minimums so metrics never show "0+" when CMS is unreachable during ISR
+  const FALLBACK_COUNTS = { agents: 160, mcpServers: 1500, skills: 500, tools: 0, podcasts: 246 };
+  const safeCounts = {
+    agents: catalogCounts.agents || FALLBACK_COUNTS.agents,
+    mcpServers: catalogCounts.mcpServers || FALLBACK_COUNTS.mcpServers,
+    skills: catalogCounts.skills || FALLBACK_COUNTS.skills,
+    tools: catalogCounts.tools || FALLBACK_COUNTS.tools,
+    podcasts: catalogCounts.podcasts || FALLBACK_COUNTS.podcasts,
+  };
   const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k+` : `${n}+`;
+
+  /* ── Mouse-reactive parallax for orbital diagram (ref-based, no re-renders) ── */
+  const heroRef = useRef<HTMLElement>(null);
+  const parallaxGlowRef = useRef<HTMLDivElement>(null);
+  const parallaxMetricRef = useRef<HTMLDivElement>(null);
+  const rafId = useRef(0);
+  const handleHeroMouse = useCallback((e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nx = (e.clientX - rect.left) / rect.width - 0.5;
+    const ny = (e.clientY - rect.top) / rect.height - 0.5;
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(() => {
+      if (parallaxGlowRef.current) parallaxGlowRef.current.style.transform = `translate(${nx * -6}px, ${ny * -6}px)`;
+      if (parallaxMetricRef.current) parallaxMetricRef.current.style.transform = `translate(${nx * 8}px, ${ny * 8}px)`;
+    });
+  }, []);
+  const handleHeroLeave = useCallback(() => {
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(() => {
+      if (parallaxGlowRef.current) parallaxGlowRef.current.style.transform = "translate(0px, 0px)";
+      if (parallaxMetricRef.current) parallaxMetricRef.current.style.transform = "translate(0px, 0px)";
+    });
+  }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- false positive: used at line ~492
   const industries = [
@@ -148,10 +181,19 @@ export default function Home({
 
   const catalogs: CatalogItem[] = [
     {
+      href: "/resources/podcasts",
+      title: "AI Podcasts",
+      description: "246 episodes with full transcripts, timestamps, and linked artifacts from Colaberry AI.",
+      meta: "246 episodes",
+      iconType: "podcast",
+      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
+      accentColor: "#a78bfa",
+    },
+    {
       href: "/aixcelerator/agents",
       title: "AI Agents",
-      description: `${catalogCounts.agents || 160}+ enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.`,
-      meta: `${fmt(catalogCounts.agents || 160)} agents`,
+      description: `${safeCounts.agents}+ enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.`,
+      meta: `${fmt(safeCounts.agents)} agents`,
       iconType: "agent",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
       accentColor: "#ef4444",
@@ -168,8 +210,8 @@ export default function Home({
     {
       href: "/aixcelerator/skills",
       title: "AI Skills",
-      description: "16,900+ reusable capability units across workflow, domain, and orchestration categories.",
-      meta: "16.9k+ skills",
+      description: `${safeCounts.skills.toLocaleString()}+ reusable capability units across workflow, domain, and orchestration categories.`,
+      meta: `${fmt(safeCounts.skills)} skills`,
       iconType: "skill",
       gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
       accentColor: "#f59e0b",
@@ -185,15 +227,6 @@ export default function Home({
       accentColor: "#10b981",
     },
     */
-    {
-      href: "/resources/podcasts",
-      title: "AI Podcasts",
-      description: "246 episodes with full transcripts, timestamps, and linked artifacts from Colaberry AI.",
-      meta: "246 episodes",
-      iconType: "podcast",
-      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
-      accentColor: "#a78bfa",
-    },
     {
       href: "/resources/books",
       title: "Books & Research",
@@ -222,9 +255,9 @@ export default function Home({
       description: "Adopt agents with clear ownership, status, and workflow alignment — ready for rollout. Browse by industry, deployment stage, and readiness level.",
       href: "/aixcelerator/agents",
       metrics: [
-        { value: fmt(catalogCounts.agents), label: "Agent profiles" },
+        { value: fmt(safeCounts.agents), label: "Agent profiles" },
         { value: "14", label: "Industries" },
-        { value: fmt(catalogCounts.agents), label: "Public agents" },
+        { value: fmt(safeCounts.agents), label: "Public agents" },
       ],
     },
     {
@@ -234,7 +267,7 @@ export default function Home({
       description: "Standardize tool access via MCP with integration-ready server patterns and endpoints. Connect your existing stack with governed, tested connectors.",
       href: "/aixcelerator/mcp",
       metrics: [
-        { value: fmt(catalogCounts.mcpServers), label: "MCP servers" },
+        { value: fmt(safeCounts.mcpServers), label: "MCP servers" },
         { value: "12", label: "Tool categories" },
         { value: "100%", label: "Tested connectors" },
       ],
@@ -246,7 +279,7 @@ export default function Home({
       description: "Discover modular, composable skills that agents use to execute tasks — from data extraction to code generation. Browse by category, source, and compatibility.",
       href: "/aixcelerator/skills",
       metrics: [
-        { value: fmt(catalogCounts.skills), label: "Skills indexed" },
+        { value: fmt(safeCounts.skills), label: "Skills indexed" },
         { value: "10", label: "Categories" },
         { value: "Composable", label: "Architecture" },
       ],
@@ -340,7 +373,7 @@ export default function Home({
           name: "What is Colaberry AI?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: `Colaberry AI is an enterprise platform for discovering, evaluating, and deploying AI agents, MCP servers, skills, and research. It catalogs ${catalogCounts.agents}+ AI agents, ${catalogCounts.mcpServers.toLocaleString()}+ MCP servers, and ${catalogCounts.skills.toLocaleString()}+ reusable AI skills — all structured for both human teams and LLM-based discovery.`,
+            text: `Colaberry AI is an enterprise platform for discovering, evaluating, and deploying AI agents, MCP servers, skills, and research. It catalogs ${safeCounts.agents}+ AI agents, ${safeCounts.mcpServers.toLocaleString()}+ MCP servers, and ${safeCounts.skills.toLocaleString()}+ reusable AI skills — all structured for both human teams and LLM-based discovery.`,
           },
         },
         {
@@ -348,7 +381,7 @@ export default function Home({
           name: "What are MCP servers and why do enterprises need them?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: `Model Context Protocol (MCP) servers provide standardized tool access and integration templates for AI agents. Colaberry AI catalogs ${catalogCounts.mcpServers.toLocaleString()}+ MCP servers across categories like Slack, Salesforce, GitHub, and AWS — enabling enterprises to connect AI agents to their existing tool stack through a unified protocol.`,
+            text: `Model Context Protocol (MCP) servers provide standardized tool access and integration templates for AI agents. Colaberry AI catalogs ${safeCounts.mcpServers.toLocaleString()}+ MCP servers across categories like Slack, Salesforce, GitHub, and AWS — enabling enterprises to connect AI agents to their existing tool stack through a unified protocol.`,
           },
         },
         {
@@ -370,10 +403,10 @@ export default function Home({
         {seoTags(seoMeta).map(({ key, ...props }) => (
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
       {/* ---- Hero (dark animated hero) ---- */}
-      <section className="-mx-4 sm:mx-0 relative overflow-hidden rounded-none sm:rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
+      <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="relative overflow-hidden rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
         {/* Animated gradient mesh background */}
         <div className="hero-gradient-mesh" aria-hidden="true">
           <div className="hero-orb hero-orb-1" />
@@ -382,99 +415,150 @@ export default function Home({
           <div className="hero-orb hero-orb-center" />
         </div>
 
-        {/* Concentric rings (depth effect) */}
-        <div className="hero-concentric-rings" aria-hidden="true">
-          <div className="hero-ring hero-ring-1" />
-          <div className="hero-ring hero-ring-2" />
-          <div className="hero-ring hero-ring-3" />
-        </div>
-
-        {/* Subtle grid overlay */}
-        <div className="animated-signal-grid pointer-events-none absolute inset-0 opacity-[0.07]" aria-hidden="true" />
-
         {/* Radial vignette for depth */}
         <div className="hero-vignette" aria-hidden="true" />
 
-        {/* Floating content-type icon nodes (constellation layout) */}
-        <div className="hero-floating-nodes" aria-hidden="true">
-          {/* Agents node */}
-          <div className="hero-node hero-node-1">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.3 24.3 0 0 1 4.5 0m0 0v5.714a2.25 2.25 0 0 0 .659 1.591L19 14.5m-4.75-11.396c.251.023.501.05.75.082M12 21a9 9 0 0 0 9-9m-9 9a9 9 0 0 1-9-9" /></svg>
-          </div>
-          {/* MCP node */}
-          <div className="hero-node hero-node-2">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-13.5-3a3 3 0 0 1 0-6h13.5a3 3 0 1 1 0 6M6 6.75h.008v.008H6V6.75Zm0 7.5h.008v.008H6v-.008Zm0 7.5h.008v.008H6v-.008Z" /></svg>
-          </div>
-          {/* Skills node */}
-          <div className="hero-node hero-node-3">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg>
-          </div>
-          {/* Podcasts node */}
-          <div className="hero-node hero-node-4">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
-          </div>
-          {/* Knowledge Graph node */}
-          <div className="hero-node hero-node-5">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
-          </div>
-        </div>
+        {/* Subtle noise grain texture — premium depth */}
+        <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.03]" aria-hidden="true" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat", backgroundSize: "256px 256px" }} />
 
-        {/* Content — centered layout */}
-        <div className="relative z-10 mx-auto max-w-4xl px-5 py-16 text-center sm:px-8 sm:py-20 md:px-10 lg:py-24">
-          <div
-            className="rise-in rise-delay-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 tracking-[0.2em]"
-            style={{ borderColor: "rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.06)", color: "#FAFAFA" }}
-          >
-            <span className="kicker-chip-dot" />
-            Enterprise AI Platform
-          </div>
+        {/* Content — split layout: text left, orbital diagram right */}
+        <div className="relative z-10 mx-auto max-w-[90rem] px-5 py-10 sm:px-6 sm:py-12 md:px-8 lg:px-10 lg:py-14 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-12 xl:py-16">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
+            {/* LEFT: Text content */}
+            <div className="text-center lg:text-left">
+              <div
+                className="hero-stagger-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 text-[0.75rem] tracking-[0.14em] lg:mx-0"
+                style={{ borderColor: "rgba(255,255,255,0.20)", background: "rgba(255,255,255,0.08)", color: "#FAFAFA" }}
+              >
+                <span className="kicker-chip-dot" />
+                Enterprise AI Platform
+              </div>
 
-          <h1 className="mt-6 font-sans text-display-md font-bold text-white sm:text-display-lg md:text-display-xl lg:text-display-2xl xl:text-display-hero">
-            Discover, govern, and scale{" "}
-            <span className="text-gradient">enterprise AI</span>
-          </h1>
+              <h1 className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white text-balance sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl">
+                Discover, govern, and scale{" "}
+                <span className="hero-word-rotator">
+                  <span className="hero-word-track">
+                    <span className="text-gradient">AI podcasts</span>
+                    <span className="text-gradient">AI agents</span>
+                    <span className="text-gradient">MCP servers</span>
+                    <span className="text-gradient">AI skills</span>
+                  </span>
+                </span>
+              </h1>
 
-          <p className="rise-in rise-delay-3 mx-auto mt-6 max-w-2xl text-body-lg leading-relaxed text-zinc-400">
-            A unified catalog where teams discover, evaluate, and deploy AI agents, MCP servers, skills, and research — governed and structured for both people and LLMs.
-          </p>
+              <p className="hero-stagger-3 mx-auto mt-5 max-w-2xl text-body-lg leading-relaxed text-zinc-300 text-balance lg:mx-0">
+                A unified catalog where teams discover, evaluate, and deploy AI agents, MCP servers, skills, and research — governed and structured for both people and LLMs.
+              </p>
 
-          <div className="rise-in mt-8 flex flex-wrap justify-center gap-4" style={{ animationDelay: "0.32s" }}>
-            <Link href="/request-demo" className="btn btn-cta" data-tour="hero-cta">
-              Book a demo
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Link>
-            <Link
-              href="/aixcelerator"
-              className="btn"
-              style={{ borderColor: "rgba(255,255,255,0.2)", color: "#FAFAFA", background: "rgba(255,255,255,0.06)" }}
-            >
-              Explore platform
-            </Link>
+              <div className="hero-stagger-4 mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
+                <Link href="/request-demo" className="btn btn-cta" data-tour="hero-cta">
+                  Book a demo
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+                <Link
+                  href="/aixcelerator"
+                  className="btn"
+                  style={{ borderColor: "rgba(255,255,255,0.2)", color: "#FAFAFA", background: "rgba(255,255,255,0.06)" }}
+                >
+                  Explore platform
+                </Link>
+              </div>
+            </div>
+
+            {/* RIGHT: Live metrics feed — typography-first showcase */}
+            <div className="hidden items-center justify-end lg:flex relative">
+              {/* Grid dot pattern — subtle texture */}
+              <div className="hero-grid-dots" aria-hidden="true" />
+
+              {/* Atmospheric glow — parallax counter-motion */}
+              <div ref={parallaxGlowRef} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" style={{ transition: "transform 0.2s ease-out", willChange: "transform" }}>
+                <div className="absolute right-[5%] top-[0%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(220,38,38,0.14)_0%,rgba(220,38,38,0.04)_30%,transparent_55%)] blur-2xl" />
+                <div className="absolute right-[20%] top-[50%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.10)_0%,transparent_55%)] blur-3xl" />
+                <div className="absolute right-[0%] top-[25%] h-[250px] w-[250px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.08)_0%,transparent_55%)] blur-3xl" />
+              </div>
+
+              {/* Hero metric — one massive number + bar breakdown */}
+              <div ref={parallaxMetricRef} className="relative z-10" style={{ transition: "transform 0.15s ease-out", willChange: "transform", maxWidth: 420 }}>
+                {/* The ONE big hero number */}
+                <div className="hero-metric-hero">
+                  <div className="hero-metric-hero-number">
+                    <span>{fmt(safeCounts.agents + safeCounts.mcpServers + safeCounts.skills + safeCounts.podcasts)}</span>
+                  </div>
+                  <div className="hero-metric-hero-label">AI resources cataloged</div>
+                </div>
+
+                {/* Category breakdown — horizontal bar chart */}
+                <div className="hero-breakdown">
+                  <Link href="/resources/podcasts" className="hero-bar-row" style={{ "--mc": "236, 72, 153" } as React.CSSProperties}>
+                    <div className="hero-bar-row-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
+                      Podcasts
+                    </div>
+                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "40%" } as React.CSSProperties} /></div>
+                    <div className="hero-bar-count">{fmt(safeCounts.podcasts)}</div>
+                  </Link>
+
+                  <Link href="/aixcelerator/agents" className="hero-bar-row" style={{ "--mc": "245, 158, 11" } as React.CSSProperties}>
+                    <div className="hero-bar-row-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.3 24.3 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19 14.5M12 21a9 9 0 0 0 9-9m-9 9a9 9 0 0 1-9-9" /></svg>
+                      Agents
+                    </div>
+                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "35%" } as React.CSSProperties} /></div>
+                    <div className="hero-bar-count">{fmt(safeCounts.agents)}</div>
+                  </Link>
+
+                  <Link href="/aixcelerator/mcp" className="hero-bar-row" style={{ "--mc": "6, 182, 212" } as React.CSSProperties}>
+                    <div className="hero-bar-row-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-13.5-3a3 3 0 0 1 0-6h13.5a3 3 0 1 1 0 6" /></svg>
+                      MCP Servers
+                    </div>
+                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "55%" } as React.CSSProperties} /></div>
+                    <div className="hero-bar-count">{fmt(safeCounts.mcpServers)}</div>
+                  </Link>
+
+                  <Link href="/aixcelerator/skills" className="hero-bar-row" style={{ "--mc": "139, 92, 246" } as React.CSSProperties}>
+                    <div className="hero-bar-row-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg>
+                      Skills
+                    </div>
+                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "95%" } as React.CSSProperties} /></div>
+                    <div className="hero-bar-count">{fmt(safeCounts.skills)}</div>
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Stay in the loop section removed per Ram's feedback */}
 
       {/* ---- Trust metrics ---- */}
       <section className="reveal section-spacing">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <AnimatedMetric value="8+" label="Industries served" note="Agriculture to fintech" delay={0} />
-          <AnimatedMetric value={fmt(catalogCounts.agents)} label="Agent profiles" note="Cataloged and governed" delay={150} />
-          <AnimatedMetric value={fmt(catalogCounts.mcpServers)} label="MCP servers" note="Integration-ready connectors" delay={300} />
-          <AnimatedMetric value={fmt(catalogCounts.skills)} label="Skills indexed" note="Reusable capability units" delay={450} />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <PodcastPromoCard episodeCount={safeCounts.podcasts} delay={0} />
+          <AnimatedMetric value="8+" label="Industries served" note="Agriculture to fintech" delay={150} />
+          <AnimatedMetric value={fmt(safeCounts.agents)} label="Agent profiles" note="Cataloged and governed" delay={300} />
+          <AnimatedMetric value={fmt(safeCounts.mcpServers)} label="MCP servers" note="Integration-ready connectors" delay={450} />
+          <AnimatedMetric value={fmt(safeCounts.skills)} label="Skills indexed" note="Reusable capability units" delay={600} />
         </div>
       </section>
 
-      <hr className="section-divider" />
+      {/* divider line removed */}
 
       <section className="section-spacing">
-        <div className="reveal">
+        <div className="reveal flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
             kicker="Explore the catalog"
             title="A structured destination for agents, MCPs, podcasts, and research"
             description="Give teams and LLMs a single place to discover, compare, and deploy intelligence."
+            animate={false}
           />
+          <Link href="/aixcelerator/ontology" className="btn btn-secondary shrink-0">
+            View knowledge graph
+          </Link>
         </div>
         <div className="stagger-grid mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-tour="catalog-grid">
           {catalogs.map((catalog) => (
@@ -515,7 +599,7 @@ export default function Home({
             <Link
               key={name}
               href={`/aixcelerator/mcp?q=${encodeURIComponent(name.toLowerCase())}`}
-              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-white"
             >
               {logo}
               {name}
@@ -571,13 +655,17 @@ export default function Home({
 }
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+  const cmsUrl = process.env.CMS_URL || process.env.NEXT_PUBLIC_CMS_URL || "";
+  const hasToken = !!(process.env.CMS_API_TOKEN || "").trim();
+  console.log(`[home:getStaticProps] CMS_URL=${cmsUrl ? "set" : "MISSING"} CMS_API_TOKEN=${hasToken ? "set" : "MISSING"}`);
+
   const allowPrivate = process.env.NEXT_PUBLIC_SHOW_PRIVATE === "true";
   const visibilityFilter = allowPrivate ? undefined : "public";
   const fetchOrEmpty = async <T,>(label: string, task: () => Promise<T>, fallback: T): Promise<T> => {
     try {
       return await task();
     } catch (error) {
-      console.error(`[home:getStaticProps] ${label} failed`, error);
+      console.error(`[home:getStaticProps] ${label} failed:`, error instanceof Error ? error.message : error);
       return fallback;
     }
   };
@@ -599,13 +687,13 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     fetchOrEmpty("latestPodcasts", () => fetchPodcastEpisodes({ maxRecords: 6, sortBy: "latest" }), [] as PodcastEpisode[]),
     fetchOrEmpty("trendingPodcasts", () => fetchPodcastEpisodes({ maxRecords: 80, sortBy: "trending" }), [] as PodcastEpisode[]),
     fetchOrEmpty("latestAgents", () => fetchAgents(visibilityFilter, { maxRecords: 6, sortBy: "latest" }), [] as Agent[]),
-    fetchOrEmpty("trendingAgents", () => fetchAgents(visibilityFilter, { maxRecords: 300 }), [] as Agent[]),
+    fetchOrEmpty("trendingAgents", () => fetchAgents(visibilityFilter, { maxRecords: 30 }), [] as Agent[]),
     fetchOrEmpty("latestSkills", () => fetchSkills(visibilityFilter, { maxRecords: 6, sortBy: "latest" }), [] as Skill[]),
-    fetchOrEmpty("trendingSkills", () => fetchSkills(visibilityFilter, { maxRecords: 300, sortBy: "latest" }), [] as Skill[]),
+    fetchOrEmpty("trendingSkills", () => fetchSkills(visibilityFilter, { maxRecords: 30, sortBy: "latest" }), [] as Skill[]),
     fetchOrEmpty("latestUseCases", () => fetchUseCases(visibilityFilter, { maxRecords: 6, sortBy: "latest" }), [] as UseCase[]),
-    fetchOrEmpty("trendingUseCases", () => fetchUseCases(visibilityFilter, { maxRecords: 300, sortBy: "latest" }), [] as UseCase[]),
+    fetchOrEmpty("trendingUseCases", () => fetchUseCases(visibilityFilter, { maxRecords: 30, sortBy: "latest" }), [] as UseCase[]),
     fetchOrEmpty("latestMCP", () => fetchMCPServers(visibilityFilter, { maxRecords: 6, sortBy: "latest" }), [] as MCPServer[]),
-    fetchOrEmpty("trendingMCP", () => fetchMCPServers(visibilityFilter, { maxRecords: 300 }), [] as MCPServer[]),
+    fetchOrEmpty("trendingMCP", () => fetchMCPServers(visibilityFilter, { maxRecords: 30 }), [] as MCPServer[]),
     fetchOrEmpty("catalogCounts", () => fetchCatalogCounts(visibilityFilter), { agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0 }),
   ]);
 
@@ -636,7 +724,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   };
 };
 
-const SIGNAL_TABS = ["Agents", "Skills", "MCP", "Podcasts"] as const; // Use Cases hidden for Release-1.0
+const SIGNAL_TABS = ["Podcasts", "Agents", "Skills", "MCP"] as const; // Use Cases hidden for Release-1.0
 type SignalTab = (typeof SIGNAL_TABS)[number];
 
 function SignalDashboard({
@@ -662,7 +750,7 @@ function SignalDashboard({
   latestUseCases: HomeUseCaseSignal[];
   trendingUseCases: HomeUseCaseSignal[];
 }) {
-  const [activeTab, setActiveTab] = useState<SignalTab>("Agents");
+  const [activeTab, setActiveTab] = useState<SignalTab>("Podcasts");
 
   const onTabChange = useCallback((tab: SignalTab) => {
     setActiveTab(tab);
@@ -670,11 +758,17 @@ function SignalDashboard({
 
   return (
     <section className="reveal section-spacing">
-      <SectionHeader
-        kicker="Platform signals"
-        title="Latest and trending across the catalog"
-        description="Fresh profiles and high-interest items across agents, skills, MCP servers, podcasts, and use cases."
-      />
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <SectionHeader
+          kicker="Platform signals"
+          title="Latest and trending across the catalog"
+          description="Fresh profiles and high-interest items across agents, skills, MCP servers, podcasts, and use cases."
+          animate={false}
+        />
+        <Link href="/aixcelerator/ecosystem" className="btn btn-secondary shrink-0">
+          View ecosystem
+        </Link>
+      </div>
 
       {/* Tab bar */}
       <div
@@ -807,7 +901,7 @@ function CatalogCard({ href, title, description, meta, iconType, gradient, accen
   return (
     <Link
       href={href}
-      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-zinc-900 dark:hover:border-zinc-600"
+      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-zinc-900 dark:hover:border-zinc-500"
       aria-label={`Open ${title}`}
     >
       <div className={`relative flex items-center justify-center bg-gradient-to-br ${gradient} px-6 py-12`}>
@@ -1735,6 +1829,61 @@ function AnimatedMetric({
   );
 }
 
+/* ── Podcast metric card — uniform with siblings, subtle CTA on hover ── */
+function PodcastPromoCard({ episodeCount, delay = 0 }: { episodeCount: number; delay?: number }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const [visible, setVisible] = useState(false);
+  const [counting, setCounting] = useState(false);
+  const { target } = parseMetricValue(`${episodeCount}+`);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!visible) return;
+    const timer = setTimeout(() => setCounting(true), delay);
+    return () => clearTimeout(timer);
+  }, [visible, delay]);
+
+  const counted = useCountUp(target, 1500, counting);
+  const displayValue = counting ? `${Math.round(counted)}+` : "0";
+
+  return (
+    <Link href="/resources/podcasts" ref={ref} className="podcast-metric-card card-glass gradient-border p-5 text-center group">
+      <div
+        className={visible ? "counter-animate" : "opacity-0"}
+        style={{ animationDelay: `${delay}ms` }}
+      >
+        <div className="font-sans text-display-sm font-bold bg-gradient-to-r from-[#B91C1C] to-[#DC2626] bg-clip-text text-transparent dark:from-[#F87171] dark:to-[#FCA5A5]">
+          {displayValue}
+        </div>
+        <div className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Podcast episodes</div>
+        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">AI leadership insights</p>
+        {/* Subtle play CTA — appears prominently on hover */}
+        <div className="podcast-metric-cta">
+          <span className="podcast-metric-play">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3"><path d="M8 5.14v14l11-7-11-7z" /></svg>
+          </span>
+          <span>Listen now</span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 type PlatformTab = {
   id: string;
   label: string;
@@ -1750,11 +1899,17 @@ function PlatformTabsSection({ tabs }: { tabs: PlatformTab[] }) {
 
   return (
     <section className="reveal section-spacing">
-      <SectionHeader
-        kicker="Platform capabilities"
-        title="Everything teams need to build, govern, and scale AI"
-        description="From cataloging agents to evaluating outcomes, the platform supports full lifecycle delivery."
-      />
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <SectionHeader
+          kicker="Platform capabilities"
+          title="Everything teams need to build, govern, and scale AI"
+          description="From cataloging agents to evaluating outcomes, the platform supports full lifecycle delivery."
+          animate={false}
+        />
+        <Link href="/aixcelerator" className="btn btn-primary shrink-0">
+          Explore AIXcelerator
+        </Link>
+      </div>
 
       {/* Tab bar */}
       <div className="mt-6 flex flex-wrap gap-1 border-b border-[var(--stroke)]" role="tablist" aria-label="Platform capability tabs">

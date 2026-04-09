@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
           "description": "Colaberry AI privacy policy covering data collection, newsletter subscriptions, analytics, and user rights.",
           "url": buildCanonical("/privacy-policy"),
           "publisher": { "@type": "Organization", "name": "Colaberry AI" },
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       <section className="mx-auto w-full max-w-4xl">

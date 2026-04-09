@@ -29,7 +29,7 @@ export default function RequestDemo() {
               "name": "Book a Demo | Colaberry AI",
               "description": "Request a tailored walkthrough of AIXcelerator, Agents, MCP servers, and modular capability layers.",
               "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/request-demo`,
-            }),
+            }).replace(/</g, "\\u003c"),
           }}
         />
       </Head>

@@ -1,0 +1,10 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- V37: The Bracket Mark — Standalone Mark (Dark) -->
+  <rect width="48" height="48" fill="#09090B"/>
+
+  <path d="M 10 6 L 4 6 L 4 42 L 10 42" fill="none" stroke="#FAFAFA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 38 6 L 44 6 L 44 42 L 38 42" fill="none" stroke="#FAFAFA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="24" cy="25" r="8" fill="#F87171"/>
+  <line x1="22" y1="17" x2="20" y2="12" stroke="#FAFAFA" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="21.5" cy="12" rx="3" ry="1.3" transform="rotate(-20 21.5 12)" fill="#FAFAFA"/>
+</svg>

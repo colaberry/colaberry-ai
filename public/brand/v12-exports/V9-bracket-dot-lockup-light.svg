@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 56" width="380" height="56">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&amp;display=swap');
+    text { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+  <!-- Mark 4 — Bracket Dot Lockup (Light) -->
+  <!-- Bracket Dot Mark -->
+  <rect x="2" y="2" width="7" height="52" fill="#18181B"/>
+  <rect x="2" y="2" width="52" height="7" fill="#18181B"/>
+  <rect x="2" y="47" width="52" height="7" fill="#18181B"/>
+  <circle cx="30" cy="28" r="10" fill="#357895"/>
+  <!-- Divider -->
+  <line x1="68" y1="8" x2="68" y2="48" stroke="#E4E4E7" stroke-width="1"/>
+  <!-- ColaberryAI -->
+  <text x="80" y="34" font-size="28" font-weight="600" fill="#18181B" letter-spacing="-0.03em">Colaberry</text>
+  <text x="245" y="34" font-size="28" font-weight="800" fill="#357895" letter-spacing="-0.03em">AI</text>
+  <!-- RESEARCH LABS -->
+  <text x="80" y="48" font-size="9" font-weight="500" fill="#A1A1AA" letter-spacing="0.18em">RESEARCH LABS</text>
+</svg>

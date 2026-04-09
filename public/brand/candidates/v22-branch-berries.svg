@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" width="400" height="80">
+  <!-- V22 — "Branch Berries" -->
+  <!-- A small branch with 2-3 berries extends from the top of the letter 'C' -->
+
+  <!-- Branch curving from top of C -->
+  <path d="M24 18 Q28 10 36 12 Q42 13 46 10" stroke="#357895" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+
+  <!-- Berry 1 (on branch, near C) -->
+  <circle cx="30" cy="10" r="4.5" fill="#DC2626"/>
+  <!-- Berry 2 (middle of branch) -->
+  <circle cx="39" cy="11" r="3.8" fill="#DC2626"/>
+  <!-- Berry 3 (end of branch, smaller) -->
+  <circle cx="46.5" cy="9" r="3.2" fill="#B91C1C"/>
+
+  <!-- Leaf 1 -->
+  <path d="M33 13 Q35 8 38 7" stroke="#357895" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <!-- Leaf 2 -->
+  <path d="M42 12 Q43 7.5 46 7" stroke="#357895" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+  <!-- "Colaberry" -->
+  <text x="12" y="48" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="36" fill="#18181B">Colaberry</text>
+
+  <!-- "AI" in steel blue -->
+  <text x="225" y="48" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="36" fill="#357895">AI</text>
+
+  <!-- "RESEARCH LABS" subtitle -->
+  <text x="12" y="68" font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="11" letter-spacing="3" fill="#A1A1AA">RESEARCH LABS</text>
+</svg>

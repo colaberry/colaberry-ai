@@ -1,0 +1,24 @@
+<svg viewBox="0 0 540 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- V34: The C-Leaf Berry — Light Mode Lockup -->
+  <!-- C wraps around o like a leaf cupping a berry. The C+o merge IS the standalone mark. -->
+
+  <!-- C-leaf: open arc that extends further, tapered stroke, cradling the o -->
+  <path d="M 30 14 A 20 20 0 1 0 30 58 Q 22 52, 18 44" fill="none" stroke="#18181B" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Berry "o" — nestled inside the C -->
+  <circle cx="28" cy="36" r="11" fill="#DC2626"/>
+
+  <!-- Stem at top of C+o unit -->
+  <line x1="24" y1="14" x2="22" y2="8" stroke="#18181B" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Micro-leaf off stem -->
+  <ellipse cx="24" cy="8" rx="3.5" ry="1.5" transform="rotate(15 24 8)" fill="#18181B"/>
+
+  <!-- "laberry" -->
+  <text x="50" y="48" font-family="Inter, sans-serif" font-weight="600" font-size="42" fill="#18181B">laberry</text>
+
+  <!-- "AI" -->
+  <text x="280" y="48" font-family="Inter, sans-serif" font-weight="800" font-size="42" fill="#357895">AI</text>
+
+  <!-- "RESEARCH LABS" -->
+  <text x="338" y="48" font-family="Inter, sans-serif" font-weight="400" font-size="14" fill="#52525B" letter-spacing="3">RESEARCH LABS</text>
+</svg>

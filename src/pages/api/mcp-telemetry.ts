@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getTelemetrySlugs } from "../../lib/mcp-slug-aliases";
 import { isBearerAuthorized } from "../../lib/api-auth";
-import { isRateLimited, getClientIp } from "../../lib/rate-limit";
+import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 const CMS_URL = (process.env.CMS_URL || process.env.NEXT_PUBLIC_CMS_URL || "").trim().replace(/\/$/, "");
 const CMS_API_TOKEN = (process.env.CMS_API_TOKEN || "").trim();
@@ -183,13 +183,29 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   if (!slug || !toolName) {
     return res.status(400).json({ error: "slug and toolName are required" });
   }
+  if (typeof slug === "string" && !/^[a-z0-9][a-z0-9-]{0,158}[a-z0-9]$/.test(slug) && !/^[a-z0-9]$/.test(slug)) {
+    return res.status(400).json({ error: "Invalid slug format" });
+  }
+
+  // Input sanitization: enforce type + length limits to prevent injection
+  const sanitizeStr = (v: unknown, max = 200): string =>
+    typeof v === "string" ? v.replace(/[<>"'&]/g, "").trim().slice(0, max) : "";
+
+  const safeSlug = sanitizeStr(slug, 120);
+  const safeToolName = sanitizeStr(toolName, 120);
+  const safeClientName = sanitizeStr(clientName, 100) || "Unknown";
+  const safeLatencyMs = typeof latencyMs === "number" && Number.isFinite(latencyMs) ? Math.max(0, Math.min(latencyMs, 300_000)) : 0;
+
+  if (!safeSlug || !safeToolName) {
+    return res.status(400).json({ error: "Invalid slug or toolName" });
+  }
 
   const payload = {
     data: {
-      mcpServerSlug: slug,
-      toolName,
-      clientName: clientName || "Unknown",
-      latencyMs: typeof latencyMs === "number" ? latencyMs : 0,
+      mcpServerSlug: safeSlug,
+      toolName: safeToolName,
+      clientName: safeClientName,
+      latencyMs: safeLatencyMs,
       success: success !== false,
       timestamp: new Date().toISOString(),
     },
@@ -206,7 +222,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Invalidate cache for this slug
-  cache.delete(slug);
+  cache.delete(safeSlug);
 
   return res.status(201).json({ success: true });
 }
@@ -215,13 +231,20 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
   const ip = getClientIp(req);
-  if (isRateLimited("mcp-telemetry", ip, 30, 60_000)) {
+  const rl = checkRateLimit("mcp-telemetry", ip, 30, 60_000);
+  if (rl.limited) {
+    res.setHeader("Retry-After", String(rl.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rl.limit));
+    res.setHeader("X-RateLimit-Remaining", "0");
     return res.status(429).json({ error: "Too many requests" });
   }
 
   const slug = req.query.slug as string;
   if (!slug) {
     return res.status(400).json({ error: "slug query parameter is required" });
+  }
+  if (!/^[a-z0-9][a-z0-9-]{0,158}[a-z0-9]$/.test(slug) && !/^[a-z0-9]$/.test(slug)) {
+    return res.status(400).json({ error: "Invalid slug format" });
   }
 
   // Check cache

@@ -38,7 +38,7 @@ export default function CaseStudiesHub() {
           "description": "Browse delivery outcomes by industry with detailed case studies and measurable results.",
           "url": buildCanonical("/resources/case-studies"),
           "publisher": { "@type": "Organization", "name": "Colaberry AI" },
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
       <SectionHeader
         as="h1"

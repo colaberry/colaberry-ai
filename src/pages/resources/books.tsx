@@ -27,7 +27,7 @@ export default function Books() {
           "description": "Books and companion artifacts including templates, worksheets, code samples, and related learning assets.",
           "url": buildCanonical("/resources/books"),
           "publisher": { "@type": "Organization", "name": "Colaberry AI" },
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
       <SectionHeader
         as="h1"

@@ -1,0 +1,12 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- V39: The Segmented O — Favicon Mark -->
+  <!-- Segmented circle: kola nut / berry cross-section / brain -->
+
+  <circle cx="16" cy="16" r="12" fill="none" stroke="#DC2626" stroke-width="2.5"/>
+
+  <!-- Vertical segment — organic S-curve -->
+  <path d="M 16 6 Q 14.5 11, 16 16 Q 17.5 21, 16 26" fill="none" stroke="#DC2626" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- Horizontal segment — organic curve -->
+  <path d="M 6 16 Q 11 14.5, 16 16 Q 21 17.5, 26 16" fill="none" stroke="#DC2626" stroke-width="1.2" stroke-linecap="round"/>
+</svg>

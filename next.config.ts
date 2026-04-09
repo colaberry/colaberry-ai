@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import { getMcpRedirects } from "./src/lib/mcp-slug-aliases";
 
 const cmsUrl = process.env.NEXT_PUBLIC_CMS_URL;
+const vtonUrl = process.env.NEXT_PUBLIC_VTON_URL || "https://vton-demo-956818257204.us-east1.run.app";
 const cmsRemotePattern = (() => {
   if (!cmsUrl) return null;
   try {
@@ -21,6 +22,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false, // Remove X-Powered-By: Next.js (OWASP A05 info disclosure)
   images: {
     qualities: [75, 90],
+    formats: ["image/avif", "image/webp"],
     remotePatterns: cmsRemotePattern ? [cmsRemotePattern] : [],
     localPatterns: [
       {
@@ -87,21 +89,26 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+            value: `camera=(self "${vtonUrl}"), microphone=(self "${vtonUrl}"), geolocation=(), interest-cohort=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()`,
           },
           ...(process.env.NODE_ENV === "production"
             ? [
                 {
                   key: "Content-Security-Policy",
+                  // SHA-256 hash used for inline theme script instead of per-request nonce.
+                  // Nonces require SSR for every page (to inject nonce into HTML), but this site
+                  // uses getStaticProps + ISR — pre-rendered HTML can't contain per-request nonces.
+                  // SHA-256 is the correct CSP approach for Pages Router with ISR/SSG.
                   value: [
                     "default-src 'self'",
-                    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.buzzsprout.com",
+                    "script-src 'self' 'sha256-CdQGV8nBFFKUGZSKmXZWMSImilQGgmVGWzhkZ5MUiII=' https://www.googletagmanager.com https://www.google-analytics.com https://www.buzzsprout.com",
                     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                     "font-src 'self' https://fonts.gstatic.com data:",
                     `img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com ${cmsUrl ? new URL(cmsUrl).origin : ""}`.trim(),
-                    `connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://www.buzzsprout.com https://*.buzzsprout.com ${cmsUrl || ""}`.trim(),
-                    "media-src 'self' https://www.buzzsprout.com https://*.buzzsprout.com",
-                    "frame-src 'self' https://www.buzzsprout.com https://*.substack.com https://www.colaberry.online",
+                    `connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://www.buzzsprout.com https://www.buzzsprout.com ${cmsUrl || ""}`.trim(),
+                    "media-src 'self' https://www.buzzsprout.com https://www.buzzsprout.com",
+                    `frame-src 'self' https://www.buzzsprout.com https://substack.com https://www.colaberry.online ${vtonUrl}`,
+                    "object-src 'none'",
                     "frame-ancestors 'self'",
                     "base-uri 'self'",
                     "form-action 'self'",

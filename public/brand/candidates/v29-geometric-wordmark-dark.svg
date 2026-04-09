@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 100" width="520" height="100">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@500;700;900&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- Primary wordmark -->
+  <text x="108" y="52"
+        font-family="'Nunito Sans', 'Inter', system-ui, sans-serif"
+        font-weight="700"
+        font-size="48"
+        letter-spacing="-0.5"
+        fill="#FAFAFA">Colaberry</text>
+
+  <text x="370" y="52"
+        font-family="'Nunito Sans', 'Inter', system-ui, sans-serif"
+        font-weight="900"
+        font-size="48"
+        letter-spacing="-0.5"
+        fill="#4A9BBF">AI</text>
+
+  <!-- Signal wave bars — left group -->
+  <g transform="translate(149, 68)">
+    <!-- Bar 1 (shortest, outermost) -->
+    <rect x="0" y="6" width="2" height="4" rx="1" fill="#4A9BBF"/>
+    <!-- Bar 2 (medium) -->
+    <rect x="5" y="3.5" width="2" height="7" rx="1" fill="#4A9BBF"/>
+    <!-- Bar 3 (tallest, innermost) -->
+    <rect x="10" y="0" width="2" height="10" rx="1" fill="#4A9BBF"/>
+    <!-- Horizontal connecting line -->
+    <line x1="14" y1="5" x2="38" y2="5" stroke="#3F3F46" stroke-width="1"/>
+  </g>
+
+  <!-- "RESEARCH LABS" subtitle -->
+  <text x="260" y="78"
+        font-family="'Nunito Sans', 'Inter', system-ui, sans-serif"
+        font-weight="500"
+        font-size="13"
+        letter-spacing="5"
+        fill="#71717A"
+        text-anchor="middle">RESEARCH LABS</text>
+
+  <!-- Signal wave bars — right group -->
+  <g transform="translate(338, 68)">
+    <!-- Horizontal connecting line -->
+    <line x1="0" y1="5" x2="24" y2="5" stroke="#3F3F46" stroke-width="1"/>
+    <!-- Bar 3 (tallest, innermost) -->
+    <rect x="26" y="0" width="2" height="10" rx="1" fill="#4A9BBF"/>
+    <!-- Bar 2 (medium) -->
+    <rect x="31" y="3.5" width="2" height="7" rx="1" fill="#4A9BBF"/>
+    <!-- Bar 1 (shortest, outermost) -->
+    <rect x="36" y="6" width="2" height="4" rx="1" fill="#4A9BBF"/>
+  </g>
+</svg>

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { isRateLimited, getClientIp } from "../../lib/rate-limit";
+import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 type GitHubStatsResponse = {
   stars: number;
@@ -15,7 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  if (isRateLimited("github-stats", getClientIp(req), 60, 60_000)) {
+  const rl = checkRateLimit("github-stats", getClientIp(req), 60, 60_000);
+  if (rl.limited) {
+    res.setHeader("Retry-After", String(rl.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rl.limit));
+    res.setHeader("X-RateLimit-Remaining", "0");
     return res.status(429).json({ error: "Too many requests" });
   }
 

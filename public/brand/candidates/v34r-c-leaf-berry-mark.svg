@@ -1,0 +1,26 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- V34R: The C-Leaf Berry — Refined Mark (Light) -->
+  <!-- C-leaf overlaps/intersects berry, tapered stroke, AI neural node signal -->
+
+  <!-- C-leaf arc — tapered via custom path (thick base ~4px tapering to ~1.5px at tip) -->
+  <!-- The C overlaps the berry circle, intersecting it for unified reading -->
+  <path d="M 30 7 C 14 7, 4 16, 4 25 C 4 34, 14 43, 30 43" fill="none" stroke="#18181B" stroke-width="3.8" stroke-linecap="round"/>
+  <!-- Taper overlay: thinner continuation at the tip end to simulate taper -->
+  <path d="M 30 7 C 22 7, 16 10, 12 15" fill="none" stroke="#18181B" stroke-width="2" stroke-linecap="round" opacity="0"/>
+
+  <!-- Berry — coral filled circle, overlapping with C arc -->
+  <circle cx="25" cy="25" r="11" fill="#DC2626"/>
+
+  <!-- Kola nut segmentation inside berry — subtle cross for brain/nut reading -->
+  <path d="M 25 15 Q 23.5 20, 25 25 Q 26.5 30, 25 35" fill="none" stroke="#18181B" stroke-width="1.4" stroke-linecap="round" opacity="0.3"/>
+  <path d="M 15 25 Q 20 23.5, 25 25 Q 30 26.5, 35 25" fill="none" stroke="#18181B" stroke-width="1.4" stroke-linecap="round" opacity="0.3"/>
+
+  <!-- Micro-stem connecting C-leaf to berry -->
+  <path d="M 26 7 L 25 3.5" fill="none" stroke="#18181B" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- AI signal — steel blue neural node on the C-leaf arc -->
+  <circle cx="8" cy="34" r="2" fill="#357895"/>
+
+  <!-- Tiny signal arc from neural node -->
+  <path d="M 11 32 A 5 5 0 0 1 11 37" fill="none" stroke="#357895" stroke-width="0.9" stroke-linecap="round"/>
+</svg>

@@ -52,7 +52,7 @@ export default function ArticlesPage({ articles, fetchError }: ArticlesPageProps
           "name": "Colaberry AI Articles",
           "description": "Enterprise AI articles, analyses, and practical implementation guidance.",
           "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/resources/articles`,
-        }) }} />
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       <EnterprisePageHero

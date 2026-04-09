@@ -555,8 +555,9 @@ function parseReadmeContent(name, readme) {
   }
 
   // --- Extract connection URL ---
-  // Look for sse://, ws://, wss:// URLs, or https:// URLs with mcp/server in path
-  const urlPatterns = /(?:sse|wss?):\/\/[^\s"'<>)]+|https?:\/\/[^\s"'<>)]*(?:mcp|\/sse)[^\s"'<>)]*/gi;
+  // Look for sse://, wss:// URLs, or https:// URLs with mcp/server in path
+  // Note: ws:// (insecure) intentionally excluded — only match wss:// (secure)
+  const urlPatterns = /(?:sse|wss):\/\/[^\s"'<>)]+|https?:\/\/[^\s"'<>)]*(?:mcp|\/sse)[^\s"'<>)]*/gi;
   const urlMatch = cleaned.match(urlPatterns);
   if (urlMatch) {
     // Filter out common non-connection URLs (docs, badges, github, images)
@@ -568,7 +569,7 @@ function parseReadmeContent(name, readme) {
       !u.includes(".md") &&
       !u.includes("npmjs.com") &&
       !u.includes("pypi.org") &&
-      (u.startsWith("sse://") || u.startsWith("ws://") || u.startsWith("wss://") || u.includes("/sse") || u.includes("/mcp"))
+      (u.startsWith("sse://") || u.startsWith("wss://") || u.includes("/sse") || u.includes("/mcp"))
     );
     if (connectionUrl) {
       // Clean trailing markdown artifacts (backticks, brackets, periods)

@@ -1,0 +1,24 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- V41: The Hybrid — C-Leaf Cradling a Kola Brain (Dark) -->
+
+  <!-- 1. C-leaf arc -->
+  <path d="M 34 8 C 18 4, 2 14, 2 26 C 2 38, 16 46, 34 42" fill="none" stroke="#FAFAFA" stroke-width="3.2" stroke-linecap="round"/>
+
+  <!-- 2. Segmented circle -->
+  <circle cx="24" cy="25" r="13" fill="none" stroke="#FAFAFA" stroke-width="2.4"/>
+
+  <!-- 3. Vertical S-curve division -->
+  <path d="M 24 12.5 Q 22 19, 24 25 Q 26 31, 24 37.5" fill="none" stroke="#FAFAFA" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- 4. Horizontal S-curve division -->
+  <path d="M 11.5 25 Q 18 23, 24 25 Q 30 27, 36.5 25" fill="none" stroke="#FAFAFA" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- 5. Micro-stem -->
+  <path d="M 28 8 L 26.5 4" fill="none" stroke="#FAFAFA" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- 6. Neural spark — coral on dark -->
+  <circle cx="30" cy="19" r="2.2" fill="#F87171"/>
+
+  <!-- 7. AI signal node -->
+  <circle cx="5.5" cy="36" r="1.6" fill="#357895"/>
+</svg>

@@ -1,0 +1,18 @@
+<svg viewBox="0 0 560 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- V32: The Kola Brain — Full Lockup (Light) -->
+
+  <!-- Mark -->
+  <g transform="translate(4, 6)">
+    <circle cx="24" cy="24" r="19" fill="none" stroke="#18181B" stroke-width="2.5"/>
+    <path d="M 24 7 Q 22 16, 24 24 Q 26 32, 24 41" fill="none" stroke="#18181B" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M 7 24 Q 16 22, 24 24 Q 32 26, 41 24" fill="none" stroke="#18181B" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="31" cy="15" r="2.5" fill="#DC2626"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="62" y="40" font-family="Inter, sans-serif" font-weight="600" font-size="36" fill="#18181B">Colaberry</text>
+  <text x="312" y="40" font-family="Inter, sans-serif" font-weight="800" font-size="36" fill="#357895">AI</text>
+
+  <!-- Subtitle -->
+  <text x="360" y="40" font-family="Inter, sans-serif" font-weight="400" font-size="12" fill="#52525B" letter-spacing="3">RESEARCH LABS</text>
+</svg>

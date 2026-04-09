@@ -1,3 +1,9 @@
+---
+name: security-audit
+description: Orchestrate all 7 security agents for comprehensive audit covering secrets, XSS, rate limiting, auth, and dependencies
+user-invocable: true
+---
+
 # Security Audit
 
 Orchestrate all 7 security agents for a comprehensive security audit of the codebase.

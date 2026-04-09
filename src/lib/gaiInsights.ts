@@ -274,10 +274,11 @@ function findLastAnchor(value: string): { href: string; text: string } | null {
 }
 
 function findLastMatch(value: string, regex: RegExp, group = 1): string | undefined {
-  const re = new RegExp(regex.source, regex.flags);
+  // Reset lastIndex to ensure clean iteration (regex must have 'g' flag)
+  regex.lastIndex = 0;
   let match: RegExpExecArray | null;
   let last: string | undefined;
-  while ((match = re.exec(value)) !== null) {
+  while ((match = regex.exec(value)) !== null) {
     last = match[group];
   }
   return last;

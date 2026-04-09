@@ -1,3 +1,9 @@
+---
+name: code-review
+description: Structured review for design system compliance, TypeScript quality, page structure, security, and accessibility
+user-invocable: true
+---
+
 # Code Review
 
 Structured code review for the Colaberry AI platform. Checks design system compliance, TypeScript quality, page structure, security, and accessibility.

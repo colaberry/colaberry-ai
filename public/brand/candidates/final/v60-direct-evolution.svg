@@ -1,0 +1,30 @@
+<svg width="720" height="200" viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- V60 Variation #1: Direct Evolution — Maximum brand continuity -->
+  <!-- Palette: Strict heritage #357895 + #52525B -->
+
+  <!-- C-berry (open ring): dia 2.05X, stroke S=0.12X, opening ~44° -->
+  <circle cx="78" cy="88" r="42" fill="none" stroke="#357895" stroke-width="10"
+    stroke-linecap="round"
+    stroke-dasharray="220 48" stroke-dashoffset="16"/>
+
+  <!-- o-berry (closed ring): dia 1.00X, offset right 0.82X, down 0.11X -->
+  <circle cx="138" cy="100" r="20" fill="none" stroke="#357895" stroke-width="10"/>
+
+  <!-- Stem: 0.60S stroke, single smooth Bézier -->
+  <path d="M65 55 C 85 22, 125 22, 145 68" fill="none" stroke="#357895" stroke-width="5.5" stroke-linecap="round"/>
+
+  <!-- Leaf: teardrop 0.55X x 0.32X, rotated ~25° -->
+  <path d="M102 34 C 110 24, 126 28, 120 40 C 114 50, 98 46, 102 34 Z" fill="#357895"/>
+
+  <!-- "laberry" — Regular 400 weight -->
+  <text x="172" y="118" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="62" font-weight="400" letter-spacing="-0.5" fill="#357895">laberry</text>
+
+  <!-- "AI" — Bold 700 weight, tight kerning -->
+  <text x="444" y="118" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="62" font-weight="700" letter-spacing="-2" fill="#357895">AI</text>
+
+  <!-- "RESEARCH LABS" — Light 300, tracked +160 -->
+  <text x="218" y="160" font-family="Inter, -apple-system, Helvetica Neue, Arial, sans-serif"
+    font-size="22" font-weight="300" letter-spacing="5.5" fill="#52525B">RESEARCH LABS</text>
+</svg>

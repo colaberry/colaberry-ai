@@ -1,0 +1,42 @@
+<!--
+  V55 Outlined — ColaberryAI Research Labs Mark (Dark Mode)
+
+  Concept: Two kola nut berries as letterform replacements.
+  Large berry = C (left), small berry = o (right).
+  Connected by curved stem with leaf at midpoint.
+  Internal segmentation lines evoke kola nut cotyledon divisions
+  (brain hemisphere pattern). All strokes, no fills except accent dots.
+
+  Colors: #FAFAFA white strokes, #F87171 coral accent, #357895 steel blue AI dot
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Large C-berry: outer circle -->
+  <circle cx="16" cy="24" r="13" stroke="#FAFAFA" stroke-width="2.6" stroke-linecap="round"/>
+
+  <!-- Large C-berry: vertical cotyledon division (S-curve) -->
+  <path d="M16 11 C14 17, 18 31, 16 37" stroke="#FAFAFA" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+
+  <!-- Large C-berry: horizontal cotyledon division (S-curve) -->
+  <path d="M3 24 C9 22, 23 26, 29 24" stroke="#FAFAFA" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+
+  <!-- Small o-berry: outer circle -->
+  <circle cx="36" cy="28" r="8" stroke="#FAFAFA" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- Curved stem connecting berries -->
+  <path d="M16 11 C18 5, 30 8, 36 20" stroke="#FAFAFA" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+
+  <!-- Leaf at stem midpoint -->
+  <ellipse cx="26" cy="10" rx="3.5" ry="1.5" transform="rotate(-30 26 10)" fill="#FAFAFA"/>
+
+  <!-- Calyx marks: large berry (top) -->
+  <path d="M14 11.5 L14.5 9 M16 11 L16 8.5 M18 11.5 L17.5 9" stroke="#FAFAFA" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- Calyx marks: small berry (top) -->
+  <path d="M35 20.5 L35 18.5 M37 20.5 L37 18.5" stroke="#FAFAFA" stroke-width="0.9" stroke-linecap="round"/>
+
+  <!-- Coral accent dot on large berry -->
+  <circle cx="21" cy="19" r="1.8" fill="#F87171"/>
+
+  <!-- Steel blue AI signal dot on stem -->
+  <circle cx="26" cy="12" r="1.5" fill="#357895"/>
+</svg>

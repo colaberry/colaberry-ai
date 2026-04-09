@@ -1,0 +1,16 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- V40: The Orbital Berry — Favicon Mark -->
+  <!-- Berry nucleus + orbit ring + electron dot -->
+
+  <!-- Orbit ring -->
+  <ellipse cx="24" cy="24" rx="20" ry="10" transform="rotate(-25 24 24)" fill="none" stroke="#A1A1AA" stroke-width="1.5"/>
+
+  <!-- Berry -->
+  <circle cx="24" cy="24" r="9" fill="#DC2626"/>
+
+  <!-- Stem -->
+  <line x1="20" y1="15" x2="18" y2="10" stroke="#18181B" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Electron -->
+  <circle cx="42" cy="14" r="3" fill="#357895"/>
+</svg>

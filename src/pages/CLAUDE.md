@@ -33,6 +33,32 @@
 
 Per-type ontology/graph/collections pages are thin wrappers around generic templates from `src/components/`. They import the type's `ContentOntologyConfig` and pass it to the template.
 
+**Exception — Skills Ontology:** `/aixcelerator/skills/ontology` has a custom inline `OntologyDiagram` component (not the shared template) with its own SVG layout. Uses the same flat enterprise design system: dynamic category sizing, `var(--font-inter)` font, `useState(false)` hydration-safe dark mode.
+
+**Exception — Platform Ontology:** `/aixcelerator/ontology` has a custom `PlatformDiagram` showing cross-type relationships (Agents, Skills, MCP Servers, Podcasts as interactive nodes). Flat enterprise style with solid zinc palette, no feDropShadow/blur/glow.
+
+## AIXcelerator Overview (`/aixcelerator`)
+
+The platform overview page uses live CMS data and static registry data:
+
+| Section | Data Source | Pattern |
+|---------|-----------|---------|
+| Live catalog metrics | `fetchCatalogCounts()` | 4-col stats band (ISR 600s) |
+| Core platform surface | `coreCapabilities` static | 3-col icon-led cards |
+| Knowledge graph method | `GRAPH_LAYERS` const | 3-step numbered indicators |
+| Cross-type links bar | `CONTENT_TYPE_META` | Inline type icons with labels |
+| Solution stacks | `SOLUTION_STACKS.slice(0,3)` | 3-col cards with type count pills |
+| Modular layers | `modularLayers` static | 4-col compact cards |
+| Roadmap | Inline data | 2-col status badges |
+
+**Card pattern:** Unified `gap-px` border grid — single `rounded-xl border` container with pixel-gap dividers. No `surface-panel` wrappers on content sections. No `card-feature`/`card-elevated` hover-lift.
+
+## Dark Mode Safety Net Conflict
+
+`globals.css` has safety-net overrides like `.dark .bg-zinc-900 { background-color: #18181B }` that clobber `dark:` Tailwind variants on the same element. When you need inverted colors (dark bg in light mode → light bg in dark mode), use `bg-zinc-950` instead of `bg-zinc-900` — there is no safety net for zinc-950.
+
+**Affected pattern:** `bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950` (numbered indicators, status badges).
+
 ## Forbidden Colors
 
 `emerald-*`, `green-*`, `blue-*`, `amber-*`, `slate-*` — use zinc equivalents. Exception: `text-red-600` for error states only.

@@ -45,6 +45,13 @@ export function getClientIp(req: NextApiRequest): string {
   return req.socket.remoteAddress || "unknown";
 }
 
+export type RateLimitInfo = {
+  limited: boolean;
+  limit: number;
+  remaining: number;
+  retryAfterSec: number;
+};
+
 /**
  * Check if a request is rate limited.
  * @param prefix - Namespace prefix (e.g., "mcps", "demo-request")
@@ -59,6 +66,18 @@ export function isRateLimited(
   limit: number,
   windowMs: number
 ): boolean {
+  return checkRateLimit(prefix, ip, limit, windowMs).limited;
+}
+
+/**
+ * Check rate limit and return metadata for response headers.
+ */
+export function checkRateLimit(
+  prefix: string,
+  ip: string,
+  limit: number,
+  windowMs: number
+): RateLimitInfo {
   cleanup();
   const key = `${prefix}:${hashIp(ip)}`;
   const now = Date.now();
@@ -66,11 +85,16 @@ export function isRateLimited(
 
   if (!current || current.resetAt <= now) {
     buckets.set(key, { count: 1, resetAt: now + windowMs });
-    return false;
+    return { limited: false, limit, remaining: limit - 1, retryAfterSec: 0 };
   }
 
-  if (current.count >= limit) return true;
+  if (current.count >= limit) {
+    const retryAfterSec = Math.ceil((current.resetAt - now) / 1000);
+    // A09: Log rate limit events for security monitoring
+    console.warn(`[rate-limit] ${prefix} limit=${limit} ip=${hashIp(ip)} retryAfter=${retryAfterSec}s`);
+    return { limited: true, limit, remaining: 0, retryAfterSec };
+  }
 
   current.count++;
-  return false;
+  return { limited: false, limit, remaining: limit - current.count, retryAfterSec: 0 };
 }

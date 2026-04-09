@@ -84,7 +84,7 @@ export default function Updates({ ratings, briefing, fetchError }: UpdatesProps)
               "name": "Colaberry AI Updates",
               "description": "Announcements, releases, and curated AI ecosystem signals in one enterprise feed.",
               "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/updates`,
-            }),
+            }).replace(/</g, "\\u003c"),
           }}
         />
       </Head>

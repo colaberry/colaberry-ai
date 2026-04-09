@@ -6,7 +6,8 @@
 
 const DEV_API = "https://dev.colaberry.ai/api/mcp-telemetry";
 const CMS = "https://dev-cms.colaberry.ai";
-const TOKEN = process.env.CMS_API_TOKEN || "e8a7e99a3d61233e32fbef071a307a3d455c2f9ef635ff494d949375c33bc6059fba4286d41ce3d88847638c3394b576efca1231df6cffd65d1accb8971af89720be18441488e0c602a332507ae4fd89ed05b75cf606bf76b39b462f6e528d9ce2c7f6c346bc90bdf3889c69a21e2f2c3cb116b503fb051bac85e08dac754a26";
+const TOKEN = process.env.CMS_API_TOKEN;
+if (!TOKEN) { console.error("Error: CMS_API_TOKEN env var is required. Set it before running this script."); process.exit(1); }
 
 const TOOLS = [
   "execute", "query", "search", "list", "get", "create", "update", "delete",

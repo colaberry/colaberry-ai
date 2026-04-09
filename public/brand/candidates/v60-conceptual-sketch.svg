@@ -1,0 +1,31 @@
+<svg width="640" height="220" viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+  <!-- V60: Conceptual Geometry Sketch (NOT final art) -->
+  <!-- Source: ChatGPT Deep Research Design Brief -->
+  <!-- Purpose: Shows geometric relationships for designer execution -->
+
+  <!-- Baseline guides (for explanation only) -->
+  <line x1="40" y1="140" x2="600" y2="140" stroke="#E4E4E7" stroke-width="1"/>
+  <line x1="40" y1="90" x2="600" y2="90" stroke="#E4E4E7" stroke-width="1"/>
+
+  <!-- C-berry ring (open circle with gap = letter C + berry) -->
+  <circle cx="110" cy="110" r="50" fill="none" stroke="#357895" stroke-width="10"
+    stroke-linecap="round"
+    stroke-dasharray="250 60" stroke-dashoffset="20"/>
+
+  <!-- o-berry ring (closed circle = letter o + smaller berry) -->
+  <circle cx="175" cy="125" r="24" fill="none" stroke="#357895" stroke-width="10"/>
+
+  <!-- Stem (smooth Bezier connecting berry tops) -->
+  <path d="M95 70 C 120 35, 160 35, 180 85" fill="none" stroke="#357895" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Leaf (simple teardrop at stem apex) -->
+  <path d="M135 45 C 145 35, 165 40, 155 55 C 145 65, 128 58, 135 45 Z" fill="#357895"/>
+
+  <!-- Placeholder text blocks (conceptual only — real logo uses outlined paths) -->
+  <text x="210" y="140" font-family="Inter, Helvetica, Arial, sans-serif"
+    font-size="72" fill="#357895">laberry</text>
+  <text x="440" y="140" font-family="Inter, Helvetica, Arial, sans-serif"
+    font-size="72" font-weight="700" fill="#357895">AI</text>
+  <text x="250" y="190" font-family="Inter, Helvetica, Arial, sans-serif"
+    font-size="26" letter-spacing="6" fill="#52525B">RESEARCH LABS</text>
+</svg>

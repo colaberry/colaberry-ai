@@ -2661,19 +2661,21 @@ export async function fetchCatalogCounts(
   visibility?: "public" | "private"
 ): Promise<{ agents: number; mcpServers: number; skills: number; tools: number; podcasts: number }> {
   const vis = visibility ? `&filters[visibility][$eq]=${visibility}` : "";
+  /* Podcasts use podcastStatus instead of visibility — filter separately */
+  const podcastFilter = `&filters[podcastStatus][$eq]=published`;
   const endpoints = [
-    { key: "agents", path: "/api/agents" },
-    { key: "mcpServers", path: "/api/mcp-servers" },
-    { key: "skills", path: "/api/skills" },
-    { key: "tools", path: "/api/tools" },
-    { key: "podcasts", path: "/api/podcast-episodes" },
+    { key: "agents", path: "/api/agents", filter: vis },
+    { key: "mcpServers", path: "/api/mcp-servers", filter: vis },
+    { key: "skills", path: "/api/skills", filter: vis },
+    { key: "tools", path: "/api/tools", filter: vis },
+    { key: "podcasts", path: "/api/podcast-episodes", filter: podcastFilter },
   ] as const;
 
   const results = await Promise.all(
-    endpoints.map(async ({ key, path }) => {
+    endpoints.map(async ({ key, path, filter }) => {
       try {
         const json = await fetchCMSJson<CMSCollectionResponse>(
-          `${CMS_URL}${path}?pagination[pageSize]=1${vis}`,
+          `${CMS_URL}${path}?pagination[pageSize]=1${filter}`,
           { allowStaleOnError: true }
         );
         return [key, json?.meta?.pagination?.total ?? 0] as const;
@@ -2933,6 +2935,21 @@ export async function fetchAllAgentTags(): Promise<{ name: string; slug: string;
     return [...tagMap.values()].sort((a, b) => b.count - a.count);
   } catch {
     return [];
+  }
+}
+
+/**
+ * Fetch total podcast episode count from CMS (lightweight — pageSize=1 query).
+ */
+export async function fetchPodcastTotalCount(): Promise<number> {
+  try {
+    const res = await fetchCMSJson<CMSCollectionResponse>(
+      `${CMS_URL}/api/podcast-episodes?pagination[pageSize]=1`,
+      { allowStaleOnError: true },
+    );
+    return res?.meta?.pagination?.total ?? 0;
+  } catch {
+    return 0;
   }
 }
 

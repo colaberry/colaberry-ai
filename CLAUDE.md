@@ -7,7 +7,7 @@
 - **Fonts:** Inter via `next/font/google` (variable `--font-inter`)
 - **CMS:** Strapi v5 headless — fetched via `src/lib/cms.ts` using `NEXT_PUBLIC_CMS_URL`
 - **Deployment:** Docker + GCP Cloud Run (prod: `colaberry-ai-prod`, CMS: `colaberry-ai-cms-prod`)
-- **Newsletter:** Substack integration (colaberry.online) — form POSTs to Substack API
+- **Newsletter / Podcast email:** Substack native delivery via the official `/embed` iframe (colaberry.online). All 5 signup touchpoints render `SubstackEmbedSignup` — the "Hybrid" component: indexable wrapper (schema.org `SubscribeAction` + heading + description + consent copy) with Substack's embed iframe inside. Subscribe APIs write to Strapi for internal telemetry only; email delivery is 100% Substack (no Resend / SendGrid on the signup path). Rationale: `docs/email-delivery-test-report-2026-04-09.md`.
 - **Podcast Transcripts:** Deepgram API (free Pay-As-You-Go, $200 credit)
 - **Default Theme:** Dark mode (enterprise standard)
 - **Domain:** colaberry.ai (live, Cloud Run prod)
@@ -34,6 +34,7 @@
 - Toggle: `.dark` class on `<html>`, persisted in localStorage
 - CSS vars swap between `:root` and `.dark` blocks in `globals.css`
 - Components use `dark:` Tailwind variants for additional overrides
+- **Safety net conflict:** `globals.css` has `.dark .bg-zinc-900` and `.dark .bg-white` overrides that can clobber `dark:` Tailwind variants with the same specificity. When you need inverted color pairs (e.g., dark bg in light → light bg in dark), use `bg-zinc-950` instead of `bg-zinc-900` — no safety net exists for zinc-950.
 
 ### Locked Theming Standard (MUST follow for ALL pages)
 
@@ -113,7 +114,7 @@ colaberry.ai is built for AEO — optimized for AI answer engines (ChatGPT, Clau
 | `robots.txt` | `src/pages/robots.txt.ts` | Explicitly welcomes GPTBot, ClaudeBot, PerplexityBot |
 | FAQ Schema | `src/pages/index.tsx` | FAQPage JSON-LD for direct AI citation |
 | Quick Answer blocks | `src/components/AeoQuickAnswer.tsx` | Answer-optimized paragraphs on catalog pages |
-| Bot Defense | `src/lib/bot-defense.ts` | Multi-layer protection for forms (AEO-safe) |
+| Bot Defense | `src/lib/bot-defense.ts` | 9-layer form protection (AEO-safe): UA filter (blocks curl/wget/headless/scrapy/okhttp/java — allows crawlers on GET), min UA length, required browser headers (accept, accept-language, user-agent), origin/referer host allowlist, `application/json` content-type enforcement, honeypot, 5s-min HMAC timing token, strict email validator w/ disposable-domain blocklist, per-IP + per-email rate limits. All failures silently fake-succeed with 200 (anti-enumeration). |
 | Category metadata | `src/pages/index.tsx` | Homepage signal cards show category for structured AI parsing |
 | Industries | `src/pages/industries/` | 8 domain-specific workspaces with agent/use-case counts |
 
@@ -133,6 +134,22 @@ Ten specialized agents in `.claude/agents/` for continuous auditing:
 | WCAG 2.2 | `accessibility-wcag.md` | Accessibility Level AA audit |
 | Core Web Vitals | `performance-core-web-vitals.md` | LCP, INP, CLS, PageSpeed optimization |
 | API Performance | `api-performance.md` | Response time, Postman collection, best practices |
+
+## Logo Design Multi-Agent Pipeline
+Eight specialized agents + 1 skill for multi-agent logo design:
+
+| Agent | File | Purpose |
+|-------|------|---------|
+| Logo Design Director | `logo-design-director.md` | Orchestrator — coordinates all design agents |
+| Brand Strategist | `brand-strategist.md` | Brand brief, personality, visual identity principles |
+| Canvas Designer | `canvas-designer.md` | Generate 5+ logo concepts with SVG specs |
+| Figma Designer | `figma-designer.md` | Polish vectors in Figma, create all variants |
+| SVG Engineer | `svg-engineer.md` | Production React component + standalone SVGs |
+| Lovable Prototyper | `lovable-prototyper.md` | Live preview mockups at `/brand-preview` |
+| Logo QA | `logo-qa.md` | Quality assurance — 50+ checks, pass/fail report |
+| Competitive Analysis | `competitive-analysis.md` | Competitor logo research, trend analysis |
+
+**Skill:** `/design-logo` — Runs the full 6-phase pipeline (Strategy → Concepts → Figma → Code → Preview → QA)
 
 ## Spec-Driven Development (SDD)
 
@@ -155,6 +172,10 @@ Reusable workflows in `.claude/skills/`:
 | `/release` | Pre-deployment checklist: tsc, lint, build, security |
 | `/security-audit` | Orchestrate all 7 security agents |
 | `/new-page` | Scaffold a new page following all standards |
+| `/design-logo` | Multi-agent logo design pipeline (6 phases, 8 agents) |
+| `/prd` | Brainstorm requirements, create sprint PRDs with atomic tasks |
+| `/dev` | Pick highest-priority sprint task, implement with TDD + E2E |
+| `/walkthrough` | Generate sprint review report: architecture, code walkthrough, data flow |
 
 ## Git
 - **Branch:** `dev` (main development), `Release-1.0` (production release)

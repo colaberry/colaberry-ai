@@ -24,8 +24,11 @@ Utility modules, all camelCase `.ts` files. Every function must be typed — no 
 Per-type helpers follow naming convention:
 - `fetch{ContentType}CategoryCounts()` — category aggregation
 - `fetchAll{ContentType}Tags()` — tag list for filters
+- `fetchCatalogCounts(visibility?)` — lightweight count-only queries across all 5 types
 
 Example: `fetchMCPCategoryCounts()`, `fetchAllAgentTags()`
+
+**Note:** Podcasts use `podcastStatus=published` filter instead of `visibility=public`. The `fetchCatalogCounts` function applies per-type filters accordingly.
 
 ## Graph Utilities
 

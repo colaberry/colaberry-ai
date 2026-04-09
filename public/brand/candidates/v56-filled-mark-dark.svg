@@ -1,0 +1,70 @@
+<!-- V56 Filled Mark Dark — ColaberryAI Research Labs -->
+<!-- Two kola nut berries as C + o letterforms, solid coral filled -->
+<!-- Large berry = C (left), Small berry = o (right) -->
+<!-- Dark mode variant -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+
+  <!-- === Curved stem connecting both berries === -->
+  <path
+    d="M16 11 C20 6, 30 6, 36 20"
+    stroke="#FAFAFA" stroke-width="1.8" stroke-linecap="round" fill="none"
+  />
+
+  <!-- === Small leaf at stem junction === -->
+  <ellipse
+    cx="24" cy="9" rx="4.5" ry="2"
+    transform="rotate(-30 24 9)"
+    fill="#FAFAFA"
+  />
+  <!-- Leaf vein -->
+  <path
+    d="M22 9.5 Q24 8.5, 26.5 8"
+    stroke="#09090B" stroke-width="0.5" stroke-linecap="round" fill="none" opacity="0.4"
+  />
+
+  <!-- === Steel blue AI dot on stem === -->
+  <circle cx="26" cy="12" r="1.5" fill="#357895" />
+
+  <!-- === Large berry (C letterform) — solid coral === -->
+  <circle cx="16" cy="24" r="13" fill="#F87171" />
+
+  <!-- Calyx detail at top of large berry -->
+  <path
+    d="M14 11.5 L16 13 L18 11.5"
+    stroke="#FAFAFA" stroke-width="1" stroke-linecap="round" fill="none"
+  />
+
+  <!-- Internal kola nut segment lines (dark) — cotyledon / brain motif -->
+  <!-- Vertical S-curve division -->
+  <path
+    d="M16 11.5 C13 18, 19 30, 16 36.5"
+    stroke="#09090B" stroke-width="1.6" stroke-linecap="round" fill="none"
+  />
+  <!-- Horizontal S-curve division -->
+  <path
+    d="M3.5 24 C10 21, 22 27, 28.5 24"
+    stroke="#09090B" stroke-width="1.6" stroke-linecap="round" fill="none"
+  />
+
+  <!-- === Small berry (o letterform) — solid coral === -->
+  <circle cx="36" cy="28" r="8" fill="#F87171" />
+
+  <!-- Calyx detail at top of small berry -->
+  <path
+    d="M34.5 20.5 L36 22 L37.5 20.5"
+    stroke="#FAFAFA" stroke-width="0.8" stroke-linecap="round" fill="none"
+  />
+
+  <!-- Internal kola nut segment lines (dark) — smaller berry -->
+  <!-- Vertical S-curve -->
+  <path
+    d="M36 20.5 C34 24, 38 32, 36 35.5"
+    stroke="#09090B" stroke-width="1.4" stroke-linecap="round" fill="none"
+  />
+  <!-- Horizontal S-curve -->
+  <path
+    d="M28.5 28 C32 26, 40 30, 43.5 28"
+    stroke="#09090B" stroke-width="1.4" stroke-linecap="round" fill="none"
+  />
+
+</svg>

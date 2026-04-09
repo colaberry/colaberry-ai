@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+  <!-- V27 Mark — "Berry Sprig" — 3 berries on a natural branch with 2 leaves -->
+
+  <!-- Main branch — curved, organic, bottom-left to upper-right -->
+  <path d="M12 34 Q14 28 18 24 Q22 20 24 16" stroke="#357895" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+
+  <!-- Sub-branch to left berry -->
+  <path d="M16 26 Q13 24 11 22" stroke="#357895" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+
+  <!-- Sub-branch to right berry -->
+  <path d="M20 22 Q24 21 27 19" stroke="#357895" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+
+  <!-- Berry 1 — bottom-left, coral red -->
+  <circle cx="10" cy="20.5" r="5.2" fill="#DC2626"/>
+  <!-- Berry 1 highlight -->
+  <circle cx="8.5" cy="19" r="1.4" fill="#F87171" opacity="0.6"/>
+
+  <!-- Berry 2 — center, darker red for depth -->
+  <circle cx="19" cy="14" r="5.8" fill="#DC2626"/>
+  <!-- Berry 2 highlight -->
+  <circle cx="17.2" cy="12.2" r="1.6" fill="#F87171" opacity="0.6"/>
+
+  <!-- Berry 3 — right, AI blue -->
+  <circle cx="28" cy="17.5" r="4.8" fill="#357895"/>
+  <!-- Berry 3 highlight -->
+  <circle cx="26.5" cy="16" r="1.3" fill="#5BA3C0" opacity="0.5"/>
+
+  <!-- Leaf 1 — upper left, teardrop shape -->
+  <path d="M23 14 Q20 8 24 6 Q28 8 25 13Z" fill="#357895" opacity="0.85"/>
+  <!-- Leaf 1 vein -->
+  <path d="M23.5 12.5 Q23 9 24 7" stroke="#2A6073" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+
+  <!-- Leaf 2 — upper right, smaller teardrop -->
+  <path d="M26 15 Q29 10 32 11 Q30 14 27 15.5Z" fill="#357895" opacity="0.7"/>
+  <!-- Leaf 2 vein -->
+  <path d="M27 14.5 Q29.5 11.5 31 11.5" stroke="#2A6073" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+</svg>

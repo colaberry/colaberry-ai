@@ -1,0 +1,39 @@
+# Colaberry AI — Local Development
+# Usage:
+#   docker compose up frontend          # Frontend only (use cloud CMS or run CMS separately)
+#   docker compose --profile with-cms up # Full stack with local CMS (SQLite)
+
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_CMS_URL: ${NEXT_PUBLIC_CMS_URL:-http://cms:1337}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_VTON_DEMO_URL: ${NEXT_PUBLIC_VTON_DEMO_URL:-http://localhost:5173}
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  cms:
+    profiles: ["with-cms"]
+    build:
+      context: ../colaberry-ai-cms-fork
+    ports:
+      - "1337:1337"
+    environment:
+      DATABASE_CLIENT: sqlite
+      DATABASE_FILENAME: .tmp/data.db
+      HOST: 0.0.0.0
+      PORT: 1337
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:1337/_health"]
+      interval: 10s
+      timeout: 5s
+      retries: 15

@@ -52,9 +52,7 @@ const NODE_POSITIONS: Partial<Record<ContentTypeName, { x: number; y: number }>>
 };
 
 function useIsDark() {
-  const [dark, setDark] = useState(() =>
-    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
-  );
+  const [dark, setDark] = useState(false);
   useEffect(() => {
     const el = document.documentElement;
     const obs = new MutationObserver(() => setDark(el.classList.contains("dark")));
@@ -64,37 +62,81 @@ function useIsDark() {
   return dark;
 }
 
+function useWindowWidth() {
+  const [w, setW] = useState(720);
+  useEffect(() => {
+    const update = () => setW(window.innerWidth);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  return w;
+}
+
 function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, number> }) {
   const [hoveredType, setHoveredType] = useState<ContentTypeName | null>(null);
   const [hoveredEdge, setHoveredEdge] = useState<number | null>(null);
   const isDark = useIsDark();
-  // Dark mode aware colors for inline SVG
-  const nodeStroke = isDark ? "#d4d4d8" : "#52525b";
-  const nodeFill = isDark ? "#52525b" : "#3f3f46";
-  const nodeFillOpacity = isDark ? 0.4 : 0.15;
-  const nodeText = isDark ? "#fafafa" : "#71717a";
-  const edgeStroke = isDark ? "#d4d4d8" : "#71717a";
+
+  const bg = isDark ? "#18181b" : "#ffffff";
+  const surface = isDark ? "#3f3f46" : "#f4f4f5";
+  const border = isDark ? "#52525b" : "#e4e4e7";
+  const textPrimary = isDark ? "#fafafa" : "#18181b";
+  const textSecondary = isDark ? "#a1a1aa" : "#71717a";
+  const textTertiary = isDark ? "#71717a" : "#a1a1aa";
+  const lineStroke = isDark ? "#52525b" : "#d4d4d8";
+
+  const windowWidth = useWindowWidth();
+  const isMobile = windowWidth < 640;
+
+  /* ── Mobile card layout ── */
+  if (isMobile) {
+    const typeEntries = (Object.entries(CONTENT_TYPE_META) as [ContentTypeName, typeof CONTENT_TYPE_META[ContentTypeName]][]).filter(([type]) => type in NODE_POSITIONS);
+    const config: Record<string, string> = { skill: "/aixcelerator/skills/ontology", agent: "/aixcelerator/agents/ontology", mcp: "/aixcelerator/mcp/ontology", podcast: "/resources/podcasts/ontology" };
+
+    return (
+      <div className="p-4">
+        <div className="text-center text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">Colaberry AI Knowledge Graph</div>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {typeEntries.map(([type, meta]) => {
+            const count = typeCounts[type] || 0;
+            return (
+              <button key={type} onClick={() => { window.location.href = config[type]; }} className="group rounded-xl border border-zinc-200 bg-white p-3 text-center transition-colors active:border-[#DC2626] dark:border-zinc-700 dark:bg-zinc-800">
+                <ContentTypeIconSvg type={type} x={0} y={0} size={0} fill="none" />
+                <ContentTypeIcon type={type as ContentTypeName} size={22} className="mx-auto text-zinc-400 transition-colors group-active:text-[#DC2626] dark:text-zinc-500" />
+                <div className="mt-1.5 text-xs font-bold text-zinc-700 dark:text-zinc-200">{meta.label}</div>
+                {count > 0 && <div className="mt-0.5 text-[10px] text-zinc-400 dark:text-zinc-500">{count.toLocaleString()}+</div>}
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-3 space-y-1.5">
+          {CROSS_TYPE_RELATIONS.slice(0, 4).map((rel, i) => (
+            <div key={i} className="flex items-center gap-2 rounded-md border border-zinc-100 bg-zinc-50/50 px-3 py-1.5 dark:border-zinc-700/50 dark:bg-zinc-800/30">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#DC2626]" />
+              <span className="text-[10px] font-semibold text-zinc-600 dark:text-zinc-300">{rel.label}</span>
+              <span className="text-[9px] text-zinc-400 dark:text-zinc-500">{CONTENT_TYPE_META[rel.sourceType].label} → {CONTENT_TYPE_META[rel.targetType].label}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 text-center text-[10px] text-zinc-400 dark:text-zinc-500">Tap a node to explore its ontology</div>
+      </div>
+    );
+  }
 
   const svgWidth = 720;
-  const svgHeight = 500;
+  const svgHeight = 480;
 
   return (
     <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[600px]" style={{ maxHeight: `${svgHeight}px`, fontFamily: "Inter, system-ui, -apple-system, sans-serif" }}>
-        <defs>
-          <filter id="kgNodeShadow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="2" stdDeviation="4" floodOpacity="0.08" />
-          </filter>
-          <filter id="kgHoverShadow" x="-40%" y="-40%" width="180%" height="180%">
-            <feDropShadow dx="0" dy="3" stdDeviation="8" floodColor="#DC2626" floodOpacity="0.12" />
-          </filter>
-          <style>{`
-            @keyframes kgDashMove { to { stroke-dashoffset: -18; } }
-            .kg-edge { animation: kgDashMove 2s linear infinite; }
-          `}</style>
-        </defs>
+      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[600px]" style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}>
+        <rect width={svgWidth} height={svgHeight} rx="12" fill={bg} />
 
-        <rect width={svgWidth} height={svgHeight} rx="12" className="fill-zinc-50 dark:fill-zinc-900" />
+        {/* Title */}
+        <text x={svgWidth / 2} y="24" textAnchor="middle" fontSize="9" fontWeight="600" letterSpacing="0.08em" fill={textTertiary}>
+          COLABERRY AI KNOWLEDGE GRAPH
+        </text>
+        <line x1="20" y1="32" x2={svgWidth - 20} y2="32" stroke={border} strokeWidth="0.5" />
 
         {/* Cross-type relationship edges */}
         {CROSS_TYPE_RELATIONS.map((rel, i) => {
@@ -115,24 +157,23 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               <line
                 x1={from.x} y1={from.y}
                 x2={to.x} y2={to.y}
-                stroke={isHovered ? "#DC2626" : edgeStroke}
-                strokeWidth={isHovered ? 2.5 : 1.2}
-                strokeDasharray="6,3"
-                opacity={isHovered ? 0.9 : (isDark ? 0.65 : 0.3)}
-                className="kg-edge"
+                stroke={isHovered ? "#DC2626" : lineStroke}
+                strokeWidth={isHovered ? 2 : 0.75}
+                style={{ transition: "stroke 0.15s, stroke-width 0.15s" }}
               />
               {isHovered && (
                 <>
                   <rect
-                    x={midX - rel.label.length * 3.5 - 6}
-                    y={midY - 12}
-                    width={rel.label.length * 7 + 12}
+                    x={midX - rel.label.length * 3.2 - 8}
+                    y={midY - 11}
+                    width={rel.label.length * 6.4 + 16}
                     height="18"
-                    rx="9"
-                    fill="#DC2626"
-                    opacity="0.9"
+                    rx="4"
+                    fill={isDark ? "#27272a" : "#f4f4f5"}
+                    stroke="#DC2626"
+                    strokeWidth="0.5"
                   />
-                  <text x={midX} y={midY} textAnchor="middle" fontSize="9" fontWeight="600" fill="#fff">
+                  <text x={midX} y={midY + 1} textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="600" fill="#DC2626">
                     {rel.label}
                   </text>
                 </>
@@ -156,42 +197,33 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
               style={{ cursor: "pointer" }}
               onClick={() => { window.location.href = config[type]; }}
             >
-              {/* Glow ring on hover — coral accent */}
-              {isHovered && (
-                <circle cx={pos.x} cy={pos.y} r="46" fill="#DC2626" opacity="0.06" />
-              )}
-
               {/* Node circle */}
               <circle
                 cx={pos.x} cy={pos.y} r="36"
-                fill="none"
-                stroke={isHovered ? "#DC2626" : nodeStroke}
-                strokeWidth={isHovered ? 2 : 1.2}
-                opacity={isHovered ? 1 : 0.8}
-                filter="url(#kgNodeShadow)"
+                fill={isHovered ? (isDark ? "#DC262612" : "#DC262608") : surface}
+                stroke={isHovered ? "#DC2626" : border}
+                strokeWidth={isHovered ? 1.5 : 1}
+                style={{ transition: "stroke 0.15s, fill 0.15s" }}
               />
-              <circle cx={pos.x} cy={pos.y} r="36" fill={isHovered ? "#DC2626" : nodeFill} opacity={isHovered ? 0.08 : nodeFillOpacity} />
 
               {/* Icon */}
-              <ContentTypeIconSvg type={type} x={pos.x} y={pos.y - 4} size={20} fill={isHovered ? "#DC2626" : nodeText} />
+              <ContentTypeIconSvg type={type} x={pos.x} y={pos.y - 4} size={20} fill={isHovered ? "#DC2626" : textSecondary} />
 
               {/* Label */}
-              <text x={pos.x} y={pos.y + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={isHovered ? "#DC2626" : nodeText}>
+              <text x={pos.x} y={pos.y + 16} textAnchor="middle" fontSize="10" fontWeight="600" fill={isHovered ? textPrimary : textSecondary} style={{ transition: "fill 0.15s" }}>
                 {meta.label}
               </text>
 
               {/* Count */}
-              <text x={pos.x} y={pos.y + 56} textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-400" fontSize="9" fontWeight="500">
+              <text x={pos.x} y={pos.y + 54} textAnchor="middle" fontSize="9" fontWeight="500" fill={textTertiary}>
                 {count > 0 ? `${count}+` : ""}
               </text>
             </g>
           );
         })}
 
-        {/* Title */}
-        <text x={svgWidth / 2} y="24" textAnchor="middle" className="fill-zinc-400 dark:fill-zinc-400" fontSize="9" fontWeight="700" letterSpacing="0.12em">
-          COLABERRY AI KNOWLEDGE GRAPH
-        </text>
+        {/* Legend */}
+        <text x="24" y={svgHeight - 28} fontSize="9" fontWeight="500" fill={textTertiary}>Click a node to explore its ontology</text>
       </svg>
     </div>
   );
