@@ -163,7 +163,7 @@ function OntologyDiagram({
           </div>
           <div className="mt-2.5 flex flex-wrap justify-center gap-1.5">
             {categories.map((cat) => (
-              <button key={cat.slug} onClick={() => router.push(`/aixcelerator/skills?category=${cat.slug}`)} className="flex items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 py-1 text-[10px] font-medium text-zinc-600 active:border-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+              <button key={cat.slug} onClick={() => router.push(`/aixcelerator/skills?category=${cat.slug}`)} className="flex items-center gap-1 rounded-md border border-zinc-200 bg-zinc-50 px-2 py-1 text-[10px] font-medium text-zinc-600 active:border-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
                 <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: catColors[cat.slug] || "#a1a1aa" }} />
                 {cat.label}
                 <span className="ml-0.5 text-zinc-400 dark:text-zinc-500">{(categoryCounts[cat.slug] || 0).toLocaleString()}</span>
@@ -184,7 +184,7 @@ function OntologyDiagram({
           <div className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">Skill Relation Graph</div>
           <div className="mt-2 flex flex-wrap justify-center gap-1.5">
             {REPRESENTATIVE_SKILLS.slice(0, 4).map((item) => (
-              <button key={item.slug} onClick={() => router.push(`/aixcelerator/skills/${item.slug}`)} className="rounded-md border border-zinc-200 bg-white px-2 py-1 text-[10px] font-medium text-zinc-600 active:border-[#DC2626] active:text-[#DC2626] dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{item.name}</button>
+              <button key={item.slug} onClick={() => router.push(`/aixcelerator/skills/${item.slug}`)} className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-1 text-[10px] font-medium text-zinc-600 active:border-[#DC2626] active:text-[#DC2626] dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{item.name}</button>
             ))}
           </div>
           <div className="mt-2 flex flex-wrap justify-center gap-2.5">
@@ -199,7 +199,7 @@ function OntologyDiagram({
           <div className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">Skill Collection Library</div>
           <div className="mt-2 grid grid-cols-2 gap-1.5">
             {collections.map((col) => (
-              <button key={col.slug} onClick={() => router.push(`/aixcelerator/skills/collections/${col.slug}`)} className="rounded-md border border-zinc-200 bg-white p-2 text-center active:border-[#DC2626] dark:border-zinc-600 dark:bg-zinc-800">
+              <button key={col.slug} onClick={() => router.push(`/aixcelerator/skills/collections/${col.slug}`)} className="rounded-md border border-zinc-200 bg-zinc-50 p-2 text-center active:border-[#DC2626] dark:border-zinc-600 dark:bg-zinc-800">
                 <div className="truncate text-[10px] font-semibold text-zinc-600 dark:text-zinc-300">{col.slug}</div>
                 <div className="text-[9px] text-zinc-400 dark:text-zinc-500">{col.skillSlugs.length} skills</div>
               </button>

@@ -405,7 +405,7 @@ export default function EcosystemPage({ nodes, links, typeBreakdown }: InferGetS
 
       {/* Legend */}
       {!isFullscreen && (
-        <div className="reveal mt-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="reveal mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-900">
           <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">Content Type Legend</h2>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
             {typeBreakdown.map(({ type, label, count, color }) => (
