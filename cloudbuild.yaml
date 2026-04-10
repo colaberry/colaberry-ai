@@ -7,6 +7,8 @@ steps:
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
+      - "--build-arg"
+      - "CMS_API_TOKEN=${_CMS_API_TOKEN}"
       - "-t"
       - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/colaberry-ai:${SHORT_SHA}"
       - "-t"
@@ -53,7 +55,8 @@ steps:
 
 substitutions:
   _REGION: us-east1
-  _REPO: colaberry-ai-repo
+  _REPO: cloud-run-source-deploy
+  _CMS_API_TOKEN: ""
   _SERVICE_NAME: colaberry-ai-prod
 
 options:

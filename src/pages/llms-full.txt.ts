@@ -1,6 +1,7 @@
 import type { GetServerSideProps } from "next";
 import {
   fetchAgents,
+  fetchCatalogCounts,
   fetchMCPServers,
   fetchSkills,
   fetchUseCases,
@@ -15,22 +16,32 @@ type CmsItem = { name?: string | null; title?: string | null; slug?: string | nu
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
 
+/**
+ * Cap per content type to avoid Strapi timeout / OOM.
+ * Skills alone = 16,900+ → 169 paginated API calls uncapped.
+ * 500 entries per type is enough for LLM context; total counts
+ * are shown in the header via fetchCatalogCounts.
+ */
+const MAX_ITEMS = 500;
+
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
-  res.setHeader("Cache-Control", "public, s-maxage=600, stale-while-revalidate=1200");
+  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=7200");
 
-  const [agentsR, mcpR, skillsR, useCasesR, podcastsR, articlesR, booksR, caseStudiesR] =
+  const [countsR, agentsR, mcpR, skillsR, useCasesR, podcastsR, articlesR, booksR, caseStudiesR] =
     await Promise.allSettled([
-      fetchAgents("public"),
-      fetchMCPServers("public"),
-      fetchSkills("public"),
+      fetchCatalogCounts("public"),
+      fetchAgents("public", { maxRecords: MAX_ITEMS }),
+      fetchMCPServers("public", { maxRecords: MAX_ITEMS }),
+      fetchSkills("public", { maxRecords: MAX_ITEMS }),
       fetchUseCases("public"),
-      fetchPodcastEpisodes(),
-      fetchArticles(),
-      fetchBooks(),
-      fetchCaseStudies(),
+      fetchPodcastEpisodes({ maxRecords: MAX_ITEMS }),
+      fetchArticles({ maxRecords: MAX_ITEMS }),
+      fetchBooks("public"),
+      fetchCaseStudies("public"),
     ]);
 
+  const counts = countsR.status === "fulfilled" ? countsR.value : { agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0 };
   const agents = agentsR.status === "fulfilled" ? agentsR.value : [];
   const mcpServers = mcpR.status === "fulfilled" ? mcpR.value : [];
   const skills = skillsR.status === "fulfilled" ? skillsR.value : [];
@@ -40,12 +51,16 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const books = booksR.status === "fulfilled" ? booksR.value : [];
   const caseStudies = caseStudiesR.status === "fulfilled" ? caseStudiesR.value : [];
 
+  const totalCatalog = (counts.agents || 0) + (counts.mcpServers || 0) + (counts.skills || 0) + (counts.podcasts || 0);
+
   const lines: string[] = [
     "# Colaberry AI — Full Content Index",
     `# Generated: ${new Date().toISOString()}`,
     `# Site: ${SITE}`,
+    `# Total catalog: ${totalCatalog.toLocaleString()}+ items (${(counts.agents || 0).toLocaleString()}+ agents, ${(counts.mcpServers || 0).toLocaleString()}+ MCP servers, ${(counts.skills || 0).toLocaleString()}+ skills, ${(counts.podcasts || 0).toLocaleString()}+ podcasts)`,
+    `# This index shows up to ${MAX_ITEMS} entries per type. Full catalog at ${SITE}/aixcelerator`,
     "",
-    `## Agents (${agents.length})`,
+    `## Agents (${agents.length} shown, ${(counts.agents || agents.length).toLocaleString()} total)`,
     "",
   ];
 
@@ -56,7 +71,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     lines.push(`- ${name} | ${SITE}/aixcelerator/agents/${slug} | ${desc}`);
   }
 
-  lines.push("", `## MCP Servers (${mcpServers.length})`, "");
+  lines.push("", `## MCP Servers (${mcpServers.length} shown, ${(counts.mcpServers || mcpServers.length).toLocaleString()} total)`, "");
   for (const m of mcpServers as CmsItem[]) {
     const name = m.name || m.title || "Untitled";
     const slug = m.slug || "";
@@ -64,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     lines.push(`- ${name} | ${SITE}/aixcelerator/mcp/${slug} | ${desc}`);
   }
 
-  lines.push("", `## Skills (${skills.length})`, "");
+  lines.push("", `## Skills (${skills.length} shown, ${(counts.skills || skills.length).toLocaleString()} total)`, "");
   for (const s of skills as CmsItem[]) {
     const name = s.name || s.title || "Untitled";
     const slug = s.slug || "";
@@ -82,7 +97,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     }
   }
 
-  lines.push("", `## Podcast Episodes (${podcasts.length})`, "");
+  lines.push("", `## Podcast Episodes (${podcasts.length} shown, ${(counts.podcasts || podcasts.length).toLocaleString()} total)`, "");
   for (const p of podcasts as CmsItem[]) {
     const title = p.title || "Untitled";
     const slug = p.slug || "";
@@ -117,7 +132,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     }
   }
 
-  lines.push("", "---", `# End of index. Total items: ${agents.length + mcpServers.length + skills.length + useCases.length + podcasts.length + articles.length + books.length + caseStudies.length}`);
+  lines.push("", "---", `# End of index. Items shown: ${agents.length + mcpServers.length + skills.length + useCases.length + podcasts.length + articles.length + books.length + caseStudies.length}. Full catalog: ${totalCatalog.toLocaleString()}+ items at ${SITE}`);
 
   res.write(lines.join("\n"));
   res.end();
