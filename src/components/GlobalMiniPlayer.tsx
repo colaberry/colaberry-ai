@@ -75,7 +75,7 @@ export default function GlobalMiniPlayer() {
         <button
           type="button"
           onClick={togglePlayback}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white shadow-sm transition-transform hover:scale-105 motion-reduce:transition-none dark:bg-zinc-100 dark:text-zinc-900"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-zinc-950 text-white shadow-sm transition-transform hover:scale-105 motion-reduce:transition-none dark:bg-zinc-100 dark:text-zinc-950"
           aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (

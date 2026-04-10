@@ -195,6 +195,28 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "What AI agents does Colaberry AI catalog?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: `Colaberry AI catalogs ${agentCount}+ enterprise AI agents across ${industryCount} industries including healthcare, fintech, agriculture, energy, and manufacturing. Each agent has ownership metadata, lifecycle status (Live/Beta/Concept), deployment runbooks, and governance controls.`,
+              },
+            },
+            {
+              "@type": "Question",
+              name: "How can I find the right AI agent for my enterprise?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Use Colaberry AI's searchable catalog to filter agents by industry, department, status, source, and tags. Each agent profile includes ratings, usage counts, and linked MCP servers and skills for integration planning.",
+              },
+            },
+          ],
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       {fetchError && (

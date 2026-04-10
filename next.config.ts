@@ -111,7 +111,7 @@ const nextConfig: NextConfig = {
                     "object-src 'none'",
                     "frame-ancestors 'self'",
                     "base-uri 'self'",
-                    "form-action 'self'",
+                    "form-action 'self' https://www.colaberry.online",
                   ].join("; "),
                 },
               ]

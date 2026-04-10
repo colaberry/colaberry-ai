@@ -90,6 +90,7 @@ src/
 - `tailwind.config.ts` — Zinc color scale, Inter fonts, animation keyframes
 - `src/pages/_app.tsx` — Font loading (Inter), global layout wrapper
 - `src/lib/cms.ts` — CMS fetch functions, TypeScript types, per-type helpers
+- `src/lib/demoRequestStore.ts` — Strapi-write layer for `DemoRequest` leads (create + delivery-status update, bearer auth, abort-controller timeout). Handler calls this BEFORE `sendNewsletterEmail` so leads are durable even if email bounces.
 - `src/lib/ontologyTypes.ts` — Shared type system: ContentOntologyConfig, ContentCollection, SolutionStack
 - `src/lib/ontologyRegistry.ts` — Central registry + cross-type relation definitions
 - `src/lib/graphUtils.ts` — Generic graph utilities: `buildGraphData()`, colors, topology
@@ -103,6 +104,19 @@ npm run lint         # ESLint check
 npx tsc --noEmit     # TypeScript type check (no emit)
 npm run dev          # Local dev server
 ```
+
+## Deployment — Known Pitfalls
+
+### API Route Auth Bug Pattern (fixed 2026-04-10)
+**Rule:** Never use raw `fetch()` to call Strapi from API routes. Always use `fetchCMSJson` or `fetchCatalogCounts` from `src/lib/cms.ts` — they send the `CMS_API_TOKEN` bearer header.
+
+`src/pages/api/skills.ts` had a local `fetchTotalCount()` that issued unauthenticated `fetch()` to Strapi → returned 401 in prod → `catalogTotal` silently fell back to 500 (the `MAX_CACHED_SKILLS` cap). SSR was correct (uses `fetchCMSJson`) but client hydration overwrote it with the broken API value. Fix: delegate to `fetchCatalogCounts()`.
+
+### Dockerfile + Cloud Build
+- `NEXT_PUBLIC_CMS_URL` has a default in the Dockerfile `ARG`. `CMS_API_TOKEN` does **not** — must be passed via `--build-arg` for build-time `getStaticProps` to fetch real data. If missing, SSG pages bake in `totalCount: 0` and wait for ISR runtime regeneration (600s).
+- `cloudbuild.yaml` passes `_CMS_API_TOKEN` substitution as `--build-arg CMS_API_TOKEN`. For trigger-based builds, configure `_CMS_API_TOKEN` in the Cloud Build trigger substitution variables. For manual deploys: `gcloud builds submit --config=cloudbuild.yaml --substitutions=SHORT_SHA=<sha>,_CMS_API_TOKEN=<token>`.
+- Cloud Build trigger `release-1-0-colaberry-ai-prod` fires on push to `colaberry/colaberry-ai` (upstream), NOT `saitejesh-cyber/colaberry-ai-fork`. For fork deploys, use `gcloud builds submit --config=cloudbuild.yaml --substitutions=SHORT_SHA=<sha>,_CMS_API_TOKEN=<token>`.
+- AR repo name is `cloud-run-source-deploy` (set as default `_REPO` in `cloudbuild.yaml`).
 
 ## AEO (Answer Engine Optimization)
 colaberry.ai is built for AEO — optimized for AI answer engines (ChatGPT, Claude, Perplexity), not just Google.

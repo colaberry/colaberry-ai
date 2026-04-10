@@ -186,7 +186,7 @@ export default function AudioPlayerUI({
           <button
             type="button"
             onClick={togglePlay}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-900 text-white shadow-md transition-transform hover:scale-105 motion-reduce:transition-none dark:bg-zinc-100 dark:text-zinc-900"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-950 text-white shadow-md transition-transform hover:scale-105 motion-reduce:transition-none dark:bg-zinc-100 dark:text-zinc-950"
             aria-label={playing ? "Pause" : "Play"}
           >
             {playing ? (

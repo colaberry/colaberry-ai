@@ -126,7 +126,7 @@ export default function MCPCollectionDetailPage({ collection, items, mcpServers,
           if (!mcp) return null;
           return (
             <div key={mcp.slug} className="relative">
-              <div className="absolute -left-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900 z-10">
+              <div className="absolute -left-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-950 z-10">
                 {index + 1}
               </div>
               <MCPCard mcp={mcp} />

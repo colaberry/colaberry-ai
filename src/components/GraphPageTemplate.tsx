@@ -167,7 +167,7 @@ export default function GraphPageTemplate({
 
   const graphContainerClass = isFullscreen
     ? "fixed inset-0 z-50"
-    : "reveal relative mt-4 overflow-hidden rounded-2xl border border-zinc-200/80 shadow-lg dark:border-zinc-700/60 dark:shadow-zinc-950/50";
+    : "reveal relative mt-4 h-[500px] overflow-hidden rounded-2xl border border-zinc-200/80 shadow-lg sm:h-[600px] lg:h-[680px] dark:border-zinc-700/60 dark:shadow-zinc-950/50";
 
   return (
     <>
@@ -182,7 +182,7 @@ export default function GraphPageTemplate({
           />
           <Link
             href={config.catalogPath}
-            className="inline-flex items-center gap-1.5 rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="inline-flex items-center gap-1.5 rounded-full bg-zinc-950 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200"
           >
             ← Back to catalog
           </Link>
@@ -190,7 +190,7 @@ export default function GraphPageTemplate({
       )}
 
       {/* Graph container with overlaid controls */}
-      <div className={graphContainerClass} style={{ height: isFullscreen ? "100vh" : "680px" }}>
+      <div className={graphContainerClass} style={{ height: isFullscreen ? "100vh" : undefined }}>
         {/* Overlaid control bar — frosted glass */}
         <div className={`absolute top-0 left-0 right-0 z-10 flex flex-wrap items-center gap-2.5 px-4 py-3 ${isFullscreen ? "bg-zinc-950/80" : "bg-zinc-900/70"} backdrop-blur-md`}>
           {/* Search */}
@@ -202,7 +202,7 @@ export default function GraphPageTemplate({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 placeholder={`Search ${config.label.toLowerCase()}...`}
-                className="h-8 w-44 rounded-lg border border-zinc-600/50 bg-zinc-800/60 pl-8 pr-3 text-xs text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500/50"
+                className="h-8 w-32 rounded-lg border border-zinc-600/50 bg-zinc-800/60 pl-8 pr-3 text-xs text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500/50 sm:w-44"
               />
               <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500">
                 <IconSearch />
@@ -215,7 +215,7 @@ export default function GraphPageTemplate({
           <div className="mx-1 h-5 w-px bg-zinc-700/50" />
 
           {/* Edge type filters */}
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="hidden flex-wrap items-center gap-1.5 sm:flex">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Edges</span>
             {edgeTypeKeys.map((type) => (
               <button

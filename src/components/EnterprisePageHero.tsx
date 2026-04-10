@@ -127,7 +127,7 @@ export default function EnterprisePageHero({
       </div>
 
       {metrics.length > 0 ? (
-        <div className="relative z-10 grid gap-3 px-6 pb-10 sm:grid-cols-3 sm:px-8 lg:px-10">
+        <div className="relative z-10 grid gap-3 px-6 pb-10 sm:grid-cols-2 sm:px-8 md:grid-cols-3 lg:px-10">
           {metrics.map((metric) => (
             <article
               key={metric.label}

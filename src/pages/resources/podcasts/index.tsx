@@ -163,6 +163,28 @@ export default function Podcasts({
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema).replace(/</g, "\\u003c") }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "Where can I find AI podcasts with full searchable transcripts?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Colaberry AI offers 260+ AI podcast episodes with full searchable transcripts generated via Deepgram. Episodes cover enterprise AI strategy, agent development, MCP servers, and responsible AI governance. Browse and search at colaberry.ai/resources/podcasts.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What topics does the Colaberry AI Podcast cover?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "The Colaberry AI Podcast provides daily updates on the latest AI breakthroughs, agent frameworks, MCP integrations, enterprise AI deployments, and industry-specific AI applications across healthcare, fintech, agriculture, energy, and more.",
+              },
+            },
+          ],
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       {fetchError ? (
@@ -195,7 +217,7 @@ export default function Podcasts({
               href="/resources/podcasts"
               className={`flex min-h-[40px] items-center rounded-lg px-5 py-2 text-sm font-semibold transition ${
                 activeSort === "latest"
-                  ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
+                  ? "bg-zinc-950 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-950"
                   : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
               }`}
             >
@@ -205,7 +227,7 @@ export default function Podcasts({
               href="/resources/podcasts?sort=trending"
               className={`flex min-h-[40px] items-center rounded-lg px-5 py-2 text-sm font-semibold transition ${
                 activeSort === "trending"
-                  ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
+                  ? "bg-zinc-950 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-950"
                   : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
               }`}
             >

@@ -1,4 +1,20 @@
+import crypto from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
+import {
+  hasJsonContentType,
+  hasRealBrowserHeaders,
+  isAllowedOrigin,
+  isKnownBot,
+  validateBotToken,
+  validateEmail as strictValidateEmail,
+} from "../../lib/bot-defense";
+import {
+  createDemoRequest,
+  isDemoRequestStoreConfigured,
+  updateDemoRequestDelivery,
+  CmsWriteError,
+  type CreateDemoRequestInput,
+} from "../../lib/demoRequestStore";
 import { resolveSenderProvider, sendNewsletterEmail } from "../../lib/newsletterSender";
 import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
@@ -19,11 +35,37 @@ type DemoRequestPayload = {
   utmContent?: string;
   referrer?: string;
   website?: string;
+  consent?: boolean | string;
+  _bt?: string;
 };
 
 const TO_EMAIL = process.env.DEMO_REQUEST_TO_EMAIL || process.env.NEWSLETTER_REPLY_TO_EMAIL || "info@colaberry.com";
 const REQUEST_TIMEOUT_MS = Number(process.env.DEMO_REQUEST_TIMEOUT_MS || 8000);
 const MAX_MESSAGE_LENGTH = Number(process.env.DEMO_REQUEST_MAX_MESSAGE || 4000);
+const HASH_SALT = process.env.DEMO_REQUEST_HASH_SALT || process.env.NEWSLETTER_HASH_SALT || "colaberry-demo-request";
+
+/**
+ * P1 feature flag — HMAC timing-token enforcement.
+ *
+ * When this flag is `"true"` AND `BOT_TOKEN_SECRET` is set on the runtime
+ * environment, every POST must include a server-signed `_bt` token that:
+ *   - was issued by GET /api/bot-token
+ *   - is at least 5 s old (humans fill forms slower than that)
+ *   - is at most 1 h old (limits replay window)
+ * Blocked requests get a silent fake-success so bots cannot enumerate.
+ *
+ * Default OFF so the code can ship without a behaviour change. Flip on via
+ * a single `gcloud run services update` once `BOT_TOKEN_SECRET` is set.
+ */
+const REQUIRE_BOT_TOKEN = process.env.DEMO_REQUEST_REQUIRE_BOT_TOKEN === "true";
+
+function hashValue(value: string) {
+  return crypto
+    .createHash("sha256")
+    .update(`${HASH_SALT}:${value}`)
+    .digest("hex")
+    .slice(0, 24);
+}
 
 function normalizeText(value: string | undefined, max = 240) {
   if (!value) return "";
@@ -45,8 +87,25 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#39;");
 }
 
-function isValidEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+// Belt-and-suspenders regex sanity check run alongside the strict
+// validateEmail() from bot-defense (disposable-domain blocklist,
+// consecutive-dots check, local-part length cap, multi-plus guard).
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+/**
+ * Silent fake-success response used when any bot-defense layer blocks the
+ * submission. Anti-enumeration pattern: the response is byte-for-byte
+ * indistinguishable from a real success so bots cannot probe which layer
+ * caught them (closes the `delivery.attempted=false` enumeration leak
+ * from the P0 implementation — the delivery block now mirrors a real
+ * success, including the live sender provider).
+ */
+function silentSuccess(res: NextApiResponse) {
+  return res.status(200).json({
+    ok: true,
+    message: "Thanks! We will reach out shortly to schedule a demo.",
+    delivery: { attempted: true, sent: true, provider: resolveSenderProvider() },
+  });
 }
 
 function parsePayload(req: NextApiRequest): DemoRequestPayload | null {
@@ -81,19 +140,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ ok: false, message: "Method not allowed." });
   }
 
-  const rl = checkRateLimit("demo-request", getClientIp(req), 10, 60_000);
-  if (rl.limited) {
-    res.setHeader("Retry-After", String(rl.retryAfterSec));
-    res.setHeader("X-RateLimit-Limit", String(rl.limit));
+  // Per-IP flood guard — runs BEFORE any parsing so abusers get throttled
+  // even if they never send valid JSON. Tightened from 10/60s → 12/10min
+  // to match the podcast-subscribe + newsletter-subscribe envelope.
+  const ip = getClientIp(req);
+  const rlIp = checkRateLimit("demo-request-ip", ip, 12, 10 * 60_000);
+  if (rlIp.limited) {
+    res.setHeader("Retry-After", String(rlIp.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rlIp.limit));
     res.setHeader("X-RateLimit-Remaining", "0");
     return res.status(429).json({ ok: false, message: "Too many requests. Please try again shortly." });
   }
 
-  // Bot defense: block known bots + validate timing token
-  const { checkBotDefense } = await import("../../lib/bot-defense");
-  const botBlock = checkBotDefense(req);
-  if (botBlock) {
-    return res.status(403).json({ ok: false, message: botBlock });
+  // Bot defense layers 1-4 — silent fake-success on any block so bots
+  // cannot enumerate which layer caught them (OWASP A01, matches
+  // podcast-subscribe + newsletter-subscribe pattern per CLAUDE.md).
+  //  Layer 1  — known-bot UA / too-short UA
+  //  Layer 2  — missing real-browser headers (accept, accept-language, user-agent)
+  //  Layer 3  — origin/referer must be one of our hosts
+  //  Layer 4  — content-type must be application/json
+  if (
+    isKnownBot(req) ||
+    !hasRealBrowserHeaders(req) ||
+    !isAllowedOrigin(req) ||
+    !hasJsonContentType(req)
+  ) {
+    return silentSuccess(res);
   }
 
   const payload = parsePayload(req);
@@ -101,18 +173,80 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ ok: false, message: "Invalid request payload." });
   }
 
-  const email = normalizeEmail(payload.email);
-  if (!email || !isValidEmail(email)) {
-    return res.status(400).json({ ok: false, message: "A valid email is required." });
-  }
-
-  // Prevent email header injection
-  if (/[\r\n]/.test(email) || /[\r\n]/.test(payload.name || "")) {
-    return res.status(400).json({ ok: false, message: "Invalid input." });
-  }
-
+  // Layer 5 — Honeypot: a real browser never touches this hidden field.
+  // Silent fake-success so the bot believes it worked and moves on.
   if (payload.website && String(payload.website).trim().length > 0) {
-    return res.status(200).json({ ok: true, message: "Thanks! We will be in touch." });
+    return silentSuccess(res);
+  }
+
+  // Layer 6 — CRLF header-injection guard across every text field. Only
+  // header-injecting bots produce \r\n in form fields, so silent fake-success
+  // is safe (no real user ever sees this path).
+  const textFieldsForCrlfCheck = [
+    payload.name,
+    payload.email,
+    payload.company,
+    payload.role,
+    payload.teamSize,
+    payload.timeline,
+    payload.message,
+    payload.sourcePage,
+    payload.sourcePath,
+    payload.utmSource,
+    payload.utmMedium,
+    payload.utmCampaign,
+    payload.utmTerm,
+    payload.utmContent,
+    payload.referrer,
+  ];
+  if (textFieldsForCrlfCheck.some((v) => typeof v === "string" && /[\r\n]/.test(v))) {
+    return silentSuccess(res);
+  }
+
+  const email = normalizeEmail(payload.email);
+
+  // Layer 7 — Strict email validator: 254-char cap, CRLF, consecutive-dots,
+  // local-part length, multi-plus, disposable-domain blocklist — plus a
+  // regex sanity check. Returns 400 on bad format so real users with a
+  // typo get corrective feedback (bots do not iterate the demo-request
+  // form the way they scrape signup endpoints, so enumeration risk is low).
+  const emailResult = strictValidateEmail(email);
+  if (!emailResult.valid || !EMAIL_PATTERN.test(email)) {
+    return res.status(400).json({ ok: false, message: "A valid work email is required." });
+  }
+
+  // Layer 8 — Per-email rate limit (now that the email is parsed).
+  // 6 attempts per 10 min per email, matching the subscribe endpoints.
+  const rlEmail = checkRateLimit("demo-request-email", email, 6, 10 * 60_000);
+  if (rlEmail.limited) {
+    res.setHeader("Retry-After", String(rlEmail.retryAfterSec));
+    res.setHeader("X-RateLimit-Limit", String(rlEmail.limit));
+    res.setHeader("X-RateLimit-Remaining", "0");
+    return res.status(429).json({ ok: false, message: "Too many requests. Please try again shortly." });
+  }
+
+  // Layer 9 — P1: HMAC timing token. Feature-flagged so the code can ship
+  // inert until BOT_TOKEN_SECRET is set on Cloud Run. When enforced, the
+  // token must be >=5 s old and <=1 h old, signed with BOT_TOKEN_SECRET.
+  // Silent fake-success on any failure (missing / expired / too-fast /
+  // invalid signature) so bots cannot enumerate the layer.
+  if (REQUIRE_BOT_TOKEN) {
+    const tokenResult = validateBotToken(payload._bt, 5000);
+    if (!tokenResult.valid) {
+      return silentSuccess(res);
+    }
+  }
+
+  // Layer 10 — P2: explicit consent to be contacted. Matches the pattern
+  // in podcast-subscribe / newsletter-subscribe. Real users see a 400
+  // with a corrective message; bots that scrape the form definition and
+  // submit without ticking the box get the same 400.
+  const consent = payload.consent === true || payload.consent === "true";
+  if (!consent) {
+    return res.status(400).json({
+      ok: false,
+      message: "Please confirm you agree to be contacted about your request.",
+    });
   }
 
   const name = normalizeText(payload.name, 120);
@@ -191,6 +325,56 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     </div>
   `;
 
+  // Step 1 — persist the lead to Strapi BEFORE attempting email delivery.
+  // This makes the lead durable even if the email provider drops the
+  // message. If Strapi is unreachable we still continue to the email
+  // step (degraded — logged — but user still gets a response).
+  const requestId = crypto.randomUUID();
+  const userAgentHeader = String(req.headers["user-agent"] || "").slice(0, 500);
+  const createInput: CreateDemoRequestInput = {
+    name,
+    email,
+    company,
+    role,
+    teamSize,
+    timeline,
+    message,
+    sourcePage,
+    sourcePath,
+    requestId,
+    ipHash: hashValue(ip),
+    userAgentHash: hashValue(userAgentHeader || "unknown"),
+    metadata: {
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      utmTerm,
+      utmContent,
+      referrer,
+      userAgent: userAgentHeader,
+    },
+  };
+
+  let documentId: string | null = null;
+  if (isDemoRequestStoreConfigured()) {
+    try {
+      const record = await createDemoRequest(createInput);
+      documentId = record.documentId;
+    } catch (error) {
+      const message = error instanceof CmsWriteError ? error.message : "unknown CMS error";
+      console.error(`[demo-request] ${requestId} CMS write failed: ${message}`);
+      // Deliberately swallow — the email path is still attempted so
+      // we never fail a user submission because of a CMS outage.
+    }
+  } else {
+    console.warn(`[demo-request] ${requestId} CMS not configured — lead will only be emailed`);
+  }
+
+  // Step 2 — attempt email delivery.
+  let emailOk = false;
+  let emailError: string | null = null;
+  const provider = resolveSenderProvider();
+
   try {
     const delivery = await withTimeout(
       sendNewsletterEmail({
@@ -203,31 +387,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       REQUEST_TIMEOUT_MS
     );
 
+    emailOk = delivery.ok;
     if (!delivery.ok) {
-      console.error("[demo-request] send failed", delivery.error);
-      return res.status(200).json({
-        ok: true,
-        message:
-          "Thanks! Your request was received. We will follow up shortly.",
-        delivery: {
-          attempted: true,
-          sent: false,
-          provider: resolveSenderProvider(),
-        },
-      });
+      emailError = delivery.error ?? "unknown delivery error";
+      console.error(`[demo-request] ${requestId} send failed: ${emailError}`);
     }
-
-    return res.status(200).json({
-      ok: true,
-      message: "Thanks! We will reach out shortly to schedule a demo.",
-      delivery: {
-        attempted: true,
-        sent: true,
-        provider: resolveSenderProvider(),
-      },
-    });
   } catch (error) {
-    console.error("[demo-request] error", error instanceof Error ? error.message : "unknown error");
-    return res.status(500).json({ ok: false, message: "Unable to send request right now." });
+    emailError = error instanceof Error ? error.message : "unknown error";
+    console.error(`[demo-request] ${requestId} send threw: ${emailError}`);
   }
+
+  // Step 3 — annotate the CMS record with the delivery outcome so
+  // sales-ops can see which leads delivered and which need manual
+  // follow-up. Fire-and-forget: never fails the user response.
+  if (documentId) {
+    try {
+      await updateDemoRequestDelivery(documentId, {
+        emailDelivered: emailOk,
+        emailProvider: provider,
+        emailError,
+        deliveryAttemptedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      const message = error instanceof CmsWriteError ? error.message : "unknown CMS error";
+      console.error(`[demo-request] ${requestId} delivery-update failed: ${message}`);
+    }
+  }
+
+  // Always return 200 to the user — the lead is either in Strapi or
+  // has been logged. Never leak CMS/email internal state to the client.
+  return res.status(200).json({
+    ok: true,
+    message: emailOk
+      ? "Thanks! We will reach out shortly to schedule a demo."
+      : "Thanks! Your request was received. We will follow up shortly.",
+    delivery: {
+      attempted: true,
+      sent: emailOk,
+      provider,
+    },
+  });
 }

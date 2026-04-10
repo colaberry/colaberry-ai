@@ -118,7 +118,7 @@ function OntologyDiagram({
         <div className="rounded-lg border border-zinc-200/60 bg-zinc-50/50 p-3 dark:border-zinc-700/60 dark:bg-zinc-800/30">
           <div className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">{config.label} Taxonomy</div>
           <div className="mt-2 flex justify-center">
-            <span className="rounded-full bg-zinc-900 px-3 py-1 text-[11px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">{config.label} · {totalItems.toLocaleString()}</span>
+            <span className="rounded-full bg-zinc-950 px-3 py-1 text-[11px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">{config.label} · {totalItems.toLocaleString()}</span>
           </div>
           <div className="mt-2.5 flex flex-wrap justify-center gap-1.5">
             {categories.map((cat) => (
@@ -235,7 +235,7 @@ function OntologyDiagram({
     <div className="overflow-x-auto">
       <svg
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-        className="w-full min-w-[700px]"
+        className="w-full min-w-[580px]"
         style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}
       >
         {/* Background */}
@@ -302,7 +302,7 @@ function OntologyDiagram({
                 style={{ transition: "stroke 0.15s, fill 0.15s" }}
               />
               <circle cx={x + 12} cy={catY + catH / 2} r="3" fill={catColor} opacity={isHovered ? 1 : 0.65} style={{ transition: "opacity 0.15s" }} />
-              <text x={x + 22} y={catY + catH / 2 + 0.5} dominantBaseline="middle" fontSize="10.5" fontWeight="500" fill={isHovered ? cl.textPrimary : cl.textSecondary} style={{ transition: "fill 0.15s" }}>{cat.label}</text>
+              <text x={x + 22} y={catY + catH / 2 + 0.5} dominantBaseline="middle" fontSize="10.5" fontWeight="500" fill={cl.textPrimary} style={{ transition: "fill 0.15s" }}>{cat.label}</text>
               <text x={x + w / 2} y={catY + catH + 14} textAnchor="middle" fontSize="9" fontWeight="500" fill={cl.textTertiary}>{count.toLocaleString()}</text>
             </g>
           );
@@ -315,7 +315,7 @@ function OntologyDiagram({
           return (
             <g key={tag.slug}>
               <rect x={x} y={tagY} width={w} height={tagH} rx={tagH / 2} fill={cl.surface} stroke={cl.border} strokeWidth="0.5" />
-              <text x={x + w / 2} y={tagY + tagH / 2 + 0.5} textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="500" fill={cl.textTertiary}>{tag.name}</text>
+              <text x={x + w / 2} y={tagY + tagH / 2 + 0.5} textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="500" fill={cl.textPrimary}>{tag.name}</text>
             </g>
           );
         })}
@@ -386,7 +386,7 @@ function OntologyDiagram({
                 x={item.x + nodeWidth / 2} y={ny + nodeH / 2 + 0.5}
                 textAnchor="middle" dominantBaseline="middle"
                 fontSize="10" fontWeight="500"
-                fill={isHovered ? cl.textPrimary : cl.textSecondary}
+                fill={cl.textPrimary}
                 style={{ transition: "fill 0.15s" }}
               >{item.name}</text>
             </g>
@@ -425,8 +425,8 @@ function OntologyDiagram({
                 strokeWidth={isHovered ? 1 : 0.5}
                 style={{ transition: "stroke 0.15s, fill 0.15s" }}
               />
-              <text x={x + colW / 2} y={colY + 24} textAnchor="middle" fontSize="10.5" fontWeight="600" fill={isHovered ? cl.textPrimary : cl.textSecondary} style={{ transition: "fill 0.15s" }}>{col.slug}</text>
-              <text x={x + colW / 2} y={colY + 42} textAnchor="middle" fontSize="9" fontWeight="500" fill={cl.textTertiary}>{col.itemSlugs.length} items</text>
+              <text x={x + colW / 2} y={colY + 24} textAnchor="middle" fontSize="10.5" fontWeight="600" fill={cl.textPrimary} style={{ transition: "fill 0.15s" }}>{col.slug}</text>
+              <text x={x + colW / 2} y={colY + 42} textAnchor="middle" fontSize="9" fontWeight="500" fill={cl.textSecondary}>{col.itemSlugs.length} items</text>
             </g>
           );
         })}
@@ -544,7 +544,7 @@ export default function OntologyPageTemplate({
           <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
             <div className="p-6">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">1</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">1</span>
                 <div>
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{config.labelSingular} Taxonomy</h3>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Abstraction Layer</div>
@@ -572,7 +572,7 @@ export default function OntologyPageTemplate({
           <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
             <div className="p-6">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">2</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">2</span>
                 <div>
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{config.labelSingular} Relation Graph</h3>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Semantic Layer</div>
@@ -600,7 +600,7 @@ export default function OntologyPageTemplate({
           <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
             <div className="p-6">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">3</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">3</span>
                 <div>
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{config.labelSingular} Collection</h3>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Execution Layer</div>

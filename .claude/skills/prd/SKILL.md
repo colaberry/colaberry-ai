@@ -55,6 +55,38 @@ Format each task as:
   - Files: [Expected files to create/modify]
 ```
 
+### Step 5: Sync to Basecamp (if authenticated)
+
+After creating the PRD and TASKS files, check if Basecamp CLI is authenticated:
+
+```bash
+basecamp auth status
+```
+
+If authenticated (`"authenticated": true`), automatically sync to the **existing Dev Team project** (ID: `6593808`):
+
+1. **Create todo lists** in the Dev Team project for each priority tier, prefixed with the sprint name:
+   ```bash
+   basecamp todolists create "Sprint vN: [Title] — P0 (Must Have)" -p 6593808 -d "[P0 task summary]"
+   basecamp todolists create "Sprint vN: [Title] — P1 (Should Have)" -p 6593808 -d "[P1 task summary]"
+   basecamp todolists create "Sprint vN: [Title] — P2 (Nice to Have)" -p 6593808 -d "[P2 task summary]"
+   ```
+
+2. **Add each task as a todo** in the appropriate list:
+   ```bash
+   basecamp todos create "Task N: [description]" -p 6593808 -l [TODOLIST_ID] --description "Acceptance: [criteria]\nFiles: [files]"
+   ```
+
+3. **Post a message** to the Dev Team message board with the PRD summary:
+   ```bash
+   basecamp messages create "PRD: Sprint vN — [Title]" "[PRD markdown body]" -p 6593808
+   ```
+
+**Important:** Do NOT create a new Basecamp project. All sprints go into the Dev Team project (6593808) as separate todolists.
+
+If Basecamp is NOT authenticated, skip this step silently and note at the end:
+> "Tip: Run `basecamp auth login` to auto-sync future PRDs to Basecamp."
+
 ### Rules
 
 - v1 sprints should have NO MORE than 10 tasks
@@ -63,6 +95,7 @@ Format each task as:
 - Always include a "project setup" task as Task 1
 - P0 tasks come before P1, P1 before P2
 - Security and testing tasks belong in later sprints (v2, v3)
+- When syncing to Basecamp, always confirm the project was created successfully before adding todos
 
 ## Example Output
 
