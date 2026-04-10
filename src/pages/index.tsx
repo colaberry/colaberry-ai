@@ -599,7 +599,7 @@ export default function Home({
             <Link
               key={name}
               href={`/aixcelerator/mcp?q=${encodeURIComponent(name.toLowerCase())}`}
-              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-white"
             >
               {logo}
               {name}
@@ -786,7 +786,7 @@ function SignalDashboard({
             id={`signal-tab-${tab}`}
             className={`shrink-0 rounded-md px-4 py-2 text-sm font-semibold transition-all ${
               activeTab === tab
-                ? "bg-white text-[var(--text-primary)] shadow-sm dark:bg-[var(--surface-strong)]"
+                ? "bg-zinc-50 text-[var(--text-primary)] shadow-sm dark:bg-[var(--surface-strong)]"
                 : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
             onClick={() => onTabChange(tab)}
@@ -901,7 +901,7 @@ function CatalogCard({ href, title, description, meta, iconType, gradient, accen
   return (
     <Link
       href={href}
-      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-zinc-900 dark:hover:border-zinc-500"
+      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-50 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-zinc-900 dark:hover:border-zinc-500"
       aria-label={`Open ${title}`}
     >
       <div className={`relative flex items-center justify-center bg-gradient-to-br ${gradient} px-6 py-12`}>
