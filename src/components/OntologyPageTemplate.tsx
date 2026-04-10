@@ -302,7 +302,7 @@ function OntologyDiagram({
                 style={{ transition: "stroke 0.15s, fill 0.15s" }}
               />
               <circle cx={x + 12} cy={catY + catH / 2} r="3" fill={catColor} opacity={isHovered ? 1 : 0.65} style={{ transition: "opacity 0.15s" }} />
-              <text x={x + 22} y={catY + catH / 2 + 0.5} dominantBaseline="middle" fontSize="10.5" fontWeight="500" fill={isHovered ? cl.textPrimary : cl.textSecondary} style={{ transition: "fill 0.15s" }}>{cat.label}</text>
+              <text x={x + 22} y={catY + catH / 2 + 0.5} dominantBaseline="middle" fontSize="10.5" fontWeight="500" fill={cl.textPrimary} style={{ transition: "fill 0.15s" }}>{cat.label}</text>
               <text x={x + w / 2} y={catY + catH + 14} textAnchor="middle" fontSize="9" fontWeight="500" fill={cl.textTertiary}>{count.toLocaleString()}</text>
             </g>
           );
@@ -315,7 +315,7 @@ function OntologyDiagram({
           return (
             <g key={tag.slug}>
               <rect x={x} y={tagY} width={w} height={tagH} rx={tagH / 2} fill={cl.surface} stroke={cl.border} strokeWidth="0.5" />
-              <text x={x + w / 2} y={tagY + tagH / 2 + 0.5} textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="500" fill={cl.textTertiary}>{tag.name}</text>
+              <text x={x + w / 2} y={tagY + tagH / 2 + 0.5} textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="500" fill={cl.textPrimary}>{tag.name}</text>
             </g>
           );
         })}
@@ -386,7 +386,7 @@ function OntologyDiagram({
                 x={item.x + nodeWidth / 2} y={ny + nodeH / 2 + 0.5}
                 textAnchor="middle" dominantBaseline="middle"
                 fontSize="10" fontWeight="500"
-                fill={isHovered ? cl.textPrimary : cl.textSecondary}
+                fill={cl.textPrimary}
                 style={{ transition: "fill 0.15s" }}
               >{item.name}</text>
             </g>
@@ -425,8 +425,8 @@ function OntologyDiagram({
                 strokeWidth={isHovered ? 1 : 0.5}
                 style={{ transition: "stroke 0.15s, fill 0.15s" }}
               />
-              <text x={x + colW / 2} y={colY + 24} textAnchor="middle" fontSize="10.5" fontWeight="600" fill={isHovered ? cl.textPrimary : cl.textSecondary} style={{ transition: "fill 0.15s" }}>{col.slug}</text>
-              <text x={x + colW / 2} y={colY + 42} textAnchor="middle" fontSize="9" fontWeight="500" fill={cl.textTertiary}>{col.itemSlugs.length} items</text>
+              <text x={x + colW / 2} y={colY + 24} textAnchor="middle" fontSize="10.5" fontWeight="600" fill={cl.textPrimary} style={{ transition: "fill 0.15s" }}>{col.slug}</text>
+              <text x={x + colW / 2} y={colY + 42} textAnchor="middle" fontSize="9" fontWeight="500" fill={cl.textSecondary}>{col.itemSlugs.length} items</text>
             </g>
           );
         })}
