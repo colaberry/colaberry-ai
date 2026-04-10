@@ -118,7 +118,7 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
           <div key={item.title} className="card-feature p-5">
             <div className="text-[0.9375rem] font-semibold text-zinc-900 dark:text-zinc-100">{item.title}</div>
             <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{item.description}</div>
-            <div className="chip chip-muted mt-4 inline-flex items-center rounded-md border border-zinc-200/80 bg-white px-2.5 py-1 text-xs font-semibold text-zinc-700">
+            <div className="chip chip-muted mt-4 inline-flex items-center rounded-md border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-semibold text-zinc-700">
               Planned
             </div>
           </div>

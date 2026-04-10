@@ -286,7 +286,7 @@ export default function InternalNewsletterReportPage() {
         />
       </div>
 
-      <section className="surface-panel mt-6 border border-zinc-200/80 bg-white/90 p-6 dark:border-zinc-700/80 dark:bg-zinc-900/90">
+      <section className="surface-panel mt-6 border border-zinc-200/80 bg-zinc-50/90 p-6 dark:border-zinc-700/80 dark:bg-zinc-900/90">
         <SectionHeader
           as="h2"
           size="md"
@@ -306,7 +306,7 @@ export default function InternalNewsletterReportPage() {
               value={apiKey}
               onChange={(event) => setApiKey(event.target.value)}
               placeholder="Enter report API key"
-              className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+              className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
             />
             <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
               Required in production. Optional on localhost development.
@@ -320,7 +320,7 @@ export default function InternalNewsletterReportPage() {
               id="report-status"
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value as ReportStatusFilter)}
-              className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+              className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
             >
               <option value="all">All</option>
               <option value="subscribed">Subscribed</option>
@@ -380,7 +380,7 @@ export default function InternalNewsletterReportPage() {
               </thead>
               <tbody>
                 {rows.slice(0, 250).map((row) => (
-                  <tr key={`${row.id}-${row.email}`} className="border-t border-zinc-200/70 bg-white">
+                  <tr key={`${row.id}-${row.email}`} className="border-t border-zinc-200/70 bg-zinc-50 dark:bg-zinc-900">
                     <td className="px-4 py-3 font-medium text-zinc-900">{row.email || "—"}</td>
                     <td className="px-4 py-3 text-zinc-700">{row.status || "unknown"}</td>
                     <td className="px-4 py-3 text-zinc-600">{row.sourcePage || "unknown"}</td>
@@ -395,7 +395,7 @@ export default function InternalNewsletterReportPage() {
         ) : null}
       </section>
 
-      <section className="surface-panel mt-6 border border-zinc-200/80 bg-white/90 p-6 dark:border-zinc-700/80 dark:bg-zinc-900/90">
+      <section className="surface-panel mt-6 border border-zinc-200/80 bg-zinc-50/90 p-6 dark:border-zinc-700/80 dark:bg-zinc-900/90">
         <SectionHeader
           as="h2"
           size="md"
@@ -415,7 +415,7 @@ export default function InternalNewsletterReportPage() {
               value={previewEmail}
               onChange={(event) => setPreviewEmail(event.target.value)}
               placeholder="recipient@company.com"
-              className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+              className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
             />
           </div>
           <button type="submit" className="btn btn-primary" disabled={previewLoading}>
@@ -430,14 +430,14 @@ export default function InternalNewsletterReportPage() {
         ) : null}
 
         {preview?.unsubscribeUrl ? (
-          <div className="mt-4 rounded-lg border border-zinc-200/80 bg-white/85 p-4 text-xs text-zinc-600">
+          <div className="mt-4 rounded-lg border border-zinc-200/80 bg-zinc-50/85 p-4 text-xs text-zinc-600">
             <span className="font-semibold text-zinc-900">Unsubscribe URL:</span>{" "}
             <span className="break-all">{preview.unsubscribeUrl}</span>
           </div>
         ) : null}
 
         {preview?.html ? (
-          <div className="mt-4 overflow-hidden rounded-lg border border-zinc-200/80 bg-white">
+          <div className="mt-4 overflow-hidden rounded-lg border border-zinc-200/80 bg-zinc-50 dark:bg-zinc-900">
             <iframe
               title="Newsletter HTML preview"
               srcDoc={preview.html}
@@ -447,7 +447,7 @@ export default function InternalNewsletterReportPage() {
         ) : null}
       </section>
 
-      <section className="surface-panel mt-6 border border-zinc-200/80 bg-white/90 p-6 dark:border-zinc-700/80 dark:bg-zinc-900/90">
+      <section className="surface-panel mt-6 border border-zinc-200/80 bg-zinc-50/90 p-6 dark:border-zinc-700/80 dark:bg-zinc-900/90">
         <SectionHeader
           as="h2"
           size="md"
@@ -465,7 +465,7 @@ export default function InternalNewsletterReportPage() {
               id="send-mode"
               value={sendMode}
               onChange={(event) => setSendMode(event.target.value as SendMode)}
-              className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+              className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
             >
               <option value="test">Test</option>
               <option value="campaign">Campaign</option>
@@ -476,7 +476,7 @@ export default function InternalNewsletterReportPage() {
             <label htmlFor="send-dry-run" className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
               Dry run
             </label>
-            <div className="mt-1 flex h-[44px] items-center rounded-lg border border-zinc-200/80 bg-white px-4">
+            <div className="mt-1 flex h-[44px] items-center rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 dark:border-zinc-700 dark:bg-zinc-900">
               <input
                 id="send-dry-run"
                 type="checkbox"
@@ -501,7 +501,7 @@ export default function InternalNewsletterReportPage() {
                 value={sendRecipient}
                 onChange={(event) => setSendRecipient(event.target.value)}
                 placeholder="recipient@company.com"
-                className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
           ) : (
@@ -517,7 +517,7 @@ export default function InternalNewsletterReportPage() {
                   max={300}
                   value={sendLimit}
                   onChange={(event) => setSendLimit(Number(event.target.value || 1))}
-                  className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                  className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                 />
               </div>
               <div>
@@ -530,7 +530,7 @@ export default function InternalNewsletterReportPage() {
                   value={sendConfirm}
                   onChange={(event) => setSendConfirm(event.target.value)}
                   placeholder='Type "SEND"'
-                  className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                  className="mt-1 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
 
 />
               </div>
@@ -551,7 +551,7 @@ export default function InternalNewsletterReportPage() {
         ) : null}
 
         {sendResult?.ok ? (
-          <div className="mt-4 rounded-lg border border-emerald-200/80 bg-emerald-50/70 p-4 text-sm text-emerald-800">
+          <div className="mt-4 rounded-lg border border-zinc-200/80 bg-zinc-100 p-4 text-sm text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
             <div className="font-semibold">
               Dispatch complete ({sendResult.mode || "unknown"}) via {sendResult.provider || "provider"}
               {sendResult.dryRun ? " [dry-run]" : ""}
@@ -576,7 +576,7 @@ export default function InternalNewsletterReportPage() {
 
 function MetricCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg border border-zinc-200/80 bg-white px-4 py-3">
+    <div className="rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-900">
       <div className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-600 dark:text-zinc-300">{label}</div>
       <div className="mt-1 text-xl font-semibold text-zinc-900">{value}</div>
     </div>

@@ -1174,8 +1174,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         <link rel="preconnect" href="https://www.buzzsprout.com" />
         <link rel="dns-prefetch" href="https://www.buzzsprout.com" />
       </Head>
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-deep focus:shadow-lg focus:ring-2 focus:ring-[#DC2626]/40">Skip to content</a>
-      <header role="banner" className={`site-header sticky top-0 z-40 border-b transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${headerCompact ? "site-header--compact border-[var(--stroke)]/60 bg-white/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] backdrop-blur-xl dark:bg-[#18181B]/80" : "border-[var(--stroke)] bg-white shadow-sm dark:bg-[#18181B]"}`}>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-zinc-50 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-deep focus:shadow-lg focus:ring-2 focus:ring-[#DC2626]/40">Skip to content</a>
+      <header role="banner" className={`site-header sticky top-0 z-40 border-b transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${headerCompact ? "site-header--compact border-[var(--stroke)]/60 bg-zinc-50/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] backdrop-blur-xl dark:bg-[#18181B]/80" : "border-[var(--stroke)] bg-zinc-50 shadow-sm dark:bg-[#18181B]"}`}>
         <div className="flex w-full items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 lg:gap-3">
             {/* ── Mobile hamburger (left-aligned, Gmail/YouTube pattern) ── */}
@@ -1381,7 +1381,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={closeMobileMenu}
-                className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-zinc-50/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                 aria-label="Close navigation menu"
               >
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
@@ -1742,7 +1742,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             aria-modal="true"
             aria-labelledby="global-search-title"
             ref={searchDialogRef}
-            className="w-full max-w-2xl rounded-xl border border-zinc-200/70 bg-white p-6 shadow-2xl dark:border-[#3F3F46] dark:bg-[#18181B]"
+            className="w-full max-w-2xl rounded-xl border border-zinc-200/70 bg-zinc-50 p-6 shadow-2xl dark:border-[#3F3F46] dark:bg-[#18181B]"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4">
@@ -1757,7 +1757,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={closeSearch}
-                className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200/70 bg-zinc-50/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                 aria-label="Close search"
               >
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
@@ -1782,7 +1782,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     name="q"
                     type="search"
                     placeholder="Search agents, MCP servers, skills, resources, updates..."
-                    className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 pr-12 text-sm text-zinc-900 placeholder:text-zinc-500 shadow-sm focus:border-[#DC2626]/40 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
+                    className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 pr-12 text-sm text-zinc-900 placeholder:text-zinc-500 shadow-sm focus:border-[#DC2626]/40 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100 dark:placeholder:text-zinc-500"
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-[#A1A1AA]">
                     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
@@ -1822,7 +1822,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="focus-ring rounded-lg border border-zinc-200/80 bg-white px-4 py-3 text-sm font-semibold text-zinc-800 hover:border-[#DC2626]/30 hover:text-[#DC2626] dark:border-[#3F3F46] dark:bg-[#27272A]/70 dark:text-zinc-100"
+                  className="focus-ring rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-3 text-sm font-semibold text-zinc-800 hover:border-[#DC2626]/30 hover:text-[#DC2626] dark:border-[#3F3F46] dark:bg-[#27272A]/70 dark:text-zinc-100"
                 >
                   {item.label}
                 </Link>
@@ -1833,7 +1833,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       ) : null}
       {isCatalogWorkspace && discoveryOpen ? (
         <div className="hidden sm:block fixed bottom-4 right-6 left-auto z-40 max-w-md">
-          <div className="surface-panel border border-zinc-200/70 bg-white/95 p-4 shadow-xl dark:border-[#3F3F46] dark:bg-[#18181B]/90">
+          <div className="surface-panel border border-zinc-200/70 bg-zinc-50/95 p-4 shadow-xl dark:border-[#3F3F46] dark:bg-[#18181B]/90">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400 dark:text-[#A1A1AA]">
@@ -1846,7 +1846,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={dismissDiscovery}
-                className="focus-ring inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-zinc-200/70 bg-white/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                className="focus-ring inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-zinc-200/70 bg-zinc-50/85 text-zinc-700 hover:text-[#18181B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                 aria-label="Dismiss"
               >
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none">
@@ -1874,7 +1874,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="focus-ring rounded-xl border border-zinc-200/70 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 hover:border-[#DC2626]/30 hover:text-[#DC2626] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                  className="focus-ring rounded-xl border border-zinc-200/70 bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-700 hover:border-[#DC2626]/30 hover:text-[#DC2626] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                 >
                   {item.label}
                 </Link>

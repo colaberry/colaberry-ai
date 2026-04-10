@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
       </Head>
 
       <section className="mx-auto w-full max-w-4xl">
-        <div className="surface-panel border border-zinc-200/80 bg-white/95 px-6 py-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-950/85 sm:px-8">
+        <div className="surface-panel border border-zinc-200/80 bg-zinc-50/95 px-6 py-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-950/85 sm:px-8">
           <div className="inline-flex items-center gap-2 rounded-md border border-[#DC2626]/15 bg-[#DC2626]/5 px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[#DC2626] dark:border-[#F87171]/20 dark:bg-[#F87171]/5 dark:text-[#F87171]">
             Legal
           </div>

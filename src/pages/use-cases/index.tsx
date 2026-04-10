@@ -211,7 +211,7 @@ export default function UseCasesPage({ useCases, allowPrivate, fetchError }: Use
               setVisibleCount(PAGE_SIZE);
             }}
             placeholder="Search title, industry, tags, or companies..."
-            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 dark:placeholder:text-zinc-500"
+            className="w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 dark:placeholder:text-zinc-500"
             aria-label="Search use cases"
           />
           <select
@@ -220,7 +220,7 @@ export default function UseCasesPage({ useCases, allowPrivate, fetchError }: Use
               setIndustryFilter(event.target.value);
               setVisibleCount(PAGE_SIZE);
             }}
-            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+            className="w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             aria-label="Filter by industry"
           >
             <option value="all">All industries</option>
@@ -236,7 +236,7 @@ export default function UseCasesPage({ useCases, allowPrivate, fetchError }: Use
               setStatusFilter(event.target.value);
               setVisibleCount(PAGE_SIZE);
             }}
-            className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+            className="w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             aria-label="Filter by status"
           >
             <option value="all">All statuses</option>
@@ -253,7 +253,7 @@ export default function UseCasesPage({ useCases, allowPrivate, fetchError }: Use
                 setVisibility(event.target.value as VisibilityFilter);
                 setVisibleCount(PAGE_SIZE);
               }}
-              className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 md:min-w-[10.5rem]"
+              className="w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-700 shadow-sm focus:border-[#4F2AA3]/40 focus:outline-none focus:ring-2 focus:ring-[#4F2AA3]/25 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 md:min-w-[10.5rem]"
               aria-label="Filter by visibility"
             >
               <option value="all">All visibility</option>
