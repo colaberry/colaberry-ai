@@ -18,12 +18,27 @@ function normalizeSearch(raw: string): string {
   return raw.trim().replace(/\s+/g, " ").slice(0, 120);
 }
 
+/** Extract plain text from a Strapi v5 rich-text blocks array. */
+function richTextToPlain(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (!Array.isArray(value)) return "";
+  return value
+    .flatMap((block: Record<string, unknown>) => {
+      const children = block?.children;
+      if (!Array.isArray(children)) return [];
+      return children.map((c: Record<string, unknown>) =>
+        typeof c?.text === "string" ? c.text : ""
+      );
+    })
+    .join(" ");
+}
+
 function matchesSearch(episode: PodcastEpisode, q: string): boolean {
   if (!q) return true;
   const lower = q.toLowerCase();
   const fields = [
     episode.title,
-    episode.description,
+    richTextToPlain(episode.description),
     ...(episode.tags || []).map((t) => t.name),
     ...(episode.companies || []).map((c) => c.name),
   ];
