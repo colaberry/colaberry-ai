@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   DEFAULT_DEMO_REQUEST_MESSAGE,
   fetchBotToken,
@@ -361,7 +362,7 @@ export default function DemoRequestForm({
           />
           <span>
             I agree to be contacted by Colaberry about my request. We only use your info to respond —
-            see our <a href="/privacy" className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-50">privacy policy</a>.
+            see our <Link href="/privacy-policy" className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-50">privacy policy</Link>.
           </span>
         </label>
         {touched.consent && fieldErrors.consent ? (
