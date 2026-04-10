@@ -298,6 +298,28 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "What are AI skills and how do they differ from AI agents?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: `AI skills are reusable capability units that agents consume to perform specific tasks — like data extraction, summarization, or code generation. Colaberry AI catalogs ${countLabel} skills across workflow, domain, and orchestration categories. Unlike agents (which are autonomous), skills are composable building blocks that multiple agents can share.`,
+              },
+            },
+            {
+              "@type": "Question",
+              name: "How can I discover AI skills for my enterprise use case?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Browse the Colaberry AI Skills catalog at colaberry.ai/aixcelerator/skills. Filter by category, provider, industry, and status. Each skill profile includes linked MCP servers, prerequisites, and usage metrics to help you evaluate fit for your workflows.",
+              },
+            },
+          ],
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       {fetchError && (

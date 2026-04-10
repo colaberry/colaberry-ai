@@ -163,6 +163,28 @@ export default function Podcasts({
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema).replace(/</g, "\\u003c") }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "Where can I find AI podcasts with full searchable transcripts?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Colaberry AI offers 260+ AI podcast episodes with full searchable transcripts generated via Deepgram. Episodes cover enterprise AI strategy, agent development, MCP servers, and responsible AI governance. Browse and search at colaberry.ai/resources/podcasts.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What topics does the Colaberry AI Podcast cover?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "The Colaberry AI Podcast provides daily updates on the latest AI breakthroughs, agent frameworks, MCP integrations, enterprise AI deployments, and industry-specific AI applications across healthcare, fintech, agriculture, energy, and more.",
+              },
+            },
+          ],
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       {fetchError ? (
