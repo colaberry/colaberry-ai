@@ -2,7 +2,7 @@ import type { GetStaticProps, InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import Layout from "../../../components/Layout";
 import SectionHeader from "../../../components/SectionHeader";
 import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
@@ -90,15 +90,15 @@ export const getStaticProps: GetStaticProps<OntologyProps> = async () => {
 /* ── Dark mode detection ────────────────────────────────────────────── */
 
 function useIsDark() {
-  const [dark, setDark] = useState(false);
-  useEffect(() => {
-    const el = document.documentElement;
-    setDark(el.classList.contains("dark"));
-    const obs = new MutationObserver(() => setDark(el.classList.contains("dark")));
-    obs.observe(el, { attributes: true, attributeFilter: ["class"] });
-    return () => obs.disconnect();
-  }, []);
-  return dark;
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      const obs = new MutationObserver(onStoreChange);
+      obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+      return () => obs.disconnect();
+    },
+    () => document.documentElement.classList.contains("dark"),
+    () => false,
+  );
 }
 
 function useWindowWidth() {
@@ -148,7 +148,7 @@ function OntologyDiagram({
 
   /* ── Mobile card layout ── */
   if (isMobile) {
-    const DownArrow = () => (
+    const downArrow = (
       <div className="flex justify-center py-0.5">
         <svg width="12" height="16" viewBox="0 0 12 16" fill="none"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" className="text-zinc-300 dark:text-zinc-600" strokeWidth="1" /><path d="M3 10l3 4 3-4" stroke="currentColor" className="text-zinc-300 dark:text-zinc-600" strokeWidth="1" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </div>
@@ -178,7 +178,7 @@ function OntologyDiagram({
             </div>
           )}
         </div>
-        <DownArrow />
+        {downArrow}
         {/* Layer 2: Relation Graph */}
         <div className="rounded-lg border border-zinc-200/60 bg-zinc-50/50 p-3 dark:border-zinc-700/60 dark:bg-zinc-800/30">
           <div className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">Skill Relation Graph</div>
@@ -193,7 +193,7 @@ function OntologyDiagram({
             ))}
           </div>
         </div>
-        <DownArrow />
+        {downArrow}
         {/* Layer 3: Collections */}
         <div className="rounded-lg border border-zinc-200/60 bg-zinc-50/50 p-3 dark:border-zinc-700/60 dark:bg-zinc-800/30">
           <div className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">Skill Collection Library</div>
@@ -234,8 +234,10 @@ function OntologyDiagram({
   const catGap = 8;
   const catWidths = categories.map((cat) => Math.max(cat.label.length * catCharW + catPadX, 96));
   const catTotalW = catWidths.reduce((s, w) => s + w, 0) + (categories.length - 1) * catGap;
-  let catRunX = (svgWidth - catTotalW) / 2;
-  const catPositions = catWidths.map((w) => { const x = catRunX; catRunX += w + catGap; return x; });
+  const catPositions = catWidths.reduce<number[]>((acc, _w, i) => {
+    acc.push(i === 0 ? (svgWidth - catTotalW) / 2 : acc[i - 1] + catWidths[i - 1] + catGap);
+    return acc;
+  }, []);
 
   /* Tags */
   const visibleTags = topTags.slice(0, 8);
@@ -245,8 +247,10 @@ function OntologyDiagram({
   const tagGap = 5;
   const tagWidths = visibleTags.map((t) => Math.max(t.name.length * tagCharW + tagPadX, 40));
   const tagTotalW = tagWidths.reduce((s, w) => s + w, 0) + (visibleTags.length - 1) * tagGap;
-  let tagRunX = (svgWidth - tagTotalW) / 2;
-  const tagPositions = tagWidths.map((w) => { const x = tagRunX; tagRunX += w + tagGap; return x; });
+  const tagPositions = tagWidths.reduce<number[]>((acc, _w, i) => {
+    acc.push(i === 0 ? (svgWidth - tagTotalW) / 2 : acc[i - 1] + tagWidths[i - 1] + tagGap);
+    return acc;
+  }, []);
 
   /* Layer Y positions */
   const l1Y = 8; const l1H = 190;
