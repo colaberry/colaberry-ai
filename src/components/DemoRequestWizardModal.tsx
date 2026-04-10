@@ -126,7 +126,7 @@ export default function DemoRequestWizardModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="demo-wizard-title"
-        className="w-full max-w-2xl rounded-xl border border-zinc-200/80 bg-white p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-950"
+        className="w-full max-w-2xl rounded-xl border border-zinc-200/80 bg-zinc-50 p-6 shadow-2xl dark:border-zinc-700 dark:bg-zinc-950"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
@@ -153,14 +153,14 @@ export default function DemoRequestWizardModal({
         </div>
 
         {state === "success" ? (
-          <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-6 text-center dark:border-emerald-700/50 dark:bg-emerald-900/20">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-800/40">
-              <svg className="h-7 w-7 text-emerald-600 dark:text-emerald-300" viewBox="0 0 24 24" fill="none" style={{ animation: "scale-in 0.4s ease-out" }}>
+          <div className="mt-5 rounded-lg border border-zinc-200 bg-zinc-100 p-6 text-center dark:border-zinc-700 dark:bg-zinc-800/40">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#DC2626]/10 dark:bg-[#DC2626]/20">
+              <svg className="h-7 w-7 text-[#DC2626] dark:text-[#F87171]" viewBox="0 0 24 24" fill="none" style={{ animation: "scale-in 0.4s ease-out" }}>
                 <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <div className="mt-3 text-base font-semibold text-emerald-800 dark:text-emerald-200">Request submitted</div>
-            <p className="mt-1.5 text-sm text-emerald-700 dark:text-emerald-300">
+            <div className="mt-3 text-base font-semibold text-zinc-900 dark:text-zinc-100">Request submitted</div>
+            <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">
               {statusMessage || "Thanks! We'll reach out shortly to schedule your demo."}
             </p>
             <div className="mt-5">
@@ -198,7 +198,7 @@ export default function DemoRequestWizardModal({
                       type="text"
                       value={name}
                       onChange={(event) => setName(event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                       placeholder="Your name"
                     />
                   </label>
@@ -209,7 +209,7 @@ export default function DemoRequestWizardModal({
                       required
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                       placeholder="name@company.com"
                     />
                   </label>
@@ -227,7 +227,7 @@ export default function DemoRequestWizardModal({
                       type="text"
                       value={company}
                       onChange={(event) => setCompany(event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                       placeholder="Company name"
                     />
                   </label>
@@ -237,7 +237,7 @@ export default function DemoRequestWizardModal({
                       type="text"
                       value={role}
                       onChange={(event) => setRole(event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                       placeholder="Title or team"
                     />
                   </label>
@@ -247,7 +247,7 @@ export default function DemoRequestWizardModal({
                       type="text"
                       value={teamSize}
                       onChange={(event) => setTeamSize(event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                       placeholder="e.g. 10-50"
                     />
                   </label>
@@ -256,7 +256,7 @@ export default function DemoRequestWizardModal({
                     <select
                       value={timeline}
                       onChange={(event) => setTimeline(event.target.value)}
-                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                      className="mt-2 w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                     >
                       <option value="">Select timeline</option>
                       <option value="Immediate">Immediate</option>
@@ -277,7 +277,7 @@ export default function DemoRequestWizardModal({
                       rows={5}
                       value={message}
                       onChange={(event) => setMessage(event.target.value)}
-                      className="mt-2 w-full resize-none rounded-lg border border-zinc-200/80 bg-white px-4 py-3 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
+                      className="mt-2 w-full resize-none rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 shadow-sm focus:border-brand-purple-600/40 focus:outline-none focus:ring-2 focus:ring-brand-purple-600/20 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-100"
                       placeholder={DEFAULT_DEMO_REQUEST_MESSAGE}
                     />
                   </label>

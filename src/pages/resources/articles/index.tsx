@@ -111,7 +111,7 @@ export default function ArticlesPage({ articles, fetchError }: ArticlesPageProps
                 className="card-feature group p-5"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span className="chip chip-muted rounded-md border border-zinc-200/80 bg-white px-2.5 py-1 text-xs font-semibold text-zinc-700">
+                  <span className="chip chip-muted rounded-md border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-semibold text-zinc-700">
                     {category}
                   </span>
                   {updatedLabel ? (

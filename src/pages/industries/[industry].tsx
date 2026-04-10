@@ -118,7 +118,7 @@ export default function Industry({ industrySlug, industryName, agentCount, useCa
         </div>
 
         <div className="lg:col-span-5">
-          <div className="surface-panel border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="surface-panel border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-700 dark:bg-zinc-900">
             <div className="text-base font-semibold text-zinc-900 dark:text-zinc-50">Workspace summary</div>
             <div className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
               Default subscriptions and recommended starting points.
@@ -133,7 +133,7 @@ export default function Industry({ industrySlug, industryName, agentCount, useCa
         </div>
       </div>
 
-      <section className="reveal section-spacing surface-panel border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
+      <section className="reveal section-spacing surface-panel border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-700 dark:bg-zinc-900">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeader
             kicker="Case studies"
@@ -183,7 +183,7 @@ function CaseStudyCard({
   };
 }) {
   return (
-    <div className="surface-panel border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="surface-panel border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-900">
       <div className="text-base font-semibold text-zinc-900 dark:text-zinc-50">{item.title}</div>
 
       <div className="mt-4 grid gap-4">
@@ -214,7 +214,7 @@ function Section({ title, items }: { title: string; items: string[] }) {
 
 function InfoCard({ title, body }: { title: string; body: string }) {
   return (
-    <div className="surface-panel border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="surface-panel border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-900">
       <div className="text-base font-semibold text-zinc-900 dark:text-zinc-50">{title}</div>
       <div className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{body}</div>
     </div>

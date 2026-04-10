@@ -786,8 +786,8 @@ function SignalDashboard({
             id={`signal-tab-${tab}`}
             className={`shrink-0 rounded-md px-4 py-2 text-sm font-semibold transition-all ${
               activeTab === tab
-                ? "bg-zinc-50 text-[var(--text-primary)] shadow-sm dark:bg-[var(--surface-strong)]"
-                : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+                ? "bg-zinc-950 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-950"
+                : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
             }`}
             onClick={() => onTabChange(tab)}
           >

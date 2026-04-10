@@ -117,7 +117,7 @@ function Card({ title, description, badge }: { title: string; description: strin
           <div className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{title}</div>
           <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{description}</div>
         </div>
-        <span className="chip chip-muted rounded-full border border-zinc-200/80 bg-white px-2.5 py-1 text-xs font-semibold text-zinc-700 dark:border-zinc-700/80 dark:bg-zinc-800 dark:text-zinc-300">
+        <span className="chip chip-muted rounded-full border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-semibold text-zinc-700 dark:border-zinc-700/80 dark:bg-zinc-800 dark:text-zinc-300">
           {badge}
         </span>
       </div>

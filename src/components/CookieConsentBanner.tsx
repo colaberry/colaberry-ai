@@ -64,7 +64,7 @@ export default function CookieConsentBanner() {
 
   /* Shared button class for secondary (outlined) buttons — avoids .btn which is pill-shaped */
   const secondaryBtnClass =
-    "focus-ring flex h-10 items-center justify-center rounded-lg border border-zinc-300 bg-white text-sm font-semibold text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-500 dark:hover:bg-zinc-700";
+    "focus-ring flex h-10 items-center justify-center rounded-lg border border-zinc-300 bg-zinc-50 text-sm font-semibold text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-500 dark:hover:bg-zinc-700";
 
   return (
     <>
@@ -74,7 +74,7 @@ export default function CookieConsentBanner() {
           aria-label="Cookie consent"
           className="fixed inset-x-0 bottom-0 z-[80] cookie-banner-enter sm:inset-x-auto sm:bottom-5 sm:right-5 sm:max-w-[400px]"
         >
-          <div className="rounded-t-xl border border-zinc-200/80 bg-white p-5 shadow-xl sm:rounded-xl dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="rounded-t-xl border border-zinc-200/80 bg-zinc-50 p-5 shadow-xl sm:rounded-xl dark:border-zinc-700 dark:bg-zinc-900">
             {!preferencesOpen ? (
               /* ── Initial View ── */
               <>

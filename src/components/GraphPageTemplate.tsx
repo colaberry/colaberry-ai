@@ -375,7 +375,7 @@ export default function GraphPageTemplate({
 
       {/* Hovered node tooltip */}
       {hoveredNode && !isFullscreen && (
-        <div className="mt-3 inline-flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="mt-3 inline-flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-4 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
           <span className="mt-0.5 h-3 w-3 shrink-0 rounded-full shadow-sm" style={{ backgroundColor: hoveredNode.color }} />
           <div>
             <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{hoveredNode.name}</span>
@@ -394,7 +394,7 @@ export default function GraphPageTemplate({
 
       {/* Legend */}
       {!isFullscreen && (
-        <div className="reveal mt-6 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="reveal mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-900">
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
               <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">

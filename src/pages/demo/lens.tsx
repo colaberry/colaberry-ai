@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Head from "next/head";
+import Link from "next/link";
 import Layout from "../../components/Layout";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
 
@@ -9,18 +10,15 @@ const VTON_DEMO_URL =
 export default function DemoLens() {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-
-  useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark");
-    setTheme(isDark ? "dark" : "light");
-
-    const observer = new MutationObserver(() => {
-      setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
-  }, []);
+  const theme = useSyncExternalStore(
+    (onStoreChange) => {
+      const observer = new MutationObserver(onStoreChange);
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+      return () => observer.disconnect();
+    },
+    () => (document.documentElement.classList.contains("dark") ? "dark" : "light") as "light" | "dark",
+    () => "dark" as const,
+  );
 
   const seoMeta: SeoMeta = {
     title: "Virtual Lens Try-On Demo | Colaberry AI",
@@ -105,12 +103,12 @@ export default function DemoLens() {
               </p>
               <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 Please try again later or{" "}
-                <a
+                <Link
                   href="/request-demo"
                   className="text-[#B91C1C] underline dark:text-[#EF4444]"
                 >
                   request a live walkthrough
-                </a>
+                </Link>
                 .
               </p>
             </div>
