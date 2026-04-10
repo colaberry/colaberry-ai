@@ -2037,10 +2037,12 @@ footer .footer-link:focus-visible {
   transition: border-color 200ms var(--ease-expo-out), box-shadow 200ms var(--ease-expo-out), transform 200ms var(--ease-expo-out);
 }
 
-.card-elevated:hover {
-  border-color: var(--stroke);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .card-elevated:hover {
+    border-color: var(--stroke);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
 }
 
 .dark .card-elevated {
@@ -2048,9 +2050,11 @@ footer .footer-link:focus-visible {
   border-color: var(--neutral-stroke);
 }
 
-.dark .card-elevated:hover {
-  border-color: #71717A;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+@media (hover: hover) {
+  .dark .card-elevated:hover {
+    border-color: #71717A;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -2260,9 +2264,11 @@ footer .footer-link:focus-visible {
               background-color 200ms var(--ease-expo-out);
 }
 
-.catalog-card:hover {
-  border-color: var(--stroke);
-  background: var(--surface-soft);
+@media (hover: hover) {
+  .catalog-card:hover {
+    border-color: var(--stroke);
+    background: var(--surface-soft);
+  }
 }
 
 .dark .catalog-card {
@@ -2270,9 +2276,11 @@ footer .footer-link:focus-visible {
   border-color: var(--neutral-stroke);
 }
 
-.dark .catalog-card:hover {
-  border-color: #71717A;
-  background: #1f1f23;
+@media (hover: hover) {
+  .dark .catalog-card:hover {
+    border-color: #71717A;
+    background: #1f1f23;
+  }
 }
 
 /* Arrow nudge on card hover */

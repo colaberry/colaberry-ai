@@ -159,7 +159,7 @@ function OntologyDiagram({
         <div className="rounded-lg border border-zinc-200/60 bg-zinc-50/50 p-3 dark:border-zinc-700/60 dark:bg-zinc-800/30">
           <div className="text-[9px] font-semibold uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">Skill Taxonomy</div>
           <div className="mt-2 flex justify-center">
-            <span className="rounded-full bg-zinc-900 px-3 py-1 text-[11px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">Skills · {totalSkills.toLocaleString()}</span>
+            <span className="rounded-full bg-zinc-950 px-3 py-1 text-[11px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">Skills · {totalSkills.toLocaleString()}</span>
           </div>
           <div className="mt-2.5 flex flex-wrap justify-center gap-1.5">
             {categories.map((cat) => (
@@ -462,7 +462,7 @@ export default function OntologyPage({
           <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
             <div className="p-6">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">1</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">1</span>
                 <div>
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">Skill Taxonomy</h3>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Abstraction Layer</div>
@@ -490,7 +490,7 @@ export default function OntologyPage({
           <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
             <div className="p-6">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">2</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">2</span>
                 <div>
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">Skill Relation Graph</h3>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Semantic Layer</div>
@@ -518,7 +518,7 @@ export default function OntologyPage({
           <div className="catalog-card overflow-hidden p-0" style={{ borderLeft: "3px solid #DC2626" }}>
             <div className="p-6">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">3</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950 text-[10px] font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">3</span>
                 <div>
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">Skill Collection</h3>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">The Execution Layer</div>

@@ -217,7 +217,7 @@ export default function Podcasts({
               href="/resources/podcasts"
               className={`flex min-h-[40px] items-center rounded-lg px-5 py-2 text-sm font-semibold transition ${
                 activeSort === "latest"
-                  ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
+                  ? "bg-zinc-950 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-950"
                   : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
               }`}
             >
@@ -227,7 +227,7 @@ export default function Podcasts({
               href="/resources/podcasts?sort=trending"
               className={`flex min-h-[40px] items-center rounded-lg px-5 py-2 text-sm font-semibold transition ${
                 activeSort === "trending"
-                  ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
+                  ? "bg-zinc-950 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-950"
                   : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
               }`}
             >
