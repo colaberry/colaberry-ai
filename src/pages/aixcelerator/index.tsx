@@ -150,7 +150,7 @@ export default function AIXcelerator({ counts }: AIXceleratorProps) {
           <Link
             key={key}
             href={href}
-            className="group flex flex-col gap-1 bg-white px-5 py-4 transition-colors duration-150 hover:bg-zinc-50 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
+            className="group flex flex-col gap-1 bg-zinc-50 px-5 py-4 transition-colors duration-150 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
           >
             <div className="flex items-center gap-2">
               <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
@@ -178,7 +178,7 @@ export default function AIXcelerator({ counts }: AIXceleratorProps) {
               <Link
                 key={capability.href}
                 href={capability.href}
-                className="group flex flex-col gap-3 bg-white p-6 transition-colors duration-150 hover:bg-zinc-50 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
+                className="group flex flex-col gap-3 bg-zinc-50 p-6 transition-colors duration-150 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
                 aria-label={`Open ${capability.title}`}
               >
                 <div className="flex items-center justify-between">
@@ -216,7 +216,7 @@ export default function AIXcelerator({ counts }: AIXceleratorProps) {
         </div>
         <div className="mt-6 grid gap-px overflow-hidden rounded-xl border border-zinc-200 bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-700 sm:grid-cols-3">
           {GRAPH_LAYERS.map((layer) => (
-            <div key={layer.step} className="flex items-start gap-3 bg-white p-6 dark:bg-zinc-900">
+            <div key={layer.step} className="flex items-start gap-3 bg-zinc-50 p-6 dark:bg-zinc-900">
               <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-950 text-xs font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">
                 {layer.step}
               </span>
@@ -264,7 +264,7 @@ export default function AIXcelerator({ counts }: AIXceleratorProps) {
               <Link
                 key={stack.slug}
                 href={`/aixcelerator/solution-stacks#${stack.slug}`}
-                className="group flex flex-col gap-3 bg-white p-6 transition-colors duration-150 hover:bg-zinc-50 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
+                className="group flex flex-col gap-3 bg-zinc-50 p-6 transition-colors duration-150 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-50">{stack.name}</span>
@@ -308,7 +308,7 @@ export default function AIXcelerator({ counts }: AIXceleratorProps) {
               <Link
                 key={capability.href}
                 href={capability.href}
-                className="group flex items-start gap-3 bg-white p-6 transition-colors duration-150 hover:bg-zinc-50 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
+                className="group flex items-start gap-3 bg-zinc-50 p-6 transition-colors duration-150 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
                 aria-label={`Open ${capability.title}`}
               >
                 <div className="flex-1">
@@ -386,7 +386,7 @@ function RoadmapItem({
 }) {
   const isLive = status.toLowerCase().includes("live");
   return (
-    <div className="flex flex-col gap-2 bg-white p-6 dark:bg-zinc-900">
+    <div className="flex flex-col gap-2 bg-zinc-50 p-6 dark:bg-zinc-900">
       <div className="flex items-center justify-between gap-3">
         <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100">{title}</span>
         <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${isLive ? "bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950" : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"}`}>

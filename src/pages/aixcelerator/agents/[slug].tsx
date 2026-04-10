@@ -362,7 +362,7 @@ export default function AgentDetail({ agent, allowPrivate: _allowPrivate, relate
                 {orchestrationSteps.map((step, i) => (
                   <div key={`step-${i}`} className="relative flex gap-4 pb-6 lg:gap-5">
                     {/* Step number circle */}
-                    <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-[#DC2626] bg-white text-sm font-bold text-[#DC2626] dark:bg-zinc-950 lg:h-12 lg:w-12 lg:text-base">
+                    <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-[#DC2626] bg-zinc-50 text-sm font-bold text-[#DC2626] dark:bg-zinc-950 lg:h-12 lg:w-12 lg:text-base">
                       {i + 1}
                     </div>
                     {/* Step content */}

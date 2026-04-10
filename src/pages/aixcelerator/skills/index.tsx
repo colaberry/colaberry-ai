@@ -396,7 +396,7 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
                 onChange={(event) => {
                   setSearch(event.target.value);
                 }}
-                className="w-full rounded-lg border border-zinc-200/80 bg-white px-4 py-2 pr-11 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 dark:placeholder:text-zinc-500"
+                className="w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-4 py-2 pr-11 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200 dark:placeholder:text-zinc-500"
               />
               <svg
                 aria-hidden="true"
@@ -428,7 +428,7 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
               onChange={(event) => {
                 setCategoryFilter(event.target.value);
               }}
-              className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+              className="w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             >
               <option value="all">All categories</option>
               {categories.map((category) => (
@@ -448,7 +448,7 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
               onChange={(event) => {
                 setStatusFilter(event.target.value);
               }}
-              className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+              className="w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             >
               <option value="all">All statuses</option>
               {statuses.map((status) => (
@@ -468,7 +468,7 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
               onChange={(event) => {
                 setSourceFilter(event.target.value);
               }}
-              className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+              className="w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
             >
               <option value="all">All sources</option>
               {sources.map((source) => (
@@ -489,7 +489,7 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
                 onChange={(event) => {
                   setTagFilter(event.target.value);
                 }}
-                className="w-full rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
+                className="w-full rounded-lg border border-zinc-200/80 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:border-zinc-500 dark:focus:ring-zinc-100/10 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-200"
               >
                 <option value="all">All tags</option>
                 {tagOptions.map((tag) => (

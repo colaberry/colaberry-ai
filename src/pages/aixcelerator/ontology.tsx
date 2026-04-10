@@ -101,7 +101,7 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
           {typeEntries.map(([type, meta]) => {
             const count = typeCounts[type] || 0;
             return (
-              <button key={type} onClick={() => { window.location.href = config[type]; }} className="group rounded-xl border border-zinc-200 bg-white p-3 text-center transition-colors active:border-[#DC2626] dark:border-zinc-700 dark:bg-zinc-800">
+              <button key={type} onClick={() => { window.location.href = config[type]; }} className="group rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-center transition-colors active:border-[#DC2626] dark:border-zinc-700 dark:bg-zinc-800">
                 <ContentTypeIconSvg type={type} x={0} y={0} size={0} fill="none" />
                 <ContentTypeIcon type={type as ContentTypeName} size={22} className="mx-auto text-zinc-400 transition-colors group-active:text-[#DC2626] dark:text-zinc-500" />
                 <div className="mt-1.5 text-xs font-bold text-zinc-700 dark:text-zinc-200">{meta.label}</div>
