@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { fetchSkills, type Skill } from "../../lib/cms";
+import { fetchSkills, fetchCatalogCounts, type Skill } from "../../lib/cms";
 import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 const PAGE_SIZE = 24;
@@ -177,14 +177,20 @@ let cacheTime = 0;
 const CACHE_TTL = 120_000; // 2 minutes
 const MAX_CACHED_SKILLS = 500;
 
-const CMS_URL = (process.env.CMS_URL || process.env.NEXT_PUBLIC_CMS_URL || "").trim().replace(/\/$/, "");
-
+/**
+ * Fetch the true total skill count from Strapi using the authenticated
+ * `fetchCatalogCounts` helper (which sends the `CMS_API_TOKEN` bearer header).
+ *
+ * Historical bug (fixed 2026-04-10): this function previously issued a raw
+ * `fetch()` with no auth header, which Strapi rejected with 401/403 in prod.
+ * That caused `cachedTotal` to fall back to `skills.length` (capped at
+ * MAX_CACHED_SKILLS = 500), and the Skills page displayed `catalog 500`
+ * even though the CMS actually has 16,896 skills.
+ */
 async function fetchTotalCount(): Promise<number> {
   try {
-    const res = await fetch(`${CMS_URL}/api/skills?pagination[pageSize]=1`);
-    if (!res.ok) return 0;
-    const json = await res.json();
-    return json?.meta?.pagination?.total ?? 0;
+    const counts = await fetchCatalogCounts();
+    return counts.skills || 0;
   } catch {
     return 0;
   }
@@ -200,7 +206,10 @@ async function getAllSkills(): Promise<{ skills: Skill[]; totalInCms: number }> 
     fetchTotalCount(),
   ]);
   cachedSkills = skills;
-  cachedTotal = total || skills.length;
+  // Prefer the authoritative CMS total. Only fall back to skills.length when
+  // the CMS count call fails — and only then when the fallback is larger than
+  // the known MAX_CACHED_SKILLS cap (otherwise we'd report the cap as the total).
+  cachedTotal = total > 0 ? total : skills.length;
   cacheTime = now;
   return { skills: cachedSkills, totalInCms: cachedTotal };
 }

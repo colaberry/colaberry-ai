@@ -8,7 +8,7 @@ import SectionHeader from "../../components/SectionHeader";
 import StatePanel from "../../components/StatePanel";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GetStaticProps } from "next";
-import { fetchMCPServers, MCPServer } from "../../lib/cms";
+import { fetchMCPServers, fetchCatalogCounts, MCPServer } from "../../lib/cms";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
@@ -40,11 +40,14 @@ export const getStaticProps: GetStaticProps<MCPPageProps> = async () => {
   const visibilityFilter = allowPrivate ? undefined : "public";
 
   try {
-    const raw = await fetchMCPServers(visibilityFilter, { maxRecords: PAGE_SIZE + 1 });
+    const [raw, counts] = await Promise.all([
+      fetchMCPServers(visibilityFilter, { maxRecords: PAGE_SIZE + 1 }),
+      fetchCatalogCounts(visibilityFilter).catch(() => ({ agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0 })),
+    ]);
     const mcps = raw.slice(0, PAGE_SIZE).map(toMcpListItem);
     const initialHasMore = raw.length > PAGE_SIZE;
     return {
-      props: { mcps, allowPrivate, fetchError: false, totalCount: mcps.length, initialHasMore },
+      props: { mcps, allowPrivate, fetchError: false, totalCount: counts.mcpServers || mcps.length, initialHasMore },
       revalidate: 600,
     };
   } catch {
@@ -311,6 +314,28 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
           "rel" in props ? <link key={key} {...props} /> : <meta key={key} {...props} />
         ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "What is an MCP server and why does enterprise AI need them?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Model Context Protocol (MCP) servers provide standardized tool access for AI agents. They let agents connect to enterprise tools like Slack, Salesforce, GitHub, AWS, and databases through a unified protocol. Colaberry AI catalogs 1,500+ MCP servers with auth readiness, integration templates, and compatibility metadata.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Where can I find a directory of MCP servers?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Colaberry AI hosts the largest curated MCP server directory with 1,500+ servers. Browse by category (Developer Tools, Communication, CRM, Cloud, Data), filter by authentication method, and view integration details for each server at colaberry.ai/aixcelerator/mcp.",
+              },
+            },
+          ],
+        }).replace(/</g, "\\u003c") }} />
       </Head>
 
       {fetchError && (
@@ -346,7 +371,7 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
           <MiniOntologyDiagram
             config={MCP_ONTOLOGY_CONFIG}
             categoryCounts={mcpCategoryCounts}
-            totalItems={totalCount || initialMCPs.length}
+            totalItems={catalogTotal || totalCount || initialMCPs.length}
           />
         </div>
       </div>

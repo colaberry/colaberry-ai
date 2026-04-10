@@ -215,7 +215,7 @@ export default function MiniOntologyDiagram({
                 x={pos.x + 18} y={pos.y + catHeight / 2 + 0.5}
                 dominantBaseline="middle"
                 fontSize="10" fontWeight="500"
-                fill={isHovered ? textPrimary : textSecondary}
+                fill={textPrimary}
                 style={{ transition: "fill 0.15s" }}
               >
                 {cat.label}
