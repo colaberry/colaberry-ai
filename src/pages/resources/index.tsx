@@ -2,10 +2,8 @@ import type { GetStaticProps } from "next";
 import Link from "next/link";
 import Layout from "../../components/Layout";
 import Head from "next/head";
-import PremiumMediaCard from "../../components/PremiumMediaCard";
+import SectionHeader from "../../components/SectionHeader";
 import EnterpriseCtaBand from "../../components/EnterpriseCtaBand";
-import EnterprisePageHero from "../../components/EnterprisePageHero";
-import { heroImage } from "../../lib/media";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
 import { fetchPodcastEpisodes, fetchArticles, fetchBooks, fetchCaseStudies } from "../../lib/cms";
 
@@ -34,45 +32,54 @@ export const getStaticProps: GetStaticProps<ResourcesProps> = async () => {
   return { props: { counts }, revalidate: 600 };
 };
 
-export default function Resources({ counts }: ResourcesProps) {
-  const resourceHighlights = [
-    {
-      href: "/resources/podcasts",
-      title: "Podcasts + transcripts",
-      description: `${counts.podcasts > 0 ? `${counts.podcasts} episodes. ` : ""}Searchable conversations tied to agents and MCP servers.`,
-      meta: "Audio",
-      image: heroImage("hero-podcasts-cinematic.webp"),
-    },
-    {
-      href: "/resources/white-papers",
-      title: "White papers + POVs",
-      description: "Technical guidance, frameworks, and executive summaries.",
-      meta: "Research",
-      image: heroImage("hero-whitepapers-cinematic.webp"),
-    },
-    {
-      href: "/resources/articles",
-      title: "Articles + analysis",
-      description: `${counts.articles > 0 ? `${counts.articles} articles. ` : ""}CMS-backed articles, practical notes, and implementation updates.`,
-      meta: "Editorial",
-      image: heroImage("hero-updates-cinematic.webp"),
-    },
-    {
-      href: "/resources/case-studies",
-      title: "Case studies",
-      description: `${counts.caseStudies > 0 ? `${counts.caseStudies} studies. ` : ""}Outcome stories with measurable impact and context.`,
-      meta: "Outcomes",
-      image: heroImage("hero-case-studies-cinematic.webp"),
-    },
-    {
-      href: "/resources/books",
-      title: "Books + artifacts",
-      description: `${counts.books > 0 ? `${counts.books} titles. ` : ""}Reference material, templates, and delivery assets.`,
-      meta: "Artifacts",
-      image: heroImage("hero-books-cinematic.webp"),
-    },
-  ];
+/* ── Resource lanes ───────────────────────────────────────────────── */
 
+const RESOURCE_LANES: {
+  href: string;
+  title: string;
+  description: string;
+  meta: string;
+  countKey?: keyof ResourceCounts;
+}[] = [
+  {
+    href: "/resources/podcasts",
+    title: "Podcasts + transcripts",
+    description: "Searchable conversations tied to agents and MCP servers.",
+    meta: "Audio",
+    countKey: "podcasts",
+  },
+  {
+    href: "/resources/white-papers",
+    title: "White papers + POVs",
+    description: "Technical guidance, frameworks, and executive summaries.",
+    meta: "Research",
+  },
+  {
+    href: "/resources/articles",
+    title: "Articles + analysis",
+    description: "CMS-backed articles, practical notes, and implementation updates.",
+    meta: "Editorial",
+    countKey: "articles",
+  },
+  {
+    href: "/resources/case-studies",
+    title: "Case studies",
+    description: "Outcome stories with measurable impact and context.",
+    meta: "Outcomes",
+    countKey: "caseStudies",
+  },
+  {
+    href: "/resources/books",
+    title: "Books + artifacts",
+    description: "Reference material, templates, and delivery assets.",
+    meta: "Artifacts",
+    countKey: "books",
+  },
+];
+
+/* ── Page ──────────────────────────────────────────────────────────── */
+
+export default function Resources({ counts }: ResourcesProps) {
   const seoMeta: SeoMeta = {
     title: "Resources | Colaberry AI - Podcasts, Books, White Papers, Case Studies",
     description: "Explore Colaberry AI resources: podcasts with transcripts, white papers, books, case studies, and articles on enterprise AI agents, MCP servers, and skills.",
@@ -94,107 +101,79 @@ export default function Resources({ counts }: ResourcesProps) {
           "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai"}/resources`,
         }).replace(/</g, "\\u003c") }} />
       </Head>
-      <EnterprisePageHero
-        kicker="Modular layer"
-        title="Resources"
-        description="A structured knowledge layer for podcasts, books, white papers, case studies, and editorial signals-ready for teams, SEO, and LLM indexing."
-        chips={["Podcasts", "White papers", "Books", "Case studies", "Articles"]}
-        primaryAction={{ label: "Browse podcasts", href: "/resources/podcasts" }}
-        secondaryAction={{ label: "Open updates feed", href: "/updates", variant: "secondary" }}
-        metrics={[
-          {
-            label: "Resource lanes",
-            value: `${resourceHighlights.length}`,
-            note: "Core resource surfaces in active navigation.",
-          },
-          {
-            label: "Publishing model",
-            value: "Internal + curated",
-            note: "Owned content with selective external aggregation.",
-          },
-          {
-            label: "Discovery",
-            value: "Search-ready",
-            note: "Metadata-first structure for users and assistants.",
-          },
-        ]}
-      />
 
-      <section className="reveal section-spacing grid gap-3 sm:grid-cols-2">
-        {resourceHighlights.map((item) => (
-          <PremiumMediaCard
-            key={item.title}
-            href={item.href}
-            title={item.title}
-            description={item.description}
-            image={item.image}
-            meta={item.meta}
-            size="sm"
-          />
-        ))}
+      {/* ── Hero ──────────────────────────────────────────────────── */}
+      <div className="reveal flex flex-col gap-4">
+        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 py-1 pl-2.5 pr-3.5 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+          <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-red-600 dark:bg-red-400" />
+          Modular layer
+        </div>
+        <SectionHeader
+          as="h1"
+          size="xl"
+          title="Resources"
+          description="A structured knowledge layer for podcasts, books, white papers, case studies, and editorial signals — ready for teams, SEO, and LLM indexing."
+        />
+      </div>
+
+      {/* ── Metrics band ──────────────────────────────────────────── */}
+      <div className="reveal mt-8 grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-zinc-200 bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-700">
+        <div className="flex flex-col gap-1 bg-zinc-50 px-5 py-4 dark:bg-zinc-900">
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Resource lanes</span>
+          <span className="text-xl font-bold tabular-nums text-zinc-900 dark:text-zinc-50">{RESOURCE_LANES.length}</span>
+          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Core resource surfaces in active navigation.</span>
+        </div>
+        <div className="flex flex-col gap-1 bg-zinc-50 px-5 py-4 dark:bg-zinc-900">
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Publishing model</span>
+          <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50">Internal + curated</span>
+          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Owned content with selective external aggregation.</span>
+        </div>
+        <div className="flex flex-col gap-1 bg-zinc-50 px-5 py-4 dark:bg-zinc-900">
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Discovery</span>
+          <span className="text-lg font-bold text-zinc-900 dark:text-zinc-50">Search-ready</span>
+          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Metadata-first structure for users and assistants.</span>
+        </div>
+      </div>
+
+      {/* ── Resource lanes grid ───────────────────────────────────── */}
+      <section className="reveal section-spacing">
+        <SectionHeader
+          kicker="Browse"
+          title="Resource lanes"
+          description="Explore structured content across five knowledge surfaces."
+          size="md"
+        />
+        <div className="stagger-grid mt-6 grid gap-px overflow-hidden rounded-xl border border-zinc-200 bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-700 sm:grid-cols-2 lg:grid-cols-3">
+          {RESOURCE_LANES.map((lane) => {
+            const count = lane.countKey ? counts[lane.countKey] : 0;
+            return (
+              <Link
+                key={lane.href}
+                href={lane.href}
+                className="group flex flex-col gap-3 bg-zinc-50 p-6 transition-colors duration-150 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-50">{lane.title}</span>
+                  <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4 shrink-0 text-zinc-300 transition-all duration-150 group-hover:translate-x-0.5 group-hover:text-zinc-500 dark:text-zinc-600 dark:group-hover:text-zinc-400">
+                    <path d="M6.5 3.5 11 8l-4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  </svg>
+                </div>
+                <p className="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{lane.description}</p>
+                <div className="mt-auto flex items-center gap-3 border-t border-zinc-100 pt-3 dark:border-zinc-800">
+                  <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                    {lane.meta}
+                  </span>
+                  {count > 0 ? (
+                    <span className="text-xs tabular-nums text-zinc-500 dark:text-zinc-400">{count} items</span>
+                  ) : null}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </section>
 
-      <div className="reveal surface-panel section-shell section-spacing p-5 sm:p-6">
-        <div className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-600 dark:text-zinc-300">
-          Search resources
-        </div>
-        <label htmlFor="resource-search" className="sr-only">
-          Search resources
-        </label>
-        <form action="/search" method="get" role="search" className="mt-3 flex flex-col gap-2 sm:flex-row">
-          <input
-            id="resource-search"
-            name="q"
-            type="search"
-            placeholder="Search podcasts, white papers, case studies..."
-            aria-describedby="resource-search-help"
-            className="input-premium"
-          />
-          <button type="submit" className="btn btn-primary btn-sm shrink-0">
-            Search
-          </button>
-        </form>
-        <p id="resource-search-help" className="mt-2 text-xs text-zinc-500">
-          Search routes to the global catalog results page.
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-600">
-          {["Podcasts", "White papers", "Case studies", "Updates", "Artifacts"].map((label) => (
-            <span
-              key={label}
-              className="chip chip-muted rounded-md border border-zinc-200/80 bg-zinc-50 px-3 py-1 font-semibold"
-            >
-              {label}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="reveal section-spacing grid gap-3 sm:grid-cols-3">
-        <ResourceQuickLink href="/solutions" title="Solutions" description="Reusable solution patterns and packaged offerings." />
-        <ResourceQuickLink href="/updates" title="News & product" description="Product updates, announcements, and relevant news." />
-        <ResourceQuickLink href="/search" title="Search catalog" description="Full-text search across all content types." />
-      </div>
-
-      <div className="reveal surface-panel section-shell section-spacing p-6">
-        <div className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-300">
-          How this evolves
-        </div>
-        <div className="mt-3 grid gap-3 text-sm text-zinc-700 sm:grid-cols-2">
-          <div className="section-card rounded-lg p-4">
-            <div className="font-semibold text-zinc-900">Internal publishing</div>
-            <div className="mt-1 text-zinc-600">
-              Structured posting for podcasts, books, white papers, and curated collections.
-            </div>
-          </div>
-          <div className="section-card rounded-lg p-4">
-            <div className="font-semibold text-zinc-900">External aggregation</div>
-            <div className="mt-1 text-zinc-600">
-              Pull in relevant sources (feeds, links, announcements) with light editorial control.
-            </div>
-          </div>
-        </div>
-      </div>
-
+      {/* ── CTA band ──────────────────────────────────────────────── */}
       <EnterpriseCtaBand
         kicker="Knowledge engine"
         title="Publish faster. Curate better. Keep every resource indexable."
@@ -205,14 +184,5 @@ export default function Resources({ counts }: ResourcesProps) {
         secondaryLabel="Open updates feed"
       />
     </Layout>
-  );
-}
-
-function ResourceQuickLink({ href, title, description }: { href: string; title: string; description: string }) {
-  return (
-    <Link href={href} className="card-feature p-4">
-      <div className="text-sm font-semibold text-zinc-900">{title}</div>
-      <p className="mt-1 text-xs text-zinc-600">{description}</p>
-    </Link>
   );
 }
