@@ -40,7 +40,7 @@ export default function AeoQuickAnswer({ question, answer, facts }: AeoQuickAnsw
             {facts.map((fact) => (
               <li
                 key={fact}
-                className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
                 {fact}

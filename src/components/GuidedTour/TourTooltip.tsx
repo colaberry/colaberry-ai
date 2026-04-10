@@ -101,7 +101,7 @@ export default function TourTooltip({
       ref={ref}
       role="dialog"
       aria-label={`Tour step ${stepIndex + 1} of ${totalSteps}`}
-      className="w-[min(92vw,380px)] rounded-xl border border-zinc-200/70 bg-white p-5 shadow-2xl dark:border-[#3F3F46] dark:bg-[#18181B]"
+      className="w-[min(92vw,380px)] rounded-xl border border-zinc-200/70 bg-zinc-50 p-5 shadow-2xl dark:border-[#3F3F46] dark:bg-[#18181B]"
       style={{
         position: "fixed",
         zIndex: 86,

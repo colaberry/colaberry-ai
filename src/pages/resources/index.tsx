@@ -161,7 +161,7 @@ export default function Resources({ counts }: ResourcesProps) {
           {["Podcasts", "White papers", "Case studies", "Updates", "Artifacts"].map((label) => (
             <span
               key={label}
-              className="chip chip-muted rounded-md border border-zinc-200/80 bg-white px-3 py-1 font-semibold"
+              className="chip chip-muted rounded-md border border-zinc-200/80 bg-zinc-50 px-3 py-1 font-semibold"
             >
               {label}
             </span>

@@ -270,7 +270,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
 
       <div className="section-shell px-4 pt-4 pb-8 sm:px-6">
         <div className="flex flex-col gap-6">
-          <div id="player" ref={playerRef} className="sticky top-16 z-30 -mx-4 border-b border-zinc-200/60 bg-white/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800/60 dark:bg-zinc-950/95 dark:supports-[backdrop-filter]:bg-zinc-950/80 sm:-mx-6 sm:px-6">
+          <div id="player" ref={playerRef} className="sticky top-16 z-30 -mx-4 border-b border-zinc-200/60 bg-zinc-50/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-zinc-50/80 dark:border-zinc-800/60 dark:bg-zinc-950/95 dark:supports-[backdrop-filter]:bg-zinc-950/80 sm:-mx-6 sm:px-6">
             {usesNativePlayer && audioUrl ? (
               <AudioPlayerUI
                 src={audioUrl}

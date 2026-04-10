@@ -36,7 +36,7 @@ export default function PremiumMediaCard({
   const minHeightClass = size === "sm" ? "min-h-[246px]" : "min-h-[286px]";
   const aspectClass = size === "sm" ? "aspect-[16/9]" : "aspect-[16/10]";
   const rootClass = [
-    "surface-panel surface-hover surface-interactive group flex h-full flex-col overflow-hidden border border-zinc-200 bg-white p-0 dark:border-zinc-800 dark:bg-zinc-900",
+    "surface-panel surface-hover surface-interactive group flex h-full flex-col overflow-hidden border border-zinc-200 bg-zinc-50 p-0 dark:border-zinc-800 dark:bg-zinc-900",
     minHeightClass,
     className ?? "",
   ]
@@ -94,7 +94,7 @@ export default function PremiumMediaCard({
           <div className="text-base font-semibold leading-tight text-zinc-900 dark:text-zinc-50">{title}</div>
           <div className="mt-1.5 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</div>
         </div>
-        <div className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-400 transition-colors group-hover:border-zinc-300 group-hover:text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:group-hover:text-zinc-200">
+        <div className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 bg-zinc-50 text-zinc-400 transition-colors group-hover:border-zinc-300 group-hover:text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:group-hover:text-zinc-200">
           {trailing ?? <span aria-hidden="true">→</span>}
         </div>
       </div>

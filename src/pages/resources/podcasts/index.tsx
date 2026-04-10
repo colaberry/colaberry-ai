@@ -363,7 +363,7 @@ export default function Podcasts({
 
                       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
                         {hero.episodeNumber ? (
-                          <span className="rounded-md bg-white/60 px-2 py-0.5 font-bold tabular-nums text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                          <span className="rounded-md bg-zinc-50/60 px-2 py-0.5 font-bold tabular-nums text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
                             Ep. {hero.episodeNumber}
                           </span>
                         ) : null}
