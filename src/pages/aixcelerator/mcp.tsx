@@ -8,7 +8,7 @@ import SectionHeader from "../../components/SectionHeader";
 import StatePanel from "../../components/StatePanel";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GetStaticProps } from "next";
-import { fetchMCPServers, MCPServer } from "../../lib/cms";
+import { fetchMCPServers, fetchCatalogCounts, MCPServer } from "../../lib/cms";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
@@ -40,11 +40,14 @@ export const getStaticProps: GetStaticProps<MCPPageProps> = async () => {
   const visibilityFilter = allowPrivate ? undefined : "public";
 
   try {
-    const raw = await fetchMCPServers(visibilityFilter, { maxRecords: PAGE_SIZE + 1 });
+    const [raw, counts] = await Promise.all([
+      fetchMCPServers(visibilityFilter, { maxRecords: PAGE_SIZE + 1 }),
+      fetchCatalogCounts(visibilityFilter).catch(() => ({ agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0 })),
+    ]);
     const mcps = raw.slice(0, PAGE_SIZE).map(toMcpListItem);
     const initialHasMore = raw.length > PAGE_SIZE;
     return {
-      props: { mcps, allowPrivate, fetchError: false, totalCount: mcps.length, initialHasMore },
+      props: { mcps, allowPrivate, fetchError: false, totalCount: counts.mcpServers || mcps.length, initialHasMore },
       revalidate: 600,
     };
   } catch {
@@ -346,7 +349,7 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
           <MiniOntologyDiagram
             config={MCP_ONTOLOGY_CONFIG}
             categoryCounts={mcpCategoryCounts}
-            totalItems={totalCount || initialMCPs.length}
+            totalItems={catalogTotal || totalCount || initialMCPs.length}
           />
         </div>
       </div>
