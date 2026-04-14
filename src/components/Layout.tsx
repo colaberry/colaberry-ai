@@ -246,6 +246,7 @@ function isActiveNavPath(currentPath: string, href: string, navPaths: string[]) 
 const SHOW_ALL_NAV = process.env.NEXT_PUBLIC_SHOW_ALL_NAV === "true";
 const RELEASE_HIDDEN_PATHS = SHOW_ALL_NAV ? new Set<string>() : new Set([
   "/aixcelerator/tools",
+  "/aixcelerator/llm-architectures",
   "/use-cases",
   "/solutions",
   "/resources/articles",
@@ -260,6 +261,7 @@ const PLATFORM_CHILD_BLUEPRINT = [
   { label: "Platform Ontology", href: "/aixcelerator/ontology" },
   { label: "Ecosystem Graph", href: "/aixcelerator/ecosystem" },
   { label: "Solution Stacks", href: "/aixcelerator/solution-stacks" },
+  { label: "LLM Architectures", href: "/aixcelerator/llm-architectures" },
   { label: "Discovery assistant", href: "/assistant" },
 ];
 
@@ -272,6 +274,8 @@ const PLATFORM_CHILD_ALIASES: Record<string, string> = {
   skill: "/aixcelerator/skills",
   tools: "/aixcelerator/tools",
   tool: "/aixcelerator/tools",
+  "llm architectures": "/aixcelerator/llm-architectures",
+  "llm-architectures": "/aixcelerator/llm-architectures",
   "use cases": "/use-cases",
   "use case": "/use-cases",
   "platform ontology": "/aixcelerator/ontology",
