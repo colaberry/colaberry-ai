@@ -338,6 +338,30 @@ export type Tool = {
   mcpServers: ToolReference[];
 };
 
+export type LLMArchitecture = {
+  id: number;
+  name: string;
+  slug: string;
+  organization: string;
+  description?: string | null;
+  longDescription?: string | null;
+  parameters: string;
+  activeParameters?: string | null;
+  contextWindow: string;
+  vocabSize?: string | null;
+  numLayers?: number | null;
+  hiddenSize?: number | null;
+  releaseDate: string;
+  decoderType: "Dense" | "MoE" | "Hybrid" | "Recurrent";
+  attention: string;
+  keyFeatures: string[];
+  configUrl?: string | null;
+  paperUrl?: string | null;
+  visibility?: "public" | "private" | string | null;
+  verified?: boolean | null;
+  tags?: Tag[];
+};
+
 export type ArticleCategory = {
   name: string;
   slug: string;
@@ -2659,7 +2683,7 @@ export async function fetchToolBySlug(slug: string): Promise<Tool | null> {
 /** Lightweight count-only queries — fetches pageSize=1 just to read meta.pagination.total. */
 export async function fetchCatalogCounts(
   visibility?: "public" | "private"
-): Promise<{ agents: number; mcpServers: number; skills: number; tools: number; podcasts: number }> {
+): Promise<{ agents: number; mcpServers: number; skills: number; tools: number; podcasts: number; llmArchitectures: number }> {
   const vis = visibility ? `&filters[visibility][$eq]=${visibility}` : "";
   /* Podcasts use podcastStatus instead of visibility — filter separately */
   const podcastFilter = `&filters[podcastStatus][$eq]=published`;
@@ -2669,6 +2693,7 @@ export async function fetchCatalogCounts(
     { key: "skills", path: "/api/skills", filter: vis },
     { key: "tools", path: "/api/tools", filter: vis },
     { key: "podcasts", path: "/api/podcast-episodes", filter: podcastFilter },
+    { key: "llmArchitectures", path: "/api/llm-architectures", filter: vis },
   ] as const;
 
   const results = await Promise.all(
@@ -2685,7 +2710,7 @@ export async function fetchCatalogCounts(
     })
   );
 
-  return Object.fromEntries(results) as { agents: number; mcpServers: number; skills: number; tools: number; podcasts: number };
+  return Object.fromEntries(results) as { agents: number; mcpServers: number; skills: number; tools: number; podcasts: number; llmArchitectures: number };
 }
 
 /* ──────────────────────────────────────────────────────────────────────
@@ -3082,5 +3107,174 @@ export async function fetchCMSCollectionBySlug(slug: string): Promise<CMSSkillCo
     };
   } catch {
     return null;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+ * LLM Architecture — fetch, map, counts, tags
+ * ──────────────────────────────────────────────────────────────────── */
+
+function mapLlmArchitecture(item: any): LLMArchitecture {
+  const attrs = item?.attributes ?? item;
+  const tags =
+    attrs?.tags?.data?.map(mapTag) ??
+    (attrs?.tags ?? []).map(mapTag);
+
+  return {
+    id: item?.id ?? attrs?.id ?? 0,
+    name: attrs?.name ?? "",
+    slug: attrs?.slug ?? "",
+    organization: attrs?.organization ?? "",
+    description: attrs?.description ?? null,
+    longDescription: attrs?.longDescription ?? null,
+    parameters: attrs?.parameters ?? "",
+    activeParameters: attrs?.activeParameters ?? null,
+    contextWindow: attrs?.contextWindow ?? "",
+    vocabSize: attrs?.vocabSize ?? null,
+    releaseDate: attrs?.releaseDate ?? "",
+    decoderType: attrs?.decoderType ?? "Dense",
+    attention: attrs?.attention ?? "",
+    keyFeatures: Array.isArray(attrs?.keyFeatures) ? attrs.keyFeatures : [],
+    configUrl: attrs?.configUrl ?? null,
+    paperUrl: attrs?.paperUrl ?? null,
+    visibility: attrs?.visibility ?? null,
+    verified: attrs?.verified ?? null,
+    tags,
+  };
+}
+
+export async function fetchLlmArchitectures(
+  visibility?: "public" | "private",
+  options: { maxRecords?: number; sortBy?: "name" | "latest" } = {}
+): Promise<LLMArchitecture[]> {
+  const max = options.maxRecords ?? 500;
+  const sort =
+    options.sortBy === "latest"
+      ? "&sort[0]=releaseDate:desc&sort[1]=name:asc"
+      : "&sort[0]=name:asc";
+  const vis = visibility ? `&filters[visibility][$eq]=${visibility}` : "";
+
+  const fields =
+    "&fields[0]=name" +
+    "&fields[1]=slug" +
+    "&fields[2]=organization" +
+    "&fields[3]=description" +
+    "&fields[4]=parameters" +
+    "&fields[5]=activeParameters" +
+    "&fields[6]=contextWindow" +
+    "&fields[7]=vocabSize" +
+    "&fields[8]=releaseDate" +
+    "&fields[9]=decoderType" +
+    "&fields[10]=attention" +
+    "&fields[11]=keyFeatures" +
+    "&fields[12]=configUrl" +
+    "&fields[13]=paperUrl" +
+    "&fields[14]=visibility" +
+    "&fields[15]=verified";
+
+  const populateQuery =
+    "&populate[tags][fields][0]=name" +
+    "&populate[tags][fields][1]=slug";
+
+  const results: LLMArchitecture[] = [];
+  let page = 1;
+
+  while (results.length < max) {
+    try {
+      const json = await fetchCMSJson<CMSCollectionResponse>(
+        `${CMS_URL}/api/llm-architectures?pagination[page]=${page}&pagination[pageSize]=100&publicationState=live${vis}${sort}${fields}${populateQuery}`,
+        { cacheMs: CMS_CACHE_TTL_MS }
+      );
+
+      const data = json?.data;
+      if (!data || data.length === 0) break;
+
+      const remaining = max - results.length;
+      results.push(...data.slice(0, remaining).map(mapLlmArchitecture));
+
+      const pagination = json?.meta?.pagination;
+      if (!pagination || page >= pagination.pageCount) break;
+      page += 1;
+    } catch {
+      break;
+    }
+  }
+
+  return results;
+}
+
+export async function fetchLlmArchitectureBySlug(
+  slug: string
+): Promise<LLMArchitecture | null> {
+  try {
+    const populateQuery =
+      "&populate[tags][fields][0]=name" +
+      "&populate[tags][fields][1]=slug";
+
+    const json = await fetchCMSJson<CMSCollectionResponse>(
+      `${CMS_URL}/api/llm-architectures?filters[slug][$eq]=${encodeURIComponent(slug)}&publicationState=live${populateQuery}`,
+      { cacheMs: CMS_CACHE_TTL_MS }
+    );
+
+    const item = json?.data?.[0];
+    if (!item) return null;
+    return mapLlmArchitecture(item);
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchLlmArchitectureCategoryCounts(): Promise<Record<string, number>> {
+  try {
+    const sample = await fetchLlmArchitectures(undefined, { maxRecords: 500, sortBy: "latest" });
+    if (sample.length === 0) return {};
+
+    const { classifyLlmArchitecture } = await import("../data/llm-architecture-taxonomy");
+
+    const json = await fetchCMSJson<CMSCollectionResponse>(
+      `${CMS_URL}/api/llm-architectures?pagination[pageSize]=1`,
+      { allowStaleOnError: true }
+    );
+    const total = json?.meta?.pagination?.total ?? sample.length;
+
+    const counts: Record<string, number> = {};
+    for (const arch of sample) {
+      const cat = classifyLlmArchitecture(arch);
+      counts[cat.slug] = (counts[cat.slug] || 0) + 1;
+    }
+
+    if (sample.length > 0 && total > sample.length) {
+      const scale = total / sample.length;
+      for (const key of Object.keys(counts)) {
+        counts[key] = Math.round(counts[key] * scale);
+      }
+    }
+
+    return counts;
+  } catch {
+    return {};
+  }
+}
+
+export async function fetchAllLlmArchitectureTags(): Promise<{ name: string; slug: string; count: number }[]> {
+  try {
+    const sample = await fetchLlmArchitectures(undefined, { maxRecords: 500, sortBy: "latest" });
+    const tagMap = new Map<string, { name: string; slug: string; count: number }>();
+
+    for (const arch of sample) {
+      for (const tag of arch.tags ?? []) {
+        const key = tag.slug.toLowerCase();
+        const existing = tagMap.get(key);
+        if (existing) {
+          existing.count++;
+        } else {
+          tagMap.set(key, { name: tag.name, slug: tag.slug, count: 1 });
+        }
+      }
+    }
+
+    return [...tagMap.values()].sort((a, b) => b.count - a.count);
+  } catch {
+    return [];
   }
 }

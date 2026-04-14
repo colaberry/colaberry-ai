@@ -694,7 +694,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     fetchOrEmpty("trendingUseCases", () => fetchUseCases(visibilityFilter, { maxRecords: 30, sortBy: "latest" }), [] as UseCase[]),
     fetchOrEmpty("latestMCP", () => fetchMCPServers(visibilityFilter, { maxRecords: 6, sortBy: "latest" }), [] as MCPServer[]),
     fetchOrEmpty("trendingMCP", () => fetchMCPServers(visibilityFilter, { maxRecords: 30 }), [] as MCPServer[]),
-    fetchOrEmpty("catalogCounts", () => fetchCatalogCounts(visibilityFilter), { agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0 }),
+    fetchOrEmpty("catalogCounts", () => fetchCatalogCounts(visibilityFilter), { agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0, llmArchitectures: 0 }),
   ]);
 
   const latestAgents = sortAgentsByDate(latestAgentsRaw).slice(0, 6).map(toHomeAgentSignal);

@@ -25,7 +25,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   // Fetch real counts from CMS pagination totals
   const cms = await import("../../lib/cms");
   const counts = await cms.fetchCatalogCounts().catch(() => ({
-    agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0,
+    agents: 0, mcpServers: 0, skills: 0, tools: 0, podcasts: 0, llmArchitectures: 0,
   }));
 
   return {
@@ -36,6 +36,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         mcp: counts.mcpServers,
         tool: counts.tools,
         podcast: counts.podcasts,
+        "llm-architecture": counts.llmArchitectures,
       },
     },
     revalidate: 600,
