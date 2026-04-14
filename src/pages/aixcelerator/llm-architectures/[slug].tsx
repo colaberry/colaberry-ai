@@ -5,7 +5,13 @@ import Layout from "../../../components/Layout";
 import SectionHeader from "../../../components/SectionHeader";
 import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
 import ArchitectureDiagram from "../../../components/ArchitectureDiagram";
+import LLMArchitectureDeepDive from "../../../components/LLMArchitectureDeepDive";
 import { LLMArchitecture, fetchLlmArchitectureBySlug } from "../../../lib/cms";
+import {
+  deepDiveToPlaintext,
+  deepDiveToCitations,
+  deepDiveWordCount,
+} from "../../../lib/deepDiveToPlaintext";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../../lib/seo";
 import { classifyLlmArchitecture } from "../../../data/llm-architecture-taxonomy";
 import { LLM_ARCHITECTURES, loadRegistryJSON, mergeWithRegistry } from "../../../data/llm-architectures";
@@ -83,6 +89,10 @@ function dataToCmsArch(a: DataLLMArch, idHint = -1): LLMArchitecture {
     visibility: "public",
     verified: false,
     tags: [],
+    // Static/registry entries never carry deep-dive content — only
+    // CMS-backed records can. Explicit `null` lets the precedence
+    // fallback in the page skip the deep-dive branch.
+    deepDive: null,
   };
 }
 
@@ -133,15 +143,63 @@ export default function LLMArchitectureDetail({ arch }: DetailProps) {
     ogType: "article",
   };
 
-  const jsonLd = {
+  /* ── TechArticle JSON-LD (Sprint v4 AEO) ─────────────────────────────
+   * When a deep-dive is present, we emit the richer variant so AI answer
+   * engines (ChatGPT, Claude, Perplexity) can cite Colaberry directly:
+   *   - `articleBody` is the flattened plaintext of every deep-dive block
+   *   - `wordCount` is computed from the same serialization
+   *   - `citation` is the structured reference list
+   *   - `proficiencyLevel: "Expert"` marks this as a technical deep dive
+   * When no deep-dive exists, we fall back to the minimal stub that was
+   * already on the page before v4.
+   */
+  const hasDeepDive = Array.isArray(arch.deepDive) && arch.deepDive.length > 0;
+  const articleBody = hasDeepDive ? deepDiveToPlaintext(arch.deepDive) : undefined;
+  const citations = hasDeepDive ? deepDiveToCitations(arch.deepDive) : [];
+  const wordCount = hasDeepDive ? deepDiveWordCount(arch.deepDive) : 0;
+
+  const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "TechArticle",
+    headline: arch.name,
     name: arch.name,
     description: seoMeta.description,
     url: seoMeta.canonical,
-    author: { "@type": "Organization", name: arch.organization },
+    inLanguage: "en",
+    author: {
+      "@type": "Organization",
+      name: "Colaberry AI",
+      url: "https://colaberry.ai",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Colaberry AI",
+      url: "https://colaberry.ai",
+    },
+    about: {
+      "@type": "Thing",
+      name: `${arch.name} — ${arch.organization} ${arch.decoderType} LLM architecture`,
+    },
     datePublished: arch.releaseDate,
+    dateModified: new Date().toISOString().slice(0, 10),
   };
+  if (hasDeepDive) {
+    jsonLd.articleBody = articleBody;
+    jsonLd.wordCount = wordCount;
+    jsonLd.proficiencyLevel = "Expert";
+    jsonLd.dependencies = `Transformer, ${arch.attention}, ${arch.decoderType} decoder`;
+    jsonLd.keywords = [
+      arch.name,
+      arch.organization,
+      arch.decoderType,
+      arch.attention,
+      `${arch.parameters} parameters`,
+      `${arch.contextWindow} context`,
+      "LLM architecture",
+      "deep dive",
+    ].join(", ");
+    if (citations.length > 0) jsonLd.citation = citations;
+  }
 
   /* ── Spec rows for the fact sheet ──────────────────────────────────── */
   const specs: { label: string; value: string }[] = [
@@ -277,13 +335,29 @@ export default function LLMArchitectureDetail({ arch }: DetailProps) {
         </section>
       )}
 
-      {/* ── Long Description ───────────────────────────────────────────── */}
-      {arch.longDescription && (
+      {/* ── Deep-Dive Content ──────────────────────────────────────────────
+          Precedence:
+            1. `deepDive` Strapi Dynamic Zone (Sprint v4) — structured,
+               editor-composed blocks rendered via LLMArchitectureDeepDive.
+            2. `longDescription` richtext (legacy fallback) — raw HTML
+               rendered inside a .prose container.
+            3. Neither present — section omitted entirely.
+          Separating the two paths keeps the transition incremental: new
+          flagship models get the dynamic zone, older records can keep
+          using longDescription until an editor migrates them. */}
+      {arch.deepDive && arch.deepDive.length > 0 ? (
+        <section className="reveal detail-section mt-8 mx-auto w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Deep Dive</h2>
+          <div className="mt-3">
+            <LLMArchitectureDeepDive blocks={arch.deepDive} />
+          </div>
+        </section>
+      ) : arch.longDescription ? (
         <section className="reveal detail-section mt-8 mx-auto w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Description</h2>
           <div className="mt-3 prose prose-zinc dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: arch.longDescription }} />
         </section>
-      )}
+      ) : null}
 
       {/* External links are in the diagram sidebar above */}
 

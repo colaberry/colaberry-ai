@@ -96,6 +96,10 @@ src/
 - `src/lib/graphUtils.ts` — Generic graph utilities: `buildGraphData()`, colors, topology
 - `src/components/Layout.tsx` — Header + footer + nav (1,800 lines)
 - `src/components/ContentTypeIcon.tsx` — Premium SVG icons for 5 content types
+- `src/components/LLMArchitectureDeepDive.tsx` — Sprint v4 renderer for the `deepDive` Strapi Dynamic Zone. Dispatches per `__component` to render heading / paragraph / callout / code-block / table / list / image / references blocks as semantic HTML inside `.prose`.
+- `src/lib/deepDiveToPlaintext.ts` — Sprint v4 AEO helper. Exports `deepDiveToPlaintext()`, `deepDiveToCitations()`, and `deepDiveWordCount()` — used by `[slug].tsx` to emit `TechArticle` JSON-LD with `articleBody`, `wordCount`, and structured `citation` array for AI answer engines.
+- `scripts/deep-dives/*.mjs` — File-sourced authoring pipeline for flagship LLM architecture deep dives (Sprint v4). Each module exports `{ slug, blocks }` where `blocks` is the Strapi Dynamic Zone payload. Currently ships 5 flagships: `llama-3-2-3b`, `deepseek-v3`, `kimi-linear-48b-a3b`, `qwen3-next-80b-a3b`, `glm-5-744b`.
+- `scripts/author-llm-deep-dive.mjs` — CLI that loads deep-dive modules and PUTs them to Strapi. Flags: `--slug <slug>`, `--all`, `--dry-run`, `--url`, `--token`. **Critical:** appends `?status=published` to writes so Strapi v5's draft/publish system lands content on the published version (otherwise PUTs default to draft and SSR never sees them).
 
 ## Build & Validation
 ```bash

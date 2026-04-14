@@ -338,6 +338,85 @@ export type Tool = {
   mcpServers: ToolReference[];
 };
 
+/* ──────────────────────────────────────────────────────────────────────
+ * LLM Architecture deep-dive Dynamic Zone blocks
+ *
+ * Discriminated union driven by Strapi's `__component` field. Each
+ * variant corresponds to a reusable component under the `deep` category
+ * in `colaberry-ai-cms-fork/src/components/deep/`. Shape mirrors the
+ * Strapi schema 1:1 so the renderer can switch without re-mapping.
+ * ──────────────────────────────────────────────────────────────────── */
+
+export type DeepDiveHeadingBlock = {
+  __component: "deep.heading";
+  id?: number;
+  level: "h2" | "h3" | "h4";
+  text: string;
+  anchor?: string | null;
+};
+
+export type DeepDiveParagraphBlock = {
+  __component: "deep.paragraph";
+  id?: number;
+  body: string;
+};
+
+export type DeepDiveCalloutBlock = {
+  __component: "deep.callout";
+  id?: number;
+  variant: "note" | "insight" | "warning" | "quote";
+  title?: string | null;
+  body: string;
+};
+
+export type DeepDiveCodeBlock = {
+  __component: "deep.code-block";
+  id?: number;
+  language?: string | null;
+  code: string;
+  caption?: string | null;
+};
+
+export type DeepDiveTableBlock = {
+  __component: "deep.table";
+  id?: number;
+  caption?: string | null;
+  headers: string[];
+  rows: string[][];
+};
+
+export type DeepDiveListBlock = {
+  __component: "deep.list";
+  id?: number;
+  style: "bullet" | "number";
+  items: string[];
+};
+
+export type DeepDiveImageBlock = {
+  __component: "deep.image";
+  id?: number;
+  media?: { url?: string | null; alternativeText?: string | null } | null;
+  caption?: string | null;
+  alt: string;
+};
+
+export type DeepDiveReferencesBlock = {
+  __component: "deep.references";
+  id?: number;
+  heading?: string | null;
+  items: Array<{ label: string; url: string }>;
+};
+
+export type DeepDiveBlock =
+  | DeepDiveHeadingBlock
+  | DeepDiveParagraphBlock
+  | DeepDiveCalloutBlock
+  | DeepDiveCodeBlock
+  | DeepDiveTableBlock
+  | DeepDiveListBlock
+  | DeepDiveImageBlock
+  | DeepDiveReferencesBlock;
+
 export type LLMArchitecture = {
   id: number;
   name: string;
@@ -360,6 +439,8 @@ export type LLMArchitecture = {
   visibility?: "public" | "private" | string | null;
   verified?: boolean | null;
   tags?: Tag[];
+  /** Dynamic Zone of deep-dive content blocks (Sprint v4). */
+  deepDive?: DeepDiveBlock[] | null;
 };
 
 export type ArticleCategory = {
@@ -3114,6 +3195,31 @@ export async function fetchCMSCollectionBySlug(slug: string): Promise<CMSSkillCo
  * LLM Architecture — fetch, map, counts, tags
  * ──────────────────────────────────────────────────────────────────── */
 
+/**
+ * Normalize a Strapi dynamic-zone payload to our `DeepDiveBlock[]` shape.
+ * Strapi v5 returns each zone entry with `__component` already set at the
+ * top level (no nested `attributes`). Media fields come back with
+ * `{ url, alternativeText }` under `media`. We cast loosely because the
+ * shape is already under our editorial control (schema.json).
+ */
+function mapDeepDiveZone(raw: unknown): DeepDiveBlock[] | null {
+  if (!Array.isArray(raw)) return null;
+  return raw.map((block: any) => {
+    const b = block?.attributes ?? block;
+    const component = b?.__component;
+    // `media` may arrive as { data: { attributes: ... } } (Strapi v4) or
+    // flat (Strapi v5). Normalize to { url, alternativeText }.
+    if (component === "deep.image" && b?.media) {
+      const m = b.media?.data?.attributes ?? b.media;
+      return {
+        ...b,
+        media: m ? { url: m?.url ?? null, alternativeText: m?.alternativeText ?? null } : null,
+      } as DeepDiveBlock;
+    }
+    return b as DeepDiveBlock;
+  });
+}
+
 function mapLlmArchitecture(item: any): LLMArchitecture {
   const attrs = item?.attributes ?? item;
   const tags =
@@ -3140,6 +3246,7 @@ function mapLlmArchitecture(item: any): LLMArchitecture {
     visibility: attrs?.visibility ?? null,
     verified: attrs?.verified ?? null,
     tags,
+    deepDive: mapDeepDiveZone(attrs?.deepDive),
   };
 }
 
@@ -3207,9 +3314,14 @@ export async function fetchLlmArchitectureBySlug(
   slug: string
 ): Promise<LLMArchitecture | null> {
   try {
+    // Detail pages need the full deepDive dynamic zone with nested
+    // media populated. `populate[deepDive][populate]=*` tells Strapi v5
+    // to expand every component's sub-fields (including the `media`
+    // relation on deep.image blocks).
     const populateQuery =
       "&populate[tags][fields][0]=name" +
-      "&populate[tags][fields][1]=slug";
+      "&populate[tags][fields][1]=slug" +
+      "&populate[deepDive][populate]=*";
 
     const json = await fetchCMSJson<CMSCollectionResponse>(
       `${CMS_URL}/api/llm-architectures?filters[slug][$eq]=${encodeURIComponent(slug)}&publicationState=live${populateQuery}`,
