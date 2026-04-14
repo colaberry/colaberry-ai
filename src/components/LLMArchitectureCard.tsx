@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useState } from "react";
 import ArchitectureDiagram from "./ArchitectureDiagram";
 
 export interface LLMArchCardProps {
@@ -41,7 +40,6 @@ function SpecRow({ label, value }: { label: string; value: string }) {
 }
 
 export default function LLMArchitectureCard({ arch, viewMode = "detailed" }: { arch: LLMArchCardProps; viewMode?: ViewMode }) {
-  const [expanded, setExpanded] = useState(false);
   const href = arch.slug ? `/aixcelerator/llm-architectures/${arch.slug}` : "/aixcelerator/llm-architectures";
   const dot = DECODER_DOT[arch.decoderType] || DECODER_DOT.Dense;
   const paramDisplay = arch.activeParameters
@@ -75,7 +73,7 @@ export default function LLMArchitectureCard({ arch, viewMode = "detailed" }: { a
 
   /* ── Detailed card ─────────────────────────────────────────────────── */
   return (
-    <article className="catalog-card flex flex-col overflow-hidden">
+    <article className="catalog-card flex h-full flex-col overflow-hidden">
       {/* Architecture Diagram — compact, constrained height */}
       <Link href={href} className="block" aria-label={`View ${arch.name} architecture details`}>
         <ArchitectureDiagram
@@ -103,23 +101,24 @@ export default function LLMArchitectureCard({ arch, viewMode = "detailed" }: { a
         </Link>
         <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{arch.organization} · {arch.releaseDate}</p>
 
-        {/* Resource pills */}
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        {/* Resource pills — fixed single-row height, no-wrap so optional pills
+            (config.json / Tech report) don't shift card layout */}
+        <div className="mt-2 flex h-6 items-center gap-1.5 overflow-hidden">
           <Link href={href}
-            className="rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
+            className="shrink-0 rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
             View details
           </Link>
           {arch.configUrl && (
             <a href={arch.configUrl} target="_blank" rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
+              className="shrink-0 rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
               config.json
             </a>
           )}
           {arch.paperUrl && (
             <a href={arch.paperUrl} target="_blank" rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
+              className="shrink-0 rounded-full border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
               Tech report
             </a>
           )}
@@ -137,48 +136,23 @@ export default function LLMArchitectureCard({ arch, viewMode = "detailed" }: { a
           </div>
         </div>
 
-        {/* Show details toggle */}
-        <button
-          type="button"
-          onClick={() => setExpanded((v) => !v)}
-          className="mt-2 flex items-center gap-1.5 text-xs font-medium text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
-        >
-          {expanded ? "Hide" : "Show"} details
-          <svg aria-hidden="true" viewBox="0 0 16 16"
-            className={`h-3 w-3 transition-transform ${expanded ? "rotate-180" : ""}`}>
-            <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          </svg>
-        </button>
+        {/* Always-visible fact sheet — fixed 3-row structure for grid alignment.
+            Optional fields use "—" fallback so all cards have identical height. */}
+        <div className="mt-3 divide-y divide-zinc-100 border-y border-zinc-100 dark:divide-zinc-800 dark:border-zinc-800">
+          <SpecRow label="Decoder" value={arch.decoderType} />
+          <SpecRow label="Attention" value={arch.attention} />
+          <SpecRow label="Layers" value={arch.numLayers ? String(arch.numLayers) : "—"} />
+        </div>
 
-        {/* Expandable fact sheet */}
-        {expanded && (
-          <div className="mt-2 divide-y divide-zinc-100 border-y border-zinc-100 dark:divide-zinc-800 dark:border-zinc-800">
-            <SpecRow label="Decoder Type" value={arch.decoderType} />
-            <SpecRow label="Attention" value={arch.attention} />
-            {arch.activeParameters && <SpecRow label="Active Params" value={arch.activeParameters} />}
-            {arch.numLayers && <SpecRow label="Layers" value={String(arch.numLayers)} />}
-            {arch.hiddenSize && <SpecRow label="Hidden Size" value={arch.hiddenSize.toLocaleString()} />}
-            {arch.vocabSize && <SpecRow label="Vocab Size" value={arch.vocabSize} />}
-            {arch.description && (
-              <div className="py-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-                {arch.description}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Key features as related concepts */}
-        {arch.keyFeatures && arch.keyFeatures.length > 0 && (
-          <div className="mt-auto pt-3">
-            <div className="flex flex-wrap gap-1">
-              {arch.keyFeatures.slice(0, 3).map((f) => (
-                <span key={f} className="rounded-full border border-zinc-200 px-2 py-0.5 text-[10px] font-medium text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-                  {f}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Key features pinned to bottom — fixed min-height reserves space
+            even when keyFeatures is empty, so cards stay aligned. */}
+        <div className="mt-auto flex min-h-[28px] flex-wrap items-end gap-1 pt-3">
+          {arch.keyFeatures?.slice(0, 3).map((f) => (
+            <span key={f} className="rounded-full border border-zinc-200 px-2 py-0.5 text-[10px] font-medium text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+              {f}
+            </span>
+          ))}
+        </div>
       </div>
     </article>
   );

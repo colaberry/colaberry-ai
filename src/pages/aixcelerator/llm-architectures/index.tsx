@@ -500,7 +500,7 @@ export default function LLMArchitecturesPage({ architectures, fetchError, source
           {viewMode === "detailed" ? (
             <div className="reveal stagger-grid mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
               {visibleArchitectures.map((a) => (
-                <div key={a.slug || String(a.id)} id={`card-${a.slug}`}>
+                <div key={a.slug || String(a.id)} id={`card-${a.slug}`} className="h-full">
                   <LLMArchitectureCard arch={a as LLMArchCardProps} viewMode="detailed" />
                 </div>
               ))}
