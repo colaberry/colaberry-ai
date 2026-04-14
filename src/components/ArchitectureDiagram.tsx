@@ -465,8 +465,11 @@ export default function ArchitectureDiagram(props: ArchDiagramProps) {
     <div className={`relative overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 ${className}`}>
       {/* Visually hidden but LLM-indexable architecture description for AEO */}
       <p className="sr-only">{indexableText}</p>
-      <div className="mx-auto w-full max-w-[360px] px-3 py-4">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-full" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      {/* Inner padding only — width/max-width controlled by parent via className.
+          On listing cards the parent caps it (~360px). On the detail page the
+          parent lets it grow to fill the column for clarity. */}
+      <div className="mx-auto w-full px-3 py-4 sm:px-4 sm:py-6">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
           <defs>
             <marker id="sm-arrow" markerWidth="5" markerHeight="4" refX="3" refY="2" orient="auto">
               <polygon points="0 0, 5 2, 0 4" className="fill-zinc-600 dark:fill-zinc-300" />
