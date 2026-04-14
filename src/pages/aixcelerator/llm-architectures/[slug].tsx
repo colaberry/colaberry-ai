@@ -8,7 +8,8 @@ import ArchitectureDiagram from "../../../components/ArchitectureDiagram";
 import { LLMArchitecture, fetchLlmArchitectureBySlug } from "../../../lib/cms";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../../lib/seo";
 import { classifyLlmArchitecture } from "../../../data/llm-architecture-taxonomy";
-import { LLM_ARCHITECTURES, loadRegistryJSON } from "../../../data/llm-architectures";
+import { LLM_ARCHITECTURES, loadRegistryJSON, mergeWithRegistry } from "../../../data/llm-architectures";
+import type { LLMArchitecture as DataLLMArch } from "../../../data/llm-architectures";
 
 const DECODER_DOT: Record<string, string> = {
   Dense: "bg-zinc-400 dark:bg-zinc-500",
@@ -53,15 +54,69 @@ function enrichArchitecture(cms: LLMArchitecture): LLMArchitecture {
   };
 }
 
+/**
+ * Convert a data-file `LLMArchitecture` (sparse, all-optional) into the
+ * CMS-shape `LLMArchitecture` used by the detail page. Mirrors the conversion
+ * in `index.tsx` getStaticProps fallback so detail and listing share the same
+ * shape contract. Synthetic negative `id` flags non-CMS origin.
+ */
+function dataToCmsArch(a: DataLLMArch, idHint = -1): LLMArchitecture {
+  return {
+    id: idHint,
+    slug: a.slug,
+    name: a.name,
+    organization: a.organization,
+    description: a.description ?? null,
+    longDescription: null,
+    parameters: a.parameters,
+    activeParameters: a.activeParameters ?? null,
+    contextWindow: a.contextWindow,
+    vocabSize: a.vocabSize ?? null,
+    numLayers: a.numLayers ?? null,
+    hiddenSize: a.hiddenSize ?? null,
+    releaseDate: a.releaseDate,
+    decoderType: a.decoderType,
+    attention: a.attention,
+    keyFeatures: a.keyFeatures ?? [],
+    configUrl: a.configUrl ?? null,
+    paperUrl: a.paperUrl ?? null,
+    visibility: "public",
+    verified: false,
+    tags: [],
+  };
+}
+
 export const getStaticProps: GetStaticProps<DetailProps> = async ({ params }) => {
   const slug = String(params?.slug || "");
+  if (!slug) return { notFound: true, revalidate: 120 };
+
+  // 1. Try CMS first
   try {
     const arch = await fetchLlmArchitectureBySlug(slug);
-    if (!arch) return { notFound: true, revalidate: 120 };
-    return { props: { arch: enrichArchitecture(arch) }, revalidate: 600 };
-  } catch {
-    return { notFound: true, revalidate: 120 };
+    if (arch) {
+      return { props: { arch: enrichArchitecture(arch) }, revalidate: 600 };
+    }
+  } catch { /* fall through to registry/static */ }
+
+  // 2. Fallback: registry JSON merged with static dataset
+  //    (Same data source the listing page uses when CMS is empty / missing the slug)
+  try {
+    const merged = mergeWithRegistry(loadRegistryJSON());
+    const dataEntry = merged.find((a) => a.slug === slug);
+    if (dataEntry) {
+      const cmsShape = dataToCmsArch(dataEntry);
+      return { props: { arch: enrichArchitecture(cmsShape) }, revalidate: 600 };
+    }
+  } catch { /* fall through */ }
+
+  // 3. Final fallback: pure static dataset
+  const staticEntry = LLM_ARCHITECTURES.find((a) => a.slug === slug);
+  if (staticEntry) {
+    const cmsShape = dataToCmsArch(staticEntry);
+    return { props: { arch: enrichArchitecture(cmsShape) }, revalidate: 600 };
   }
+
+  return { notFound: true, revalidate: 120 };
 };
 
 export default function LLMArchitectureDetail({ arch }: DetailProps) {
@@ -142,8 +197,14 @@ export default function LLMArchitectureDetail({ arch }: DetailProps) {
         />
       </div>
 
-      {/* ── Architecture Diagram + Quick Specs ─────────────────────────── */}
-      <div className="reveal mt-8 grid gap-6 lg:grid-cols-[1fr_1.2fr] lg:items-start">
+      {/* ── Architecture Diagram (full-width focal point) ──────────────────
+          Layout philosophy (Raschka-style): the architecture diagram is THE
+          focal point — stack it full-width at the top, specs below. Users
+          come to these pages to see the architecture; everything else is
+          supporting context. On ultra-wide screens we cap the width so the
+          SVG doesn't become absurdly large, but let it grow much bigger
+          than the old side-by-side 360px cap. */}
+      <div className="reveal mt-8">
         <ArchitectureDiagram
           name={arch.name}
           decoderType={arch.decoderType}
@@ -155,42 +216,42 @@ export default function LLMArchitectureDetail({ arch }: DetailProps) {
           hiddenSize={arch.hiddenSize}
           numLayers={arch.numLayers}
           keyFeatures={arch.keyFeatures}
-          className="mx-auto max-w-sm lg:max-w-none"
+          className="mx-auto w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl"
         />
-        <div>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-zinc-200 bg-zinc-50 px-5 py-3 text-sm dark:border-zinc-700 dark:bg-zinc-900">
-            <span className="font-mono font-semibold text-zinc-900 dark:text-zinc-50">{paramLabel}</span>
-            <span className="text-zinc-300 dark:text-zinc-600">|</span>
-            <span className="text-zinc-600 dark:text-zinc-400">{arch.contextWindow} context</span>
-            <span className="text-zinc-300 dark:text-zinc-600">|</span>
-            <span className="text-zinc-600 dark:text-zinc-400">{arch.attention}</span>
-            <span className="text-zinc-300 dark:text-zinc-600">|</span>
-            <span className="text-zinc-600 dark:text-zinc-400">{arch.decoderType}</span>
-          </div>
-          {/* Resource pills */}
-          {(arch.configUrl || arch.paperUrl) && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {arch.configUrl && (
-                <a href={arch.configUrl} target="_blank" rel="noopener noreferrer" className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
-                  config.json
-                </a>
-              )}
-              {arch.paperUrl && (
-                <a href={arch.paperUrl} target="_blank" rel="noopener noreferrer" className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
-                  Tech report
-                </a>
-              )}
-            </div>
-          )}
-          {/* Description in sidebar */}
-          {arch.description && (
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{arch.description}</p>
-          )}
+      </div>
+
+      {/* ── Quick Specs Strip + Resource Pills ─────────────────────────────
+          Horizontal strip sitting directly beneath the diagram. Mirrors the
+          Raschka gallery pattern where key specs accompany the diagram as a
+          single line of context. */}
+      <div className="reveal mt-6 mx-auto w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-zinc-200 bg-zinc-50 px-5 py-3 text-sm dark:border-zinc-700 dark:bg-zinc-900">
+          <span className="font-mono font-semibold text-zinc-900 dark:text-zinc-50">{paramLabel}</span>
+          <span className="text-zinc-300 dark:text-zinc-600">|</span>
+          <span className="text-zinc-600 dark:text-zinc-400">{arch.contextWindow} context</span>
+          <span className="text-zinc-300 dark:text-zinc-600">|</span>
+          <span className="text-zinc-600 dark:text-zinc-400">{arch.attention}</span>
+          <span className="text-zinc-300 dark:text-zinc-600">|</span>
+          <span className="text-zinc-600 dark:text-zinc-400">{arch.decoderType}</span>
         </div>
+        {(arch.configUrl || arch.paperUrl) && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {arch.configUrl && (
+              <a href={arch.configUrl} target="_blank" rel="noopener noreferrer" className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
+                config.json
+              </a>
+            )}
+            {arch.paperUrl && (
+              <a href={arch.paperUrl} target="_blank" rel="noopener noreferrer" className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800">
+                Tech report
+              </a>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Fact Sheet ─────────────────────────────────────────────────── */}
-      <section className="reveal mt-8">
+      <section className="reveal mt-8 mx-auto w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Architecture Specifications</h2>
         <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
           <div className="divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -206,7 +267,7 @@ export default function LLMArchitectureDetail({ arch }: DetailProps) {
 
       {/* ── Key Features ───────────────────────────────────────────────── */}
       {arch.keyFeatures.length > 0 && (
-        <section className="reveal detail-section mt-8">
+        <section className="reveal detail-section mt-8 mx-auto w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Key Features</h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {arch.keyFeatures.map((f) => (
@@ -218,7 +279,7 @@ export default function LLMArchitectureDetail({ arch }: DetailProps) {
 
       {/* ── Long Description ───────────────────────────────────────────── */}
       {arch.longDescription && (
-        <section className="reveal detail-section mt-8">
+        <section className="reveal detail-section mt-8 mx-auto w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Description</h2>
           <div className="mt-3 prose prose-zinc dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: arch.longDescription }} />
         </section>
@@ -228,7 +289,7 @@ export default function LLMArchitectureDetail({ arch }: DetailProps) {
 
       {/* ── Tags ───────────────────────────────────────────────────────── */}
       {arch.tags && arch.tags.length > 0 && (
-        <section className="reveal detail-section mt-8">
+        <section className="reveal detail-section mt-8 mx-auto w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Tags</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {arch.tags.map((t) => (
