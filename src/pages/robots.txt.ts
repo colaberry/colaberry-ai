@@ -1,7 +1,7 @@
 import type { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai").replace(/\/$/, "");
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai").replace(/\/$/, "");
 
   const body = [
     "# Colaberry AI — Answer Engine Optimized (AEO)",
@@ -16,10 +16,25 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     "User-agent: GPTBot",
     "Allow: /",
     "",
+    "User-agent: OAI-SearchBot",
+    "Allow: /",
+    "",
+    "User-agent: ChatGPT-User",
+    "Allow: /",
+    "",
     "User-agent: ClaudeBot",
     "Allow: /",
     "",
+    "User-agent: Claude-SearchBot",
+    "Allow: /",
+    "",
+    "User-agent: Claude-User",
+    "Allow: /",
+    "",
     "User-agent: PerplexityBot",
+    "Allow: /",
+    "",
+    "User-agent: Perplexity-User",
     "Allow: /",
     "",
     "User-agent: Google-Extended",
