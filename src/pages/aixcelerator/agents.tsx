@@ -109,12 +109,12 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
     acc[key] = (acc[key] ?? 0) + 1;
     return acc;
   }, {});
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai";
   const agentCount = agents.length;
   const industryCount = new Set(agents.map((a) => a.industry).filter(Boolean)).size;
-  const metaTitle = `${agentCount} AI Agents Across ${industryCount} Industries | Colaberry AI`;
+  const metaTitle = `AI Agents Catalog | ${agentCount} Enterprise AI Agents | Colaberry AI`;
   const metaDescription =
-    `Discover ${agentCount} enterprise AI agents with ownership, runbooks, evaluations, and deployment readiness across ${industryCount} industries. LLM-indexed for AI search discovery.`;
+    `Browse the Colaberry AI agents catalog with ${agentCount} enterprise AI agents across ${industryCount} industries. Compare ownership, runbooks, evaluations, lifecycle status, and deployment readiness.`;
   const seoMeta: SeoMeta = {
     title: metaTitle,
     description: metaDescription,
@@ -209,6 +209,14 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
             },
             {
               "@type": "Question",
+              name: "Where is the Colaberry AI agents catalog?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: `The Colaberry AI agents catalog is available at ${canonicalUrl}. It is the main page for browsing enterprise AI agents by industry, status, source, department, and tags.`,
+              },
+            },
+            {
+              "@type": "Question",
               name: "How can I find the right AI agent for my enterprise?",
               acceptedAnswer: {
                 "@type": "Answer",
@@ -244,8 +252,8 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
             as="h1"
             size="xl"
             kicker="Agents catalog"
-            title="AI Agents"
-            description="A governed AI marketplace of enterprise agents and assistants-aligned to teams, workflows, and industry context, with public and private listings."
+            title="AI Agents Catalog"
+            description="Browse Colaberry's governed catalog of enterprise AI agents and assistants aligned to teams, workflows, and industry context, with public and private listings."
           />
         </div>
         <div className="hidden lg:block">
@@ -258,9 +266,9 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
       </div>
 
       <AeoQuickAnswer
-        question="What AI agents does Colaberry AI offer for enterprise?"
-        answer={`Colaberry AI catalogs ${agents.length} enterprise AI agents across ${new Set(agents.map((a) => a.industry)).size} industries including Healthcare, Sales, Marketing, Legal, and IT Operations. Each agent includes ownership details, deployment runbooks, lifecycle status (Live, Beta, Concept), evaluation metrics, and LLM-ready metadata for automated discovery. Agents are governed with public and private visibility controls for enterprise compliance.`}
-        facts={[`${agents.length} agents`, `${new Set(agents.map((a) => a.industry)).size} industries`, "Lifecycle governed", "LLM-indexed"]}
+        question="Where can I browse the Colaberry AI agents catalog?"
+        answer={`Browse the Colaberry AI agents catalog at ${canonicalUrl}. It includes ${agents.length} enterprise AI agents across ${new Set(agents.map((a) => a.industry)).size} industries, with ownership details, deployment runbooks, lifecycle status, evaluation metadata, and linked MCP servers and skills.`}
+        facts={[`${agents.length} agents`, `${new Set(agents.map((a) => a.industry)).size} industries`, "Catalog page", "LLM-indexed"]}
       />
 
       <CatalogSnapshot
@@ -734,4 +742,3 @@ function _SignalRail({
     </article>
   );
 }
-

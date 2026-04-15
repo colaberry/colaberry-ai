@@ -29,7 +29,7 @@ function toPlainText(value: unknown): string {
     .join(" ");
 }
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai";
 
 /**
  * Cap per content type to avoid Strapi timeout / OOM.

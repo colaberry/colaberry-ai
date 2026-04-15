@@ -59,7 +59,7 @@ const STATIC_ROUTES: Array<{ path: string; changefreq: SitemapUrl["changefreq"];
 ];
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai").replace(/\/$/, "");
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai").replace(/\/$/, "");
   const allowPrivate = process.env.NEXT_PUBLIC_SHOW_PRIVATE === "true";
   const visibilityFilter = allowPrivate ? undefined : "public";
 
