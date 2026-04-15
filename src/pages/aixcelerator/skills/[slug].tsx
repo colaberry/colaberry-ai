@@ -174,7 +174,7 @@ export default function SkillDetailPage({ skill, skillMdContent, relatedSkills, 
     (skill.agents?.length || 0) + (skill.mcpServers?.length || 0) + (skill.useCases?.length || 0);
 
   /* ---- SEO ---- */
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai";
   const canonicalUrl = `${siteUrl}/aixcelerator/skills/${skill.slug}`;
   const metaTitle = `${skill.name} | Skills | Colaberry AI`;
   const metaDescription =
@@ -735,7 +735,7 @@ function ReviewsSection({ skillName, skillSlug, sourceUrl }: { skillName: string
     return stored === "up" || stored === "down" ? stored : null;
   });
 
-  const agentPrompt = `Review the skill "${skillName}" and share your assessment. Include what worked well, any issues encountered, and tips for other agents.\n\nSkill page: https://colaberry.ai/aixcelerator/skills/${skillSlug}${sourceUrl ? `\nSource: ${sourceUrl}` : ""}`;
+  const agentPrompt = `Review the skill "${skillName}" and share your assessment. Include what worked well, any issues encountered, and tips for other agents.\n\nSkill page: https://www.colaberry.ai/aixcelerator/skills/${skillSlug}${sourceUrl ? `\nSource: ${sourceUrl}` : ""}`;
 
   const handleCopy = async () => {
     try {

@@ -145,10 +145,10 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
     }, {});
   }, [allSkills]);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai";
   const countLabel = catalogTotal > 0 ? `${catalogTotal.toLocaleString()}+` : "";
-  const metaTitle = `${countLabel} AI Skills — Reusable Capability Library | Colaberry AI`;
-  const metaDescription = `Explore ${countLabel} reusable AI skills across workflow, domain, and orchestration categories. Enterprise-grade discovery with structured metadata for agents and LLMs.`;
+  const metaTitle = `AI Skills Catalog | ${countLabel} Reusable AI Skills | Colaberry AI`;
+  const metaDescription = `Browse the Colaberry AI skills catalog with ${countLabel} reusable AI skills across workflow, domain, and orchestration categories. Compare providers, prerequisites, linked agents, and linked MCP servers.`;
   const seoMeta: SeoMeta = {
     title: metaTitle,
     description: metaDescription,
@@ -315,7 +315,7 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
               name: "How can I discover AI skills for my enterprise use case?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Browse the Colaberry AI Skills catalog at colaberry.ai/aixcelerator/skills. Filter by category, provider, industry, and status. Each skill profile includes linked MCP servers, prerequisites, and usage metrics to help you evaluate fit for your workflows.",
+                text: `Browse the Colaberry AI skills catalog at ${canonicalUrl}. Filter by category, provider, industry, and status. Each skill profile includes linked MCP servers, prerequisites, and usage metrics to help you evaluate fit for your workflows.`,
               },
             },
           ],
@@ -347,8 +347,8 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
             as="h1"
             size="xl"
             kicker="Skills catalog"
-            title="AI Skills"
-            description="A governed catalog of AI skills with structured metadata, lifecycle status, and enterprise-grade discovery for agents and workflows."
+            title="AI Skills Catalog"
+            description="Browse Colaberry's governed catalog of AI skills with structured metadata, lifecycle status, and enterprise-grade discovery for agents and workflows."
           />
         </div>
         <div className="hidden lg:block">
@@ -361,9 +361,9 @@ export default function Skills({ skills: initialSkills, allowPrivate, fetchError
       </div>
 
       <AeoQuickAnswer
-        question="What AI skills are available for enterprise agents and workflows?"
-        answer={`Colaberry AI indexes ${catalogTotal.toLocaleString()} reusable AI skills across ${categories.length} categories including workflow automation, domain-specific intelligence, and orchestration patterns. Skills are structured capability units that AI agents consume — each with metadata on prerequisites, supported models, provider details, and linked agents/MCP servers. The catalog supports enterprise-grade discovery with filtering by category, status, and provider.`}
-        facts={[`${catalogTotal.toLocaleString()} skills`, `${categories.length} categories`, "Agent-consumable", "Structured metadata"]}
+        question="Where can I browse the Colaberry AI skills catalog?"
+        answer={`Browse the Colaberry AI skills catalog at ${canonicalUrl}. The catalog includes ${countLabel} reusable AI skills with provider details, prerequisites, linked agents, linked MCP servers, and structured metadata for enterprise discovery.`}
+        facts={[`${countLabel} skills`, `${categories.length} categories`, "Catalog page", "Structured metadata"]}
       />
 
       <CatalogSnapshot

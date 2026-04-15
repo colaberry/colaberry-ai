@@ -334,9 +334,17 @@ export default function Home({
     },
   ];
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai";
   const metaDescription =
-    "Colaberry AI is a marketplace and destination for AI agents, MCP servers, skills, podcasts, case studies, and trusted research-built for SEO and LLM indexing.";
+    "Colaberry AI is an LLM-ready catalog and knowledge graph for AI agents, MCP servers, skills, podcasts, and enterprise AI discovery.";
+  const heroCatalogLinks = [
+    { href: "/aixcelerator/agents", label: "AI agents catalog" },
+    { href: "/aixcelerator/mcp", label: "MCP servers directory" },
+    { href: "/aixcelerator/skills", label: "AI skills catalog" },
+    { href: "/resources/podcasts", label: "AI podcasts" },
+    { href: "/aixcelerator/ontology", label: "Platform ontology" },
+    { href: "/aixcelerator/ecosystem", label: "Ecosystem graph" },
+  ];
   const seoMeta: SeoMeta = {
     title: "Colaberry AI | The go-to destination for agents, MCPs, and AI knowledge",
     description: metaDescription,
@@ -389,7 +397,7 @@ export default function Home({
           name: "How is Colaberry AI optimized for Answer Engine Optimization (AEO)?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Colaberry AI is built for AEO — Answer Engine Optimization. Every page includes JSON-LD structured data, the site provides /llms.txt for AI crawlers (GPTBot, ClaudeBot, PerplexityBot), and all 260+ podcast episodes include full searchable transcripts. The Colaberry Knowledge Graph maps relationships between agents, skills, MCP servers, and tools — making the content natively accessible to AI answer engines like ChatGPT, Perplexity, and Claude.",
+            text: "Colaberry AI is built for AEO — Answer Engine Optimization. Every page includes JSON-LD structured data, the site provides /llms.txt for AI crawlers including OAI-SearchBot, Claude-SearchBot, PerplexityBot, and Google-Extended, and all podcast episodes include full searchable transcripts. The Colaberry Knowledge Graph maps relationships between agents, skills, MCP servers, and tools — making the content natively accessible to AI answer engines like ChatGPT, Perplexity, Claude, and Gemini.",
           },
         },
       ],
@@ -464,6 +472,23 @@ export default function Home({
                 >
                   Explore platform
                 </Link>
+              </div>
+
+              <div className="hero-stagger-5 mt-6">
+                <p className="text-sm font-medium text-zinc-300">
+                  Explore the LLM-ready catalogs:
+                </p>
+                <div className="mt-3 flex flex-wrap justify-center gap-3 lg:justify-start">
+                  {heroCatalogLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-zinc-100 transition hover:bg-white/10"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
 

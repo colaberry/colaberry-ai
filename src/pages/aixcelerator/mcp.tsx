@@ -149,16 +149,17 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
     }, {});
   }, [allMCPs]);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
-  const metaTitle = "1,500+ MCP Servers — Model Context Protocol Directory | Colaberry AI";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai";
+  const countLabel = catalogTotal > 0 ? `${catalogTotal.toLocaleString()}+` : "1,500+";
+  const metaTitle = `MCP Servers Directory | ${countLabel} Model Context Protocol Servers | Colaberry AI`;
   const metaDescription =
-    "Browse 1,500+ Model Context Protocol servers with tool access, connectors, auth readiness, and integration templates. The largest MCP directory for enterprise AI.";
+    `Browse the Colaberry MCP servers directory with ${countLabel} Model Context Protocol servers. Compare tool access, connectors, authentication methods, hosting options, and enterprise integration readiness.`;
   const seoMeta: SeoMeta = {
     title: metaTitle,
     description: metaDescription,
     canonical: buildCanonical("/aixcelerator/mcp"),
     ogImage: "/og/mcp.png",
-    ogImageAlt: "Colaberry AI — 1,500+ MCP servers directory",
+    ogImageAlt: `Colaberry AI — ${countLabel} MCP servers directory`,
   };
   const canonicalUrl = seoMeta.canonical!;
   const jsonLd = {
@@ -331,7 +332,7 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
               name: "Where can I find a directory of MCP servers?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Colaberry AI hosts the largest curated MCP server directory with 1,500+ servers. Browse by category (Developer Tools, Communication, CRM, Cloud, Data), filter by authentication method, and view integration details for each server at colaberry.ai/aixcelerator/mcp.",
+                text: `Colaberry AI hosts a curated MCP servers directory with ${countLabel} Model Context Protocol servers. Browse by category, filter by authentication method, and review integration details for each server at ${canonicalUrl}.`,
               },
             },
           ],
@@ -363,8 +364,8 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
             as="h1"
             size="xl"
             kicker="MCP library"
-            title="MCP Servers"
-            description="A curated MCP server library for connecting agents to business apps, data, and developer tools-with public and private options for secure deployment."
+            title="MCP Servers Directory"
+            description="Browse Colaberry's curated MCP servers directory for connecting agents to business apps, data, and developer tools with public and private deployment options."
           />
         </div>
         <div className="hidden lg:block">
@@ -377,9 +378,9 @@ export default function MCP({ mcps: initialMCPs, allowPrivate, fetchError, total
       </div>
 
       <AeoQuickAnswer
-        question="What are the best MCP servers for enterprise AI integration?"
-        answer={`Colaberry AI maintains the largest curated directory of ${catalogTotal.toLocaleString()} Model Context Protocol (MCP) servers for enterprise AI integration. MCP servers provide standardized tool access, connectors, and integration templates for AI agents. Top categories include Developer Tools, Data & Analytics, Communication (Slack, Microsoft Teams), CRM (Salesforce), and Cloud Infrastructure (AWS, GCP). Each server listing includes authentication methods, hosting options, compatibility details, and integration guides.`}
-        facts={[`${catalogTotal.toLocaleString()} MCP servers`, `${industries.length} categories`, "Standardized protocol", "Enterprise-ready"]}
+        question="Where can I browse the Colaberry MCP servers directory?"
+        answer={`Browse the Colaberry MCP servers directory at ${canonicalUrl}. The catalog includes ${countLabel} Model Context Protocol servers with tool access patterns, authentication methods, hosting options, compatibility details, and enterprise integration guidance.`}
+        facts={[`${countLabel} MCP servers`, `${industries.length} categories`, "Directory page", "Enterprise-ready"]}
       />
 
       <CatalogSnapshot
@@ -788,4 +789,3 @@ function _SignalRail({
     </article>
   );
 }
-
