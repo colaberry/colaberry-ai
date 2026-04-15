@@ -74,6 +74,19 @@ These routes exist but are hidden from navigation until approved:
 - `/resources/articles` — Articles listing
 - `/resources/case-studies` — Case Studies listing
 
+**Interactive Demos (`/demo/*`):**
+Client-facing interactive AI demos live under `/demo` and have their own top-level nav item ("Demos", order 2, between Platform and Industries). The surface is intentionally thin to keep future demo onboarding cheap:
+
+| Route | Purpose |
+|-------|---------|
+| `/demo` | Hub listing all demos (static cards from `src/data/demos.ts`) |
+| `/demo/[slug]` | SSG detail page template (hero + metrics + features + tech stack + launch CTA). ISR `revalidate: 3600`, `fallback: "blocking"`. Currently pre-renders `/demo/goggle-vton`. |
+| `/demo/lens` | Existing static iframe wrapper for the Goggle VTON app (unchanged; preserved URL for production demo share-links). Contains a "← Details" breadcrumb back to `/demo/goggle-vton`. |
+
+Adding a new demo = one record in `src/data/demos.ts`. The hub + detail pages pick it up automatically; no code changes required. If the demo lives at a different embed URL (not `/demo/lens`), set `launchUrl` to the appropriate path/URL. Next.js Pages Router static routes always win over `[slug].tsx`, so reserved static slugs (`lens`, `index`) must NOT be used as `slug` values in the registry.
+
+Schema.org: hub emits `ItemList` JSON-LD; detail page emits `WebApplication` JSON-LD. Built for AEO-first discovery.
+
 ## Project Structure
 ```
 src/
@@ -94,7 +107,8 @@ src/
 - `src/lib/ontologyTypes.ts` — Shared type system: ContentOntologyConfig, ContentCollection, SolutionStack
 - `src/lib/ontologyRegistry.ts` — Central registry + cross-type relation definitions
 - `src/lib/graphUtils.ts` — Generic graph utilities: `buildGraphData()`, colors, topology
-- `src/components/Layout.tsx` — Header + footer + nav (1,800 lines)
+- `src/components/Layout.tsx` — Header + footer + nav (1,800 lines). `fallbackNavigation.headerLinks` is the source of truth for the top nav when the CMS `global-navigation` content type is not yet published. Current nav order: Platform → **Demos** → Industries → Resources → Updates.
+- `src/data/demos.ts` — Demo registry (type `DemoConfig`) powering `/demo` hub and `/demo/[slug]` detail pages. Add a record, get a detail page for free.
 - `src/components/ContentTypeIcon.tsx` — Premium SVG icons for 5 content types
 - `src/components/LLMArchitectureDeepDive.tsx` — Sprint v4 renderer for the `deepDive` Strapi Dynamic Zone. Dispatches per `__component` to render heading / paragraph / callout / code-block / table / list / image / references blocks as semantic HTML inside `.prose`.
 - `src/lib/deepDiveToPlaintext.ts` — Sprint v4 AEO helper. Exports `deepDiveToPlaintext()`, `deepDiveToCitations()`, and `deepDiveWordCount()` — used by `[slug].tsx` to emit `TechArticle` JSON-LD with `articleBody`, `wordCount`, and structured `citation` array for AI answer engines.

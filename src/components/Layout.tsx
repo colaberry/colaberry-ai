@@ -44,15 +44,21 @@ const fallbackNavigation: GlobalNavigation = {
       ],
     },
     {
+      label: "Demos",
+      href: "/demo",
+      order: 2,
+      group: "header",
+    },
+    {
       label: "Industries",
       href: "/industries",
-      order: 2,
+      order: 3,
       group: "header",
     },
     {
       label: "Resources",
       href: "/resources",
-      order: 3,
+      order: 4,
       group: "header",
       children: [
         { label: "Podcasts", href: "/resources/podcasts", order: 1 },
@@ -62,7 +68,7 @@ const fallbackNavigation: GlobalNavigation = {
     {
       label: "Updates",
       href: "/updates",
-      order: 4,
+      order: 5,
       group: "header",
     },
   ],
