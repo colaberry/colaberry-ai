@@ -15,14 +15,17 @@ This directory makes future incidents a **single-command restore**.
 | File | Service | Project | Region |
 |------|---------|---------|--------|
 | `colaberry-ai-prod.yaml` | `colaberry-ai-prod` (prod, www.colaberry.ai) | `colaberryaiwebsite` | `us-east1` |
+| `colaberry-ai.yaml` | `colaberry-ai` (dev, dev.colaberry.ai) | `colaberryaiwebsite` | `us-east1` |
 
-Dev service `colaberry-ai` (dev.colaberry.ai) has the same wipe condition and should be snapshotted here in a follow-up task.
+Both services were migrated to Secret Manager refs on **2026-04-15** in the same canary-based flow (`--no-traffic --tag=canary` → test → `update-traffic --to-latest` → `remove-tags=canary`). Dev had **never** successfully run the `buzzsprout-sync-dev-6h` scheduler before this migration — it returned 401 on every single run for 14+ days — because `PODCAST_SYNC_SECRET` and `BUZZSPROUT_API_TOKEN` were never configured on the dev service. A fresh 64-char hex `PODCAST_SYNC_SECRET` was generated for dev, stored in `podcast-sync-secret-dev`, and the scheduler's `Authorization: Bearer …` header was rotated to match.
 
 ## What's in the snapshot
 
 - Full service spec as produced by `gcloud run services describe ... --format=export`
 - All env vars (plain values for non-sensitive config)
-- **Secret Manager refs** for sensitive values (`PODCAST_SYNC_SECRET`, `BUZZSPROUT_API_TOKEN`, `CMS_API_TOKEN`, `NEWSLETTER_UNSUBSCRIBE_SECRET`, `NEWSLETTER_REPORT_API_KEY`) — the YAML contains the secret *reference*, not the value itself
+- **Secret Manager refs** for sensitive values — the YAML contains the secret *reference*, not the value itself:
+  - prod: `PODCAST_SYNC_SECRET` (→`podcast-sync-secret`), `BUZZSPROUT_API_TOKEN` (→`buzzsprout-api-token`), `CMS_API_TOKEN` (→`cms-api-token-prod`), `NEWSLETTER_UNSUBSCRIBE_SECRET`, `NEWSLETTER_REPORT_API_KEY`
+  - dev: `PODCAST_SYNC_SECRET` (→`podcast-sync-secret-dev`), `BUZZSPROUT_API_TOKEN` (→`buzzsprout-api-token`, **shared with prod** — same Buzzsprout podcast ID), `CMS_API_TOKEN` (→`cms-api-token-dev`)
 - Traffic config (100% → LATEST)
 - Container image URI pinned to a specific SHA
 
@@ -40,20 +43,24 @@ If the prod service ever gets into a bad state (env vars wiped, wrong image, bad
 # 1. Verify you're authenticated against the right project
 gcloud config set project colaberryaiwebsite
 
+# Pick the service: colaberry-ai-prod (prod) or colaberry-ai (dev)
+SERVICE=colaberry-ai-prod
+YAML=infra/cloud-run/${SERVICE}.yaml
+HOST=https://www.colaberry.ai   # dev: https://dev.colaberry.ai
+
 # 2. Dry-run: diff current against snapshot
-diff <(gcloud run services describe colaberry-ai-prod --region=us-east1 --format=export) \
-     infra/cloud-run/colaberry-ai-prod.yaml
+diff <(gcloud run services describe "$SERVICE" --region=us-east1 --format=export) "$YAML"
 
 # 3. Apply — this performs a Services.ReplaceService, creating a new revision
-gcloud run services replace infra/cloud-run/colaberry-ai-prod.yaml \
+gcloud run services replace "$YAML" \
   --region=us-east1 --project=colaberryaiwebsite
 
 # 4. Verify traffic, env vars, and a probe request
-gcloud run services describe colaberry-ai-prod \
+gcloud run services describe "$SERVICE" \
   --region=us-east1 --project=colaberryaiwebsite \
   --format="value(status.traffic[].revisionName,status.traffic[].percent)"
 
-curl -sS https://www.colaberry.ai/api/podcasts?limit=1
+curl -sS "$HOST/api/podcasts?limit=1"
 ```
 
 The new revision will use the current Secret Manager values (because the secret refs use `:latest`), so rotated secrets are preserved.
@@ -84,14 +91,19 @@ Re-snapshotting after every image deploy is overkill — the image URI pinned in
 
 A log-based metric `buzzsprout_sync_failures` watches for non-200 responses from the `buzzsprout-sync-6h` Cloud Scheduler job. If the scheduler starts returning 401/500/etc., an alert fires within minutes instead of waiting 7 days for a human to notice stale podcast content on the homepage.
 
-Query the metric:
+Query the metric for either environment:
 ```bash
+# prod
 gcloud logging read 'resource.type="cloud_scheduler_job" AND resource.labels.job_id="buzzsprout-sync-6h" AND httpRequest.status!=200' \
+  --project=colaberryaiwebsite --limit=20
+
+# dev
+gcloud logging read 'resource.type="cloud_scheduler_job" AND resource.labels.job_id="buzzsprout-sync-dev-6h" AND httpRequest.status!=200' \
   --project=colaberryaiwebsite --limit=20
 ```
 
 ## Follow-ups (not yet done)
 
-- [ ] Snapshot `colaberry-ai` (dev) to `colaberry-ai.yaml` after restoring its env vars
+- [x] ~~Snapshot `colaberry-ai` (dev) to `colaberry-ai.yaml` after restoring its env vars~~ — done 2026-04-15 (fresh `PODCAST_SYNC_SECRET` generated, scheduler header rotated, dev's first-ever 200 from `buzzsprout-sync-dev-6h` recorded at `2026-04-15T14:20:06Z`)
 - [ ] Terraform for Secret Manager + IAM bindings so the whole state is reproducible
 - [ ] Migrate `cloudbuild.yaml` to always use `--set-secrets=` for sensitive values on first deploy, so a fresh project bootstrap doesn't need manual secret creation
