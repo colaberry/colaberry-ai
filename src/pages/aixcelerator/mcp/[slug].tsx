@@ -107,7 +107,7 @@ export default function MCPDetail({ mcp, relatedServers }: MCPDetailProps) {
   const metaDescription =
     mcp.description ||
     "MCP server profile with structured metadata for discoverability and deployment readiness.";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai";
   const canonicalUrl = `${siteUrl}/aixcelerator/mcp/${mcp.slug || mcp.id}`;
   const seoMeta: SeoMeta = {
     title: metaTitle,

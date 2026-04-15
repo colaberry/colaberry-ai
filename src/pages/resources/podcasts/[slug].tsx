@@ -93,7 +93,7 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
   const audioUrl = rawAudioUrl?.includes("buzzsprout.com/")
     ? `/api/audio-stream?url=${encodeURIComponent(rawAudioUrl)}`
     : rawAudioUrl;
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai").replace(/\/$/, "");
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai").replace(/\/$/, "");
   const canonicalUrl = `${siteUrl}/resources/podcasts/${episode.slug}`;
   const metaDescription =
     (typeof episode.description === "string" && episode.description.trim()) ||
