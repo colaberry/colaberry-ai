@@ -45,6 +45,9 @@ skills-lock.json
 test-results/
 playwright-report/
 
+# demo walkthrough generator scratch (Y4M fake-camera inputs, raw recordings)
+tmp/
+
 # large screenshot directories (local capture artifacts)
 screenshots-linkedin-launch/
 screenshots-notebooklm/

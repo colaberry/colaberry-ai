@@ -61,7 +61,7 @@ Chromium supports `--use-file-for-fake-video-capture` to pipe a `.y4m` video fil
 
 Output: a **real demo recording** of the product working on a real face, fully automated, reproducible on every release. No AI video tool needed. Full extension of our existing `scripts/generate-demo-walkthrough.mjs`.
 
-**Karun: if you want the deepest automation, say "ship path B" and I'll extend the generator to this. It's ~120 more lines of `.mjs` plus one stock video file.**
+**Status: shipped (2026-04-16).** The generator now supports `--mode=explainer` and a companion `scripts/prepare-fake-camera.mjs` converts any face clip to the Y4M Chromium needs. See **§14 — Path B usage** for the exact two-step flow.
 
 ### Path C · Human shoot (when there's budget + time)
 
@@ -383,9 +383,66 @@ Update the `VideoObject` JSON-LD in the detail page the same commit.
 
 | Question | Answer | Go |
 |---|---|---|
-| Need it this week, zero budget? | Path B (I extend the Playwright generator with fake-camera mode) | Say **"ship path B"** |
+| Need it this week, zero budget? | **Path B (shipped).** Run the two commands in §14. | Follow §14 |
 | Have $50 + 2 hours, want the cleanest edit? | Path A (Veo 3.1 or Sora 2 for 2 B-roll clips, manual screen capture for 5 UI clips, ElevenLabs VO, edit in DaVinci Resolve free) | Follow §4–§7 step-by-step |
 | Have a week + budget for an agency? | Path C (hand this doc + shot list + brand lock to the agency) | Treat §4–§10 as the SOW |
+
+---
+
+## 14. Path B — usage (Playwright + fake camera)
+
+Two scripts, two commands. Both live at the repo root under `scripts/`.
+
+**Prereqs (one time):**
+- `ffmpeg` in `$PATH` — `brew install ffmpeg` on macOS.
+- Playwright Chromium installed — `npx playwright install chromium`.
+- A short face clip to use as the fake webcam feed. Any MP4 / MOV / WEBM of a single clearly-visible front-facing face works (smartphone selfie video, CC0 stock from pexels.com / pixabay.com filtered to "people" + "face"). 10–20 seconds is ideal — Chromium auto-loops the file during playback, so a short clip covers the whole recording. Higher-quality input = more convincing overlay.
+
+**Step 1 — convert the face clip to Y4M (Chromium's required fake-camera format):**
+
+```bash
+node scripts/prepare-fake-camera.mjs --input ~/path/to/face-clip.mp4
+```
+
+Writes `tmp/fake-camera.y4m` (gitignored under `tmp/`). Defaults to 640×480 @ 30fps, 12 s duration — override with `--width`, `--height`, `--fps`, `--duration` if needed.
+
+**Step 2 — record the explainer:**
+
+```bash
+node scripts/generate-demo-walkthrough.mjs --mode=explainer
+```
+
+Launches Chromium with `--use-file-for-fake-video-capture=tmp/fake-camera.y4m` pointed at the live Cloud Run VTON app, drives it through the architecture-aligned pipeline (detect → classify → fit → recommend → render per `Goggle_VTON_Architecture.pdf §6.1`), then renders `public/videos/goggle-vton-explainer.mp4` + a poster JPG, bracketed by auto-generated title + end cards.
+
+Total runtime: ~45 s of actual recording + ~20 s ffmpeg stitching. Reproducible on every release.
+
+**Beat structure the Playwright script executes:**
+
+| # | Stage | What the camera sees |
+|---|---|---|
+| 0 | Init (6 s) | Wait for React SPA mount, WASM load, MediaPipe first frame (covers Cloud Run cold starts) |
+| 1 | **DETECT** (5 s) | Live 3D overlay, MediaPipe 478-point face mesh at 30–60 FPS |
+| 2 | **CLASSIFY** (~5 s) | Click "Photo Mode" → "Capture photo" — shape classifier runs on the stable frame |
+| 3 | **FIT** (~8 s) | Click "Try All Frames" then "Try Another" 3× — trimesh width-scoring variety |
+| 4 | **RECOMMEND** (5 s) | Scroll to the LangGraph + GPT-4.1 "Recommended for You" panel |
+| 5 | **RENDER** (5 s) | Click "Live Mode" — close on the live Three.js + R3F overlay |
+
+**Wiring the result into the site:** `src/data/demos.ts` already points `videoEmbedUrl` at `/videos/goggle-vton-walkthrough.mp4` (the tour placeholder). When the explainer is ready to ship, swap that to `/videos/goggle-vton-explainer.mp4` (and the matching `videoPoster`) — the detail page at `src/pages/demo/[slug].tsx` detects the extension and renders `<video>` either way.
+
+**Useful flags:**
+
+| Flag | Default | When to use |
+|---|---|---|
+| `--mode=tour` | `tour` | Page scroll-through of `/demo/[slug]` on local dev server (the original generator) |
+| `--mode=explainer` | — | This path (real product in action) |
+| `--vton-url <url>` | Cloud Run URL baked in | Point at a staging / preview VTON deployment |
+| `--camera-file <path>` | `tmp/fake-camera.y4m` | Use a different Y4M without re-running step 1 |
+| `--no-titles` | off | Raw recording only (skip brand title + end cards — useful when splicing into a longer edit) |
+| `--headed` | off | Open Chromium with UI for debugging selector drift |
+
+**If a step fails:** re-run with `--headed`. The VTON UI labels the script looks for ("Photo Mode", "Capture photo", "Try All Frames", "Try Another", "Live Mode") are matched with defensive `.or()` chains, but if the VTON app renames a button the corresponding beat will silently hold — the video still concatenates, but that beat shows a static frame. Fix by updating the selector in `recordExplainer()` and re-running.
+
+**Hand-off to Path A / C:** the explainer MP4 is also usable as **source footage** for a human edit. Drop it into DaVinci Resolve, overlay the ElevenLabs VO from §6, trim beats to taste. Path B = the machine baseline; Paths A and C build on it.
 
 ---
 
