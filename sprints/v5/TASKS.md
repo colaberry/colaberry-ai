@@ -57,7 +57,7 @@ Tasks are sequenced so each builds on the previous. Priority: **P0** = must-ship
     - `src/lib/distribution/channelConfig.ts` (new)
     - `src/lib/distribution/types.ts` (extend with `ChannelConfig`)
 
-- [ ] **Task 5: Build Mustache-style template engine** (P0)
+- [x] **Task 5: Build Mustache-style template engine** (P0)
   - Acceptance: `src/lib/distribution/template.ts` exports
     `renderTemplate(tpl: string, ctx: DistributableEntry): string` that
     handles `{{title}}`, `{{summary}}`, `{{url}}`, `{{isNew ? "New" : "Updated"}}`
@@ -69,6 +69,16 @@ Tasks are sequenced so each builds on the previous. Priority: **P0** = must-ship
   - Files:
     - `src/lib/distribution/template.ts` (new)
     - `src/lib/distribution/__tests__/template.test.ts` (new — Vitest or Jest)
+  - Completed: 2026-04-16 — Engine shipped as Mustache-style `{{#tags}}{{.}}{{/tags}}`
+    (sections not simple ternary, same effect). 44 unit tests under `node:test`
+    (zero new deps) covering all interpolation tokens, iteration + truthy/inverted
+    sections, `escapeHtml` (incl. URL immunity), `maxLength` word-boundary trim,
+    unknown tokens, and malformed input (non-string template, unclosed `{{`,
+    unclosed section, stray `{{/tag}}`). Run via
+    `node --test src/lib/distribution/__tests__/template.test.ts`. Added
+    `allowImportingTsExtensions: true` to `tsconfig.json` so TS imports resolve
+    for Node 24 native type-stripping. `npm run build` + `npx tsc --noEmit` +
+    `npx eslint` all clean.
 
 - [ ] **Task 6: Rewrite `templates.ts` + `orchestrator.ts` to iterate CMS channels** (P0)
   - Acceptance: `buildDrafts()` in `templates.ts` takes a `ChannelConfig[]`
