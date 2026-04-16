@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import KineticHeading from "./KineticHeading";
 
 type SectionHeaderProps = {
   kicker?: string;
@@ -72,9 +73,27 @@ export default function SectionHeader({
           <span>{kicker}</span>
         </div>
       ) : null}
-      <HeadingTag className={`${rd1} font-sans font-bold text-zinc-900 dark:text-zinc-50 ${titleClass} ${gradient ? "text-gradient" : ""}`}>
-        {title}
-      </HeadingTag>
+      {as === "h1" && !wipeTitle ? (
+        // Sprint v5 kinetic-pacing — route H1 titles through KineticHeading so
+        // every page that uses SectionHeader as="h1" (29 pages) inherits the
+        // word-by-word line-mask reveal. Preserves the `rd1` className flow
+        // (reveal / reveal-delay-1) so IntersectionObserver staging still
+        // participates in the cascade. Server-renders the full title in an
+        // sr-only span for AEO crawlability. `wipeTitle` is still respected
+        // (reserved for flagship H2s, but if a consumer ever opts an H1 into
+        // the editorial wipe we defer to that intent).
+        <KineticHeading
+          as="h1"
+          text={title}
+          className={`${rd1} font-sans font-bold text-zinc-900 dark:text-zinc-50 ${titleClass} ${gradient ? "text-gradient" : ""}`}
+          duration={0.9}
+          stagger={0.08}
+        />
+      ) : (
+        <HeadingTag className={`${rd1} font-sans font-bold text-zinc-900 dark:text-zinc-50 ${titleClass} ${gradient ? "text-gradient" : ""}`}>
+          {title}
+        </HeadingTag>
+      )}
       {description ? (
         <p className={`${rd2} ${descriptionClass}`}>{description}</p>
       ) : null}

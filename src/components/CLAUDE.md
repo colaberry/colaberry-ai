@@ -54,6 +54,17 @@ The IntersectionObserver in `Layout.tsx` observes these classes and adds `.revea
 - **`HeroGraphBloom`** — SVG "coded motion" graph constellation (25 nodes, 20+ edges). Uses `<m.line>` with `pathLength: 0 → 1` for stroke-trace entry, then staggered `<m.circle>` fade-ins. Center node = coral; primaries white; secondaries muted zinc. Deterministic seeded positions (SSR-safe). Mounts in `/pages/index.tsx` hero (replaces legacy `.hero-orb-*`).
 - **`KineticHeading`** — Line-mask word-by-word reveal (110% y-offset, 0.9s, 0.08s stagger). Server-renders the plain `text` prop via an `sr-only` span so AEO crawlers still see the full copy. Accepts `children` for appended content (e.g. the hero word rotator sits as a child of the H1).
 
+### Site-wide Kinetic-Pacing Rollout (Sprint v5.1)
+
+The kinetic-pacing treatment is applied site-wide, not just the homepage. Two shared components are the single lever for ~45 pages:
+
+- **`SectionHeader`** — when `as="h1"` (and not `wipeTitle`), the title is rendered through `KineticHeading` automatically. The `rd1` className (reveal / reveal-delay-1) is forwarded so the IntersectionObserver cascade still participates. This covers **~29 pages** that use `<SectionHeader as="h1" />` as their page H1 with a single edit. `h2`/`h3` headings keep the plain `<HeadingTag>` path so `.reveal-wipe` (editorial clip-path) stays reserved for flagship H2s.
+- **`EnterprisePageHero`** — carries three scroll-linked parallax layers (grain `z-[-30]`, radial mesh `z-[-20]`, coral punch `z-[-10]`) inside a `relative isolate overflow-hidden` section wrapper, with magnitudes `grainY ±10`, `meshY ±32`, `coralY ±30` (lighter than the homepage PlatformTabsSection since page heroes scroll in different viewport positions). The H1 is rendered via `KineticHeading` with `duration=0.9, stagger=0.08`. This covers **~16 detail/listing pages** that mount `<EnterprisePageHero />` as their top hero.
+
+Raw-`<h1>` pages that sit outside the two shared components are wired individually: `src/pages/resources/podcasts/index.tsx`, `src/pages/resources/podcasts/[slug].tsx` (tighter pacing: `duration=0.7, stagger=0.05` for shorter episode titles), `src/pages/privacy-policy.tsx`, `src/pages/cookie-policy.tsx`. `demo/lens.tsx` and `brand-preview.tsx` are intentionally skipped (low-priority utility surfaces).
+
+All KineticHeading mounts respect `useReducedMotion()` — under reduced-motion the plain title renders in a single static `<Tag>`, and the parallax `useTransform` ranges collapse to `[0, 0]` so no y-drift happens.
+
 ## Graph Components
 
 - Use `react-force-graph-2d` via `next/dynamic` (no SSR)

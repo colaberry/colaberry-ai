@@ -2,6 +2,7 @@ import Layout from "../../../components/Layout";
 import AeoQuickAnswer from "../../../components/AeoQuickAnswer";
 import EnterpriseCtaBand from "../../../components/EnterpriseCtaBand";
 import SubstackEmbedSignup from "../../../components/SubstackEmbedSignup";
+import KineticHeading from "../../../components/KineticHeading";
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
@@ -131,14 +132,15 @@ export default function Podcasts({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMore, currentPage]);
 
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai").replace(/\/$/, "");
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai").replace(/\/$/, "");
   const canonicalUrl = `${siteUrl}${canonicalPath}`;
+  const countLabel = displayTotal > 0 ? `${displayTotal}+` : "260+";
   const seoMeta: SeoMeta = {
-    title: "260+ AI Podcasts with Full Transcripts | Colaberry AI",
-    description: "Listen to 260+ AI podcast episodes with full transcripts, timestamps, and linked artifacts. Enterprise AI insights from industry leaders.",
+    title: `AI Podcasts Catalog | ${countLabel} Episodes with Full Transcripts | Colaberry AI`,
+    description: `Browse the Colaberry AI podcasts catalog with ${countLabel} episodes, full transcripts, timestamps, and linked artifacts for enterprise AI discovery and citation.`,
     canonical: canonicalUrl,
     ogImage: "/og/podcasts.png",
-    ogImageAlt: "Colaberry AI — 260+ AI podcast episodes with full transcripts",
+    ogImageAlt: `Colaberry AI — ${countLabel} AI podcast episodes with full transcripts`,
   };
   const itemListSchema = {
     "@context": "https://schema.org",
@@ -172,7 +174,7 @@ export default function Podcasts({
               name: "Where can I find AI podcasts with full searchable transcripts?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Colaberry AI offers 260+ AI podcast episodes with full searchable transcripts generated via Deepgram. Episodes cover enterprise AI strategy, agent development, MCP servers, and responsible AI governance. Browse and search at colaberry.ai/resources/podcasts.",
+                text: `The Colaberry AI podcasts catalog is available at ${canonicalUrl}. It includes ${countLabel} AI podcast episodes with full searchable transcripts, timestamps, and linked artifacts for enterprise AI research.`,
               },
             },
             {
@@ -199,16 +201,21 @@ export default function Podcasts({
 
       {/* ── AEO Quick Answer ── */}
       <AeoQuickAnswer
-        question="What AI podcasts does Colaberry AI offer with full transcripts?"
-        answer={`Colaberry AI hosts a library of ${displayTotal}+ AI podcast episodes with full searchable transcripts, timestamps, and linked artifacts. Episodes cover enterprise AI strategy, agent development, MCP server integrations, and responsible AI governance. Each episode includes connections to related agents, skills, and MCP servers in the Colaberry AI knowledge graph. Transcripts are generated via Deepgram for maximum accuracy.`}
-        facts={[`${displayTotal}+ episodes`, "Full transcripts", "Searchable", "Knowledge graph linked"]}
+        question="Where can I browse the Colaberry AI podcasts catalog?"
+        answer={`Browse the Colaberry AI podcasts catalog at ${canonicalUrl}. It includes ${countLabel} AI podcast episodes with full searchable transcripts, timestamps, and linked artifacts. Episodes connect to related agents, skills, and MCP servers in the Colaberry AI knowledge graph.`}
+        facts={[`${countLabel} episodes`, "Full transcripts", "Catalog page", "Knowledge graph linked"]}
       />
 
       {/* ── Clean header with pill tabs + search ── */}
       <section className="reveal section-shell px-4 pt-6 pb-4 sm:px-6 sm:pt-8">
-        <h1 className="font-display text-display-sm font-bold text-zinc-900 dark:text-zinc-100 sm:text-display-md md:text-display-lg lg:text-display-xl">
-          Podcasts
-        </h1>
+        <KineticHeading
+          as="h1"
+          text="AI Podcasts Catalog"
+          className="font-display text-display-sm font-bold text-zinc-900 dark:text-zinc-100 sm:text-display-md md:text-display-lg lg:text-display-xl"
+        />
+        <p className="mt-3 max-w-3xl text-sm text-zinc-600 dark:text-zinc-300 sm:text-base">
+          Browse full transcripts, timestamps, and linked artifacts across enterprise AI podcast episodes.
+        </p>
 
         <div className="mt-4 flex items-center justify-between">
           {/* Sort pill tabs */}
