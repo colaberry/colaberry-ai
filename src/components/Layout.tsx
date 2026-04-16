@@ -943,7 +943,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         { threshold: 0, rootMargin: "0px 0px -60px 0px" },
       );
       document
-        .querySelectorAll(".reveal:not(.revealed), .stagger-grid:not(.revealed)")
+        .querySelectorAll(
+          ".reveal:not(.revealed), .stagger-grid:not(.revealed), .reveal-wipe:not(.revealed)",
+        )
         .forEach((el) => observer.observe(el));
     };
 

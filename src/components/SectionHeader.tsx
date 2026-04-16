@@ -11,6 +11,13 @@ type SectionHeaderProps = {
   children?: ReactNode;
   /** Set false to disable scroll-reveal animation (e.g. when inside a parent that already animates). Default true. */
   animate?: boolean;
+  /**
+   * Opt the heading into the editorial left-to-right clip-path wipe
+   * (Sprint v5 kinetic-pacing). Reserved for flagship H2s on the homepage —
+   * too loud for dense listing pages. Underlying HTML still contains full
+   * crawlable text pre-hydration (AEO-safe).
+   */
+  wipeTitle?: boolean;
 };
 
 export default function SectionHeader({
@@ -23,6 +30,7 @@ export default function SectionHeader({
   gradient = false,
   children,
   animate = true,
+  wipeTitle = false,
 }: SectionHeaderProps) {
   const HeadingTag = as;
   const titleClass =
@@ -42,7 +50,15 @@ export default function SectionHeader({
         : "max-w-3xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400";
 
   const r = animate ? "reveal" : "";
-  const rd1 = animate ? "reveal reveal-delay-1" : "";
+  // wipeTitle takes precedence over the generic animate flag because the two
+  // target different elements (the title vs. the wrapper). Keeping wipeTitle
+  // independent means a parent can animate={false} while still opting the
+  // title into the editorial wipe.
+  const rd1 = wipeTitle
+    ? "reveal-wipe"
+    : animate
+      ? "reveal reveal-delay-1"
+      : "";
   const rd2 = animate ? "reveal reveal-delay-2" : "";
   const rd3 = animate ? "reveal reveal-delay-3" : "";
 

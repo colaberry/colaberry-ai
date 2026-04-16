@@ -12,6 +12,7 @@
     "audit:data": "node scripts/audit-data-readiness.mjs"
   },
   "dependencies": {
+    "framer-motion": "^11.18.2",
     "next": "^16.2.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",

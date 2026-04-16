@@ -57,11 +57,23 @@
 6. Use `ContentTypeIcon` for content type icons — never emoji
 
 **Locked Component Classes:**
-- `.catalog-card` — listing cards (1px border, no hover lift)
+- `.catalog-card` — listing cards (1px border, **Sprint v5:** 2px soft-UI micro-lift on hover via `translate3d(0, -2px, 0)` + `var(--shadow-lg)`)
 - `.surface-panel` — filter/search panels
 - `.chip-brand` — active filter (coral accent)
 - `.chip-neutral` — default filter (zinc scale)
 - `.detail-section` — content sections on detail pages
+
+**Kinetic-Pacing Easing Tokens (Sprint v5 — use, never hard-code a cubic-bezier):**
+- `--ease-entry: cubic-bezier(0.22, 1, 0.36, 1)` — content entering frame (reveal, KineticHeading, HeroGraphBloom)
+- `--ease-exit: cubic-bezier(0.64, 0, 0.78, 0)` — content leaving frame
+- `--ease-soft-ui: cubic-bezier(0.4, 0, 0.2, 1)` — hover, press, lift (`.btn`, `.catalog-card`) — zero overshoot
+- `--ease-magnetic: cubic-bezier(0.34, 1.56, 0.64, 1)` — pointer springs ONLY, never content
+
+**Reveal classes:** `.reveal`, `.reveal-left`, `.reveal-right`, `.reveal-scale`, `.reveal-wipe`, `.stagger-grid` — all observed by `Layout.tsx` IntersectionObserver. `.reveal-wipe` (editorial left-to-right clip-path, reserved for flagship H2s) opts in via `<SectionHeader wipeTitle />`.
+
+**Framer Motion:** Installed for Sprint v5. `_app.tsx` wraps everything in `<LazyMotion features={domAnimation} strict>`. Import `{ m, useScroll, useTransform, useReducedMotion } from "framer-motion"` — use lowercase `m.*` components (smaller bundle than full `motion.*`). All motion components must respect `useReducedMotion()`.
+
+**Global reduced-motion guard:** `@media (prefers-reduced-motion: reduce)` block at end of `globals.css` collapses all animation / transition durations to 0.01ms and nukes reveal-class transforms. Framer Motion components additionally check `useReducedMotion()`.
 
 **3-Layer Ontology Pattern (standard for all content types):**
 The 3-layer ontology approach (Taxonomy → Relation Graph → Collections) is Colaberry's unique knowledge graph method. All 5 content types use generic templates (`OntologyPageTemplate`, `GraphPageTemplate`, `CollectionsPageTemplate`, `CollectionDetailTemplate`) with `ContentOntologyConfig`.
@@ -101,7 +113,9 @@ src/
 ## Key Files
 - `src/styles/globals.css` — ALL CSS custom properties and component classes
 - `tailwind.config.ts` — Zinc color scale, Inter fonts, animation keyframes
-- `src/pages/_app.tsx` — Font loading (Inter), global layout wrapper
+- `src/pages/_app.tsx` — Font loading (Inter), global layout wrapper, `<LazyMotion features={domAnimation} strict>` provider for Framer Motion (Sprint v5 kinetic-pacing)
+- `src/components/HeroGraphBloom.tsx` — Sprint v5 kinetic-pacing SVG coded-motion graph constellation. Replaces legacy `.hero-orb-*` gradient blur stack with a tangible, brand-relevant knowledge-graph artifact. Deterministic seeded positions (SSR-safe), `pathLength` edge tracing, staggered node fade, center coral pulse. Respects `useReducedMotion()`.
+- `src/components/KineticHeading.tsx` — Sprint v5 kinetic-pacing line-mask word-by-word H1/H2 reveal. Server-renders full text in an `sr-only` span (AEO-safe), animates visible words on hydration with 110% y-offset and `cubic-bezier(0.22, 1, 0.36, 1)` easing. Collapses to plain DOM under reduced-motion.
 - `src/lib/cms.ts` — CMS fetch functions, TypeScript types, per-type helpers
 - `src/lib/demoRequestStore.ts` — Strapi-write layer for `DemoRequest` leads (create + delivery-status update, bearer auth, abort-controller timeout). Handler calls this BEFORE `sendNewsletterEmail` so leads are durable even if email bounces.
 - `src/lib/ontologyTypes.ts` — Shared type system: ContentOntologyConfig, ContentCollection, SolutionStack
