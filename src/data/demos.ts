@@ -57,6 +57,30 @@ export interface DemoConfig {
   releaseVersion?: string;
   /** ISO date of last update */
   lastUpdated?: string;
+  /**
+   * Optional iframe embed URL for a walkthrough video shown in the hero's
+   * right column (YouTube, Vimeo, or Loom — any provider that supports an
+   * iframe embed). When set, a 16:9 video card renders next to the hero copy
+   * on `lg+` and stacks above the tech stack on mobile. When omitted, a
+   * subtle placeholder card renders in the same slot.
+   *
+   * Use the **embed** URL, not the watch URL:
+   *   - YouTube: `https://www.youtube.com/embed/VIDEO_ID`
+   *   - Vimeo:   `https://player.vimeo.com/video/VIDEO_ID`
+   *   - Loom:    `https://www.loom.com/embed/VIDEO_ID`
+   */
+  videoEmbedUrl?: string;
+  /**
+   * Optional poster image shown while the video loads (or in place of the
+   * video if `videoEmbedUrl` is omitted). Path under `/public` or an absolute
+   * URL. Recommended 16:9 aspect, ≥1280×720.
+   */
+  videoPoster?: string;
+  /**
+   * Optional human-readable caption shown under the video (e.g. "2-min
+   * walkthrough" or "Full live demo recording — 4:32").
+   */
+  videoCaption?: string;
 }
 
 export const demos: DemoConfig[] = [
@@ -73,6 +97,13 @@ export const demos: DemoConfig[] = [
     releaseVersion: "v2.0",
     lastUpdated: "2026-03-28",
     architectureDocHref: "/demo/lens",
+    // Auto-generated page-tour video (Playwright + ffmpeg). Re-run
+    // `node scripts/generate-demo-walkthrough.mjs --slug goggle-vton` to
+    // refresh. When a human-narrated production walkthrough is ready,
+    // swap this for the YouTube/Vimeo embed URL and delete the asset.
+    videoEmbedUrl: "/videos/goggle-vton-walkthrough.mp4",
+    videoPoster: "/videos/goggle-vton-walkthrough-poster.jpg",
+    videoCaption: "22-second automated page tour · generator in scripts/generate-demo-walkthrough.mjs",
     metrics: [
       { value: "30–60 FPS", label: "Real-time overlay" },
       { value: "478-point", label: "Face mesh" },
