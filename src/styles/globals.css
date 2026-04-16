@@ -165,6 +165,26 @@
   --header-height-compact: 64px;
   --header-transition: background-color 200ms var(--ease-expo-out),
                         box-shadow 200ms var(--ease-expo-out);
+
+  /* ── "Global Enterprise" design-system tokens (Sprint v5.3) ──
+   * The Enterprise CTA band is the canonical dark surface. These tokens
+   * centralize the look so other enterprise surfaces (pricing band, case
+   * study ribbon, etc.) can reuse the same contract. All values stay
+   * inside the locked zinc + coral palette. */
+  --enterprise-surface: #0A0A0A;            /* obsidian ground */
+  --enterprise-surface-elevated: #111113;   /* for nested cards on the band */
+  --enterprise-edge: rgba(255, 255, 255, 0.10);    /* glass border */
+  --enterprise-edge-strong: rgba(255, 255, 255, 0.20);  /* ghost-button border */
+  --enterprise-highlight: rgba(255, 255, 255, 0.14);   /* top-rim 1px */
+  --enterprise-text: #FFFFFF;
+  --enterprise-text-muted: #A1A1AA;         /* zinc-400 — subtext contrast */
+  --enterprise-text-subtle: #71717A;        /* zinc-500 — tertiary / meta */
+  --enterprise-accent: #DC2626;             /* locked coral */
+  --enterprise-accent-soft: rgba(220, 38, 38, 0.15); /* ~15% brand blur */
+  --enterprise-accent-rim: rgba(220, 38, 38, 0.35);  /* outline halo */
+  --enterprise-pad-sm: 2rem;      /* p-8 */
+  --enterprise-pad-lg: 3rem;      /* p-12 — standard banner padding */
+  --enterprise-radius: 1rem;      /* rounded-2xl */
 }
 
 .dark {
@@ -2453,17 +2473,100 @@ footer .footer-link:focus-visible {
   scrollbar-color: var(--border) transparent;
 }
 
-/* Enterprise CTA band */
+/* ── Catalog workspace rail ("Global Enterprise" sidebar pass) ──
+ * Light mode stays solid + legible (backdrop-blur on a white backdrop
+ * reads as nothing). Dark mode gets the modernized frosted glass chrome:
+ * translucent white at 5% over the zinc-950 ground, 12px blur +
+ * saturation bump for color depth behind it.
+ *
+ * The active-state glow is an inset coral top-highlight + soft ground
+ * shadow scoped to the .dark theme — it reinforces the existing
+ * nav-active-indicator's 3px coral rail without touching light mode. */
+.workspace-rail {
+  position: relative;
+}
+
+.dark .workspace-rail {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-right-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Active nav item — dark-mode coral glow. Light mode keeps the clean
+ * zinc-100 surface pairing already set in Layout.tsx. */
+.dark .workspace-rail a[aria-current="page"] {
+  background: linear-gradient(
+    180deg,
+    rgba(220, 38, 38, 0.14) 0%,
+    rgba(220, 38, 38, 0.04) 100%
+  );
+  box-shadow:
+    inset 3px 0 0 #DC2626,
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 24px -8px rgba(220, 38, 38, 0.35);
+}
+
+/* Subtle left indent on rest items — reinforces the "nested" workspace
+ * hierarchy without shifting layout. Applied in both themes. */
+.workspace-rail a:not([aria-current="page"]) {
+  transition: padding-left 160ms var(--ease-soft-ui),
+              background-color 160ms var(--ease-soft-ui),
+              color 160ms var(--ease-soft-ui);
+}
+
+.workspace-rail a:not([aria-current="page"]):hover {
+  padding-left: 0.75rem;
+}
+
+/* Enterprise CTA band — Sprint v5.2 premium redesign.
+ * Deep obsidian #0A0A0A ground (same in light + dark — a dark band is the
+ * whole point). The atmospheric mesh (zinc neutral + coral punch) lives in
+ * the component as an absolutely-positioned decorative layer so it can be
+ * animated or scroll-linked later without touching this base. */
 .cta-band-enterprise {
   position: relative;
   overflow: hidden;
-  background: #18181B;
+  background: #0A0A0A;
   border-radius: 1rem;
   color: #FAFAFA;
 }
 
 .dark .cta-band-enterprise {
-  background: #27272A;
+  background: #0A0A0A;
+}
+
+/* Primary CTA inside the band — solid high-contrast coral. One tiny inset
+ * top-highlight reads as a lit rim without muddying the solid-fill read.
+ * The coral halo bloom on hover is inherited from .btn-cta:hover — no
+ * extra ground-shadow is layered here so the hierarchy vs. the ghost
+ * secondary stays crisp. */
+.cta-band-primary {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.cta-band-primary:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 24px rgba(220, 38, 38, 0.35);
+}
+
+/* Secondary CTA inside the band — true ghost. Transparent background,
+ * 20% white edge, white text. No fill, no backdrop-blur — the enterprise
+ * brief called this out explicitly to keep the primary unchallenged. */
+.cta-band-secondary {
+  background: transparent;
+  border: 1px solid var(--enterprise-edge-strong);
+  color: var(--enterprise-text);
+}
+
+.cta-band-secondary:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.30);
+}
+
+.cta-band-secondary:active {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* Scroll indicator for horizontal scroll areas */

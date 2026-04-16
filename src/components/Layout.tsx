@@ -1564,7 +1564,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {isCatalogWorkspace ? (
         <div className="w-full flex-1 transition-[grid-template-columns] duration-200 lg:grid lg:grid-cols-[var(--workspace-rail-width)_minmax(0,1fr)] lg:gap-6 lg:px-8" style={workspaceGridStyle}>
-          <aside className="hidden border-r border-zinc-200 dark:border-zinc-800 lg:block" aria-label="Catalog navigation">
+          <aside className="workspace-rail hidden border-r border-zinc-200 dark:border-zinc-800 lg:block" aria-label="Catalog navigation">
             <div className="sidebar-scroll sticky max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto pb-6 will-change-[transform]" style={{ top: "var(--site-header-height)" }}>
               <div className="px-5 py-5">
                 {workspaceSections.map((section) => (

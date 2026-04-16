@@ -416,7 +416,11 @@ export default function Home({
         ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
-      {/* ---- Hero (dark animated hero) ---- */}
+      {/* ---- Hero (dark animated hero) ----
+       * Restored to the contained-card look: rounded-2xl corners inside
+       * the <main> gutter. If we ever want the editorial full-bleed look
+       * again, swap this back to `-mx-4 overflow-hidden sm:-mx-6 xl:-mx-8`
+       * (no rounded corners at viewport edges). */}
       <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="relative overflow-hidden rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
         {/* Hero visual anchor — coded-motion knowledge-graph constellation
          * (Sprint v5 kinetic-pacing). Replaces the prior `.hero-orb-*` gradient
@@ -433,8 +437,11 @@ export default function Home({
         {/* Subtle noise grain texture — premium depth */}
         <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.03]" aria-hidden="true" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat", backgroundSize: "256px 256px" }} />
 
-        {/* Content — split layout: text left, orbital diagram right */}
-        <div className="relative z-10 mx-auto max-w-[90rem] px-5 py-10 sm:px-6 sm:py-12 md:px-8 lg:px-10 lg:py-14 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-12 xl:py-16">
+        {/* Content — split layout: text left, orbital diagram right.
+         * max-w removed so the H1 + metric aside hug the viewport edges
+         * on wide screens; tight horizontal padding provides just enough
+         * breathing room without a visible content-column gutter. */}
+        <div className="relative z-10 w-full px-5 py-10 sm:px-8 sm:py-12 md:px-10 lg:px-14 lg:py-14 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-16 2xl:px-20">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
             {/* LEFT: Text content */}
             <div className="text-center lg:text-left">
