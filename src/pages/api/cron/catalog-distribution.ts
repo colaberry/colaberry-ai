@@ -10,7 +10,12 @@
  *
  * Without the live flag the run is DRY_RUN — we serialize payloads,
  * return the full DistributionRunResult, but make zero external calls.
- * This is the production-safe default for the POC.
+ * This is the production-safe default.
+ *
+ * Sprint v5 — config is fetched from the Strapi `distribution-channel`
+ * collection. When CMS is down the orchestrator falls back to its
+ * hard-coded `STATIC_CHANNELS` constant; ops can force that path for
+ * recovery with `?forceStatic=true`.
  */
 
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -55,10 +60,18 @@ export default async function handler(
   const liveFromQuery = parseLiveFlag(req);
   const dryRun = !(LIVE_ENV_FLAG || liveFromQuery);
 
+  const forceStaticRaw = req.query.forceStatic;
+  const forceStaticValue = Array.isArray(forceStaticRaw)
+    ? forceStaticRaw[0]
+    : forceStaticRaw;
+  const forceStaticChannels =
+    (forceStaticValue || "").toLowerCase() === "true";
+
   try {
     const result = await runDistribution({
       dryRun,
       windowHours: parseWindowHours(req),
+      forceStaticChannels,
     });
 
     res.setHeader("Cache-Control", "no-store");

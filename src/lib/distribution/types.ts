@@ -14,8 +14,20 @@
  */
 
 /** Supported distribution targets. Add a new union member and ship a new
- * client module + template case — nothing else needs editing. */
-export type Platform = "x" | "moltbook" | "huggingface";
+ * client module + template case — nothing else needs editing. Sprint v5
+ * reserved the developer/agent-community platform set even though clients
+ * ship incrementally; the CMS enum mirrors this union exactly. */
+export type Platform =
+  | "x"
+  | "moltbook"
+  | "huggingface"
+  | "devto"
+  | "hashnode"
+  | "reddit"
+  | "discord"
+  | "producthunt"
+  | "hackernews"
+  | "github";
 
 /** The 5 CMS content types eligible for distribution. Sprint v4 shipped
  * `llmArchitecture`; podcasts are the highest-velocity source today. */
@@ -168,4 +180,42 @@ export interface PlatformSummary {
   skipped: number;
   failed: number;
   dryRun: number;
+}
+
+/** Sprint v5 — per-channel config fetched from the Strapi
+ * `distribution-channel` content type. `credentialRef` is an env-var NAME
+ * (e.g. "TWITTER_API_KEY") — never the secret itself. The CMS stores
+ * names only; secrets live in Cloud Run env and are resolved at dispatch
+ * time via `process.env[credentialRef]`. */
+export interface ChannelConfig {
+  /** CMS documentId — stable across edits, used to key per-channel logs. */
+  documentId: string;
+  /** Human label shown in admin + in logs. */
+  name: string;
+  /** Must match the `Platform` union for the client registry to route. */
+  platform: Platform;
+  /** Hard off-switch — orchestrator skips disabled channels entirely. */
+  enabled: boolean;
+  /** Force DRY_RUN for this channel even when the cron runs live. Used to
+   * stage a new channel in prod without risking a real post. */
+  dryRunOverride: boolean;
+  /** Env-var NAME — NOT the secret. Resolved at dispatch time. */
+  credentialRef: string;
+  /** Mustache-style template for the post body. Always required. */
+  bodyTemplate: string;
+  /** Optional title template — used by platforms that have a title field
+   * (Moltbook, Dev.to, Hashnode). Ignored otherwise. */
+  titleTemplate?: string;
+  /** Lookback window in hours for this channel. Overridable by the cron
+   * route via `?windowHours=`. */
+  defaultWindowHours: number;
+  /** Per-channel posting throttle per run. Protects against a big CMS bulk
+   * edit blasting hundreds of posts. */
+  maxPostsPerRun: number;
+  /** Restrict to specific content kinds. Empty/undefined = all. */
+  supportedKinds: ContentKind[];
+  /** When true, `{{title}}` / `{{summary}}` are HTML-escaped before render. */
+  escapeHtml: boolean;
+  /** Free-form ops notes from CMS admin. Not rendered anywhere. */
+  notes?: string;
 }
