@@ -44,15 +44,21 @@ const fallbackNavigation: GlobalNavigation = {
       ],
     },
     {
+      label: "Demos",
+      href: "/demo",
+      order: 2,
+      group: "header",
+    },
+    {
       label: "Industries",
       href: "/industries",
-      order: 2,
+      order: 3,
       group: "header",
     },
     {
       label: "Resources",
       href: "/resources",
-      order: 3,
+      order: 4,
       group: "header",
       children: [
         { label: "Podcasts", href: "/resources/podcasts", order: 1 },
@@ -62,7 +68,7 @@ const fallbackNavigation: GlobalNavigation = {
     {
       label: "Updates",
       href: "/updates",
-      order: 4,
+      order: 5,
       group: "header",
     },
   ],
@@ -937,7 +943,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         { threshold: 0, rootMargin: "0px 0px -60px 0px" },
       );
       document
-        .querySelectorAll(".reveal:not(.revealed), .stagger-grid:not(.revealed)")
+        .querySelectorAll(
+          ".reveal:not(.revealed), .stagger-grid:not(.revealed), .reveal-wipe:not(.revealed)",
+        )
         .forEach((el) => observer.observe(el));
     };
 
@@ -1556,7 +1564,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {isCatalogWorkspace ? (
         <div className="w-full flex-1 transition-[grid-template-columns] duration-200 lg:grid lg:grid-cols-[var(--workspace-rail-width)_minmax(0,1fr)] lg:gap-6 lg:px-8" style={workspaceGridStyle}>
-          <aside className="hidden border-r border-zinc-200 dark:border-zinc-800 lg:block" aria-label="Catalog navigation">
+          <aside className="workspace-rail hidden border-r border-zinc-200 dark:border-zinc-800 lg:block" aria-label="Catalog navigation">
             <div className="sidebar-scroll sticky max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto pb-6 will-change-[transform]" style={{ top: "var(--site-header-height)" }}>
               <div className="px-5 py-5">
                 {workspaceSections.map((section) => (

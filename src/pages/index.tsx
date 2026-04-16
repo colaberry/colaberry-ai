@@ -6,6 +6,9 @@ import type { GetStaticProps } from "next";
 import type { ContentTypeName } from "../lib/ontologyTypes";
 import { useCallback, useEffect, useRef, useState } from "react";
 import SectionHeader from "../components/SectionHeader";
+import HeroGraphBloom from "../components/HeroGraphBloom";
+import KineticHeading from "../components/KineticHeading";
+import { m, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import {
   fetchAgents,
   fetchSkills,
@@ -334,9 +337,9 @@ export default function Home({
     },
   ];
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://colaberry.ai";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.colaberry.ai";
   const metaDescription =
-    "Colaberry AI is a marketplace and destination for AI agents, MCP servers, skills, podcasts, case studies, and trusted research-built for SEO and LLM indexing.";
+    "Colaberry AI is an LLM-ready catalog and knowledge graph for AI agents, MCP servers, skills, podcasts, and enterprise AI discovery.";
   const seoMeta: SeoMeta = {
     title: "Colaberry AI | The go-to destination for agents, MCPs, and AI knowledge",
     description: metaDescription,
@@ -389,11 +392,19 @@ export default function Home({
           name: "How is Colaberry AI optimized for Answer Engine Optimization (AEO)?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Colaberry AI is built for AEO — Answer Engine Optimization. Every page includes JSON-LD structured data, the site provides /llms.txt for AI crawlers (GPTBot, ClaudeBot, PerplexityBot), and all 260+ podcast episodes include full searchable transcripts. The Colaberry Knowledge Graph maps relationships between agents, skills, MCP servers, and tools — making the content natively accessible to AI answer engines like ChatGPT, Perplexity, and Claude.",
+            text: "Colaberry AI is built for AEO — Answer Engine Optimization. Every page includes JSON-LD structured data, the site provides /llms.txt for AI crawlers including OAI-SearchBot, Claude-SearchBot, PerplexityBot, and Google-Extended, and all 260+ podcast episodes include full searchable transcripts. The Colaberry Knowledge Graph maps relationships between agents, skills, MCP servers, and tools — making the content natively accessible to AI answer engines like ChatGPT, Perplexity, Claude, and Gemini.",
           },
         },
       ],
     },
+  ];
+  const heroCatalogLinks = [
+    { href: "/aixcelerator/agents", label: "AI agents catalog" },
+    { href: "/aixcelerator/mcp", label: "MCP servers directory" },
+    { href: "/aixcelerator/skills", label: "AI skills catalog" },
+    { href: "/resources/podcasts", label: "AI podcasts" },
+    { href: "/aixcelerator/ontology", label: "Platform ontology" },
+    { href: "/aixcelerator/ecosystem", label: "Ecosystem graph" },
   ];
 
   return (
@@ -405,14 +416,19 @@ export default function Home({
         ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
-      {/* ---- Hero (dark animated hero) ---- */}
+      {/* ---- Hero (dark animated hero) ----
+       * Restored to the contained-card look: rounded-2xl corners inside
+       * the <main> gutter. If we ever want the editorial full-bleed look
+       * again, swap this back to `-mx-4 overflow-hidden sm:-mx-6 xl:-mx-8`
+       * (no rounded corners at viewport edges). */}
       <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="relative overflow-hidden rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
-        {/* Animated gradient mesh background */}
+        {/* Hero visual anchor — coded-motion knowledge-graph constellation
+         * (Sprint v5 kinetic-pacing). Replaces the prior `.hero-orb-*` gradient
+         * blur stack with a tangible, brand-relevant artifact. The graph itself
+         * is decorative (aria-hidden), but it signals what Colaberry *is* —
+         * structured relationships — much better than abstract orbs. */}
         <div className="hero-gradient-mesh" aria-hidden="true">
-          <div className="hero-orb hero-orb-1" />
-          <div className="hero-orb hero-orb-2" />
-          <div className="hero-orb hero-orb-3" />
-          <div className="hero-orb hero-orb-center" />
+          <HeroGraphBloom />
         </div>
 
         {/* Radial vignette for depth */}
@@ -421,8 +437,11 @@ export default function Home({
         {/* Subtle noise grain texture — premium depth */}
         <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.03]" aria-hidden="true" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat", backgroundSize: "256px 256px" }} />
 
-        {/* Content — split layout: text left, orbital diagram right */}
-        <div className="relative z-10 mx-auto max-w-[90rem] px-5 py-10 sm:px-6 sm:py-12 md:px-8 lg:px-10 lg:py-14 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-12 xl:py-16">
+        {/* Content — split layout: text left, orbital diagram right.
+         * max-w removed so the H1 + metric aside hug the viewport edges
+         * on wide screens; tight horizontal padding provides just enough
+         * breathing room without a visible content-column gutter. */}
+        <div className="relative z-10 w-full px-5 py-10 sm:px-8 sm:py-12 md:px-10 lg:px-14 lg:py-14 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-16 2xl:px-20">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
             {/* LEFT: Text content */}
             <div className="text-center lg:text-left">
@@ -434,8 +453,20 @@ export default function Home({
                 Enterprise AI Platform
               </div>
 
-              <h1 className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white text-balance sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl">
-                Discover, govern, and scale{" "}
+              {/* Sprint v5: KineticHeading word-by-word line-mask reveal on the
+               * editorial half of the H1; the word rotator is preserved as a
+               * child slot so its existing CSS animation continues unaffected.
+               * Plain crawlable text "Discover, govern, and scale AI podcasts|
+               * agents|MCP servers|skills" is always present in the DOM pre-
+               * hydration via the KineticHeading sr-only label + the rotator's
+               * static text fallback. */}
+              <KineticHeading
+                as="h1"
+                text="Discover, govern, and scale "
+                className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white text-balance sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl"
+                duration={0.9}
+                stagger={0.08}
+              >
                 <span className="hero-word-rotator">
                   <span className="hero-word-track">
                     <span className="text-gradient">AI podcasts</span>
@@ -444,7 +475,7 @@ export default function Home({
                     <span className="text-gradient">AI skills</span>
                   </span>
                 </span>
-              </h1>
+              </KineticHeading>
 
               <p className="hero-stagger-3 mx-auto mt-5 max-w-2xl text-body-lg leading-relaxed text-zinc-300 text-balance lg:mx-0">
                 A unified catalog where teams discover, evaluate, and deploy AI agents, MCP servers, skills, and research — governed and structured for both people and LLMs.
@@ -464,6 +495,23 @@ export default function Home({
                 >
                   Explore platform
                 </Link>
+              </div>
+
+              <div className="hero-stagger-5 mt-6">
+                <p className="text-sm font-medium text-zinc-300">
+                  Explore the LLM-ready catalogs:
+                </p>
+                <div className="mt-3 flex flex-wrap justify-center gap-3 lg:justify-start">
+                  {heroCatalogLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-zinc-100 transition hover:bg-white/10"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -555,6 +603,7 @@ export default function Home({
             title="A structured destination for agents, MCPs, podcasts, and research"
             description="Give teams and LLMs a single place to discover, compare, and deploy intelligence."
             animate={false}
+            wipeTitle
           />
           <Link href="/aixcelerator/ontology" className="btn btn-secondary shrink-0">
             View knowledge graph
@@ -589,6 +638,7 @@ export default function Home({
             kicker="Connect your stack"
             title="Integrations-ready from day one"
             description="Build assistants that can act across your tools — using a standardized MCP surface."
+            wipeTitle
           />
           <Link href="/aixcelerator/mcp" className="btn btn-secondary shrink-0">
             Explore MCP servers
@@ -764,6 +814,7 @@ function SignalDashboard({
           title="Latest and trending across the catalog"
           description="Fresh profiles and high-interest items across agents, skills, MCP servers, podcasts, and use cases."
           animate={false}
+          wipeTitle
         />
         <Link href="/aixcelerator/ecosystem" className="btn btn-secondary shrink-0">
           View ecosystem
@@ -1897,8 +1948,64 @@ function PlatformTabsSection({ tabs }: { tabs: PlatformTab[] }) {
   const [activeId, setActiveId] = useState(tabs[0].id);
   const active = tabs.find((t) => t.id === activeId) || tabs[0];
 
+  // Sprint v5 kinetic-pacing: scroll-linked parallax layers behind the section
+  // give it visible depth without touching the content layout. Three layers
+  // move at different rates (grain stays ~still, mesh drifts, coral spot
+  // counter-moves a little more) so the eye reads them as separate planes.
+  const sectionRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  // Ranges are pixel-y offsets applied to absolutely-positioned layers.
+  // Under reduced-motion we collapse all ranges to zero so nothing translates.
+  const grainY = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [-12, 12]);
+  const meshY = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [-40, 40]);
+  const coralY = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [40, -40]);
+
   return (
-    <section className="reveal section-spacing">
+    <section
+      ref={sectionRef}
+      className="reveal section-spacing relative isolate overflow-hidden"
+    >
+      {/* ── Parallax backdrop layers (decorative, aria-hidden) ────────────────
+       * z-stack (bottom → top):
+       *   .z-grain  (-30)  — fine noise texture, barely moves
+       *   .z-mesh   (-20)  — large radial mesh, drifts gently
+       *   .z-punch  (-10)  — small coral blob, counter-moves for depth cue
+       * Content sits at the default stack (z-auto, isolated). `isolate` keeps
+       * the parallax layers from bleeding into adjacent sections. */}
+      <m.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-[-30] opacity-[0.035]"
+        style={{
+          y: grainY,
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          backgroundRepeat: "repeat",
+          backgroundSize: "256px 256px",
+        }}
+      />
+      <m.div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-16 z-[-20] opacity-60 dark:opacity-40"
+        style={{
+          y: meshY,
+          background:
+            "radial-gradient(ellipse at 20% 20%, rgba(161, 161, 170, 0.10) 0%, rgba(161, 161, 170, 0) 55%), radial-gradient(ellipse at 85% 70%, rgba(113, 113, 122, 0.08) 0%, rgba(113, 113, 122, 0) 60%)",
+        }}
+      />
+      <m.div
+        aria-hidden="true"
+        className="pointer-events-none absolute right-[-120px] top-[10%] z-[-10] h-[320px] w-[320px] rounded-full blur-3xl"
+        style={{
+          y: coralY,
+          background:
+            "radial-gradient(circle, rgba(220, 38, 38, 0.10) 0%, rgba(220, 38, 38, 0.02) 45%, transparent 70%)",
+        }}
+      />
+
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <SectionHeader
           kicker="Platform capabilities"
