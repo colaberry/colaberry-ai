@@ -373,14 +373,103 @@ async function recordExplainer() {
   // Goggle_VTON_Architecture.pdf §6.1:
   //   detect → classify → fit → recommend → render
   //
-  // 0) Wait for the React SPA to mount, WASM to load, and MediaPipe to receive
-  //    its first frame. Cold Cloud Run starts can take a few seconds.
-  logStep("Init: waiting for VTON UI + camera");
+  // 0) Wait for the React SPA to mount — we need the canvas/video to
+  //    exist before we can hide the hero + pin the studio card. Cold
+  //    Cloud Run starts can take a few seconds.
+  logStep("Init: waiting for VTON UI to mount");
   await page
     .waitForFunction(() => document.querySelector("canvas, video") !== null, {
       timeout: 45_000,
     })
     .catch(() => {});
+
+  // Remove the hero card that sits above the try-on studio. Previous
+  // attempts used inline `display:none` but React re-renders wiped the
+  // style. We now install a persistent MutationObserver that re-hides
+  // the hero every time React recreates it, plus a CSS stylesheet that
+  // pins the studio card to the top of the viewport.
+  //
+  // We target the hero by the page's unique headline text — safer than
+  // hashed class names which can change between deploys.
+  logStep("Pinning try-on studio to top of viewport (hero hidden persistently)");
+  await page.evaluate(() => {
+    const HERO_MATCH = /virtual try-on for premium eyewear|move between live try-on/i;
+
+    const findHeroRoot = () => {
+      const el = Array.from(document.querySelectorAll("h1, h2, p")).find(
+        (n) => HERO_MATCH.test(n.textContent || "")
+      );
+      if (!el) return null;
+      // Bubble up until we hit a direct child of main / body / root.
+      let node = el;
+      for (let i = 0; i < 8 && node.parentElement; i++) {
+        const parent = node.parentElement;
+        if (
+          parent === document.body ||
+          parent.id === "root" ||
+          parent.tagName === "MAIN"
+        ) break;
+        node = parent;
+      }
+      return node;
+    };
+
+    const hideHero = () => {
+      const hero = findHeroRoot();
+      if (hero && hero.style.display !== "none") {
+        hero.style.setProperty("display", "none", "important");
+      }
+    };
+
+    hideHero();
+
+    // Re-hide on any DOM mutation. Scoped to <main> / <body> so we catch
+    // React re-renders. Cheap enough — <100 mutations over 30 s of
+    // recording — and beats fighting React over the scroll position.
+    const observer = new MutationObserver(hideHero);
+    observer.observe(document.body, { childList: true, subtree: true });
+    // Expose on window so we could disconnect later if needed
+    window.__heroObserver = observer;
+
+    window.scrollTo(0, 0);
+  });
+
+  await page.waitForTimeout(400);
+
+  // Scroll the camera to the top of the viewport (hero is gone, so
+  // camera element should already be near the top, but confirm).
+  await page.evaluate(() => {
+    const cam = document.querySelector("video") || document.querySelector("canvas");
+    if (cam) {
+      const rect = cam.getBoundingClientRect();
+      // If cam is already near top (< 100 px) leave it. Otherwise nudge.
+      if (rect.top > 100) window.scrollBy(0, rect.top - 30);
+    }
+  });
+
+  const scrollInfo = await page.evaluate(() => {
+    const cam =
+      document.querySelector("video") || document.querySelector("canvas");
+    const rect = cam?.getBoundingClientRect();
+    const heroEl = Array.from(document.querySelectorAll("h1, h2, p")).find(
+      (n) => /virtual try-on for premium eyewear/i.test(n.textContent || "")
+    );
+    return {
+      scrollY: window.scrollY,
+      camTop: rect?.top ?? null,
+      camBottom: rect?.bottom ?? null,
+      heroVisible: heroEl ? heroEl.offsetHeight > 0 : "not-found",
+    };
+  });
+  logStep(
+    `  scrollY=${scrollInfo.scrollY}  camTop=${scrollInfo.camTop}  camBottom=${scrollInfo.camBottom}  heroVisible=${scrollInfo.heroVisible}`
+  );
+
+  // Now wait for MediaPipe to finish loading its WASM model + receive
+  // first frame from the fake camera. Cold Cloud Run starts need ~6 s.
+  // We do this AFTER hero-hide so the first frames the recorder sees
+  // already have the studio card pinned at the top.
+  logStep("Waiting for MediaPipe + first camera frame (6s)");
   await page.waitForTimeout(6000);
 
   // 1) DETECT — MediaPipe 478-point face mesh tracks the fake-camera feed.
@@ -580,8 +669,24 @@ function renderEndCard(outPath, { kicker, cta, duration }) {
 
 async function normaliseRaw(rawWebm) {
   const normalised = join(TMP_DIR, `${OUTPUT_BASENAME}-body.mp4`);
+  // Playwright records with variable-frame-rate WebM; the duration
+  // metadata and real content length can disagree by 20+ seconds. We
+  // normalise by:
+  //   1. Trimming the leading 3 s (page still loading, hero not yet
+  //      hidden, scroll not yet applied).
+  //   2. Capping the total body length at 34 s for explainer mode —
+  //      the sum of our beat timings is ~36 s, and the VO audio is
+  //      ~38 s; 34 s + 2.6 s title + 2.8 s end = ~39.4 s, which
+  //      matches the narration duration cleanly.
+  const trimFront = mode === "explainer" ? 3 : 0;
+  const bodyDuration = mode === "explainer" ? 34 : null;
+  const trimArgs = [
+    ...(trimFront > 0 ? ["-ss", String(trimFront)] : []),
+    ...(bodyDuration ? ["-t", String(bodyDuration)] : []),
+  ];
   run("ffmpeg", [
     "-y",
+    ...trimArgs,
     "-i", rawWebm,
     "-vf",
     `scale=${VIDEO_WIDTH}:${VIDEO_HEIGHT}:force_original_aspect_ratio=decrease,pad=${VIDEO_WIDTH}:${VIDEO_HEIGHT}:(ow-iw)/2:(oh-ih)/2:color=${COLOR_BG},fps=30`,
