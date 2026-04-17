@@ -13,6 +13,8 @@
  *   - windowHours: 1..336 (default 24)
  *   - kind: repeatable — restrict to specific ContentKinds
  *   - platform: repeatable — restrict to specific Platforms
+ *   - channel: one `documentId` — dry-run a single CMS channel
+ *   - forceStatic=true — bypass CMS and use the hard-coded fallback
  */
 
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -33,7 +35,18 @@ const VALID_KINDS: readonly ContentKind[] = [
   "podcastEpisode",
   "llmArchitecture",
 ];
-const VALID_PLATFORMS: readonly Platform[] = ["x", "moltbook", "huggingface"];
+const VALID_PLATFORMS: readonly Platform[] = [
+  "x",
+  "moltbook",
+  "huggingface",
+  "devto",
+  "hashnode",
+  "reddit",
+  "discord",
+  "producthunt",
+  "hackernews",
+  "github",
+];
 
 type ErrorResponse = { error: string };
 
@@ -78,12 +91,28 @@ export default async function handler(
     (VALID_PLATFORMS as readonly string[]).includes(p)
   );
 
+  const channelRaw = req.query.channel;
+  const channelDocumentId = Array.isArray(channelRaw)
+    ? channelRaw[0]
+    : channelRaw;
+  const forceStaticRaw = req.query.forceStatic;
+  const forceStaticValue = Array.isArray(forceStaticRaw)
+    ? forceStaticRaw[0]
+    : forceStaticRaw;
+  const forceStaticChannels =
+    (forceStaticValue || "").toLowerCase() === "true";
+
   try {
     const result = await runDistribution({
       dryRun: true, // hard-coded — this endpoint NEVER live-posts
       windowHours: parseWindowHours(req),
       kinds: kinds.length ? kinds : undefined,
       platforms: platforms.length ? platforms : undefined,
+      channelDocumentId:
+        typeof channelDocumentId === "string" && channelDocumentId.trim()
+          ? channelDocumentId.trim()
+          : undefined,
+      forceStaticChannels,
     });
 
     res.setHeader("Cache-Control", "no-store");

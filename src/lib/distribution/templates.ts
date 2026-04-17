@@ -1,99 +1,128 @@
 /**
  * Template engine — render one `DistributableEntry` into one `PostDraft`
- * per enabled platform.
+ * per CMS channel.
  *
- * Every platform has its own copy budget and affordances:
- *   - X: 280 chars, hashtags + 1 link. Aggressive truncation, keep URL intact.
- *   - Moltbook: longer body OK, native title/body split, tag array.
- *   - Hugging Face: JSONL row for a dataset repo — no copy length constraint,
- *     but the dataset audience expects structured data over marketing.
+ * Sprint v5 shift: post copy is no longer hard-coded per platform — it
+ * comes from the Strapi `distribution-channel.bodyTemplate` field and is
+ * rendered by the Mustache-style engine in `./template.ts`. This module
+ * is the thin adapter that converts the rendered text into the platform-
+ * canonical payload shape (`XPayload` / `MoltbookPayload` / `HuggingfacePayload`).
  *
- * The template engine is pure — no I/O, no env reads. All inputs are
- * passed in by the orchestrator. That means tests can call `buildDrafts`
- * directly with a fixture and assert on the output.
+ * Copy budgets:
+ *   - X: 280 chars hard — enforced via `renderTemplate(maxLength)`. The
+ *     engine truncates on a word boundary with an ellipsis suffix.
+ *   - Moltbook: no copy budget. `titleTemplate` → title, `bodyTemplate` → body.
+ *   - Hugging Face: the JSONL row carries the raw entry; the rendered text
+ *     is the dry-run preview.
+ *
+ * Pure function — no I/O, no env reads. The orchestrator threads
+ * `ChannelConfig[]` in; tests call this with a fixture.
  */
 
+import { renderTemplate } from "./template";
 import type {
-  DistributableEntry,
-  PostDraft,
-  Platform,
-  XPayload,
-  MoltbookPayload,
-  HuggingfacePayload,
+  ChannelConfig,
   ContentKind,
+  DistributableEntry,
+  HuggingfacePayload,
+  MoltbookPayload,
+  Platform,
+  PostDraft,
+  XPayload,
 } from "./types";
 
-/** Agent identity on Moltbook — one slug per colaberry org. Overridable
- * via env in the orchestrator so the POC can point at a staging agent. */
+/** Default Moltbook agent identity — overridable per-run from the
+ * orchestrator (env fallback for staging vs prod). */
 const DEFAULT_MOLTBOOK_AGENT_SLUG = "colaberry-ai";
 
-/** HF target dataset — structured daily drops of catalog deltas. One
- * dataset for all kinds keeps the interface simple; rows carry `kind`
- * so downstream consumers can filter. */
+/** Default HF dataset target. One dataset for all kinds keeps the
+ * downstream-consumer interface simple; rows carry `kind` for filtering. */
 const DEFAULT_HF_DATASET_ID = "colaberry/catalog-updates";
 
 const X_CHAR_BUDGET = 280;
-/** X treats t.co URLs as a fixed-width 23 chars. We reserve 24 (23 + space). */
-const X_URL_WIDTH = 24;
 
 export interface TemplateOptions {
-  /** Override the Moltbook agent identity (defaults to colaberry-ai). */
+  /** Override Moltbook agent identity (defaults to colaberry-ai). */
   moltbookAgentSlug?: string;
-  /** Override the HF dataset target (defaults to colaberry/catalog-updates). */
+  /** Override HF dataset target. */
   huggingfaceDatasetId?: string;
-  /** Platforms to render. Orchestrator passes only the enabled ones. */
-  platforms: Platform[];
+  /** Channels to render for. Orchestrator passes only the enabled ones. */
+  channels: ChannelConfig[];
 }
 
 /**
- * Render an entry into one draft per requested platform. No side
- * effects — the orchestrator decides whether to dispatch.
+ * Render one entry into one draft per channel that supports it.
+ *
+ * A channel can restrict itself to specific content kinds via
+ * `supportedKinds`; if the entry's kind isn't in the list we skip the
+ * channel (returns fewer drafts than channels). An empty `supportedKinds`
+ * means "all kinds allowed" — the common case.
  */
 export function buildDrafts(
   entry: DistributableEntry,
   options: TemplateOptions
 ): PostDraft[] {
-  return options.platforms.map((platform) => {
-    switch (platform) {
-      case "x":
-        return buildXDraft(entry);
-      case "moltbook":
-        return buildMoltbookDraft(entry, {
-          agentSlug: options.moltbookAgentSlug ?? DEFAULT_MOLTBOOK_AGENT_SLUG,
-        });
-      case "huggingface":
-        return buildHuggingfaceDraft(entry, {
-          repoId: options.huggingfaceDatasetId ?? DEFAULT_HF_DATASET_ID,
-        });
-    }
-  });
+  const drafts: PostDraft[] = [];
+
+  for (const channel of options.channels) {
+    if (!channelSupportsKind(channel, entry.kind)) continue;
+    const draft = buildDraftForChannel(entry, channel, {
+      moltbookAgentSlug:
+        options.moltbookAgentSlug ?? DEFAULT_MOLTBOOK_AGENT_SLUG,
+      huggingfaceDatasetId:
+        options.huggingfaceDatasetId ?? DEFAULT_HF_DATASET_ID,
+    });
+    if (draft) drafts.push(draft);
+  }
+
+  return drafts;
 }
 
-/** X/Twitter — single tweet. Truncates summary to fit 280 chars alongside
- * the headline, URL (23 chars reserved), and up to 2 hashtags. */
-function buildXDraft(entry: DistributableEntry): PostDraft {
-  const headline = buildHeadline(entry); // "New: Name" | "Updated: Name"
-  const hashtags = pickHashtags(entry.tags, 2);
-  const hashtagsStr = hashtags.length ? " " + hashtags.map((t) => `#${t}`).join(" ") : "";
+interface BuildCtx {
+  moltbookAgentSlug: string;
+  huggingfaceDatasetId: string;
+}
 
-  // Budget: 280 - headline - hashtags - url(24) - separator spacing
-  const fixedCost =
-    headline.length + hashtagsStr.length + X_URL_WIDTH + 2; // 2 = two "\n\n" separators compressed
-  const summaryBudget = Math.max(0, X_CHAR_BUDGET - fixedCost);
-  const summary = truncate(entry.summary, summaryBudget);
+function buildDraftForChannel(
+  entry: DistributableEntry,
+  channel: ChannelConfig,
+  ctx: BuildCtx
+): PostDraft | null {
+  switch (channel.platform) {
+    case "x":
+      return buildXDraft(entry, channel);
+    case "moltbook":
+      return buildMoltbookDraft(entry, channel, ctx.moltbookAgentSlug);
+    case "huggingface":
+      return buildHuggingfaceDraft(entry, channel, ctx.huggingfaceDatasetId);
+    // Platforms reserved in the CMS enum but not yet implemented in
+    // clients: we still render a draft so the dry-run preview shows the
+    // copy, and the orchestrator will tag the dispatch as
+    // skipped/not-implemented via the unknown-platform path.
+    case "devto":
+    case "hashnode":
+    case "reddit":
+    case "discord":
+    case "producthunt":
+    case "hackernews":
+    case "github":
+      return buildGenericDraft(entry, channel);
+  }
+}
 
-  // Final shape: "Headline\n\nSummary\n\nURL #tag #tag"
-  const text = [headline, summary, `${entry.url}${hashtagsStr}`.trim()]
-    .filter(Boolean)
-    .join("\n\n")
-    .trim();
-
+function buildXDraft(
+  entry: DistributableEntry,
+  channel: ChannelConfig
+): PostDraft {
+  const text = renderTemplate(channel.bodyTemplate, entry, {
+    escapeHtml: channel.escapeHtml,
+    maxLength: X_CHAR_BUDGET,
+  });
   const payload: XPayload = {
     platform: "x",
     text,
     replySettings: "everyone",
   };
-
   return {
     platform: "x",
     idempotencyKey: makeIdempotencyKey("x", entry),
@@ -103,30 +132,27 @@ function buildXDraft(entry: DistributableEntry): PostDraft {
   };
 }
 
-/** Moltbook — native title + body. Much more generous copy room,
- * canonical URL is first-class metadata not embedded in the body. */
 function buildMoltbookDraft(
   entry: DistributableEntry,
-  ctx: { agentSlug: string }
+  channel: ChannelConfig,
+  agentSlug: string
 ): PostDraft {
-  const title = buildHeadline(entry);
-  const body = [
-    entry.summary,
-    `Read more: ${entry.url}`,
-  ]
-    .filter(Boolean)
-    .join("\n\n")
-    .trim();
-
+  const title = channel.titleTemplate
+    ? renderTemplate(channel.titleTemplate, entry, {
+        escapeHtml: channel.escapeHtml,
+      })
+    : buildDefaultHeadline(entry);
+  const body = renderTemplate(channel.bodyTemplate, entry, {
+    escapeHtml: channel.escapeHtml,
+  });
   const payload: MoltbookPayload = {
     platform: "moltbook",
     title,
     body,
-    agentSlug: ctx.agentSlug,
+    agentSlug,
     tags: entry.tags.slice(0, 8),
     canonicalUrl: entry.url,
   };
-
   return {
     platform: "moltbook",
     idempotencyKey: makeIdempotencyKey("moltbook", entry),
@@ -136,16 +162,17 @@ function buildMoltbookDraft(
   };
 }
 
-/** Hugging Face Datasets — one JSONL row appended to the configured
- * dataset repo. Designed for downstream agent fine-tuning / RAG corpora,
- * not marketing copy. Structured, crawler-friendly. */
 function buildHuggingfaceDraft(
   entry: DistributableEntry,
-  ctx: { repoId: string }
+  channel: ChannelConfig,
+  repoId: string
 ): PostDraft {
+  const preview = renderTemplate(channel.bodyTemplate, entry, {
+    escapeHtml: false,
+  });
   const payload: HuggingfacePayload = {
     platform: "huggingface",
-    repoId: ctx.repoId,
+    repoId,
     row: {
       id: entry.id,
       kind: entry.kind,
@@ -158,29 +185,50 @@ function buildHuggingfaceDraft(
       source: "colaberry.ai",
     },
   };
-
-  // Render a human-readable preview for logging / dry-run echo.
-  const text = [
-    `[${entry.kind}] ${entry.title}`,
-    entry.summary,
-    entry.url,
-  ]
-    .filter(Boolean)
-    .join("\n")
-    .trim();
-
   return {
     platform: "huggingface",
     idempotencyKey: makeIdempotencyKey("huggingface", entry),
-    text,
+    text: preview,
     payload,
+    sourceEntry: entry,
+  };
+}
+
+/** Render a draft for a reserved-but-not-yet-implemented platform. The
+ * orchestrator will tag its dispatch as "skipped: not-implemented"; we
+ * still want the rendered text in the dry-run preview so CMS editors can
+ * validate the template before the client ships. Cast to `XPayload` so
+ * the existing union doesn't need loosening — the client layer is the
+ * only consumer of `payload` and it rejects mismatched platforms. */
+function buildGenericDraft(
+  entry: DistributableEntry,
+  channel: ChannelConfig
+): PostDraft {
+  const text = renderTemplate(channel.bodyTemplate, entry, {
+    escapeHtml: channel.escapeHtml,
+  });
+  return {
+    platform: channel.platform,
+    idempotencyKey: makeIdempotencyKey(channel.platform, entry),
+    text,
+    payload: { platform: "x", text } as XPayload,
     sourceEntry: entry,
   };
 }
 
 /* ---------- helpers ----------------------------------------------------- */
 
-function buildHeadline(entry: DistributableEntry): string {
+function channelSupportsKind(
+  channel: ChannelConfig,
+  kind: ContentKind
+): boolean {
+  if (!channel.supportedKinds || channel.supportedKinds.length === 0) {
+    return true;
+  }
+  return channel.supportedKinds.includes(kind);
+}
+
+function buildDefaultHeadline(entry: DistributableEntry): string {
   const verb = entry.isNew ? "New" : "Updated";
   const kindLabel = kindToLabel(entry.kind);
   return `${verb} ${kindLabel}: ${entry.title}`;
@@ -201,45 +249,9 @@ function kindToLabel(kind: ContentKind): string {
   }
 }
 
-/** Produce up to `n` hashtag-safe strings. Strips non-alphanumerics,
- * camelCases multi-word tags ("rag retrieval" → "RagRetrieval"). */
-function pickHashtags(tags: string[], n: number): string[] {
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const raw of tags) {
-    const hashtag = toHashtag(raw);
-    if (!hashtag) continue;
-    const key = hashtag.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(hashtag);
-    if (out.length >= n) break;
-  }
-  return out;
-}
-
-function toHashtag(raw: string): string {
-  const cleaned = raw.replace(/[^a-zA-Z0-9\s-]/g, "").trim();
-  if (!cleaned) return "";
-  return cleaned
-    .split(/[\s-]+/)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-    .join("");
-}
-
-/** Trim long strings on a word boundary, ellipsize. Returns "" if budget
- * is non-positive (happens on absurdly long titles — we'd rather post a
- * clean headline+url than a mangled middle chunk). */
-function truncate(text: string, budget: number): string {
-  if (!text) return "";
-  if (budget <= 1) return "";
-  if (text.length <= budget) return text;
-  const trimmed = text.slice(0, Math.max(0, budget - 1));
-  const lastSpace = trimmed.lastIndexOf(" ");
-  const cut = lastSpace > budget * 0.6 ? trimmed.slice(0, lastSpace) : trimmed;
-  return cut.trimEnd() + "…";
-}
-
-function makeIdempotencyKey(platform: Platform, entry: DistributableEntry): string {
+function makeIdempotencyKey(
+  platform: Platform,
+  entry: DistributableEntry
+): string {
   return `${platform}:${entry.id}:${entry.updatedAt}`;
 }
