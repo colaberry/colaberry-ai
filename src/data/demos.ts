@@ -97,13 +97,17 @@ export const demos: DemoConfig[] = [
     releaseVersion: "v2.0",
     lastUpdated: "2026-03-28",
     architectureDocHref: "/demo/lens",
-    // Auto-generated page-tour video (Playwright + ffmpeg). Re-run
-    // `node scripts/generate-demo-walkthrough.mjs --slug goggle-vton` to
-    // refresh. When a human-narrated production walkthrough is ready,
-    // swap this for the YouTube/Vimeo embed URL and delete the asset.
-    videoEmbedUrl: "/videos/goggle-vton-walkthrough.mp4",
-    videoPoster: "/videos/goggle-vton-walkthrough-poster.jpg",
-    videoCaption: "22-second automated page tour · generator in scripts/generate-demo-walkthrough.mjs",
+    // Auto-generated explainer video (Playwright drives the live VTON app
+    // with a Y4M fake-camera feed through the LangGraph pipeline: detect ->
+    // classify -> fit -> recommend -> render). Refresh via:
+    //   node scripts/prepare-fake-camera.mjs --input <face-clip.mp4>
+    //   node scripts/generate-demo-walkthrough.mjs --mode=explainer
+    // (Path B — see docs/demo-walkthrough-video-brief.md §14.) The legacy
+    // `goggle-vton-walkthrough.mp4` (22s page tour) is retained for
+    // fallback but the explainer leads.
+    videoEmbedUrl: "/videos/goggle-vton-explainer.mp4",
+    videoPoster: "/videos/goggle-vton-explainer-poster.jpg",
+    videoCaption: "Automated product explainer · MediaPipe face mesh + Three.js overlay in action",
     metrics: [
       { value: "30–60 FPS", label: "Real-time overlay" },
       { value: "478-point", label: "Face mesh" },

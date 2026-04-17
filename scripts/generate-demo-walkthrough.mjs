@@ -286,12 +286,25 @@ async function recordExplainer() {
   // Chromium flags enable a fake media device fed by our Y4M file. This is
   // the only way to give the VTON demo (getUserMedia → MediaPipe) real face
   // frames without attaching an actual webcam.
+  //
+  // MediaPipe's face-detection model ships as WASM + ONNX/TFLite assets that
+  // require SharedArrayBuffer (cross-origin isolation) and accelerated canvas
+  // to initialize. Headless Chromium blocks some of these by default, so we
+  // opt in explicitly — without these, the VTON app shows "Failed to load
+  // face detection model" and the pipeline never starts.
   const browser = await chromium.launch({
     headless: !headed,
     args: [
       "--use-fake-ui-for-media-stream",
       "--use-fake-device-for-media-stream",
       `--use-file-for-fake-video-capture=${cameraFile}`,
+      // MediaPipe + WASM essentials
+      "--enable-features=SharedArrayBuffer",
+      "--enable-unsafe-webgpu",
+      "--ignore-gpu-blocklist",
+      "--enable-gpu-rasterization",
+      "--use-gl=angle",
+      "--use-angle=default",
       // Reduce CPU jitter during recording
       "--disable-background-timer-throttling",
       "--disable-renderer-backgrounding",
@@ -315,6 +328,21 @@ async function recordExplainer() {
 
   const page = await context.newPage();
 
+  // Forward page console errors / failed requests to our stdout so a failing
+  // model fetch ("Failed to load face detection model") is visible in the
+  // generator run log instead of only in the final MP4.
+  page.on("console", (msg) => {
+    if (msg.type() === "error" || msg.type() === "warning") {
+      logStep(`  [page ${msg.type()}] ${msg.text()}`);
+    }
+  });
+  page.on("pageerror", (err) => {
+    logStep(`  [page error] ${err.message}`);
+  });
+  page.on("requestfailed", (req) => {
+    logStep(`  [request failed] ${req.url()} — ${req.failure()?.errorText}`);
+  });
+
   await page.goto(vtonUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
 
   // The beats below mirror the VTON LangGraph pipeline documented in
@@ -331,59 +359,86 @@ async function recordExplainer() {
     .catch(() => {});
   await page.waitForTimeout(6000);
 
-  // 1) DETECT — live 3D overlay, MediaPipe 478-point face mesh at 30-60 FPS.
-  logStep("Beat 1: DETECT — live overlay (5s)");
+  // 1) DETECT — MediaPipe 478-point face mesh tracks the fake-camera feed.
+  //    Landing state is "Position Your Face" with a live overlay.
+  logStep("Beat 1: DETECT — live face mesh (5s)");
   await page.waitForTimeout(5000);
 
-  // 2) CLASSIFY — capture a photo so the shape classifier runs on a stable frame.
-  logStep("Beat 2: CLASSIFY — photo capture");
-  const photoModeBtn = page
-    .getByRole("button", { name: /photo mode|guided photo capture/i })
-    .or(page.getByText(/^photo mode$/i));
-  if (await photoModeBtn.count()) {
-    await photoModeBtn.first().click({ force: true }).catch(() => {});
+  // Enter the 3D try-on mode. The VTON app's studio header has a toggle
+  // with two labels: "VIEW FRAMES" and "VIEW 3D TRY ON". Clicking the 3D
+  // label (or the container holding it) switches the canvas to the live
+  // Three.js overlay with a selected goggle SKU.
+  logStep("Beat 1.5: switch to 3D try-on");
+  const tryOn3dBtn = page
+    .getByRole("button", { name: /view 3d try on/i })
+    .or(page.getByText(/view 3d try on/i));
+  if (await tryOn3dBtn.count()) {
+    await tryOn3dBtn.first().click({ force: true }).catch(() => {});
+    await page.waitForTimeout(2000);
+  }
+
+  // 2) CLASSIFY — trigger the shape classifier via guided photo capture.
+  //    The hero panel has a "Guided photo capture" affordance; clicking it
+  //    flips the studio into capture mode and exposes a "Capture" button.
+  logStep("Beat 2: CLASSIFY — guided photo capture");
+  const guidedCaptureBtn = page
+    .getByRole("button", { name: /guided photo capture|photo mode/i })
+    .or(page.getByText(/guided photo capture/i));
+  if (await guidedCaptureBtn.count()) {
+    await guidedCaptureBtn.first().click({ force: true }).catch(() => {});
     await page.waitForTimeout(2000);
 
-    const captureBtn = page.getByRole("button", { name: /capture( photo)?/i });
+    const captureBtn = page
+      .getByRole("button", { name: /^capture|capture photo|take photo/i })
+      .or(page.getByText(/^capture$/i));
     if (await captureBtn.count()) {
       await captureBtn.first().click({ force: true }).catch(() => {});
       await page.waitForTimeout(3000);
+    } else {
+      await page.waitForTimeout(3000);
     }
   } else {
-    logStep("  photo-mode button not found — holding on current view");
+    logStep("  guided-capture affordance not found — holding on 3D view");
     await page.waitForTimeout(5000);
   }
 
-  // 3) FIT — cycle through 3 SKUs so viewers see trimesh width-scoring variety.
+  // 3) FIT — cycle 3 SKUs so viewers see trimesh width-scoring variety.
+  //    "Try All Frames" enters a grid; "Try Another" advances through
+  //    individual SKUs. We fall back to any "next frame" / arrow button.
   logStep("Beat 3: FIT — SKU cycle (3 frames)");
   const tryAllBtn = page
-    .getByRole("button", { name: /try all frames|all frames/i })
+    .getByRole("button", { name: /try all frames|all frames|view frames/i })
     .or(page.getByText(/try all frames/i));
   if (await tryAllBtn.count()) {
     await tryAllBtn.first().click({ force: true }).catch(() => {});
     await page.waitForTimeout(2000);
   }
   for (let i = 0; i < 3; i++) {
-    const tryAnotherBtn = page.getByRole("button", { name: /try another/i });
-    if ((await tryAnotherBtn.count()) === 0) break;
-    await tryAnotherBtn.first().click({ force: true }).catch(() => {});
+    const nextBtn = page
+      .getByRole("button", { name: /try another|next frame|next goggle/i })
+      .or(page.getByText(/try another/i));
+    if ((await nextBtn.count()) === 0) break;
+    await nextBtn.first().click({ force: true }).catch(() => {});
     await page.waitForTimeout(2000);
   }
 
-  // 4) RECOMMEND — scroll the LangGraph + GPT-4.1 recommendations into view.
+  // 4) RECOMMEND — the LangGraph + GPT-4.1 "Fit recommendations" panel.
+  //    The hero exposes a "Fit recommendations" affordance that scrolls to
+  //    or opens the recommendations block.
   logStep("Beat 4: RECOMMEND — expert-optician picks (5s)");
-  const recsHeading = page
-    .getByText(/recommended for you|fit recommendations/i)
-    .first();
-  if (await recsHeading.count()) {
-    await recsHeading.scrollIntoViewIfNeeded().catch(() => {});
+  const recsAffordance = page
+    .getByRole("button", { name: /fit recommendations|recommended for you/i })
+    .or(page.getByText(/fit recommendations|recommended for you/i));
+  if (await recsAffordance.count()) {
+    await recsAffordance.first().scrollIntoViewIfNeeded().catch(() => {});
+    await recsAffordance.first().click({ force: true }).catch(() => {});
   }
   await page.waitForTimeout(5000);
 
   // 5) RENDER — return to live camera for the closing Three.js + R3F overlay.
   logStep("Beat 5: RENDER — back to live (5s)");
   const liveBtn = page
-    .getByRole("button", { name: /^live( mode)?$/i })
+    .getByRole("button", { name: /^live( mode)?$|realtime 3d overlay/i })
     .or(page.getByText(/^live( mode)?$/i));
   if (await liveBtn.count()) {
     await liveBtn.first().click({ force: true }).catch(() => {});
