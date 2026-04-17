@@ -99,7 +99,31 @@ if (!demo) {
   process.exit(1);
 }
 
-// ------------------------------------------------------------ paths
+// ------------------------------------------------------------ paths + constants
+
+// Native 16:9 at 1440 wide so the video fills the detail-page hero slot
+// (`aspect-video` / 16:9) without letterboxing. Previous 1440x900 (8:5) left
+// black bars top+bottom at embed time.
+const VIDEO_WIDTH = 1440;
+const VIDEO_HEIGHT = 810;
+
+// Embedded brand assets — Inter matches the site's next/font/google family
+// so title + end cards are pixel-consistent with the page chrome.
+const FONT_REGULAR = join(REPO_ROOT, "scripts", "assets", "fonts", "Inter-Regular.ttf");
+const FONT_MEDIUM = join(REPO_ROOT, "scripts", "assets", "fonts", "Inter-Medium.ttf");
+const FONT_BOLD = join(REPO_ROOT, "scripts", "assets", "fonts", "Inter-Bold.ttf");
+
+// Brand palette (locked theming standard — see CLAUDE.md):
+//   bg     zinc-950  #09090B
+//   text   zinc-50   #FAFAFA
+//   muted  zinc-400  #A1A1AA
+//   dim    zinc-500  #71717A
+//   coral  #DC2626 (CTAs + accent dots only)
+const COLOR_BG = "0x09090B";
+const COLOR_TEXT = "0xFAFAFA";
+const COLOR_MUTED = "0xA1A1AA";
+const COLOR_DIM = "0x71717A";
+const COLOR_CORAL = "0xDC2626";
 
 const OUTPUT_DIR = join(REPO_ROOT, "public", "videos");
 const TMP_DIR = join(REPO_ROOT, "tmp", "walkthrough-recorder");
@@ -207,11 +231,11 @@ async function recordTour() {
 
   const browser = await chromium.launch({ headless: !headed });
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+    viewport: { width: VIDEO_WIDTH, height: VIDEO_HEIGHT },
     deviceScaleFactor: 2,
     recordVideo: {
       dir: RAW_VIDEO_DIR,
-      size: { width: 1440, height: 900 },
+      size: { width: VIDEO_WIDTH, height: VIDEO_HEIGHT },
     },
     colorScheme: "dark",
   });
@@ -313,11 +337,11 @@ async function recordExplainer() {
 
   const vtonOrigin = new URL(vtonUrl).origin;
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+    viewport: { width: VIDEO_WIDTH, height: VIDEO_HEIGHT },
     deviceScaleFactor: 2,
     recordVideo: {
       dir: RAW_VIDEO_DIR,
-      size: { width: 1440, height: 900 },
+      size: { width: VIDEO_WIDTH, height: VIDEO_HEIGHT },
     },
     colorScheme: "dark",
     permissions: ["camera"],
@@ -454,25 +478,94 @@ async function recordExplainer() {
 }
 
 // ------------------------------------------------------------ ffmpeg: title + end cards
+//
+// Both cards render at VIDEO_WIDTHxVIDEO_HEIGHT with the locked brand palette
+// (zinc + coral accent, Inter typography). The end card hosts the brand
+// lockup: coral dot + "colaberry" (Regular) + "AI" (Bold) + "RESEARCH LABS"
+// microcopy — mirrors the header logo at src/components/Layout.tsx.
 
-function renderCard(outPath, { kicker, title, subtitle, duration }) {
-  const kickerY = 380;
-  const titleY = 430;
-  const subtitleY = 560;
-  const dotX = 660;
-  const dotY = 402;
+function renderTitleCard(outPath, { kicker, title, subtitle, duration }) {
+  // Stacked, center-aligned, vertical rhythm tuned for 1440x810.
+  const kickerY = 300;
+  const dotY = 330; // between kicker and title
+  const titleY = 362;
+  const subtitleY = 478;
 
+  const dotX = Math.round((VIDEO_WIDTH - 12) / 2);
   const filter = [
-    `drawbox=x=${dotX}:y=${dotY}:w=14:h=14:color=0xDC2626@1:t=fill`,
-    `drawtext=text='${ffText(kicker)}':fontcolor=0xA1A1AA:fontsize=22:x=(w-text_w)/2:y=${kickerY}`,
-    `drawtext=text='${ffText(title)}':fontcolor=0xFAFAFA:fontsize=68:x=(w-text_w)/2:y=${titleY}`,
-    `drawtext=text='${ffText(subtitle)}':fontcolor=0xA1A1AA:fontsize=26:x=(w-text_w)/2:y=${subtitleY}`,
+    // small coral accent square between kicker and title
+    `drawbox=x=${dotX}:y=${dotY}:w=12:h=12:color=${COLOR_CORAL}@1:t=fill`,
+    // kicker (uppercase, tracked via content — ffmpeg drawtext has no
+    // letter-spacing; we pass the caller's pre-uppercased string)
+    `drawtext=fontfile=${FONT_MEDIUM}:text='${ffText(kicker)}':fontcolor=${COLOR_MUTED}:fontsize=20:x=(w-text_w)/2:y=${kickerY}`,
+    // big display title
+    `drawtext=fontfile=${FONT_BOLD}:text='${ffText(title)}':fontcolor=${COLOR_TEXT}:fontsize=76:x=(w-text_w)/2:y=${titleY}`,
+    // pipeline subtitle
+    `drawtext=fontfile=${FONT_REGULAR}:text='${ffText(subtitle)}':fontcolor=${COLOR_MUTED}:fontsize=26:x=(w-text_w)/2:y=${subtitleY}`,
   ].join(",");
 
   run("ffmpeg", [
     "-y",
     "-f", "lavfi",
-    "-i", `color=c=0x09090B:s=1440x900:d=${duration}:r=30`,
+    "-i", `color=c=${COLOR_BG}:s=${VIDEO_WIDTH}x${VIDEO_HEIGHT}:d=${duration}:r=30`,
+    "-vf", filter,
+    "-c:v", "libx264",
+    "-pix_fmt", "yuv420p",
+    "-preset", "veryfast",
+    "-profile:v", "high",
+    "-crf", "20",
+    outPath,
+  ]);
+}
+
+function renderEndCard(outPath, { kicker, cta, duration }) {
+  // The brand lockup is "colaberry" (Regular) + "AI" (Bold) — mirrors the
+  // site header logo at src/components/Layout.tsx. The coral accent sits
+  // centered BETWEEN the kicker and the lockup (matching the title card)
+  // rather than next to the wordmark — keeps the lockup clean and reads
+  // as an intentional brand mark rather than a floating dot.
+  //
+  // We pre-compute all absolute pixel positions in JS because ffmpeg
+  // drawtext expressions with literal divisions (e.g. `(iw-458)/2`) fail
+  // silently on some builds; `(w-text_w)/2` still works fine.
+  const logoFontSize = 92;
+  const kickerY = 260;
+  const dotY = 298;
+  const logoY = 330;
+  const researchY = 452;
+  const ctaY = 538;
+
+  // Empirically measured advance widths for Inter:
+  //   "colaberry" Regular  ~ 0.49em × 9 chars
+  //   "AI"        Bold     ~ 0.54em × 2 chars
+  const wCol = Math.round("colaberry".length * logoFontSize * 0.49);
+  const wAI = Math.round("AI".length * logoFontSize * 0.54);
+  const gap = 16;
+  const totalW = wCol + gap + wAI;
+  const lockupX = Math.round((VIDEO_WIDTH - totalW) / 2);
+  const aiX = lockupX + wCol + gap;
+
+  // Coral accent centered horizontally above the lockup
+  const dotX = Math.round((VIDEO_WIDTH - 12) / 2);
+
+  const filter = [
+    // kicker (small caps, above everything)
+    `drawtext=fontfile=${FONT_MEDIUM}:text='${ffText(kicker)}':fontcolor=${COLOR_MUTED}:fontsize=18:x=(w-text_w)/2:y=${kickerY}`,
+    // coral accent square — centered, separates kicker from logo
+    `drawbox=x=${dotX}:y=${dotY}:w=12:h=12:color=${COLOR_CORAL}@1:t=fill`,
+    // brand lockup: Regular "colaberry" + Bold "AI"
+    `drawtext=fontfile=${FONT_REGULAR}:text='colaberry':fontcolor=${COLOR_TEXT}:fontsize=${logoFontSize}:x=${lockupX}:y=${logoY}`,
+    `drawtext=fontfile=${FONT_BOLD}:text='AI':fontcolor=${COLOR_TEXT}:fontsize=${logoFontSize}:x=${aiX}:y=${logoY}`,
+    // RESEARCH LABS microcopy (tracked caps via literal spacing)
+    `drawtext=fontfile=${FONT_MEDIUM}:text='R E S E A R C H   L A B S':fontcolor=${COLOR_DIM}:fontsize=15:x=(w-text_w)/2:y=${researchY}`,
+    // CTA row
+    `drawtext=fontfile=${FONT_REGULAR}:text='${ffText(cta)}':fontcolor=${COLOR_MUTED}:fontsize=22:x=(w-text_w)/2:y=${ctaY}`,
+  ].join(",");
+
+  run("ffmpeg", [
+    "-y",
+    "-f", "lavfi",
+    "-i", `color=c=${COLOR_BG}:s=${VIDEO_WIDTH}x${VIDEO_HEIGHT}:d=${duration}:r=30`,
     "-vf", filter,
     "-c:v", "libx264",
     "-pix_fmt", "yuv420p",
@@ -491,7 +584,7 @@ async function normaliseRaw(rawWebm) {
     "-y",
     "-i", rawWebm,
     "-vf",
-    "scale=1440:900:force_original_aspect_ratio=decrease,pad=1440:900:(ow-iw)/2:(oh-ih)/2:color=0x09090B,fps=30",
+    `scale=${VIDEO_WIDTH}:${VIDEO_HEIGHT}:force_original_aspect_ratio=decrease,pad=${VIDEO_WIDTH}:${VIDEO_HEIGHT}:(ow-iw)/2:(oh-ih)/2:color=${COLOR_BG},fps=30`,
     "-c:v", "libx264",
     "-pix_fmt", "yuv420p",
     "-preset", "veryfast",
@@ -563,27 +656,24 @@ async function main() {
     // drops in mid-clip can map what they see to the architecture doc:
     //   Goggle_VTON_Architecture.pdf section 6.1 — detect -> classify -> fit
     //   -> recommend -> render.
-    // ASCII-only separators so ffmpeg's default font always renders them —
-    // unicode arrows silently drop glyphs on systems without a wide-coverage
-    // fallback font.
-    // Tour subtitle just describes what the video is (a page walkthrough).
+    // Inter-based cards support the Unicode arrow (U+2192) cleanly now that
+    // we ship Inter Regular/Medium/Bold as fontfiles.
     const titleSubtitle =
       mode === "explainer"
-        ? "Detect > Classify > Fit > Recommend > Render"
+        ? "Detect  \u2192  Classify  \u2192  Fit  \u2192  Recommend  \u2192  Render"
         : "A guided walkthrough";
     const endKicker = mode === "explainer" ? "TRY IT YOURSELF" : "TRY IT LIVE";
 
-    renderCard(TITLE_CARD, {
+    renderTitleCard(TITLE_CARD, {
       kicker: demo.category.toUpperCase(),
       title: demo.title,
       subtitle: titleSubtitle,
       duration: 2.6,
     });
-    renderCard(END_CARD, {
+    renderEndCard(END_CARD, {
       kicker: endKicker,
-      title: "colaberry.ai",
-      subtitle: `/demo/${slug}  //  Launch the live demo now`,
-      duration: 2.5,
+      cta: `Launch the live demo  \u2192  colaberry.ai/demo/${slug}`,
+      duration: 2.8,
     });
     parts = [TITLE_CARD, body, END_CARD];
   }
