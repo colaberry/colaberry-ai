@@ -412,7 +412,22 @@ Writes `tmp/fake-camera.y4m` (gitignored under `tmp/`). Defaults to 640×480 @ 3
 node scripts/generate-demo-walkthrough.mjs --mode=explainer
 ```
 
-Launches Chromium with `--use-file-for-fake-video-capture=tmp/fake-camera.y4m` pointed at the live Cloud Run VTON app, drives it through the architecture-aligned pipeline (detect → classify → fit → recommend → render per `Goggle_VTON_Architecture.pdf §6.1`), then renders `public/videos/goggle-vton-explainer.mp4` + a poster JPG, bracketed by auto-generated title + end cards.
+Launches Chromium with `--use-file-for-fake-video-capture=tmp/fake-camera.y4m` pointed at the live Cloud Run VTON app, drives it through the architecture-aligned pipeline (detect → classify → fit → recommend → render per `Goggle_VTON_Architecture.pdf §6.1`), then renders `public/videos/goggle-vton-explainer.mp4` + a poster JPG, bracketed by auto-generated title + end cards. Playwright's `recordVideo` captures video only — the MP4 at this stage is muted.
+
+**Step 3 (optional but recommended) — add voice-over:**
+
+```bash
+node scripts/add-explainer-audio.mjs
+```
+
+Synthesizes a voice-over from `scripts/vo/goggle-vton-explainer.txt` using the built-in macOS `say` command (Samantha, 165 wpm by default), normalizes to broadcast-safe loudness (`loudnorm I=-16 LRA=11 TP=-1.5`), and muxes it into the explainer MP4. The pre-audio file is preserved at `*-explainer-silent.mp4` so re-runs skip the Playwright step. Script copy is grounded in `Goggle_VTON_Architecture.pdf §1` (executive summary) and uses `[[slnc <ms>]]` inline silence markers to land VO beats on the visual pipeline stages.
+
+Override voice or swap in a pre-recorded track:
+
+```bash
+node scripts/add-explainer-audio.mjs --voice Daniel --rate 170
+node scripts/add-explainer-audio.mjs --audio-file ~/elevenlabs-vo.m4a
+```
 
 Total runtime: ~45 s of actual recording + ~20 s ffmpeg stitching. Reproducible on every release.
 
