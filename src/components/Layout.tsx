@@ -38,21 +38,28 @@ const fallbackNavigation: GlobalNavigation = {
         { label: "Agents", href: "/aixcelerator/agents", order: 1 },
         { label: "MCP Servers", href: "/aixcelerator/mcp", order: 2 },
         { label: "Skills", href: "/aixcelerator/skills", order: 3 },
+        { label: "LLM Architectures", href: "/aixcelerator/llm-architectures", order: 4 },
         { label: "Platform Ontology", href: "/aixcelerator/ontology", order: 6 },
         { label: "Ecosystem Graph", href: "/aixcelerator/ecosystem", order: 7 },
         { label: "Solution Stacks", href: "/aixcelerator/solution-stacks", order: 8 },
       ],
     },
     {
+      label: "Demos",
+      href: "/demo",
+      order: 2,
+      group: "header",
+    },
+    {
       label: "Industries",
       href: "/industries",
-      order: 2,
+      order: 3,
       group: "header",
     },
     {
       label: "Resources",
       href: "/resources",
-      order: 3,
+      order: 4,
       group: "header",
       children: [
         { label: "Podcasts", href: "/resources/podcasts", order: 1 },
@@ -62,7 +69,7 @@ const fallbackNavigation: GlobalNavigation = {
     {
       label: "Updates",
       href: "/updates",
-      order: 4,
+      order: 5,
       group: "header",
     },
   ],
@@ -74,7 +81,8 @@ const fallbackNavigation: GlobalNavigation = {
         { label: "Agents", href: "/aixcelerator/agents", order: 2, group: "Product" },
         { label: "MCP servers", href: "/aixcelerator/mcp", order: 3, group: "Product" },
         { label: "Skills", href: "/aixcelerator/skills", order: 4, group: "Product" },
-        { label: "Discovery assistant", href: "/assistant", order: 5, group: "Product" },
+        { label: "LLM Architectures", href: "/aixcelerator/llm-architectures", order: 5, group: "Product" },
+        { label: "Discovery assistant", href: "/assistant", order: 6, group: "Product" },
         { label: "Industries", href: "/industries", order: 9, group: "Product" },
       ],
     },
@@ -260,6 +268,7 @@ const PLATFORM_CHILD_BLUEPRINT = [
   { label: "Platform Ontology", href: "/aixcelerator/ontology" },
   { label: "Ecosystem Graph", href: "/aixcelerator/ecosystem" },
   { label: "Solution Stacks", href: "/aixcelerator/solution-stacks" },
+  { label: "LLM Architectures", href: "/aixcelerator/llm-architectures" },
   { label: "Discovery assistant", href: "/assistant" },
 ];
 
@@ -272,6 +281,8 @@ const PLATFORM_CHILD_ALIASES: Record<string, string> = {
   skill: "/aixcelerator/skills",
   tools: "/aixcelerator/tools",
   tool: "/aixcelerator/tools",
+  "llm architectures": "/aixcelerator/llm-architectures",
+  "llm-architectures": "/aixcelerator/llm-architectures",
   "use cases": "/use-cases",
   "use case": "/use-cases",
   "platform ontology": "/aixcelerator/ontology",
@@ -452,6 +463,9 @@ function getSidebarIcon(href: string): ReactNode {
   if (p.startsWith("/aixcelerator/agents") || p === "/aixcelerator/agents") return <svg {...sidebarIconProps}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="3" /><line x1="8" y1="16" x2="8" y2="16.01" /><line x1="16" y1="16" x2="16" y2="16.01" /><line x1="12" y1="16" x2="12" y2="18" /></svg>;
   if (p.startsWith("/aixcelerator/mcp")) return <svg {...sidebarIconProps}><rect x="2" y="2" width="20" height="8" rx="2" /><rect x="2" y="14" width="20" height="8" rx="2" /><circle cx="6" cy="6" r="1" /><circle cx="6" cy="18" r="1" /></svg>;
   if (p.startsWith("/aixcelerator/skills")) return <svg {...sidebarIconProps}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>;
+  // LLM Architectures: two transformer-style layers connected by three
+  // "attention" nodes — visual shorthand for a layered neural-net blueprint.
+  if (p.startsWith("/aixcelerator/llm-architectures")) return <svg {...sidebarIconProps}><rect x="3" y="3" width="18" height="5" rx="1" /><rect x="3" y="16" width="18" height="5" rx="1" /><circle cx="8" cy="12" r="1.2" /><circle cx="12" cy="12" r="1.2" /><circle cx="16" cy="12" r="1.2" /><line x1="8" y1="8" x2="8" y2="10.8" /><line x1="12" y1="8" x2="12" y2="10.8" /><line x1="16" y1="8" x2="16" y2="10.8" /><line x1="8" y1="13.2" x2="8" y2="16" /><line x1="12" y1="13.2" x2="12" y2="16" /><line x1="16" y1="13.2" x2="16" y2="16" /></svg>;
   if (p.startsWith("/use-cases")) return <svg {...sidebarIconProps}><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a4 4 0 0 0-8 0v2" /></svg>;
   if (p === "/search") return <svg {...sidebarIconProps}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>;
   if (p === "/assistant") return <svg {...sidebarIconProps}><path d="M12 3l1.912 5.813L20 12l-6.088 3.187L12 21l-1.912-5.813L4 12l6.088-3.187z" /><path d="M20 3l.75 2.25L23 6l-2.25.75L20 9l-.75-2.25L17 6l2.25-.75z" /></svg>;
@@ -933,7 +947,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         { threshold: 0, rootMargin: "0px 0px -60px 0px" },
       );
       document
-        .querySelectorAll(".reveal:not(.revealed), .stagger-grid:not(.revealed)")
+        .querySelectorAll(
+          ".reveal:not(.revealed), .stagger-grid:not(.revealed), .reveal-wipe:not(.revealed)",
+        )
         .forEach((el) => observer.observe(el));
     };
 
@@ -1552,7 +1568,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {isCatalogWorkspace ? (
         <div className="w-full flex-1 transition-[grid-template-columns] duration-200 lg:grid lg:grid-cols-[var(--workspace-rail-width)_minmax(0,1fr)] lg:gap-6 lg:px-8" style={workspaceGridStyle}>
-          <aside className="hidden border-r border-zinc-200 dark:border-zinc-800 lg:block" aria-label="Catalog navigation">
+          <aside className="workspace-rail hidden border-r border-zinc-200 dark:border-zinc-800 lg:block" aria-label="Catalog navigation">
             <div className="sidebar-scroll sticky max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto pb-6 will-change-[transform]" style={{ top: "var(--site-header-height)" }}>
               <div className="px-5 py-5">
                 {workspaceSections.map((section) => (

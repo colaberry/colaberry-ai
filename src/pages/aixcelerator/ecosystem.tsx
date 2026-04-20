@@ -146,7 +146,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       }
     }
 
-    const typeCounts: Record<ContentTypeName, number> = { skill: 0, mcp: 0, agent: 0, tool: 0, podcast: 0 };
+    const typeCounts: Record<ContentTypeName, number> = { skill: 0, mcp: 0, agent: 0, tool: 0, podcast: 0, "llm-architecture": 0 };
     for (const n of nodes) typeCounts[n.contentType]++;
     const typeBreakdown = (Object.entries(CONTENT_TYPE_META) as [ContentTypeName, typeof CONTENT_TYPE_META[ContentTypeName]][])
       .filter(([type]) => typeCounts[type] > 0)
@@ -165,7 +165,7 @@ export default function EcosystemPage({ nodes, links, typeBreakdown }: InferGetS
   const [highlightedNode, setHighlightedNode] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [enabledTypes, setEnabledTypes] = useState<Record<ContentTypeName, boolean>>({
-    skill: true, mcp: true, agent: true, tool: true, podcast: true,
+    skill: true, mcp: true, agent: true, tool: true, podcast: true, "llm-architecture": true,
   });
   const graphRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   const hoveredNodeIdRef = useRef<string | null>(null);
