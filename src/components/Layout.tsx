@@ -1251,7 +1251,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={openMobileMenu}
-              className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 hover:bg-zinc-100 hover:text-[#18181B] lg:hidden dark:text-zinc-100 dark:hover:bg-zinc-800"
+              className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg text-zinc-700 hover:bg-zinc-100 hover:text-[#18181B] xl:hidden dark:text-zinc-100 dark:hover:bg-zinc-800"
               aria-expanded={mobileMenuOpen}
               aria-label="Open navigation menu"
             >
@@ -1264,7 +1264,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={() => setWorkspaceRailCollapsed((current) => !current)}
-                className="hidden lg:inline-flex items-center justify-center h-10 w-10 rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                className="hidden xl:inline-flex items-center justify-center h-10 w-10 rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                 aria-expanded={!workspaceRailCollapsed}
                 aria-label={workspaceRailCollapsed ? "Expand catalog menu" : "Collapse catalog menu"}
               >
@@ -1301,7 +1301,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             </Link>
           </div>
 
-          <nav aria-label="Main navigation" className="hidden min-w-0 items-center gap-1.5 text-sm lg:flex">
+          <nav aria-label="Main navigation" className="hidden min-w-0 items-center gap-1.5 text-sm xl:flex">
             {isCatalogWorkspace ? (
               <>
                 <span className="hidden rounded-md px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400 min-[1560px]:inline-flex dark:text-zinc-500">
@@ -1361,7 +1361,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             ) : null}
           </nav>
 
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-2 xl:hidden">
             {isCatalogWorkspace ? (
               <button
                 type="button"
@@ -1417,7 +1417,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       </header>
       {mobileMenuOpen ? (
         <div
-          className="fixed inset-0 z-[55] bg-zinc-950/45 backdrop-blur-sm lg:hidden animate-fade-in"
+          className="fixed inset-0 z-[55] bg-zinc-950/45 backdrop-blur-sm xl:hidden animate-fade-in"
           onClick={closeMobileMenu}
         >
           <aside
@@ -1550,7 +1550,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {isCatalogWorkspace && workspaceMobileRailOpen ? (
         <div
-          className="fixed inset-0 z-[58] bg-zinc-950/45 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[58] bg-zinc-950/45 backdrop-blur-sm xl:hidden"
           onClick={() => setWorkspaceMobileRailOpen(false)}
         >
           <aside

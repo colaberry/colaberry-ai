@@ -596,6 +596,40 @@ h6 {
   box-shadow: none;
 }
 
+/* Responsive safety utility — horizontally scrollable chip row for filter
+ * bars and pill groups on listing pages (skills, mcp, agents, podcasts).
+ * At narrow viewports where many chips don't fit, they scroll horizontally
+ * instead of wrapping into 4+ lines that push content down the page and
+ * break layout. Scrollbar hidden for a clean enterprise feel; swipe /
+ * trackpad pan still works. */
+.chip-row-scroll {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.125rem; /* breathing room for hover lift */
+}
+.chip-row-scroll::-webkit-scrollbar {
+  display: none;
+}
+.chip-row-scroll > * {
+  flex-shrink: 0;
+}
+
+/* Responsive safety utility — `text-pretty` applied to all catalog card
+ * titles site-wide so long titles don't orphan single words at narrow
+ * widths. Pairs with .catalog-card without requiring per-page edits. */
+.catalog-card [class*="card-title"],
+.catalog-card h2,
+.catalog-card h3,
+.catalog-card h4 {
+  text-wrap: pretty;
+}
+
 .dark .surface-hover:hover {
   border-color: rgba(161, 161, 170, 0.35);
   box-shadow: var(--shadow-md);
@@ -835,6 +869,14 @@ section[style*="gradient-hero"]::before {
    * survives without competing with the text for readability. Desktop
    * unaffected. */
   .hero-graph-bloom { opacity: 0.3; }
+}
+
+/* Tablet + small desktop (640px – 1279px): hero is still single-column
+ * because the two-column layout only activates at xl (1280px). The graph
+ * still sits directly under the centered copy, so dampen further to keep
+ * text legible while preserving the depth cue. */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .hero-graph-bloom { opacity: 0.45; }
 }
 
 @media (min-width: 1024px) {
@@ -1146,8 +1188,13 @@ section[style*="gradient-hero"]::before {
   to { opacity: 1; }
 }
 
-/* Responsive — hide metrics feed below lg */
-@media (max-width: 1023px) {
+/* Responsive — hide metrics feed below xl (1280px).
+ * Raised from 1023px to 1279px so iPad Pro (1024px) and small-desktop
+ * (1280px and below) get a clean single-column hero with HeroGraphBloom
+ * centered behind the copy. The two-column layout re-appears at xl+
+ * where there's enough horizontal room for the 420px metric panel + H1
+ * without coral-glow bleed into the text column. */
+@media (max-width: 1279px) {
   .hero-metrics-feed { display: none; }
   .hero-grid-dots { display: none; }
 }
