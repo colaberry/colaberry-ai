@@ -596,6 +596,40 @@ h6 {
   box-shadow: none;
 }
 
+/* Responsive safety utility — horizontally scrollable chip row for filter
+ * bars and pill groups on listing pages (skills, mcp, agents, podcasts).
+ * At narrow viewports where many chips don't fit, they scroll horizontally
+ * instead of wrapping into 4+ lines that push content down the page and
+ * break layout. Scrollbar hidden for a clean enterprise feel; swipe /
+ * trackpad pan still works. */
+.chip-row-scroll {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.125rem; /* breathing room for hover lift */
+}
+.chip-row-scroll::-webkit-scrollbar {
+  display: none;
+}
+.chip-row-scroll > * {
+  flex-shrink: 0;
+}
+
+/* Responsive safety utility — `text-pretty` applied to all catalog card
+ * titles site-wide so long titles don't orphan single words at narrow
+ * widths. Pairs with .catalog-card without requiring per-page edits. */
+.catalog-card [class*="card-title"],
+.catalog-card h2,
+.catalog-card h3,
+.catalog-card h4 {
+  text-wrap: pretty;
+}
+
 .dark .surface-hover:hover {
   border-color: rgba(161, 161, 170, 0.35);
   box-shadow: var(--shadow-md);
