@@ -88,7 +88,11 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
   const lineStroke = isDark ? "#52525b" : "#d4d4d8";
 
   const windowWidth = useWindowWidth();
-  const isMobile = windowWidth < 640;
+  // Use the card-grid fallback through tablet portrait (up to xl breakpoint)
+  // — the 720px SVG overflowed narrow containers at 640–1279, forcing
+  // horizontal scroll. Card layout reads as enterprise-native at all
+  // non-desktop widths. Desktop (1280+) keeps the SVG diagram.
+  const isMobile = windowWidth < 1280;
 
   /* ── Mobile card layout ── */
   if (isMobile) {
@@ -130,7 +134,7 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
 
   return (
     <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[600px]" style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}>
+      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full" style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}>
         <rect width={svgWidth} height={svgHeight} rx="12" fill={bg} />
 
         {/* Title */}
@@ -252,7 +256,7 @@ export default function PlatformOntologyPage({ typeCounts }: InferGetStaticProps
         )}
       </Head>
 
-      <div className="reveal grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:items-start">
+      <div className="reveal grid gap-6 xl:grid-cols-[1fr_1.4fr] xl:items-start">
         <div>
           <SectionHeader
             as="h1"

@@ -205,7 +205,7 @@ export default function DemoRequestForm({
         Tell us about your team and we will prepare a demo that fits your workflows.
       </p>
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
         <div>
           <label
             htmlFor="demo-name"
