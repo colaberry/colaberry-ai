@@ -115,7 +115,7 @@ export default function EnterprisePageHero({
         }}
       />
 
-      <div className={`relative z-10 grid gap-6 px-5 py-12 sm:px-8 sm:py-16 md:px-10 lg:items-start lg:px-14 lg:py-20${image ? " lg:grid-cols-[1.08fr_0.92fr]" : ""}`}>
+      <div className={`relative z-10 grid gap-6 px-5 py-12 sm:px-8 sm:py-16 md:px-10 lg:items-start lg:px-14 lg:py-20${image ? " xl:grid-cols-[1.08fr_0.92fr]" : ""}`}>
         <div className="flex flex-col gap-4">
           <div className="rise-in rise-delay-1 inline-flex w-fit items-center gap-2.5 rounded-full border border-zinc-200 bg-zinc-100 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
             <span className="relative flex h-1.5 w-1.5 shrink-0">
@@ -127,15 +127,20 @@ export default function EnterprisePageHero({
            * word-by-word line-mask reveal on every page that uses
            * EnterprisePageHero (16 pages). Keeps `rise-in rise-delay-2`
            * classes so the wrapper still participates in the existing
-           * on-load stagger. The line-mask animates WITHIN the rise. */}
+           * on-load stagger. The line-mask animates WITHIN the rise.
+           *
+           * Responsive: `text-pretty` + progressive `max-w` clamp so long
+           * titles (e.g. "Discover, govern, and scale AI skills") don't
+           * orphan on their own line at 768 / 1024 / 1280. Desktop gets
+           * full width via `2xl:max-w-none`. */}
           <KineticHeading
             as="h1"
             text={title}
-            className="rise-in rise-delay-2 mt-2 font-sans text-display-sm font-bold text-zinc-900 dark:text-zinc-50 sm:text-display-md md:text-display-lg lg:text-display-xl"
+            className="rise-in rise-delay-2 mt-2 max-w-[22ch] font-sans text-display-sm font-bold text-zinc-900 text-pretty dark:text-zinc-50 sm:max-w-[28ch] sm:text-display-md md:text-display-lg lg:text-display-xl xl:max-w-[32ch] 2xl:max-w-none"
             duration={0.9}
             stagger={0.08}
           />
-          <p className="rise-in rise-delay-3 max-w-2xl text-caption leading-relaxed text-zinc-500 dark:text-zinc-400 sm:text-lg">
+          <p className="rise-in rise-delay-3 max-w-2xl text-caption leading-relaxed text-zinc-500 text-pretty dark:text-zinc-400 sm:text-lg">
             {description}
           </p>
           {chips.length > 0 ? (
