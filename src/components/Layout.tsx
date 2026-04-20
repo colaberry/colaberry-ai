@@ -99,11 +99,28 @@ const fallbackNavigation: GlobalNavigation = {
   cta: { label: "Book a demo", href: "/request-demo", group: "header" },
   socialLinks: [
     {
+      label: "Email",
+      /* Opens Gmail compose in a new tab with `To: info@colaberry.com`
+       * prefilled — parallels the LinkedIn/X/YouTube "click → open
+       * platform in new tab" behavior. Avoids the mailto-handler
+       * roulette (Apple Mail launches cold, Windows default-app
+       * prompts, Chrome "no handler" silent failures). For the ~60% of
+       * visitors who use Gmail (and 100% of Colaberry internals on
+       * Google Workspace) this is a one-click Send flow. Non-Gmail
+       * users land on the Gmail sign-in page and can still copy the
+       * address from the compose UI. */
+      href: "https://mail.google.com/mail/?view=cm&fs=1&to=info@colaberry.com",
+      target: "_blank",
+      icon: "email",
+      order: 1,
+      group: "social",
+    },
+    {
       label: "LinkedIn",
       href: "https://www.linkedin.com/company/colaberry",
       target: "_blank",
       icon: "linkedin",
-      order: 1,
+      order: 2,
       group: "social",
     },
     {
@@ -111,7 +128,7 @@ const fallbackNavigation: GlobalNavigation = {
       href: "https://www.instagram.com/colaberryinc/",
       target: "_blank",
       icon: "instagram",
-      order: 2,
+      order: 3,
       group: "social",
     },
     {
@@ -119,7 +136,7 @@ const fallbackNavigation: GlobalNavigation = {
       href: "https://x.com/colaberryinc?lang=en",
       target: "_blank",
       icon: "x",
-      order: 3,
+      order: 4,
       group: "social",
     },
     {
@@ -127,7 +144,7 @@ const fallbackNavigation: GlobalNavigation = {
       href: "https://www.facebook.com/colaberryschoolofdataanalytics/",
       target: "_blank",
       icon: "facebook",
-      order: 4,
+      order: 5,
       group: "social",
     },
     {
@@ -135,7 +152,7 @@ const fallbackNavigation: GlobalNavigation = {
       href: "https://www.youtube.com/channel/UCb23caPCK7xW8roOkr_iKRA",
       target: "_blank",
       icon: "youtube",
-      order: 5,
+      order: 6,
       group: "social",
     },
   ],
@@ -181,6 +198,12 @@ const SOCIAL_ICON_PATHS: Record<string, ReactNode> = {
     <>
       <rect x="2" y="4.5" width="20" height="15" rx="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
       <polygon points="10 8.5 16 12 10 15.5" fill="currentColor" />
+    </>
+  ),
+  email: (
+    <>
+      <rect x="2.5" y="4.5" width="19" height="15" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <polyline points="3 6 12 13 21 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </>
   ),
 };
@@ -624,6 +647,11 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [allowBackdropClose, setAllowBackdropClose] = useState(true);
   const [demoWizardOpen, setDemoWizardOpen] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
+  // True when the <footer> element has entered the viewport — used to hide
+  // the back-to-top FAB so it doesn't overlap the social icon row + legal
+  // links at the bottom of the page. Flip back off as soon as the footer
+  // scrolls out of view upward.
+  const [footerInView, setFooterInView] = useState(false);
   // Footer newsletter state
   const [footerEmail, setFooterEmail] = useState("");
   const [footerHoneypot, setFooterHoneypot] = useState("");
@@ -636,6 +664,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchDialogRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const footerRef = useRef<HTMLElement | null>(null);
   const { currentEpisode } = usePodcastPlayer();
   const currentPath = normalizePath(router.asPath || "/");
   const isCatalogWorkspace = isCatalogWorkspacePath(currentPath);
@@ -709,6 +738,30 @@ export default function Layout({ children }: { children: ReactNode }) {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* Hide the back-to-top FAB when the footer enters the viewport. Premium
+   * sites (Linear, Stripe, Vercel) fade the FAB out once the user is in the
+   * footer — there's nothing below to justify the button's presence, and
+   * leaving it parked in bottom-right covers the footer's social-icon row
+   * + legal links, rendering them unclickable. IntersectionObserver on the
+   * <footer> element is the cheap + correct hook (no scroll-listener math).
+   * `rootMargin: 0px 0px -24px 0px` fires the hide slightly before the
+   * footer's top edge touches the viewport bottom so the transition
+   * completes before any overlap. */
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") return;
+    const target = footerRef.current;
+    if (!target) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry) setFooterInView(entry.isIntersecting);
+      },
+      { rootMargin: "0px 0px -24px 0px", threshold: 0 },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -1622,7 +1675,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       ) : null}
 
-      <footer role="contentinfo" className="footer-surface mt-6">
+      <footer ref={footerRef} role="contentinfo" className="footer-surface mt-6">
         {/* ── Top section: Logo + Newsletter (left) + Link columns (right) ── */}
         <div className="px-4 pt-14 pb-12 sm:px-6 lg:pt-20 lg:pb-14 xl:px-8">
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr] lg:gap-12">
@@ -1936,7 +1989,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <button
         type="button"
         aria-label="Back to top"
-        className={`back-to-top btn-icon${headerCompact ? " visible" : ""}${miniPlayerVisible ? " mini-player-offset" : ""}`}
+        className={`back-to-top btn-icon${headerCompact && !footerInView ? " visible" : ""}${miniPlayerVisible ? " mini-player-offset" : ""}`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">

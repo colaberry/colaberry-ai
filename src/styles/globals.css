@@ -827,6 +827,14 @@ section[style*="gradient-hero"]::before {
   .hero-orb-2 { width: 350px; height: 350px; }
   .hero-orb-3 { width: 300px; height: 300px; }
   .hero-orb-center { width: 500px; height: 500px; }
+
+  /* HeroGraphBloom is `position: absolute; inset: 0` across the full hero.
+   * On mobile the hero collapses to single column so the graph now sits
+   * under the h1 + description text at 100% opacity, with the coral center
+   * blob landing on top of copy. Dampen to 30% so the animated depth
+   * survives without competing with the text for readability. Desktop
+   * unaffected. */
+  .hero-graph-bloom { opacity: 0.3; }
 }
 
 @media (min-width: 1024px) {
@@ -1521,15 +1529,22 @@ button:focus-visible {
   font-size: 0.75rem;
 }
 
+/* Dark-mode secondary pill — the previous override was a no-op (identical
+ * to the base rule), which left the button with a `--neutral-stroke`
+ * (#3F3F46) border on a near-black page background, effectively
+ * invisible. This replacement adds a subtle translucent tint + brighter
+ * outline so the pill reads as a clearly-clickable surface in dark mode
+ * while staying subordinate to `.btn-primary` (white fill). Applies
+ * site-wide — 34 usages across 25 files. Light-mode styling unchanged. */
 .dark .btn-secondary {
-  background: transparent;
-  border-color: var(--neutral-stroke);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.15);
   color: var(--text-primary);
 }
 
 .dark .btn-secondary:hover {
-  border-color: #71717A;
-  background: var(--neutral-fill);
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .dark .btn-ghost {

@@ -605,7 +605,7 @@ export default function Home({
             animate={false}
             wipeTitle
           />
-          <Link href="/aixcelerator/ontology" className="btn btn-secondary shrink-0">
+          <Link href="/aixcelerator/ontology" className="btn btn-primary shrink-0">
             View knowledge graph
           </Link>
         </div>
@@ -816,7 +816,7 @@ function SignalDashboard({
           animate={false}
           wipeTitle
         />
-        <Link href="/aixcelerator/ecosystem" className="btn btn-secondary shrink-0">
+        <Link href="/aixcelerator/ecosystem" className="btn btn-primary shrink-0">
           View ecosystem
         </Link>
       </div>
