@@ -441,12 +441,12 @@ export default function Home({
          * max-w removed so the H1 + metric aside hug the viewport edges
          * on wide screens; tight horizontal padding provides just enough
          * breathing room without a visible content-column gutter. */}
-        <div className="relative z-10 w-full px-5 py-10 sm:px-8 sm:py-12 md:px-10 lg:px-14 lg:py-14 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-16 2xl:px-20">
-          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
+        <div className="relative z-10 w-full px-5 py-10 sm:px-8 sm:py-12 md:px-10 lg:px-14 lg:py-14 xl:min-h-[80vh] xl:flex xl:flex-col xl:justify-center xl:px-16 2xl:px-20">
+          <div className="grid grid-cols-1 items-center gap-8 xl:grid-cols-[1fr_auto] xl:gap-10">
             {/* LEFT: Text content */}
-            <div className="text-center lg:text-left">
+            <div className="text-center xl:text-left">
               <div
-                className="hero-stagger-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 text-[0.75rem] tracking-[0.14em] lg:mx-0"
+                className="hero-stagger-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 text-[0.75rem] tracking-[0.14em] xl:mx-0"
                 style={{ borderColor: "rgba(255,255,255,0.20)", background: "rgba(255,255,255,0.08)", color: "#FAFAFA" }}
               >
                 <span className="kicker-chip-dot" />
@@ -463,7 +463,7 @@ export default function Home({
               <KineticHeading
                 as="h1"
                 text="Discover, govern, and scale "
-                className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white text-balance sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl"
+                className="hero-stagger-2 mx-auto mt-6 max-w-[20ch] font-sans text-display-md font-bold text-white text-pretty sm:max-w-[24ch] sm:text-display-lg lg:text-display-xl xl:mx-0 xl:max-w-none 2xl:text-display-2xl"
                 duration={0.9}
                 stagger={0.08}
               >
@@ -477,11 +477,11 @@ export default function Home({
                 </span>
               </KineticHeading>
 
-              <p className="hero-stagger-3 mx-auto mt-5 max-w-2xl text-body-lg leading-relaxed text-zinc-300 text-balance lg:mx-0">
+              <p className="hero-stagger-3 mx-auto mt-5 max-w-2xl text-body-lg leading-relaxed text-zinc-300 text-pretty xl:mx-0">
                 A unified catalog where teams discover, evaluate, and deploy AI agents, MCP servers, skills, and research — governed and structured for both people and LLMs.
               </p>
 
-              <div className="hero-stagger-4 mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
+              <div className="hero-stagger-4 mt-8 flex flex-wrap justify-center gap-4 xl:justify-start">
                 <Link href="/request-demo" className="btn btn-cta" data-tour="hero-cta">
                   Book a demo
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -501,7 +501,7 @@ export default function Home({
                 <p className="text-sm font-medium text-zinc-300">
                   Explore the LLM-ready catalogs:
                 </p>
-                <div className="mt-3 flex flex-wrap justify-center gap-3 lg:justify-start">
+                <div className="mt-3 flex flex-wrap justify-center gap-3 xl:justify-start">
                   {heroCatalogLinks.map((link) => (
                     <Link
                       key={link.href}
@@ -515,8 +515,12 @@ export default function Home({
               </div>
             </div>
 
-            {/* RIGHT: Live metrics feed — typography-first showcase */}
-            <div className="hidden items-center justify-end lg:flex relative">
+            {/* RIGHT: Live metrics feed — typography-first showcase.
+             * Hidden below xl (1280px) so iPad Pro + smaller tablets get a
+             * clean single-column hero with HeroGraphBloom behind centered
+             * copy, preventing the coral bleed + metric-panel overlap that
+             * broke the layout at 1024px. */}
+            <div className="hidden items-center justify-end xl:flex relative overflow-hidden">
               {/* Grid dot pattern — subtle texture */}
               <div className="hero-grid-dots" aria-hidden="true" />
 

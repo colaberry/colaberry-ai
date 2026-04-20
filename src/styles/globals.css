@@ -837,6 +837,14 @@ section[style*="gradient-hero"]::before {
   .hero-graph-bloom { opacity: 0.3; }
 }
 
+/* Tablet + small desktop (640px – 1279px): hero is still single-column
+ * because the two-column layout only activates at xl (1280px). The graph
+ * still sits directly under the centered copy, so dampen further to keep
+ * text legible while preserving the depth cue. */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .hero-graph-bloom { opacity: 0.45; }
+}
+
 @media (min-width: 1024px) {
   .hero-ring-1 { width: 500px; height: 500px; }
   .hero-ring-2 { width: 900px; height: 900px; }
@@ -1146,8 +1154,13 @@ section[style*="gradient-hero"]::before {
   to { opacity: 1; }
 }
 
-/* Responsive — hide metrics feed below lg */
-@media (max-width: 1023px) {
+/* Responsive — hide metrics feed below xl (1280px).
+ * Raised from 1023px to 1279px so iPad Pro (1024px) and small-desktop
+ * (1280px and below) get a clean single-column hero with HeroGraphBloom
+ * centered behind the copy. The two-column layout re-appears at xl+
+ * where there's enough horizontal room for the 420px metric panel + H1
+ * without coral-glow bleed into the text column. */
+@media (max-width: 1279px) {
   .hero-metrics-feed { display: none; }
   .hero-grid-dots { display: none; }
 }
