@@ -35,6 +35,13 @@ function seeded(seed: number) {
   };
 }
 
+/* Round to 2 decimals so SSR and client serialize identically.
+ * Without this, Math.cos/sin produces full-precision floats (e.g.
+ * 142.44070994596987) and React's SSR vs client paths emit different
+ * string forms (15 vs 16 digits), triggering a hydration mismatch on
+ * every <line>/<circle> and a visible flash of the SVG on mount. */
+const r2 = (n: number) => Math.round(n * 100) / 100;
+
 function buildGraph() {
   const rand = seeded(0xc01a_be77);
   const cx = 200;
@@ -49,8 +56,8 @@ function buildGraph() {
     const angle = (i / 8) * Math.PI * 2 + 0.18;
     nodes.push({
       id: nodes.length,
-      x: cx + Math.cos(angle) * 70,
-      y: cy + Math.sin(angle) * 70,
+      x: r2(cx + Math.cos(angle) * 70),
+      y: r2(cy + Math.sin(angle) * 70),
       r: 3.2,
       kind: "primary",
     });
@@ -62,9 +69,9 @@ function buildGraph() {
     const rad = 138 + (rand() - 0.5) * 18;
     nodes.push({
       id: nodes.length,
-      x: cx + Math.cos(angle) * rad,
-      y: cy + Math.sin(angle) * rad,
-      r: 2.2 + rand() * 0.8,
+      x: r2(cx + Math.cos(angle) * rad),
+      y: r2(cy + Math.sin(angle) * rad),
+      r: r2(2.2 + rand() * 0.8),
       kind: "secondary",
     });
   }
