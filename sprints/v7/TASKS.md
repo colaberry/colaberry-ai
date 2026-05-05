@@ -56,9 +56,10 @@ Tasks Phase-3+4 (Tasks 1–4 in spirit) are already shipped on `feat/voice-agent
   - Files: `src/components/Layout.tsx` (remove 2 lines from `RELEASE_HIDDEN_PATHS`)
   - Blocker: Tasks 4 + 5 + 6 + 7 all complete; Ram final sign-off
 
-- [ ] **Task 10: Document the hybrid external-runtime demo pattern in `docs/runbooks/external-runtime-demo-pattern.md`** (P2)
+- [x] **Task 10: Document the hybrid external-runtime demo pattern in `docs/runbooks/external-runtime-demo-pattern.md`** (P2)
   - Acceptance: A second developer can follow the runbook to add a future external-runtime demo (e.g. a different LiveKit-hosted agent, or a Modal/Replicate-hosted demo) end-to-end without asking Sai. Covers: when to choose external runtime vs GCP-only, secret management pattern, rate-limit pattern, JSON-LD requirements, hidden-path workflow, cost guardrails
   - Files: `docs/runbooks/external-runtime-demo-pattern.md` (NEW)
+  - Completed: 2026-05-05 — Runbook published. 9 numbered steps mapping 1:1 to Sprint v7 task layout, pattern decision-tree (GCP-only vs hybrid), architecture template, secret-management hard rules, 9-layer bot-defense reuse, monitoring thresholds, failure mode + rollback table, "active demos using this pattern" registry seeded with Voice Agent. References `Constitution.md`, `bot-defense.ts`, `voice.tsx`, `lens.tsx`.
 
 ---
 
