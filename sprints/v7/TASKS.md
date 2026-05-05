@@ -39,9 +39,11 @@ Tasks Phase-3+4 (Tasks 1–4 in spirit) are already shipped on `feat/voice-agent
   - Acceptance: `colaberry-ai-prod` Cloud Build trigger has `_NEXT_PUBLIC_VOICE_AGENT_URL=https://voice-agent-demo-<hash>-uc.a.run.app` set; redeploy succeeds; `view-source:https://www.colaberry.ai/demo/voice` shows the iframe pointing at the live URL
   - Files: GCP Cloud Build trigger config for `colaberry-ai-prod`
 
-- [ ] **Task 7: Verify hub `/demo` emits `ItemList` JSON-LD including `voice-agent`** (P1)
+- [x] **Task 7: Verify hub `/demo` emits `ItemList` JSON-LD including `voice-agent`** (P1, code-level done — live curl is post-publish)
   - Acceptance: `curl -sL https://www.colaberry.ai/demo | grep -o '"@type":"ItemList"'` returns 1 match AND the JSON-LD `itemListElement` contains an entry with `name: "Voice Agent"`; Schema.org validator passes
   - Files: `src/pages/demo/index.tsx` if missing — verify only, no edit needed if `voice-agent` already auto-included
+  - Completed: 2026-05-05 — Code-level contract verified by `scripts/verify-voice-agent-jsonld.mjs` (10 / 10 checks pass): demos.ts has voice-agent with status="live", index.tsx emits ItemList with `itemListElement: demos.map(...)` (no filter), getLiveDemoSlugs() includes voice-agent → [slug].tsx generates the detail page. Live-curl portion of acceptance is post-publish; the script ends with the exact two curl commands to run after Task 9 unhides the path.
+  - Note (flagged for Task 9): hub `/demo` does NOT filter by `RELEASE_HIDDEN_PATHS` — the voice-agent card + JSON-LD entry will be visible to users + crawlers as soon as this PR merges, even before Cloud Run is up. Mitigation in place: iframe shows graceful "Demo temporarily unavailable" state when the placeholder URL fails. If reviewers want the hub fully gated pre-publish, Task 9 should also extend `RELEASE_HIDDEN_PATHS` filtering to the hub render + JSON-LD iteration.
 
 - [ ] **Task 8: Set up LiveKit minutes budget alarm + Cloud Run usage alarm in GCP Cloud Monitoring** (P1)
   - Acceptance: Email alert at 50% / 80% / 100% of monthly LiveKit-minutes cap (cap defined in `docs/runbooks/external-runtime-demo-pattern.md`); Cloud Run alarm if `voice-agent-demo` request rate > 100/min for 5 minutes; both verified by triggering a synthetic test
