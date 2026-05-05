@@ -27,9 +27,10 @@ Tasks Phase-3+4 (Tasks 1–4 in spirit) are already shipped on `feat/voice-agent
   - Files: in the `colaberry/VoiceAgent` repo — `cloudbuild.yaml`, `Dockerfile` adjustments to override branding (`Colaberry AI` + `https://colaberry.ai/`)
   - Blocker: Task 3 complete; Karun + Harsh approval
 
-- [ ] **Task 5: Rate-limit `/api/connection-details` token-issuer + bot defense** (P0)
+- [x] **Task 5: Rate-limit `/api/connection-details` token-issuer + bot defense** (P0)
   - Acceptance: Endpoint rejects > 5 requests/hour from the same IP (HTTP 429), missing `Origin` / wrong host, missing `Accept`/`Accept-Language`/`User-Agent`, and curl/wget UA — all silently fake-success with a no-op token (anti-enumeration); test plan documented; LiveKit minutes never billed for bot traffic
   - Files: in `colaberry/VoiceAgent` repo — `app/api/connection-details/route.ts` (or equivalent), reuse pattern from colaberry-ai's `src/lib/bot-defense.ts`
+  - Completed: 2026-05-05 — PR https://github.com/colaberry/VoiceAgent/pull/1 ships `frontend/lib/bot-defense.ts` (5-layer pre-check, fake-success JWT signed `iss=blocked-by-bot-defense`), updates `frontend/app/api/connection-details/route.ts` to gate on bot defense + per-IP rate limit (5/hour, override via `CONNECTION_DETAILS_PER_IP_HOURLY`, real 429 with `Retry-After`), and adds `frontend/tests/connection-details-bot-defense.spec.ts` with 9 Playwright tests (one per acceptance criterion). Cost-cap worst-case is 5 real tokens/hour/IP × 15-min TTL = 75 min/hour/IP, bounded by Task 8's LiveKit minutes budget alarm.
 
 ---
 
