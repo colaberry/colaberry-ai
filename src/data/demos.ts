@@ -168,6 +168,79 @@ export const demos: DemoConfig[] = [
       { label: "Playwright 1.51 + pytest 8", role: "End-to-end browser tests + backend unit/integration" },
     ],
   },
+  {
+    slug: "voice-agent",
+    title: "Voice Agent",
+    category: "Voice AI",
+    tagline:
+      "Real-time conversational voice agent with sub-1.2s round-trip latency, multi-language speech, and tool-calling via LangGraph + LiveKit.",
+    summary:
+      "Voice Agent is a production-grade conversational AI proof of concept that demonstrates a sub-1.2-second round-trip from end-of-utterance to first audio byte — the latency budget that separates a natural-feeling agent from one that feels broken. The platform combines LiveKit Cloud (WebRTC SFU + Python agent worker), a LangGraph state machine for conversation flow, FastMCP for tool exposure, Sarvam for Indian-language speech, Groq for English speech, and OpenAI for language understanding. PostgreSQL persists session memory; Redis holds live state. The architecture follows the latency budget, silence-handling, and conversation-design patterns from the Building Intelligent Voice Agents guide.",
+    launchUrl: "/demo/voice",
+    status: "live",
+    releaseVersion: "v1.0",
+    lastUpdated: "2026-05-04",
+    architectureDocHref: "/demo/voice-agent",
+    metrics: [
+      { value: "<1.2s", label: "Round-trip latency" },
+      { value: "<1.1s", label: "Max silence" },
+      { value: "Multi-lang", label: "EN + Indian" },
+      { value: "WebRTC", label: "Audio transport" },
+    ],
+    features: [
+      {
+        title: "Sub-1.2s round-trip latency",
+        description:
+          "End-to-end pipeline tuned to keep total time from end of caller's utterance to first audio byte of the agent's response under the 1.2-second budget that separates natural conversation from a broken-feeling agent.",
+      },
+      {
+        title: "Filler-phrase handler against silence",
+        description:
+          "When the language model is slow, a brief phrase like 'let me check on that for you' fills the gap without breaking flow. The agent never goes silent for more than 1.1 seconds — silence in a phone call is an error signal, not a neutral state.",
+      },
+      {
+        title: "LangGraph conversation state machine",
+        description:
+          "Multi-turn dialog managed as an explicit DAG with named nodes (greet, gather, confirm, fulfill, recover) instead of free-form prompts — predictable, testable, and easier to evolve as flows grow.",
+      },
+      {
+        title: "FastMCP tool exposure",
+        description:
+          "External tools (lookups, bookings, escalations) are surfaced through FastMCP so the agent can call them mid-conversation with bounded latency and structured arguments.",
+      },
+      {
+        title: "Multi-language speech (Sarvam + Groq)",
+        description:
+          "Sarvam handles Indian-language voice (Hindi, Telugu, Tamil, etc.); Groq handles English STT with sub-200ms first-token. Voice routing is transparent to the language model.",
+      },
+      {
+        title: "OpenAI for language understanding",
+        description:
+          "Conversation reasoning, intent extraction, and tool-argument synthesis run through OpenAI; the model sees only text after STT, so the language layer is decoupled from the audio layer.",
+      },
+      {
+        title: "Persistent + live session memory",
+        description:
+          "PostgreSQL stores cross-call memory (preferences, history); Redis holds live in-session state (current turn, pending tool calls, partial transcripts) so reconnections after a network blip resume cleanly.",
+      },
+      {
+        title: "LiveKit Cloud audio transport",
+        description:
+          "WebRTC SFU handles bidirectional low-latency audio. The Python agent worker auto-joins each room created by the front-end token-issuer; no audio ever transits our application server.",
+      },
+    ],
+    techStack: [
+      { label: "LiveKit Cloud (Agents SDK + SFU)", role: "WebRTC audio transport + Python agent worker that auto-joins rooms" },
+      { label: "LangGraph", role: "Stateful conversation DAG (greet → gather → confirm → fulfill → recover)" },
+      { label: "FastMCP", role: "Tool exposure surface — lookup, booking, escalation calls during a turn" },
+      { label: "Sarvam", role: "Indian-language speech-to-text + text-to-speech (Hindi, Telugu, Tamil, etc.)" },
+      { label: "Groq", role: "English speech-to-text with sub-200ms first-token latency" },
+      { label: "OpenAI", role: "Language understanding, intent extraction, tool-argument synthesis" },
+      { label: "PostgreSQL", role: "Persistent cross-call memory (preferences, history, audit log)" },
+      { label: "Redis", role: "Live in-session state (current turn, pending tool calls, partial transcripts)" },
+      { label: "Next.js 15 + LiveKit React SDK", role: "Front-end UI + server-side LiveKit access-token issuer" },
+    ],
+  },
 ];
 
 /** Lookup helper used by the detail page + hub. */
