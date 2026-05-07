@@ -28,23 +28,16 @@ export default function Document() {
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        {/* Google Analytics — fires on every pageview (no consent gating).
-         * `anonymize_ip` strips the last octet of the visitor's IP before GA
-         * stores it (residual GDPR mitigation). `transport_type: 'beacon'`
-         * uses navigator.sendBeacon so the ping doesn't block navigation.
-         * Cookie banner intentionally removed for AI/LLM-first UX —
-         * see PR description for rationale. */}
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID || "G-F9YN432TTH"}`}
-        />
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-F9YN432TTH" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID || "G-F9YN432TTH"}', { anonymize_ip: true, transport_type: 'beacon' });
+
+              gtag('config', 'G-F9YN432TTH');
             `,
           }}
         />
