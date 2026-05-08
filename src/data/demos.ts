@@ -179,8 +179,14 @@ export const demos: DemoConfig[] = [
     launchUrl: "/demo/voice",
     status: "live",
     releaseVersion: "v1.0",
-    lastUpdated: "2026-05-04",
+    lastUpdated: "2026-05-08",
     architectureDocHref: "/demo/voice-agent",
+    // Walkthrough video — auto-recorded against the live dev page via:
+    //   node scripts/generate-demo-walkthrough.mjs --slug voice-agent --host https://dev.colaberry.ai
+    // Refresh whenever the detail-page layout meaningfully changes.
+    videoEmbedUrl: "/videos/voice-agent-walkthrough.mp4",
+    videoPoster: "/videos/voice-agent-walkthrough-poster.jpg",
+    videoCaption: "Detail-page tour · LiveKit + LangGraph + multi-language voice stack",
     metrics: [
       { value: "<1.2s", label: "Round-trip latency" },
       { value: "<1.1s", label: "Max silence" },
