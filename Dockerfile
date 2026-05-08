@@ -17,7 +17,7 @@ ARG NEXT_PUBLIC_VTON_DEMO_URL=https://vton-demo-956818257204.us-east1.run.app
 # Voice Agent demo Cloud Run URL — set in cloudbuild.yaml substitution
 # `_NEXT_PUBLIC_VOICE_AGENT_URL`. Default placeholder is non-functional and
 # will only be replaced once the `voice-agent-demo` Cloud Run service is live.
-ARG NEXT_PUBLIC_VOICE_AGENT_URL=https://voice-agent-demo-placeholder.invalid
+ARG NEXT_PUBLIC_VOICE_AGENT_URL=https://voice-agent-demo-ucwuixvwga-ue.a.run.app/voiceagent/demo
 # CMS_API_TOKEN is needed at build time for getStaticProps to fetch content
 # Pass via: --build-arg CMS_API_TOKEN=<token> or set in Cloud Build substitutions
 ARG CMS_API_TOKEN
