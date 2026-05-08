@@ -278,6 +278,11 @@ const RELEASE_HIDDEN_PATHS = SHOW_ALL_NAV ? new Set<string>() : new Set([
   "/solutions",
   "/resources/articles",
   "/resources/case-studies",
+  // Voice Agent demo — hidden until Karun + Harsh approve and Cloud Run
+  // service `voice-agent-demo` is live with `NEXT_PUBLIC_VOICE_AGENT_URL`
+  // pointing at it. Both the SSG detail page and the iframe wrapper.
+  "/demo/voice-agent",
+  "/demo/voice",
 ]);
 
 const PLATFORM_CHILD_BLUEPRINT = [
