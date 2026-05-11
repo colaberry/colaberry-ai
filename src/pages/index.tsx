@@ -604,7 +604,7 @@ export default function Home({
         <div className="reveal flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
             kicker="Explore the catalog"
-            title="A structured destination for agents, MCPs, podcasts, and research"
+            title="A structured destination for agents, MCPs, skills, podcasts, and research"
             description="Give teams and LLMs a single place to discover, compare, and deploy intelligence."
             animate={false}
             wipeTitle
