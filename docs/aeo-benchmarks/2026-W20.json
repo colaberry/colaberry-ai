@@ -1,0 +1,157 @@
+{
+  "week": "2026-W20",
+  "dateStr": "2026-05-11 10:14 UTC",
+  "results": [
+    {
+      "host": "www.colaberry.ai",
+      "deep": "/aixcelerator/llm-architectures/llama-3-2-3b",
+      "label": "colaberry.ai",
+      "isPrimary": true,
+      "bots_listed": [
+        "GPTBot",
+        "ClaudeBot",
+        "PerplexityBot",
+        "Google-Extended"
+      ],
+      "score_robots": 2,
+      "has_llms_txt": true,
+      "score_llms": 1.5,
+      "has_llms_full": true,
+      "score_llms_full": 1.5,
+      "schema_home_types": [
+        "Organization",
+        "WebSite",
+        "SearchAction",
+        "FAQPage",
+        "Question",
+        "Answer"
+      ],
+      "score_schema_home": 2,
+      "schema_deep_types": [
+        "TechArticle",
+        "Organization",
+        "Thing"
+      ],
+      "score_schema_deep": 1.5,
+      "sitemap_urls": 2485,
+      "score_sitemap": 1.5,
+      "total": 10
+    },
+    {
+      "host": "huggingface.co",
+      "deep": "/models",
+      "label": "huggingface.co",
+      "bots_listed": [],
+      "score_robots": 0,
+      "has_llms_txt": false,
+      "score_llms": 0,
+      "has_llms_full": false,
+      "score_llms_full": 0,
+      "schema_home_types": [],
+      "score_schema_home": 0,
+      "schema_deep_types": [],
+      "score_schema_deep": 0,
+      "sitemap_urls": 7,
+      "score_sitemap": 0,
+      "total": 0
+    },
+    {
+      "host": "replicate.com",
+      "deep": "/explore",
+      "label": "replicate.com",
+      "bots_listed": [],
+      "score_robots": 0,
+      "has_llms_txt": true,
+      "score_llms": 1.5,
+      "has_llms_full": false,
+      "score_llms_full": 0,
+      "schema_home_types": [],
+      "score_schema_home": 0,
+      "schema_deep_types": [],
+      "score_schema_deep": 0,
+      "sitemap_urls": 6,
+      "score_sitemap": 0,
+      "total": 1.5
+    },
+    {
+      "host": "modal.com",
+      "deep": "/docs",
+      "label": "modal.com",
+      "bots_listed": [],
+      "score_robots": 0,
+      "has_llms_txt": true,
+      "score_llms": 1.5,
+      "has_llms_full": true,
+      "score_llms_full": 1.5,
+      "schema_home_types": [
+        "WebSite"
+      ],
+      "score_schema_home": 2,
+      "schema_deep_types": [],
+      "score_schema_deep": 0,
+      "sitemap_urls": 0,
+      "score_sitemap": 0,
+      "total": 5
+    },
+    {
+      "host": "together.ai",
+      "deep": "/models",
+      "label": "together.ai",
+      "bots_listed": [],
+      "score_robots": 0,
+      "has_llms_txt": true,
+      "score_llms": 1.5,
+      "has_llms_full": false,
+      "score_llms_full": 0,
+      "schema_home_types": [
+        "Organization"
+      ],
+      "score_schema_home": 2,
+      "schema_deep_types": [],
+      "score_schema_deep": 0,
+      "sitemap_urls": 570,
+      "score_sitemap": 1.5,
+      "total": 5
+    },
+    {
+      "host": "ollama.com",
+      "deep": "/library",
+      "label": "ollama.com",
+      "bots_listed": [],
+      "score_robots": 0,
+      "has_llms_txt": true,
+      "score_llms": 1.5,
+      "has_llms_full": false,
+      "score_llms_full": 0,
+      "schema_home_types": [
+        "WebSite"
+      ],
+      "score_schema_home": 2,
+      "schema_deep_types": [
+        "WebSite"
+      ],
+      "score_schema_deep": 1.5,
+      "sitemap_urls": 0,
+      "score_sitemap": 0,
+      "total": 5
+    },
+    {
+      "host": "langchain.com",
+      "deep": "/products",
+      "label": "langchain.com",
+      "bots_listed": [],
+      "score_robots": 0,
+      "has_llms_txt": false,
+      "score_llms": 0,
+      "has_llms_full": false,
+      "score_llms_full": 0,
+      "schema_home_types": [],
+      "score_schema_home": 0,
+      "schema_deep_types": [],
+      "score_schema_deep": 0,
+      "sitemap_urls": 465,
+      "score_sitemap": 1.5,
+      "total": 1.5
+    }
+  ]
+}
