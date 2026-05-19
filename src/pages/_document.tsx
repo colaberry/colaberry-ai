@@ -28,23 +28,12 @@ export default function Document() {
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-F9YN432TTH" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-
-              gtag('config', 'G-F9YN432TTH');
-            `,
-          }}
-        />
       </Head>
       <body>
         <Main />
         <NextScript />
+        {/* Colaberry central visitor tracker — reports to enterprise.colaberry.ai */}
+        <script src="https://enterprise.colaberry.ai/v1/track.js" data-site="colaberry" defer />
       </body>
     </Html>
   );
