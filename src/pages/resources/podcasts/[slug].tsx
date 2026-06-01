@@ -195,8 +195,6 @@ export default function PodcastDetail({ episode, relatedEpisodes }: PodcastDetai
   // (small native audio bar from the listing onward, auto-load via the
   // global player context). The embed path is now only a fallback for
   // episodes with no `audioUrl` at all.
-  // Kept for reference (no longer used directly): shouldForceNative, preferNative
-  void shouldForceNative; void preferNative;
   const usesNativePlayer = Boolean(audioUrl);
   const subscribeLinks = (episode.platformLinks || []).filter(
     (link): link is PlatformLink & { url: string } => Boolean(link?.url)
