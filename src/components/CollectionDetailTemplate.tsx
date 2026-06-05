@@ -124,7 +124,7 @@ export default function CollectionDetailTemplate({
       {/* Embedded Relationship Graph */}
       {graphNodes.length > 1 && (
         <section className="reveal mt-8">
-          <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
             {config.labelSingular} Relationship Graph
           </h2>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
@@ -144,11 +144,11 @@ export default function CollectionDetailTemplate({
 
       {/* Items grid */}
       {items.length > 0 ? (
-        <section className="reveal mt-8">
-          <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+        <section className="mt-8">
+          <h2 className="reveal text-lg font-bold text-zinc-900 dark:text-zinc-50">
             {config.label} in this collection
           </h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="stagger-grid mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item, index) =>
               renderItemCard ? (
                 renderItemCard(item, index)
@@ -175,7 +175,7 @@ export default function CollectionDetailTemplate({
       {/* Pipeline Flow */}
       {items.length > 1 && (
         <section className="reveal mt-8 surface-panel p-6">
-          <h2 className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
             {config.labelSingular} Pipeline Flow
           </h2>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">

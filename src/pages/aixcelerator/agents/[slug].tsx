@@ -595,9 +595,7 @@ export default function AgentDetail({ agent, allowPrivate: _allowPrivate, relate
               />
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {relatedAgents.map((related) => (
-                  <div key={related.id} className="card-elevated">
-                    <AgentCard agent={related} />
-                  </div>
+                  <AgentCard key={related.id} agent={related} />
                 ))}
               </div>
             </section>

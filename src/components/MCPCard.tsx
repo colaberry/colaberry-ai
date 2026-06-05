@@ -43,7 +43,7 @@ export default function MCPCard({ mcp }: { mcp: MCP }) {
       <div className="catalog-card p-6">
         <div className="flex items-center justify-between gap-3">
           <span className="chip chip-neutral rounded-full px-2.5 py-1 text-label font-semibold uppercase tracking-[0.12em]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--pivot-fill)]" />
             MCP
           </span>
           <svg aria-hidden="true" viewBox="0 0 16 16" className="card-arrow h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-400 transition-colors group-hover:text-zinc-600 dark:group-hover:text-zinc-300">
@@ -63,10 +63,11 @@ export default function MCPCard({ mcp }: { mcp: MCP }) {
           <span
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${statusTone}`}
           >
+            <span className="sr-only">Status: </span>
             {statusLabel}
           </span>
           {mcp.verified ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-[var(--trusted-surface)] px-2.5 py-1 text-xs font-semibold text-[var(--trusted-text)] ring-1 ring-inset ring-[var(--trusted-stroke)]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[var(--neutral-fill)] px-2.5 py-1 text-xs font-semibold text-[var(--neutral-text)] ring-1 ring-inset ring-[var(--neutral-stroke)]">
               <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" aria-hidden="true">
                 <path
                   d="M7.4 13.2 4.2 10l1.4-1.4 1.8 1.8 4.8-4.8 1.4 1.4-6.2 6.2Z"

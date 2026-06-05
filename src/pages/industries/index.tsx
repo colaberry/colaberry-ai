@@ -49,11 +49,13 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
     canonical: buildCanonical("/industries"),
   };
 
-  const iconProps = { width: 28, height: 28, viewBox: "0 0 24 24", fill: "none", stroke: "#DC2626", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  // Coral accent driven via currentColor + dark-aware text class (SVG presentation
+  // attributes can't resolve var(--pivot-fill)); gives #DC2626 light / #F87171 dark.
+  const iconProps = { width: 28, height: 28, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, className: "text-[#DC2626] dark:text-[#F87171]" };
   const industries = [
     { name: "Agriculture", slug: "agriculture", icon: <svg {...iconProps}><path d="M12 22V8" /><path d="M5 12H2a10 10 0 0020 0h-3" /><path d="M8 5.2C9 4 10.5 3 12 3c1.5 0 3 1 4 2.2" /></svg> },
     { name: "Energy", slug: "energy", icon: <svg {...iconProps}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg> },
-    { name: "Oil & Gas", slug: "oil-and-gas", icon: <svg {...iconProps}><path d="M6 14c0 4 6 7 6 7s6-3 6-7c0-3-2-5-6-9-4 4-6 6-6 9z" /><path d="M12 21v-4" /><circle cx="12" cy="14" r="1" fill="#DC2626" stroke="none" /></svg> },
+    { name: "Oil & Gas", slug: "oil-and-gas", icon: <svg {...iconProps}><path d="M6 14c0 4 6 7 6 7s6-3 6-7c0-3-2-5-6-9-4 4-6 6-6 9z" /><path d="M12 21v-4" /><circle cx="12" cy="14" r="1" fill="currentColor" stroke="none" /></svg> },
     { name: "Utilities", slug: "utilities", icon: <svg {...iconProps}><path d="M6 3v18" /><path d="M18 3v18" /><path d="M6 8h12" /><path d="M6 16h12" /><circle cx="12" cy="12" r="2" /></svg> },
     { name: "Healthcare & Life Sciences", slug: "healthcare-life-sciences", icon: <svg {...iconProps}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg> },
     { name: "Biotech", slug: "biotech", icon: <svg {...iconProps}><circle cx="12" cy="12" r="3" /><path d="M12 3v6" /><path d="M12 15v6" /><path d="M3 12h6" /><path d="M15 12h6" /><path d="M5.64 5.64l4.24 4.24" /><path d="M14.12 14.12l4.24 4.24" /><path d="M5.64 18.36l4.24-4.24" /><path d="M14.12 9.88l4.24-4.24" /></svg> },
@@ -64,9 +66,9 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
   ];
   const industryHighlights = [
     {
-      href: "/resources/case-studies",
+      href: "/resources/books",
       title: "Outcome stories",
-      description: "Case studies with measurable outcomes and delivery context.",
+      description: "Research and reference material with measurable outcomes and delivery context.",
       meta: "Outcomes",
       icon: <svg {...iconProps}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>,
     },
@@ -82,7 +84,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
       title: "Domain signals",
       description: "Key data sources, workflows, and AI surfaces per industry.",
       meta: "Signals",
-      icon: <svg {...iconProps}><path d="M5.636 18.364a9 9 0 010-12.728" /><path d="M8.464 15.536a5 5 0 010-7.072" /><circle cx="12" cy="12" r="1" fill="#DC2626" stroke="none" /></svg>,
+      icon: <svg {...iconProps}><path d="M5.636 18.364a9 9 0 010-12.728" /><path d="M8.464 15.536a5 5 0 010-7.072" /><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" /></svg>,
     },
     {
       href: "/aixcelerator/agents",
@@ -120,7 +122,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
         description="Domain-led delivery surfaces for sector-specific agents, MCP patterns, use cases, and outcomes."
         chips={["Agriculture", "Energy", "Oil & Gas", "Healthcare", "Biotech", "Manufacturing", "Supply chain"]}
         primaryAction={{ label: "Explore agents", href: "/aixcelerator/agents" }}
-        secondaryAction={{ label: "Browse case studies", href: "/resources/case-studies", variant: "secondary" }}
+        secondaryAction={{ label: "Browse research", href: "/resources/books", variant: "secondary" }}
         metrics={[
           { label: "Industry tracks", value: `${industries.length}`, note: "Current vertical delivery surfaces." },
           { label: "Launch path", value: "Catalog → outcome", note: "From signals to deployable patterns." },
@@ -133,7 +135,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
           kicker="Capabilities"
           title="What each workspace delivers"
           description="Outcome stories, workspace templates, domain signals, and governed delivery — all domain-adapted."
-          size="md"
+          size="lg"
         />
         <div className="stagger-grid mt-6 grid gap-3 sm:grid-cols-2">
           {industryHighlights.map((item) => (
@@ -155,7 +157,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
           kicker="Verticals"
           title="Industry workspaces"
           description="Sector-specific delivery surfaces with curated agents, MCP servers, and domain intelligence."
-          size="md"
+          size="lg"
         />
         <div className="stagger-grid mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {industries.map((item) => (
@@ -171,7 +173,6 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
               if (counts.useCases > 0) parts.push(`${counts.useCases} use case${counts.useCases === 1 ? "" : "s"}`);
               return parts.join(" \u00b7 ") + " in the catalog.";
             })()}
-            meta="Industry"
             icon={item.icon}
             size="sm"
           />
@@ -185,8 +186,8 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
         description="Combine industry context, governed agents, and MCP integrations into repeatable playbooks that teams can deploy with confidence."
         primaryHref="/aixcelerator/agents"
         primaryLabel="Explore agents"
-        secondaryHref="/resources/case-studies"
-        secondaryLabel="Browse case studies"
+        secondaryHref="/resources/books"
+        secondaryLabel="Browse research"
       />
     </Layout>
   );

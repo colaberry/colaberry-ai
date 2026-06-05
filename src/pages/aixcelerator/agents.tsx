@@ -484,7 +484,7 @@ export default function Agents({ agents, allowPrivate, fetchError }: AgentsPageP
         </div>
       </section>
 
-      <div className="reveal stagger-grid mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="stagger-grid mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 lg:grid-cols-3">
         {visibleAgents.map((a) => (
           <AgentCard key={a.slug || String(a.id)} agent={a} />
         ))}

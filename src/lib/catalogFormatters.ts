@@ -27,17 +27,21 @@ export function formatUsage(value: number): string {
 
 /* ── Status badge tone ──────────────────────────────────────────────────── */
 
+/**
+ * Locked palette is zinc + coral only — status pills must NOT use green/amber.
+ * Every status renders on the neutral zinc tone; the visible label (and the
+ * sr-only "Status:" prefix in the cards) conveys state, not color (WCAG 1.4.1).
+ */
+const NEUTRAL_TONE =
+  "bg-[var(--neutral-fill)] text-[var(--neutral-text)] ring-[var(--neutral-stroke)]";
+
 const STATUS_TONES: Record<string, string> = {
-  active:
-    "bg-[var(--trusted-surface)] text-[var(--trusted-text)] ring-[var(--trusted-stroke)]",
-  live:
-    "bg-[var(--trusted-surface)] text-[var(--trusted-text)] ring-[var(--trusted-stroke)]",
-  beta:
-    "bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-900/30 dark:text-amber-200 dark:ring-amber-500/40",
+  active: NEUTRAL_TONE,
+  live: NEUTRAL_TONE,
+  beta: NEUTRAL_TONE,
 };
 
-const DEFAULT_STATUS_TONE =
-  "bg-[var(--neutral-fill)] text-[var(--neutral-text)] ring-[var(--neutral-stroke)]";
+const DEFAULT_STATUS_TONE = NEUTRAL_TONE;
 
 export function getStatusTone(status?: string | null): string {
   return STATUS_TONES[(status || "").toLowerCase()] ?? DEFAULT_STATUS_TONE;
@@ -46,14 +50,14 @@ export function getStatusTone(status?: string | null): string {
 /* ── Source badge tone ──────────────────────────────────────────────────── */
 
 const SOURCE_TONES: Record<string, string> = {
+  // "external" keeps the coral pivot family (same as the .chip-brand accent).
   external:
     "bg-[var(--pivot-surface)] text-[var(--pivot-fill)] ring-[var(--pivot-stroke)] dark:text-[var(--pivot-text)]",
-  partner:
-    "bg-violet-50 text-violet-700 ring-violet-200 dark:bg-violet-900/30 dark:text-violet-200 dark:ring-violet-500/40",
+  // "partner" was violet (forbidden) — now neutral zinc.
+  partner: NEUTRAL_TONE,
 };
 
-const DEFAULT_SOURCE_TONE =
-  "bg-[var(--neutral-fill)] text-[var(--neutral-text)] ring-[var(--neutral-stroke)]";
+const DEFAULT_SOURCE_TONE = NEUTRAL_TONE;
 
 export function getSourceTone(source?: string | null): string {
   return SOURCE_TONES[(source || "").toLowerCase()] ?? DEFAULT_SOURCE_TONE;

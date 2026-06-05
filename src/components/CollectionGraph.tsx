@@ -179,20 +179,15 @@ export default function CollectionGraph({
         <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-zinc-950/40 to-transparent" />
       </div>
 
-      {/* Relationship legend below graph */}
-      <div className="mt-2.5 flex flex-wrap gap-3">
+      {/* Relationship legend below graph — monochrome count pills (DOM chrome is
+          zinc+coral only; the hue-coded edges live inside the canvas exception). */}
+      <div className="mt-2.5 flex flex-wrap gap-2">
         {Object.keys(RELATIONSHIP_TYPE_COLORS)
           .filter((type) => (linkTypeCounts[type] || 0) > 0)
           .map((type) => (
-            <div key={type} className="flex items-center gap-1.5">
-              <span
-                className="inline-block h-0.5 w-4 rounded-full"
-                style={{ backgroundColor: RELATIONSHIP_TYPE_COLORS[type] }}
-              />
-              <span className="text-[10px] text-zinc-500 dark:text-zinc-400">
-                {RELATIONSHIP_TYPE_LABELS[type]} ({linkTypeCounts[type]})
-              </span>
-            </div>
+            <span key={type} className="chip chip-neutral rounded-full px-2 py-0.5 text-[10px] font-medium">
+              {RELATIONSHIP_TYPE_LABELS[type]} ({linkTypeCounts[type]})
+            </span>
           ))}
       </div>
     </div>
