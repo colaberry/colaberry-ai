@@ -310,7 +310,7 @@ export default function Podcasts({
                 const heroFullUrl = `${siteUrl}${heroUrl}`;
 
                 return (
-                  <div className="group/hero flex flex-col gap-5 rounded-2xl bg-[#F5F3EE] p-6 dark:bg-[#1E1D1A] sm:flex-row sm:items-start sm:gap-8 sm:p-8">
+                  <div className="group/hero flex flex-col gap-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-700 dark:bg-zinc-900 sm:flex-row sm:items-start sm:gap-8 sm:p-8">
                     {/* Artwork */}
                     <div className="relative w-full shrink-0 overflow-hidden rounded-2xl shadow-lg sm:w-56 md:w-72 lg:w-80">
                       <Link href={heroUrl} tabIndex={-1} aria-hidden="true">
@@ -368,16 +368,16 @@ export default function Podcasts({
                           </span>
                         ) : null}
                         {formatShortDate(hero.publishedDate) ? (
-                          <span className="font-medium text-zinc-400 dark:text-zinc-400">{formatShortDate(hero.publishedDate)}</span>
+                          <span className="font-medium text-zinc-500 dark:text-zinc-400">{formatShortDate(hero.publishedDate)}</span>
                         ) : null}
                         {hero.duration ? (
                           <>
                             <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
-                            <span className="font-medium text-zinc-400 dark:text-zinc-400">{hero.duration}</span>
+                            <span className="font-medium text-zinc-500 dark:text-zinc-400">{hero.duration}</span>
                           </>
                         ) : null}
                         <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
-                        <span className="font-medium text-zinc-400 dark:text-zinc-400">{heroIsExternal ? "External" : "Colaberry AI"}</span>
+                        <span className="font-medium text-zinc-500 dark:text-zinc-400">{heroIsExternal ? "External" : "Colaberry AI"}</span>
                       </div>
 
                       {/* Hero share row */}
@@ -453,7 +453,7 @@ export default function Podcasts({
                   const fullUrl = `${siteUrl}${episodeUrl}`;
 
                   return (
-                    <div key={episode.id} className="group/card card-elevated flex gap-5 p-5 sm:p-6">
+                    <div key={episode.id} className="group/card catalog-card flex-row gap-5 p-5 sm:p-6">
                       {/* Left: Content */}
                       <div className="min-w-0 flex-1">
                         <Link
@@ -478,15 +478,15 @@ export default function Podcasts({
                               Ep. {episode.episodeNumber}
                             </span>
                           ) : null}
-                          {shortDate ? <span className="font-medium text-zinc-400 dark:text-zinc-400">{shortDate}</span> : null}
+                          {shortDate ? <span className="font-medium text-zinc-500 dark:text-zinc-400">{shortDate}</span> : null}
                           {episode.duration ? (
                             <>
                               <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
-                              <span className="font-medium text-zinc-400 dark:text-zinc-400">{episode.duration}</span>
+                              <span className="font-medium text-zinc-500 dark:text-zinc-400">{episode.duration}</span>
                             </>
                           ) : null}
                           <span className="text-zinc-300 dark:text-zinc-600" aria-hidden="true">·</span>
-                          <span className="font-medium text-zinc-400 dark:text-zinc-400">{isExternal ? "External" : "Colaberry AI"}</span>
+                          <span className="font-medium text-zinc-500 dark:text-zinc-400">{isExternal ? "External" : "Colaberry AI"}</span>
                         </div>
 
                         {/* Share / action row */}
@@ -594,7 +594,7 @@ export default function Podcasts({
 
         {/* ── Right sidebar (warm beige style) ── */}
         <aside className="hidden lg:sticky lg:top-20 lg:block lg:self-start">
-          <div className="rounded-2xl bg-[#E8E5DE] p-6 dark:bg-[#2A2824]">
+          <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-700 dark:bg-zinc-900">
             {/* Podcast identity */}
             <div className="flex items-center gap-4">
               <Image
@@ -606,16 +606,16 @@ export default function Podcasts({
                 unoptimized
               />
               <div>
-                <h3 className="text-base font-semibold text-[#18181B] dark:text-[#FAFAFA]">
+                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
                   Colaberry AI Podcast
                 </h3>
-                <p className="text-sm text-[#71717A] dark:text-[#A1A1AA]">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
                   {displayTotal} episodes
                 </p>
               </div>
             </div>
 
-            <p className="mt-5 text-sm leading-relaxed text-[#52525B] dark:text-[#A1A1AA]">
+            <p className="mt-5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
               Colaberry AI Podcast explores the latest in AI, Data Science, and Emerging Tech. From cutting-edge research to real-world impact, we break down how AI is shaping industries, careers, and the future of work.
             </p>
 
@@ -631,8 +631,8 @@ export default function Podcasts({
 
             {/* Company tags */}
             {companies.length > 0 ? (
-              <div className="mt-6 border-t border-[#D4D1CA] pt-6 dark:border-[#4A473F]">
-                <h4 className="text-xs font-semibold uppercase tracking-[0.14em] text-[#71717A] dark:text-[#A1A1AA]">
+              <div className="mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-700">
+                <h4 className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
                   Browse by company
                 </h4>
                 <div className="mt-3 flex flex-wrap gap-1.5">
@@ -640,13 +640,13 @@ export default function Podcasts({
                     <Link
                       key={company.slug}
                       href={`/resources/podcasts/company?slug=${encodeURIComponent(company.slug)}`}
-                      className="rounded-full bg-[#D4D1CA] px-2.5 py-1 text-xs font-medium text-[#3F3F46] transition-colors hover:bg-[#C4C1BA] dark:bg-[#3D3A33] dark:text-[#D4D4D8] dark:hover:bg-[#4A473F]"
+                      className="chip chip-neutral rounded-full px-2.5 py-1 text-xs font-medium"
                     >
                       {company.name}
                     </Link>
                   ))}
                   {companies.length > 20 ? (
-                    <span className="px-1 py-1 text-xs text-[#A1A1AA]">+{companies.length - 20} more</span>
+                    <span className="px-1 py-1 text-xs text-zinc-400">+{companies.length - 20} more</span>
                   ) : null}
                 </div>
               </div>

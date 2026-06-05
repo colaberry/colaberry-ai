@@ -23,7 +23,7 @@ export default function ToolCard({ name, slug, description, toolCategory, mcpSer
       <div className="catalog-card p-6">
         <div className="flex items-center justify-between gap-3">
           <span className="chip chip-neutral rounded-full px-2.5 py-1 text-label font-semibold uppercase tracking-[0.12em]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--pivot-fill)]" />
             Tool
           </span>
           <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-400 transition-colors group-hover:text-zinc-600 dark:group-hover:text-zinc-300">

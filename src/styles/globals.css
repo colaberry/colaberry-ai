@@ -75,7 +75,7 @@
   /* Borders */
   --stroke: #E4E4E7;
   --stroke-strong: rgba(0, 0, 0, 0.08);
-  --stroke-focus: rgba(24, 24, 27, 0.3);
+  --stroke-focus: rgba(24, 24, 27, 0.55); /* clears 3:1 non-text contrast on #FAFAFA (WCAG 2.4.11) */
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -2447,7 +2447,7 @@ footer .footer-link:focus-visible {
 .input-premium:focus {
   outline: none;
   border-color: var(--stroke);
-  box-shadow: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.28);
 }
 
 .input-premium::placeholder {
@@ -2461,7 +2461,7 @@ footer .footer-link:focus-visible {
 
 .dark .input-premium:focus {
   border-color: #71717A;
-  box-shadow: none;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.30);
 }
 
 /* Shared form primitive used by internal operations pages */
@@ -3051,7 +3051,7 @@ footer .footer-link:focus-visible {
 .input-premium:focus {
   outline: none;
   border-color: var(--stroke);
-  box-shadow: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.28);
 }
 
 .input-premium::placeholder {
@@ -3201,6 +3201,29 @@ footer .footer-link:focus-visible {
   .hero-orb-3,
   .hero-orb-center {
     animation: none !important;
+  }
+
+  /* Hero word-rotator: freeze on the first word (a11y: meaning never depends on motion) */
+  .hero-word-track {
+    animation: none !important;
+    transform: translateY(0) !important;
+  }
+
+  /* Hero entrance staggers: show immediately, no spring-in */
+  .hero-stagger-1,
+  .hero-stagger-2,
+  .hero-stagger-3,
+  .hero-stagger-4 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  /* Hero top-border light sweep */
+  section[style*="gradient-hero"]::before {
+    animation: none !important;
+    opacity: 0 !important;
   }
 
   .text-stagger {

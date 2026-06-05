@@ -140,29 +140,6 @@ export default function Home({
   };
   const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k+` : `${n}+`;
 
-  /* ── Mouse-reactive parallax for orbital diagram (ref-based, no re-renders) ── */
-  const heroRef = useRef<HTMLElement>(null);
-  const parallaxGlowRef = useRef<HTMLDivElement>(null);
-  const parallaxMetricRef = useRef<HTMLDivElement>(null);
-  const rafId = useRef(0);
-  const handleHeroMouse = useCallback((e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const nx = (e.clientX - rect.left) / rect.width - 0.5;
-    const ny = (e.clientY - rect.top) / rect.height - 0.5;
-    cancelAnimationFrame(rafId.current);
-    rafId.current = requestAnimationFrame(() => {
-      if (parallaxGlowRef.current) parallaxGlowRef.current.style.transform = `translate(${nx * -6}px, ${ny * -6}px)`;
-      if (parallaxMetricRef.current) parallaxMetricRef.current.style.transform = `translate(${nx * 8}px, ${ny * 8}px)`;
-    });
-  }, []);
-  const handleHeroLeave = useCallback(() => {
-    cancelAnimationFrame(rafId.current);
-    rafId.current = requestAnimationFrame(() => {
-      if (parallaxGlowRef.current) parallaxGlowRef.current.style.transform = "translate(0px, 0px)";
-      if (parallaxMetricRef.current) parallaxMetricRef.current.style.transform = "translate(0px, 0px)";
-    });
-  }, []);
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- false positive: used at line ~492
   const industries = [
     { name: "Agriculture", slug: "agriculture", icon: "leaf" as const },
@@ -186,8 +163,6 @@ export default function Home({
       description: "246 episodes with full transcripts, timestamps, and linked artifacts from Colaberry AI.",
       meta: "246 episodes",
       iconType: "podcast",
-      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
-      accentColor: "#a78bfa",
     },
     {
       href: "/aixcelerator/agents",
@@ -195,8 +170,6 @@ export default function Home({
       description: `${safeCounts.agents}+ enterprise agents with ownership, runbooks, and deployment readiness across 13 industries.`,
       meta: `${fmt(safeCounts.agents)} agents`,
       iconType: "agent",
-      gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
-      accentColor: "#ef4444",
     },
     {
       href: "/aixcelerator/mcp",
@@ -204,8 +177,6 @@ export default function Home({
       description: "1,500+ Model Context Protocol servers with tool access, connectors, and integration templates.",
       meta: "1.5k+ servers",
       iconType: "mcp",
-      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
-      accentColor: "#3b82f6",
     },
     {
       href: "/aixcelerator/skills",
@@ -213,8 +184,6 @@ export default function Home({
       description: `${safeCounts.skills.toLocaleString()}+ reusable capability units across workflow, domain, and orchestration categories.`,
       meta: `${fmt(safeCounts.skills)} skills`,
       iconType: "skill",
-      gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
-      accentColor: "#f59e0b",
     },
     /* Use cases hidden for Release-1.0
     {
@@ -233,8 +202,6 @@ export default function Home({
       description: "Enterprise reference material, delivery frameworks, and responsible AI research.",
       meta: "Research",
       iconType: "skill",
-      gradient: "from-zinc-900 via-zinc-800 to-zinc-900",
-      accentColor: "#22d3ee",
     },
     {
       href: "/aixcelerator/ontology",
@@ -242,8 +209,6 @@ export default function Home({
       description: "Knowledge graph ontology mapping agents, skills, MCPs, and tools into a structured intelligence layer.",
       meta: "Ontology",
       iconType: "mcp",
-      gradient: "from-zinc-900 via-zinc-800 to-zinc-950",
-      accentColor: "#f87171",
     },
   ];
 
@@ -406,7 +371,7 @@ export default function Home({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
       {/* ---- Hero (dark animated hero) ---- */}
-      <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="relative overflow-hidden rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
+      <section className="relative overflow-hidden rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
         {/* Animated gradient mesh background */}
         <div className="hero-gradient-mesh" aria-hidden="true">
           <div className="hero-orb hero-orb-1" />
@@ -421,114 +386,48 @@ export default function Home({
         {/* Subtle noise grain texture — premium depth */}
         <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.03]" aria-hidden="true" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat", backgroundSize: "256px 256px" }} />
 
-        {/* Content — split layout: text left, orbital diagram right */}
-        <div className="relative z-10 mx-auto max-w-[90rem] px-5 py-10 sm:px-6 sm:py-12 md:px-8 lg:px-10 lg:py-14 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-12 xl:py-16">
-          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
-            {/* LEFT: Text content */}
-            <div className="text-center lg:text-left">
-              <div
-                className="hero-stagger-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 text-[0.75rem] tracking-[0.14em] lg:mx-0"
-                style={{ borderColor: "rgba(255,255,255,0.20)", background: "rgba(255,255,255,0.08)", color: "#FAFAFA" }}
-              >
-                <span className="kicker-chip-dot" />
-                Enterprise AI Platform
-              </div>
+        {/* Content — single centered focal column (one idea per view: the headline) */}
+        <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-5 py-16 text-center sm:px-6 sm:py-20 lg:min-h-[68vh] lg:justify-center lg:py-24">
+          <div
+            className="hero-stagger-1 kicker-chip inline-flex rounded-full px-4 py-1.5 text-[0.75rem] tracking-[0.14em]"
+            style={{ borderColor: "rgba(255,255,255,0.20)", background: "rgba(255,255,255,0.08)", color: "#FAFAFA" }}
+          >
+            <span className="kicker-chip-dot" />
+            Enterprise AI Platform
+          </div>
 
-              <h1 className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white text-balance sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl">
-                Discover, govern, and scale{" "}
-                <span className="hero-word-rotator">
-                  <span className="hero-word-track">
-                    <span className="text-gradient">AI podcasts</span>
-                    <span className="text-gradient">AI agents</span>
-                    <span className="text-gradient">MCP servers</span>
-                    <span className="text-gradient">AI skills</span>
-                  </span>
-                </span>
-              </h1>
+          <h1 className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white text-balance sm:text-display-lg lg:text-display-xl">
+            Discover, govern, and scale{" "}
+            {/* Accessible name uses one canonical word; the rotator is decorative only */}
+            <span className="sr-only">AI agents</span>
+            <span className="hero-word-rotator" aria-hidden="true">
+              <span className="hero-word-track">
+                <span className="text-gradient">AI agents</span>
+                <span className="text-gradient">MCP servers</span>
+                <span className="text-gradient">AI skills</span>
+                <span className="text-gradient">AI podcasts</span>
+              </span>
+            </span>
+          </h1>
 
-              <p className="hero-stagger-3 mx-auto mt-5 max-w-2xl text-body-lg leading-relaxed text-zinc-300 text-balance lg:mx-0">
-                A unified catalog where teams discover, evaluate, and deploy AI agents, MCP servers, skills, and research — governed and structured for both people and LLMs.
-              </p>
+          <p className="hero-stagger-3 mt-5 max-w-2xl text-body-lg leading-relaxed text-zinc-300 text-balance">
+            A unified catalog where teams discover, evaluate, and deploy AI agents, MCP servers, skills, and research — governed and structured for both people and LLMs.
+          </p>
 
-              <div className="hero-stagger-4 mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
-                <Link href="/request-demo" className="btn btn-cta" data-tour="hero-cta">
-                  Book a demo
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </Link>
-                <Link
-                  href="/aixcelerator"
-                  className="btn"
-                  style={{ borderColor: "rgba(255,255,255,0.2)", color: "#FAFAFA", background: "rgba(255,255,255,0.06)" }}
-                >
-                  Explore platform
-                </Link>
-              </div>
-            </div>
-
-            {/* RIGHT: Live metrics feed — typography-first showcase */}
-            <div className="hidden items-center justify-end lg:flex relative">
-              {/* Grid dot pattern — subtle texture */}
-              <div className="hero-grid-dots" aria-hidden="true" />
-
-              {/* Atmospheric glow — parallax counter-motion */}
-              <div ref={parallaxGlowRef} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" style={{ transition: "transform 0.2s ease-out", willChange: "transform" }}>
-                <div className="absolute right-[5%] top-[0%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(220,38,38,0.14)_0%,rgba(220,38,38,0.04)_30%,transparent_55%)] blur-2xl" />
-                <div className="absolute right-[20%] top-[50%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.10)_0%,transparent_55%)] blur-3xl" />
-                <div className="absolute right-[0%] top-[25%] h-[250px] w-[250px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.08)_0%,transparent_55%)] blur-3xl" />
-              </div>
-
-              {/* Hero metric — one massive number + bar breakdown */}
-              <div ref={parallaxMetricRef} className="relative z-10" style={{ transition: "transform 0.15s ease-out", willChange: "transform", maxWidth: 420 }}>
-                {/* The ONE big hero number */}
-                <div className="hero-metric-hero">
-                  <div className="hero-metric-hero-number">
-                    <span>{fmt(safeCounts.agents + safeCounts.mcpServers + safeCounts.skills + safeCounts.podcasts)}</span>
-                  </div>
-                  <div className="hero-metric-hero-label">AI resources cataloged</div>
-                </div>
-
-                {/* Category breakdown — horizontal bar chart */}
-                <div className="hero-breakdown">
-                  <Link href="/resources/podcasts" className="hero-bar-row" style={{ "--mc": "236, 72, 153" } as React.CSSProperties}>
-                    <div className="hero-bar-row-label">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
-                      Podcasts
-                    </div>
-                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "40%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(safeCounts.podcasts)}</div>
-                  </Link>
-
-                  <Link href="/aixcelerator/agents" className="hero-bar-row" style={{ "--mc": "245, 158, 11" } as React.CSSProperties}>
-                    <div className="hero-bar-row-label">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.3 24.3 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19 14.5M12 21a9 9 0 0 0 9-9m-9 9a9 9 0 0 1-9-9" /></svg>
-                      Agents
-                    </div>
-                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "35%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(safeCounts.agents)}</div>
-                  </Link>
-
-                  <Link href="/aixcelerator/mcp" className="hero-bar-row" style={{ "--mc": "6, 182, 212" } as React.CSSProperties}>
-                    <div className="hero-bar-row-label">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-13.5-3a3 3 0 0 1 0-6h13.5a3 3 0 1 1 0 6" /></svg>
-                      MCP Servers
-                    </div>
-                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "55%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(safeCounts.mcpServers)}</div>
-                  </Link>
-
-                  <Link href="/aixcelerator/skills" className="hero-bar-row" style={{ "--mc": "139, 92, 246" } as React.CSSProperties}>
-                    <div className="hero-bar-row-label">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg>
-                      Skills
-                    </div>
-                    <div className="hero-bar-track"><div className="hero-bar-fill" style={{ "--bar-width": "95%" } as React.CSSProperties} /></div>
-                    <div className="hero-bar-count">{fmt(safeCounts.skills)}</div>
-                  </Link>
-                </div>
-              </div>
-            </div>
+          <div className="hero-stagger-4 mt-8 flex flex-wrap justify-center gap-4">
+            <Link href="/request-demo" className="btn btn-cta" data-tour="hero-cta">
+              Book a demo
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+            <Link
+              href="/aixcelerator"
+              className="btn"
+              style={{ borderColor: "rgba(255,255,255,0.2)", color: "#FAFAFA", background: "rgba(255,255,255,0.06)" }}
+            >
+              Explore platform
+            </Link>
           </div>
         </div>
       </section>
@@ -884,8 +783,6 @@ type CatalogItem = {
   description: string;
   meta: string;
   iconType: ContentTypeName;
-  gradient: string;
-  accentColor: string;
 };
 
 const CATALOG_ICON_PATHS: Record<string, { d: string; viewBox: string }> = {
@@ -896,51 +793,33 @@ const CATALOG_ICON_PATHS: Record<string, { d: string; viewBox: string }> = {
   podcast: { viewBox: "0 0 24 24", d: "M12 1a4 4 0 00-4 4v7a4 4 0 008 0V5a4 4 0 00-4-4zM6 11a1 1 0 10-2 0 8 8 0 0016 0 1 1 0 10-2 0 6 6 0 01-12 0zm5 10.93A8 8 0 014.07 14H6.1a6 6 0 0011.8 0h2.03A8 8 0 0113 21.93V24h-2v-2.07z" },
 };
 
-function CatalogCard({ href, title, description, meta, iconType, gradient, accentColor }: CatalogItem) {
+function CatalogCard({ href, title, description, meta, iconType }: CatalogItem) {
   const icon = CATALOG_ICON_PATHS[iconType] || CATALOG_ICON_PATHS.skill;
   return (
     <Link
       href={href}
-      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-50 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-zinc-900 dark:hover:border-zinc-500"
+      className="catalog-card group h-full p-5"
       aria-label={`Open ${title}`}
     >
-      <div className={`relative flex items-center justify-center bg-gradient-to-br ${gradient} px-6 py-12`}>
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-        {/* Large soft glow */}
-        <div className="absolute rounded-full blur-3xl transition-opacity duration-300 group-hover:opacity-30" style={{ width: 140, height: 140, backgroundColor: accentColor, opacity: 0.2 }} />
-        {/* Floating particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <div className="catalog-particle" style={{ left: "20%", top: "30%", animationDelay: "0s", animationDuration: "4s" }} />
-          <div className="catalog-particle" style={{ left: "65%", top: "55%", animationDelay: "1.3s", animationDuration: "5s" }} />
-          <div className="catalog-particle" style={{ left: "80%", top: "25%", animationDelay: "2.6s", animationDuration: "3.5s" }} />
-        </div>
-        {/* Icon with orbit ring */}
-        <div className="relative flex items-center justify-center">
-          <div className="catalog-orbit-ring" style={{ color: accentColor }} aria-hidden="true">
-            <div className="catalog-orbit-dot" />
-          </div>
-          <svg viewBox={icon.viewBox} className="relative h-16 w-16 drop-shadow-lg transition-transform duration-300 group-hover:scale-110" fill="none" strokeLinecap="round" strokeLinejoin="round">
-            <path d={icon.d} fill={accentColor} fillOpacity={0.85} stroke={accentColor} strokeWidth={0.3} />
+      <div className="flex items-start justify-between gap-3">
+        {/* Coral icon tile — the only accent on the card (locked: zinc + coral only) */}
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[#DC2626]/15 bg-[#DC2626]/10 text-[#DC2626] dark:border-[#F87171]/25 dark:bg-[#F87171]/10 dark:text-[#F87171]">
+          <svg viewBox={icon.viewBox} className="h-6 w-6" fill="currentColor" aria-hidden="true">
+            <path d={icon.d} />
           </svg>
-        </div>
-        {/* Badge */}
-        <div className="absolute left-3.5 top-3.5">
-          <div className="rounded-full border border-white/15 bg-black/30 px-3 py-1 text-xs font-bold tracking-wide text-white/95 backdrop-blur-md">
-            {meta}
-          </div>
-        </div>
-        {/* Arrow */}
-        <div className="absolute right-3.5 top-3.5 rounded-full border border-white/10 bg-white/5 p-2 text-white/50 transition-all duration-300 group-hover:bg-white/15 group-hover:text-white">
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M7 17L17 7M17 7H7M17 7v10" /></svg>
-        </div>
+        </span>
+        <span className="chip-neutral inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium">
+          {meta}
+        </span>
       </div>
-      <div className="flex flex-1 flex-col justify-between p-5">
-        <div>
-          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50">{title}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</p>
-        </div>
-      </div>
+      <h3 className="mt-4 text-base font-bold text-zinc-900 dark:text-zinc-50">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{description}</p>
+      <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        Explore
+        <svg className="card-arrow h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      </span>
     </Link>
   );
 }
@@ -1808,7 +1687,8 @@ function AnimatedMetric({
   }, [visible, delay]);
 
   const counted = useCountUp(target, 1500, counting);
-  const displayValue = counting ? formatCountedValue(counted, value) : "0";
+  // Render the real value server-side / before count-up (never a literal "0" — SSR/AEO + CLS)
+  const displayValue = counting ? formatCountedValue(counted, value) : value;
 
   return (
     <div
@@ -1859,7 +1739,8 @@ function PodcastPromoCard({ episodeCount, delay = 0 }: { episodeCount: number; d
   }, [visible, delay]);
 
   const counted = useCountUp(target, 1500, counting);
-  const displayValue = counting ? `${Math.round(counted)}+` : "0";
+  // Render the real value server-side / before count-up (never a literal "0" — SSR/AEO + CLS)
+  const displayValue = counting ? `${Math.round(counted)}+` : `${episodeCount}+`;
 
   return (
     <Link href="/resources/podcasts" ref={ref} className="podcast-metric-card card-glass gradient-border p-5 text-center group">

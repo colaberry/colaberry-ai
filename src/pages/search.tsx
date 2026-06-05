@@ -511,9 +511,9 @@ export default function SearchPage({ query, results, fetchError }: SearchPagePro
       {hasResults ? (
         <div className="reveal section-spacing grid gap-6">
           {grouped.map((group) => (
-            <section key={group.type} className="detail-section">
+            <section key={group.type} className="detail-section" aria-labelledby={`search-group-${group.type}`}>
               <div className="flex items-center justify-between">
-                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{group.type}</div>
+                <h2 id={`search-group-${group.type}`} className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{group.type}</h2>
                 <span className="text-xs text-zinc-500">{group.items.length} results</span>
               </div>
               <div className="mt-4 grid gap-3">
@@ -521,7 +521,7 @@ export default function SearchPage({ query, results, fetchError }: SearchPagePro
                   <Link
                     key={item.id}
                     href={item.href}
-                    className="card-elevated p-4"
+                    className="catalog-card p-4"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -530,7 +530,7 @@ export default function SearchPage({ query, results, fetchError }: SearchPagePro
                           <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{item.description}</div>
                         ) : null}
                       </div>
-                      <span className="rounded-md border border-[#4F2AA3]/15 bg-[#F3EEFF] px-2.5 py-1 text-xs font-semibold text-[#2B0F63] dark:border-[#7B5CE0]/20 dark:bg-[#18233A] dark:text-[#C4B3FF]">
+                      <span className="chip chip-neutral shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold">
                         {item.type}
                       </span>
                     </div>

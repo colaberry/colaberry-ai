@@ -151,20 +151,18 @@ export default function CollectionsPageTemplate({
       {/* Search + Category Filter Bar */}
       <div className="reveal mt-8 surface-panel p-4 flex flex-wrap items-center gap-3">
         <input
-          type="text"
+          type="search"
+          aria-label="Search collections"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search collections..."
-          className="h-9 w-64 rounded-full border border-zinc-300 bg-zinc-50 px-4 text-xs text-zinc-900 placeholder-zinc-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
+          className="h-9 w-64 rounded-full border border-zinc-300 bg-zinc-50 px-4 text-xs text-zinc-900 placeholder-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-400"
         />
 
         <button
           onClick={() => setSelectedCategory(null)}
-          className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-            !selectedCategory
-              ? "bg-[#DC2626]/10 text-[#DC2626] ring-1 ring-[#DC2626]/20 dark:text-[#F87171]"
-              : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
-          }`}
+          aria-pressed={!selectedCategory}
+          className={`rounded-full px-3 py-1.5 text-xs font-medium ${!selectedCategory ? "chip-brand" : "chip-neutral"}`}
         >
           All
         </button>
@@ -172,11 +170,8 @@ export default function CollectionsPageTemplate({
           <button
             key={cat.slug}
             onClick={() => setSelectedCategory(selectedCategory === cat.slug ? null : cat.slug)}
-            className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-              selectedCategory === cat.slug
-                ? "bg-[#DC2626]/10 text-[#DC2626] ring-1 ring-[#DC2626]/20 dark:text-[#F87171]"
-                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
-            }`}
+            aria-pressed={selectedCategory === cat.slug}
+            className={`rounded-full px-3 py-1.5 text-xs font-medium ${selectedCategory === cat.slug ? "chip-brand" : "chip-neutral"}`}
           >
             {cat.label}
           </button>
@@ -192,7 +187,7 @@ export default function CollectionsPageTemplate({
         )}
       </div>
 
-      <p className="reveal mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="reveal mt-4 text-sm text-zinc-500 dark:text-zinc-400" aria-live="polite">
         Showing {filtered.length} collections
         {filtered.length !== allCollections.length && ` of ${allCollections.length}`}
         {" | "}
@@ -200,7 +195,7 @@ export default function CollectionsPageTemplate({
       </p>
 
       {/* Collection Cards Grid */}
-      <section className="reveal stagger-grid mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="stagger-grid mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {filtered.map((collection) => (
           <CollectionCard key={collection.slug} collection={collection} config={config} />
         ))}
