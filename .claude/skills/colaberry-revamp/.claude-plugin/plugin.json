@@ -1,0 +1,8 @@
+{
+  "name": "colaberry-frontend-revamp",
+  "version": "1.0.0",
+  "description": "Redesign and rebuild the colaberry.ai / AIXcelerator front end to UX laws, WCAG 2.1 AA, and the WoT/Atlas design system — audit, critique, redesign, rebuild, verify, hand off.",
+  "author": { "name": "Colaberry Design" },
+  "keywords": ["ui-design", "ux-laws", "design-critique", "design-system", "accessibility", "colaberry", "atlas", "wot", "nextjs", "tailwind", "shadcn", "handoff"],
+  "license": "MIT"
+}
