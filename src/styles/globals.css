@@ -2446,8 +2446,8 @@ footer .footer-link:focus-visible {
 
 .input-premium:focus {
   outline: none;
-  border-color: var(--stroke);
-  box-shadow: none;
+  border-color: #DC2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
 }
 
 .input-premium::placeholder {
@@ -2460,8 +2460,8 @@ footer .footer-link:focus-visible {
 }
 
 .dark .input-premium:focus {
-  border-color: #71717A;
-  box-shadow: none;
+  border-color: #F87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3);
 }
 
 /* Shared form primitive used by internal operations pages */
@@ -3050,8 +3050,8 @@ footer .footer-link:focus-visible {
 
 .input-premium:focus {
   outline: none;
-  border-color: var(--stroke);
-  box-shadow: none;
+  border-color: #DC2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
 }
 
 .input-premium::placeholder {

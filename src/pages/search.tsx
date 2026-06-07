@@ -530,7 +530,7 @@ export default function SearchPage({ query, results, fetchError }: SearchPagePro
                           <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{item.description}</div>
                         ) : null}
                       </div>
-                      <span className="rounded-md border border-[#4F2AA3]/15 bg-[#F3EEFF] px-2.5 py-1 text-xs font-semibold text-[#2B0F63] dark:border-[#7B5CE0]/20 dark:bg-[#18233A] dark:text-[#C4B3FF]">
+                      <span className="chip chip-neutral rounded-full px-2.5 py-1 text-xs font-semibold">
                         {item.type}
                       </span>
                     </div>

@@ -163,7 +163,7 @@ export default function DemoRequestForm({
 
   const statusClass =
     state === "success"
-      ? "text-[var(--trusted-text)] dark:text-[var(--trusted-text)]"
+      ? "text-zinc-900 dark:text-zinc-50 font-semibold"
       : state === "error"
       ? "text-[var(--failure-text)] dark:text-[var(--failure-text)]"
       : "text-zinc-500 dark:text-zinc-400";
@@ -376,7 +376,7 @@ export default function DemoRequestForm({
         <button
           type="submit"
           className="btn btn-cta"
-          disabled={state === "submitting" || !consent}
+          disabled={state === "submitting"}
         >
           {state === "submitting" ? "Sending request..." : "Submit demo request"}
         </button>

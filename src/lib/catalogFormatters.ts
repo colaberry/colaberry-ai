@@ -33,7 +33,7 @@ const STATUS_TONES: Record<string, string> = {
   live:
     "bg-[var(--trusted-surface)] text-[var(--trusted-text)] ring-[var(--trusted-stroke)]",
   beta:
-    "bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-900/30 dark:text-amber-200 dark:ring-amber-500/40",
+    "bg-[var(--pivot-surface)] text-[var(--pivot-fill)] ring-[var(--pivot-stroke)] dark:text-[var(--pivot-text)]",
 };
 
 const DEFAULT_STATUS_TONE =
@@ -49,7 +49,7 @@ const SOURCE_TONES: Record<string, string> = {
   external:
     "bg-[var(--pivot-surface)] text-[var(--pivot-fill)] ring-[var(--pivot-stroke)] dark:text-[var(--pivot-text)]",
   partner:
-    "bg-violet-50 text-violet-700 ring-violet-200 dark:bg-violet-900/30 dark:text-violet-200 dark:ring-violet-500/40",
+    "bg-[var(--neutral-fill)] text-[var(--neutral-text)] ring-[var(--neutral-stroke)]",
 };
 
 const DEFAULT_SOURCE_TONE =

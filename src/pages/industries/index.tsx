@@ -49,7 +49,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
     canonical: buildCanonical("/industries"),
   };
 
-  const iconProps = { width: 28, height: 28, viewBox: "0 0 24 24", fill: "none", stroke: "#DC2626", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  const iconProps = { width: 28, height: 28, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, className: "text-zinc-700 dark:text-zinc-300" };
   const industries = [
     { name: "Agriculture", slug: "agriculture", icon: <svg {...iconProps}><path d="M12 22V8" /><path d="M5 12H2a10 10 0 0020 0h-3" /><path d="M8 5.2C9 4 10.5 3 12 3c1.5 0 3 1 4 2.2" /></svg> },
     { name: "Energy", slug: "energy", icon: <svg {...iconProps}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg> },
