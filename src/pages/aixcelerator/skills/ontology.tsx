@@ -145,6 +145,16 @@ function OntologyDiagram({
     (slug: string) => router.push(`/aixcelerator/skills?category=${slug}`),
     [router],
   );
+  /** Activate an SVG node via keyboard (Enter / Space), mirroring the click handler. */
+  const keyActivate = useCallback(
+    (fn: () => void) => (e: { key: string; preventDefault: () => void }) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        fn();
+      }
+    },
+    [],
+  );
 
   /* ── Mobile card layout ── */
   if (isMobile) {
@@ -271,7 +281,7 @@ function OntologyDiagram({
 
   return (
     <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[700px]" style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}>
+      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[700px]" style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }} role="group" aria-label={`Skill ontology — three-layer interactive diagram. A skill taxonomy of ${categories.length} categories, a relation graph of representative skills, and ${collections.length} collections. Press Tab to move between interactive nodes and Enter to open one.`} focusable="false">
         <rect width={svgWidth} height={svgHeight} rx="12" fill={bg} />
 
         {/* ─── LAYER 1: TAXONOMY ─── */}
@@ -304,7 +314,7 @@ function OntologyDiagram({
           const isHovered = hoveredCategory === cat.slug;
           const color = catColors[cat.slug] || textTertiary;
           return (
-            <g key={cat.slug} onClick={() => handleCategoryClick(cat.slug)} onMouseEnter={() => setHoveredCategory(cat.slug)} onMouseLeave={() => setHoveredCategory(null)} style={{ cursor: "pointer" }}>
+            <g key={cat.slug} className="ontology-node" role="link" tabIndex={0} aria-label={`${cat.label} category — ${count.toLocaleString()} skills`} onClick={() => handleCategoryClick(cat.slug)} onKeyDown={keyActivate(() => handleCategoryClick(cat.slug))} onMouseEnter={() => setHoveredCategory(cat.slug)} onMouseLeave={() => setHoveredCategory(null)} onFocus={() => setHoveredCategory(cat.slug)} onBlur={() => setHoveredCategory(null)} style={{ cursor: "pointer" }}>
               <rect x={x} y={catY} width={w} height={catH} rx="6" fill={isHovered ? (isDark ? `${color}15` : `${color}0A`) : surface} stroke={isHovered ? color : border} strokeWidth={isHovered ? 1 : 0.5} style={{ transition: "stroke 0.15s, fill 0.15s" }} />
               <circle cx={x + 11} cy={catY + catH / 2} r="2.5" fill={color} opacity={isHovered ? 1 : 0.65} />
               <text x={x + 20} y={catY + catH / 2 + 0.5} dominantBaseline="middle" fontSize="10" fontWeight="500" fill={isHovered ? textPrimary : textSecondary} style={{ transition: "fill 0.15s" }}>{cat.label}</text>
@@ -357,7 +367,7 @@ function OntologyDiagram({
           const nH = 24;
           const ny = skill.y + l2BaseY;
           return (
-            <g key={skill.slug} onMouseEnter={() => setHoveredSkill(i)} onMouseLeave={() => setHoveredSkill(null)} onClick={() => router.push(`/aixcelerator/skills/${skill.slug}`)} style={{ cursor: "pointer" }}>
+            <g key={skill.slug} className="ontology-node" role="link" tabIndex={0} aria-label={`${skill.name} — view skill`} onMouseEnter={() => setHoveredSkill(i)} onMouseLeave={() => setHoveredSkill(null)} onFocus={() => setHoveredSkill(i)} onBlur={() => setHoveredSkill(null)} onClick={() => router.push(`/aixcelerator/skills/${skill.slug}`)} onKeyDown={keyActivate(() => router.push(`/aixcelerator/skills/${skill.slug}`))} style={{ cursor: "pointer" }}>
               <rect x={skill.x} y={ny} width={nW} height={nH} rx="6" fill={isHovered ? (isDark ? "#DC262615" : "#DC26260A") : surface} stroke={isHovered ? "#DC2626" : border} strokeWidth={isHovered ? 1 : 0.5} style={{ transition: "stroke 0.15s, fill 0.15s" }} />
               <text x={skill.x + nW / 2} y={ny + nH / 2 + 0.5} textAnchor="middle" dominantBaseline="middle" fontSize="9.5" fontWeight="500" fill={isHovered ? textPrimary : textSecondary} style={{ transition: "fill 0.15s" }}>{skill.name}</text>
             </g>
@@ -377,7 +387,7 @@ function OntologyDiagram({
           const x = colStartX + i * (colW + colGap);
           const isHovered = hoveredCollection === col.slug;
           return (
-            <g key={col.slug} onClick={() => router.push(`/aixcelerator/skills/collections/${col.slug}`)} onMouseEnter={() => setHoveredCollection(col.slug)} onMouseLeave={() => setHoveredCollection(null)} style={{ cursor: "pointer" }}>
+            <g key={col.slug} className="ontology-node" role="link" tabIndex={0} aria-label={`${col.slug} collection — ${col.skillSlugs.length} skills`} onClick={() => router.push(`/aixcelerator/skills/collections/${col.slug}`)} onKeyDown={keyActivate(() => router.push(`/aixcelerator/skills/collections/${col.slug}`))} onMouseEnter={() => setHoveredCollection(col.slug)} onMouseLeave={() => setHoveredCollection(null)} onFocus={() => setHoveredCollection(col.slug)} onBlur={() => setHoveredCollection(null)} style={{ cursor: "pointer" }}>
               <rect x={x} y={colY} width={colW} height="52" rx="6" fill={isHovered ? (isDark ? "#DC262610" : "#DC262606") : surface} stroke={isHovered ? "#DC2626" : border} strokeWidth={isHovered ? 1 : 0.5} style={{ transition: "stroke 0.15s, fill 0.15s" }} />
               <text x={x + colW / 2} y={colY + 20} textAnchor="middle" fontSize="10" fontWeight="600" fill={isHovered ? textPrimary : textSecondary} style={{ transition: "fill 0.15s" }}>{col.slug}</text>
               <text x={x + colW / 2} y={colY + 38} textAnchor="middle" fontSize="8.5" fontWeight="500" fill={textTertiary}>{col.skillSlugs.length} skills</text>

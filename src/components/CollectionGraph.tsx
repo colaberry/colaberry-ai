@@ -11,7 +11,7 @@
  */
 
 import dynamic from "next/dynamic";
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CATEGORY_COLORS,
   RELATIONSHIP_TYPE_COLORS,
@@ -47,6 +47,17 @@ export default function CollectionGraph({
   onNodeClick,
 }: CollectionGraphProps) {
   const graphRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  // Respect prefers-reduced-motion for the continuous edge-particle animation
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduceMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const graphData = useMemo(
     () => ({ nodes: [...nodes], links: [...links] }),
@@ -87,6 +98,11 @@ export default function CollectionGraph({
         className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700"
         style={{ height }}
       >
+        <div
+          className="h-full w-full"
+          role="img"
+          aria-label={`Force-directed graph of ${nodes.length} related items. This is a visual element — use the list below to navigate with the keyboard.`}
+        >
         <ForceGraph2D
           ref={graphRef}
           graphData={graphData}
@@ -108,7 +124,7 @@ export default function CollectionGraph({
             link.type === "compose_with" || link.type === "depend_on" ? 1.8 : 1.0
           }
           linkCurvature={0.12}
-          linkDirectionalParticles={(link: any) => link.type === "depend_on" ? 2 : 0} // eslint-disable-line @typescript-eslint/no-explicit-any
+          linkDirectionalParticles={(link: any) => reduceMotion ? 0 : (link.type === "depend_on" ? 2 : 0)} // eslint-disable-line @typescript-eslint/no-explicit-any
           linkDirectionalParticleSpeed={0.006}
           linkDirectionalParticleWidth={2}
           linkDirectionalParticleColor={(link: any) => // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -174,6 +190,7 @@ export default function CollectionGraph({
             ctx.fillText(RELATIONSHIP_TYPE_LABELS[link.type] || link.type, midX, midY - 3 / globalScale);
           }}
         />
+        </div>
 
         {/* Bottom gradient for depth */}
         <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-zinc-950/40 to-transparent" />
@@ -195,6 +212,34 @@ export default function CollectionGraph({
             </div>
           ))}
       </div>
+
+      {/* Keyboard / screen-reader accessible alternative to the canvas graph */}
+      <details className="mt-2.5 rounded-lg border border-zinc-200 bg-zinc-50/60 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800/40">
+        <summary className="cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          Browse as a list ({nodes.length})
+        </summary>
+        <ul className="mt-2 grid gap-x-4 gap-y-0.5 sm:grid-cols-2">
+          {[...nodes].sort((a, b) => a.name.localeCompare(b.name)).map((n) => (
+            <li key={n.id}>
+              {onNodeClick ? (
+                <button
+                  type="button"
+                  onClick={() => onNodeClick(n.id)}
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+                >
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: n.color || CATEGORY_COLORS[n.category] || "#a1a1aa" }} aria-hidden="true" />
+                  <span className="truncate">{n.name}</span>
+                </button>
+              ) : (
+                <span className="flex items-center gap-2 px-2 py-1 text-xs text-zinc-600 dark:text-zinc-400">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: n.color || CATEGORY_COLORS[n.category] || "#a1a1aa" }} aria-hidden="true" />
+                  <span className="truncate">{n.name}</span>
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </details>
     </div>
   );
 }

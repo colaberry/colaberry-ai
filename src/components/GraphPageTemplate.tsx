@@ -81,6 +81,17 @@ export default function GraphPageTemplate({
   const [searchQuery, setSearchQuery] = useState("");
   const [highlightedNode, setHighlightedNode] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  // Respect prefers-reduced-motion for the continuous edge-particle animation
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduceMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const edgeTypeKeys = useMemo(
     () => config.relationTypes.map((r) => r.type),
@@ -256,8 +267,13 @@ export default function GraphPageTemplate({
           </div>
         </div>
 
-        {/* Canvas */}
+        {/* Canvas — decorative/visual; keyboard + screen-reader users use the list below */}
         {nodes.length > 0 ? (
+          <div
+            className="h-full w-full"
+            role="img"
+            aria-label={`Force-directed graph of ${nodes.length} ${config.label.toLowerCase()} connected by ${filteredLinks.length} relationships. This is a visual element — use the "Browse as a list" section below the graph to navigate ${config.label.toLowerCase()} with the keyboard.`}
+          >
           <ForceGraph2D
             ref={graphRef}
             graphData={graphData}
@@ -280,6 +296,7 @@ export default function GraphPageTemplate({
             }}
             linkCurvature={0.15}
             linkDirectionalParticles={(link: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+              if (reduceMotion) return 0;
               return directionalTypes.includes(link.type) ? 3 : 0;
             }}
             linkDirectionalParticleSpeed={0.004}
@@ -346,6 +363,7 @@ export default function GraphPageTemplate({
               ctx.fillText(RELATIONSHIP_TYPE_LABELS[link.type] || link.type, midX, midY - 3 / globalScale);
             }}
           />
+          </div>
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-zinc-500">
             Loading graph data...
@@ -372,6 +390,32 @@ export default function GraphPageTemplate({
           </div>
         )}
       </div>
+
+      {/* Keyboard / screen-reader accessible alternative to the canvas graph */}
+      {!isFullscreen && nodes.length > 0 && (
+        <details className="reveal mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-900">
+          <summary className="cursor-pointer text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+            Browse as a list ({nodes.length} {config.label.toLowerCase()})
+          </summary>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+            A keyboard-navigable alternative to the visual graph above. Select a {config.labelSingular.toLowerCase()} to open it.
+          </p>
+          <ul className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+            {[...nodes].sort((a, b) => a.name.localeCompare(b.name)).map((n) => (
+              <li key={n.id}>
+                <Link
+                  href={`${config.basePath}/${n.id}`}
+                  className="group flex items-center gap-2 rounded-md px-2 py-1 text-sm text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+                >
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: n.color }} aria-hidden="true" />
+                  <span className="truncate">{n.name}</span>
+                  <span className="ml-auto shrink-0 text-[10px] capitalize text-zinc-400 dark:text-zinc-500">{n.category.replace("-", " & ")}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
 
       {/* Hovered node tooltip */}
       {hoveredNode && !isFullscreen && (

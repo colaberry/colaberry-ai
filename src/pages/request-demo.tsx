@@ -33,10 +33,10 @@ export default function RequestDemo() {
           }}
         />
       </Head>
-      <div className="reveal grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
+      <div className="atlas reveal grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
         <div className="lg:col-span-7">
-        <div className="chip chip-brand inline-flex w-fit items-center gap-2 rounded-md border border-[#4F2AA3]/15 bg-[#F3EEFF] py-1 pl-2 pr-3 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-[#2B0F63] dark:border-[#7B5CE0]/20 dark:bg-[#18233A] dark:text-[#C4B3FF]">
-            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#008EA8]" />
+        <div className="chip chip-brand inline-flex w-fit items-center gap-2 rounded-full py-1 pl-2 pr-3 text-[0.6875rem] font-semibold uppercase tracking-[0.14em]">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--atlas-primary)]" />
             Demo request
           </div>
 
@@ -49,12 +49,15 @@ export default function RequestDemo() {
             />
           </div>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <button type="submit" form="demo-request-form" className="btn btn-cta">
-              Submit demo request
-            </button>
-            <Link href="/aixcelerator" className="btn btn-secondary">
-              Explore AIXcelerator
+          <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            <Link href="#demo-request-form" className="btn btn-cta">
+              Start your request
+            </Link>
+            <Link
+              href="/aixcelerator"
+              className="text-sm font-medium text-zinc-500 underline-offset-4 transition-colors hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
+            >
+              Or explore AIXcelerator first
             </Link>
           </div>
 
@@ -98,7 +101,7 @@ export default function RequestDemo() {
 function Bullet({ children }: { children: string }) {
   return (
     <div className="flex gap-2">
-      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#008EA8]" />
+      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--atlas-primary)]" />
       <span>{children}</span>
     </div>
   );
@@ -107,7 +110,7 @@ function Bullet({ children }: { children: string }) {
 function Step({ n, title, body }: { n: string; title: string; body: string }) {
   return (
     <div className="card-elevated flex items-start gap-3 p-4">
-      <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[#4F2AA3]/5 text-xs font-semibold text-[#2B0F63] ring-1 ring-[#4F2AA3]/20 dark:bg-[#7B5CE0]/10 dark:text-[#C4B3FF] dark:ring-[#7B5CE0]/25">
+      <div className="flex h-7 w-7 items-center justify-center rounded-md bg-zinc-950 text-xs font-semibold text-white dark:bg-zinc-100 dark:text-zinc-950">
         {n}
       </div>
       <div>

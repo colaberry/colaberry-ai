@@ -1,5 +1,5 @@
 import type { AppProps } from "next/app";
-import { Inter } from "next/font/google";
+import { Inter, Geist } from "next/font/google";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -12,6 +12,15 @@ import GlobalMiniPlayer from "../components/GlobalMiniPlayer";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+// Geist — WoT/Atlas UI font. Variable is exposed globally so it is available
+// for incremental migration, but font-family is only applied where `.atlas`
+// scopes it (e.g. /request-demo). Other surfaces stay on Inter until migrated.
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
   display: "swap",
 });
 
@@ -41,7 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router]);
 
   return (
-    <div className={`${inter.variable} font-sans`}>
+    <div className={`${inter.variable} ${geist.variable} font-sans`}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>

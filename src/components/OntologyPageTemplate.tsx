@@ -104,6 +104,16 @@ function OntologyDiagram({
     (slug: string) => router.push(`${config.catalogPath}?category=${slug}`),
     [router, config.catalogPath],
   );
+  /** Activate an SVG node via keyboard (Enter / Space), mirroring the click handler. */
+  const keyActivate = useCallback(
+    (fn: () => void) => (e: { key: string; preventDefault: () => void }) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        fn();
+      }
+    },
+    [],
+  );
 
   /* ── Mobile card layout — replaces SVG on small screens ── */
   if (isMobile) {
@@ -233,6 +243,9 @@ function OntologyDiagram({
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         className="w-full min-w-[580px]"
         style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}
+        role="group"
+        aria-label={`${config.labelSingular} ontology — three-layer interactive diagram. A ${config.label} taxonomy of ${categories.length} categories, a relation graph of representative ${config.label.toLowerCase()}, and ${topCollections.length} collections. Press Tab to move between interactive nodes and Enter to open one.`}
+        focusable="false"
       >
         {/* Background */}
         <rect width={svgWidth} height={svgHeight} rx="12" fill={cl.bg} />
@@ -285,9 +298,16 @@ function OntologyDiagram({
           return (
             <g
               key={cat.slug}
+              className="ontology-node"
+              role="link"
+              tabIndex={0}
+              aria-label={`${cat.label} category — ${count.toLocaleString()} ${config.label.toLowerCase()}`}
               onClick={() => handleCategoryClick(cat.slug)}
+              onKeyDown={keyActivate(() => handleCategoryClick(cat.slug))}
               onMouseEnter={() => setHoveredCategory(cat.slug)}
               onMouseLeave={() => setHoveredCategory(null)}
+              onFocus={() => setHoveredCategory(cat.slug)}
+              onBlur={() => setHoveredCategory(null)}
               style={{ cursor: "pointer" }}
             >
               <rect
@@ -365,9 +385,16 @@ function OntologyDiagram({
           return (
             <g
               key={item.slug}
+              className="ontology-node"
+              role="link"
+              tabIndex={0}
+              aria-label={`${item.name} — view ${config.labelSingular.toLowerCase()}`}
               onMouseEnter={() => setHoveredItem(i)}
               onMouseLeave={() => setHoveredItem(null)}
+              onFocus={() => setHoveredItem(i)}
+              onBlur={() => setHoveredItem(null)}
               onClick={() => router.push(`${config.basePath}/${item.slug}`)}
+              onKeyDown={keyActivate(() => router.push(`${config.basePath}/${item.slug}`))}
               style={{ cursor: "pointer" }}
             >
               <rect
@@ -410,9 +437,16 @@ function OntologyDiagram({
           return (
             <g
               key={col.slug}
+              className="ontology-node"
+              role="link"
+              tabIndex={0}
+              aria-label={`${col.name || col.slug} collection — ${col.itemSlugs.length} items`}
               onClick={() => router.push(`${config.basePath}/collections/${col.slug}`)}
+              onKeyDown={keyActivate(() => router.push(`${config.basePath}/collections/${col.slug}`))}
               onMouseEnter={() => setHoveredCollection(col.slug)}
               onMouseLeave={() => setHoveredCollection(null)}
+              onFocus={() => setHoveredCollection(col.slug)}
+              onBlur={() => setHoveredCollection(null)}
               style={{ cursor: "pointer" }}
             >
               <rect x={x} y={colY} width={colW} height="60" rx="6"
