@@ -405,45 +405,24 @@ export default function Home({
         ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
-      {/* ---- Hero (dark animated hero) ---- */}
-      <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="relative overflow-hidden rounded-2xl" style={{ background: "var(--gradient-hero)" }}>
-        {/* Animated gradient mesh background */}
-        <div className="hero-gradient-mesh" aria-hidden="true">
-          <div className="hero-orb hero-orb-1" />
-          <div className="hero-orb hero-orb-2" />
-          <div className="hero-orb hero-orb-3" />
-          <div className="hero-orb hero-orb-center" />
-        </div>
-
-        {/* Radial vignette for depth */}
-        <div className="hero-vignette" aria-hidden="true" />
-
-        {/* Subtle noise grain texture — premium depth */}
-        <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.03]" aria-hidden="true" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat", backgroundSize: "256px 256px" }} />
-
-        {/* Content — split layout: text left, orbital diagram right */}
-        <div className="relative z-10 mx-auto max-w-[90rem] px-5 py-10 sm:px-6 sm:py-12 md:px-8 lg:px-10 lg:py-14 lg:min-h-[80vh] lg:flex lg:flex-col lg:justify-center xl:px-12 xl:py-16">
+      {/* ---- Hero (flat Atlas — navy, no gradients/glow) ---- */}
+      <section ref={heroRef} onMouseMove={handleHeroMouse} onMouseLeave={handleHeroLeave} className="atlas relative overflow-hidden rounded-2xl border border-[rgba(6,182,212,0.15)]" style={{ background: "#0B1E3D" }}>
+        {/* Content — split layout: text left, metrics right */}
+        <div className="relative z-10 mx-auto max-w-[90rem] px-5 py-10 sm:px-6 sm:py-12 md:px-8 lg:px-10 lg:py-14 lg:min-h-[70vh] lg:flex lg:flex-col lg:justify-center xl:px-12 xl:py-16">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-10">
             {/* LEFT: Text content */}
             <div className="text-center lg:text-left">
               <div
-                className="hero-stagger-1 kicker-chip mx-auto inline-flex rounded-full px-4 py-1.5 text-[0.75rem] tracking-[0.14em] lg:mx-0"
-                style={{ borderColor: "rgba(255,255,255,0.20)", background: "rgba(255,255,255,0.08)", color: "#FAFAFA" }}
+                className="hero-stagger-1 kicker-chip mx-auto inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[0.75rem] font-semibold uppercase tracking-[0.14em] lg:mx-0"
+                style={{ borderColor: "rgba(6,182,212,0.35)", background: "rgba(6,182,212,0.10)", color: "#67E8F9" }}
               >
                 <span className="kicker-chip-dot" />
                 Enterprise AI Platform
               </div>
 
-              <h1 className="hero-stagger-2 mt-6 font-sans text-display-md font-bold text-white text-balance sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl">
+              <h1 className="hero-stagger-2 mt-6 text-display-md font-bold text-white text-balance sm:text-display-lg lg:text-display-xl 2xl:text-display-2xl">
                 Discover, govern, and scale{" "}
-                <span className="hero-word-rotator">
-                  <span className="hero-word-track">
-                    <span className="text-gradient">AI podcasts</span>
-                    <span className="text-gradient">AI agents</span>
-                    <span className="text-gradient">MCP servers</span>
-                    <span className="text-gradient">AI skills</span>
-                  </span>
-                </span>
+                <span style={{ color: "#22D3EE" }}>enterprise AI</span>
               </h1>
 
               <p className="hero-stagger-3 mx-auto mt-5 max-w-2xl text-body-lg leading-relaxed text-zinc-300 text-balance lg:mx-0">
@@ -460,26 +439,19 @@ export default function Home({
                 <Link
                   href="/aixcelerator"
                   className="btn"
-                  style={{ borderColor: "rgba(255,255,255,0.2)", color: "#FAFAFA", background: "rgba(255,255,255,0.06)" }}
+                  style={{ borderColor: "rgba(255,255,255,0.25)", color: "#FAFAFA", background: "transparent" }}
                 >
                   Explore platform
                 </Link>
               </div>
             </div>
 
-            {/* RIGHT: Live metrics feed — typography-first showcase */}
+            {/* RIGHT: Live metrics feed — typography-first, flat (lg+) */}
             <div className="hidden items-center justify-end lg:flex relative">
-              {/* Grid dot pattern — subtle texture */}
+              {/* Subtle dot-grid — Atlas-permitted texture (no glow) */}
               <div className="hero-grid-dots" aria-hidden="true" />
 
-              {/* Atmospheric glow — parallax counter-motion */}
-              <div ref={parallaxGlowRef} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" style={{ transition: "transform 0.2s ease-out", willChange: "transform" }}>
-                <div className="absolute right-[5%] top-[0%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(220,38,38,0.14)_0%,rgba(220,38,38,0.04)_30%,transparent_55%)] blur-2xl" />
-                <div className="absolute right-[20%] top-[50%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.10)_0%,transparent_55%)] blur-3xl" />
-                <div className="absolute right-[0%] top-[25%] h-[250px] w-[250px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.08)_0%,transparent_55%)] blur-3xl" />
-              </div>
-
-              {/* Hero metric — one massive number + bar breakdown */}
+              {/* Hero metric — one big number + bar breakdown */}
               <div ref={parallaxMetricRef} className="relative z-10" style={{ transition: "transform 0.15s ease-out", willChange: "transform", maxWidth: 420 }}>
                 {/* The ONE big hero number */}
                 <div className="hero-metric-hero">
@@ -489,9 +461,9 @@ export default function Home({
                   <div className="hero-metric-hero-label">AI resources cataloged</div>
                 </div>
 
-                {/* Category breakdown — horizontal bar chart */}
+                {/* Category breakdown — single-hue (cyan) horizontal bars */}
                 <div className="hero-breakdown">
-                  <Link href="/resources/podcasts" className="hero-bar-row" style={{ "--mc": "236, 72, 153" } as React.CSSProperties}>
+                  <Link href="/resources/podcasts" className="hero-bar-row" style={{ "--mc": "6, 182, 212" } as React.CSSProperties}>
                     <div className="hero-bar-row-label">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
                       Podcasts
@@ -500,7 +472,7 @@ export default function Home({
                     <div className="hero-bar-count">{fmt(safeCounts.podcasts)}</div>
                   </Link>
 
-                  <Link href="/aixcelerator/agents" className="hero-bar-row" style={{ "--mc": "245, 158, 11" } as React.CSSProperties}>
+                  <Link href="/aixcelerator/agents" className="hero-bar-row" style={{ "--mc": "6, 182, 212" } as React.CSSProperties}>
                     <div className="hero-bar-row-label">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.3 24.3 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19 14.5M12 21a9 9 0 0 0 9-9m-9 9a9 9 0 0 1-9-9" /></svg>
                       Agents
@@ -518,7 +490,7 @@ export default function Home({
                     <div className="hero-bar-count">{fmt(safeCounts.mcpServers)}</div>
                   </Link>
 
-                  <Link href="/aixcelerator/skills" className="hero-bar-row" style={{ "--mc": "139, 92, 246" } as React.CSSProperties}>
+                  <Link href="/aixcelerator/skills" className="hero-bar-row" style={{ "--mc": "6, 182, 212" } as React.CSSProperties}>
                     <div className="hero-bar-row-label">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg>
                       Skills
@@ -536,7 +508,7 @@ export default function Home({
       {/* Stay in the loop section removed per Ram's feedback */}
 
       {/* ---- Trust metrics ---- */}
-      <section className="reveal section-spacing">
+      <section className="atlas reveal section-spacing">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <PodcastPromoCard episodeCount={safeCounts.podcasts} delay={0} />
           <AnimatedMetric value="8+" label="Industries served" note="Agriculture to fintech" delay={150} />
@@ -548,7 +520,7 @@ export default function Home({
 
       {/* divider line removed */}
 
-      <section className="section-spacing">
+      <section className="atlas section-spacing">
         <div className="reveal flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
             kicker="Explore the catalog"
@@ -896,51 +868,31 @@ const CATALOG_ICON_PATHS: Record<string, { d: string; viewBox: string }> = {
   podcast: { viewBox: "0 0 24 24", d: "M12 1a4 4 0 00-4 4v7a4 4 0 008 0V5a4 4 0 00-4-4zM6 11a1 1 0 10-2 0 8 8 0 0016 0 1 1 0 10-2 0 6 6 0 01-12 0zm5 10.93A8 8 0 014.07 14H6.1a6 6 0 0011.8 0h2.03A8 8 0 0113 21.93V24h-2v-2.07z" },
 };
 
-function CatalogCard({ href, title, description, meta, iconType, gradient, accentColor }: CatalogItem) {
+function CatalogCard({ href, title, description, meta, iconType }: CatalogItem) {
   const icon = CATALOG_ICON_PATHS[iconType] || CATALOG_ICON_PATHS.skill;
   return (
     <Link
       href={href}
-      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-50 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 dark:border-zinc-700/60 dark:bg-zinc-900 dark:hover:border-zinc-500"
+      className="group catalog-card flex h-full flex-col p-5"
       aria-label={`Open ${title}`}
     >
-      <div className={`relative flex items-center justify-center bg-gradient-to-br ${gradient} px-6 py-12`}>
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-        {/* Large soft glow */}
-        <div className="absolute rounded-full blur-3xl transition-opacity duration-300 group-hover:opacity-30" style={{ width: 140, height: 140, backgroundColor: accentColor, opacity: 0.2 }} />
-        {/* Floating particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <div className="catalog-particle" style={{ left: "20%", top: "30%", animationDelay: "0s", animationDuration: "4s" }} />
-          <div className="catalog-particle" style={{ left: "65%", top: "55%", animationDelay: "1.3s", animationDuration: "5s" }} />
-          <div className="catalog-particle" style={{ left: "80%", top: "25%", animationDelay: "2.6s", animationDuration: "3.5s" }} />
-        </div>
-        {/* Icon with orbit ring */}
-        <div className="relative flex items-center justify-center">
-          <div className="catalog-orbit-ring" style={{ color: accentColor }} aria-hidden="true">
-            <div className="catalog-orbit-dot" />
-          </div>
-          <svg viewBox={icon.viewBox} className="relative h-16 w-16 drop-shadow-lg transition-transform duration-300 group-hover:scale-110" fill="none" strokeLinecap="round" strokeLinejoin="round">
-            <path d={icon.d} fill={accentColor} fillOpacity={0.85} stroke={accentColor} strokeWidth={0.3} />
+      <div className="flex items-start justify-between">
+        {/* Flat cyan icon tile — single accent, no gradient/glow/orbit (Atlas) */}
+        <span className="flex h-11 w-11 items-center justify-center rounded-[var(--atlas-radius,0.625rem)] bg-[rgba(6,182,212,0.10)]">
+          <svg viewBox={icon.viewBox} className="h-6 w-6" fill="none" aria-hidden="true">
+            <path d={icon.d} fill="var(--atlas-primary, #06B6D4)" fillOpacity={0.9} stroke="var(--atlas-primary, #06B6D4)" strokeWidth={0.3} />
           </svg>
-        </div>
-        {/* Badge */}
-        <div className="absolute left-3.5 top-3.5">
-          <div className="rounded-full border border-white/15 bg-black/30 px-3 py-1 text-xs font-bold tracking-wide text-white/95 backdrop-blur-md">
-            {meta}
-          </div>
-        </div>
-        {/* Arrow */}
-        <div className="absolute right-3.5 top-3.5 rounded-full border border-white/10 bg-white/5 p-2 text-white/50 transition-all duration-300 group-hover:bg-white/15 group-hover:text-white">
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M7 17L17 7M17 7H7M17 7v10" /></svg>
-        </div>
+        </span>
+        <span className="rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+          {meta}
+        </span>
       </div>
-      <div className="flex flex-1 flex-col justify-between p-5">
-        <div>
-          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50">{title}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</p>
-        </div>
-      </div>
+      <h3 className="mt-4 text-base font-bold text-zinc-900 dark:text-zinc-50">{title}</h3>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</p>
+      <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[#0E7490] dark:text-[#22D3EE]">
+        Explore
+        <svg className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7v10" /></svg>
+      </span>
     </Link>
   );
 }
@@ -1813,13 +1765,13 @@ function AnimatedMetric({
   return (
     <div
       ref={ref}
-      className="card-glass gradient-border p-5 text-center"
+      className="catalog-card p-5 text-center"
     >
       <div
         className={visible ? "counter-animate" : "opacity-0"}
         style={{ animationDelay: `${delay}ms` }}
       >
-        <div className="font-sans text-display-sm font-bold bg-gradient-to-r from-[#B91C1C] to-[#DC2626] bg-clip-text text-transparent dark:from-[#F87171] dark:to-[#FCA5A5]">
+        <div className="text-display-sm font-bold tabular-nums text-[#0E7490] dark:text-[#22D3EE]">
           {displayValue}
         </div>
         <div className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{label}</div>
@@ -1862,12 +1814,12 @@ function PodcastPromoCard({ episodeCount, delay = 0 }: { episodeCount: number; d
   const displayValue = counting ? `${Math.round(counted)}+` : "0";
 
   return (
-    <Link href="/resources/podcasts" ref={ref} className="podcast-metric-card card-glass gradient-border p-5 text-center group">
+    <Link href="/resources/podcasts" ref={ref} className="podcast-metric-card catalog-card p-5 text-center group">
       <div
         className={visible ? "counter-animate" : "opacity-0"}
         style={{ animationDelay: `${delay}ms` }}
       >
-        <div className="font-sans text-display-sm font-bold bg-gradient-to-r from-[#B91C1C] to-[#DC2626] bg-clip-text text-transparent dark:from-[#F87171] dark:to-[#FCA5A5]">
+        <div className="text-display-sm font-bold tabular-nums text-[#0E7490] dark:text-[#22D3EE]">
           {displayValue}
         </div>
         <div className="mt-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Podcast episodes</div>

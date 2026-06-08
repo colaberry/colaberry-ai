@@ -100,7 +100,7 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
         {solutionHighlights.map((item) => (
           <div
             key={item.title}
-            className="card-elevated p-4"
+            className="catalog-card p-4"
           >
             <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{item.title}</div>
             <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">{item.description}</div>
@@ -108,14 +108,14 @@ export default function Solutions({ agentCount, useCaseCount }: SolutionsProps) 
         ))}
       </div>
       {agentCount > 0 || useCaseCount > 0 ? (
-        <p className="mt-2 text-sm text-[#667085] dark:text-[#94A3B8]">
+        <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
           Backed by {agentCount > 0 ? `${agentCount} agents` : ""}{agentCount > 0 && useCaseCount > 0 ? " and " : ""}{useCaseCount > 0 ? `${useCaseCount} use cases` : ""} in the catalog.
         </p>
       ) : null}
 
       <div className="reveal section-spacing grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {solutions.map((item) => (
-          <div key={item.title} className="card-feature p-5">
+          <div key={item.title} className="catalog-card p-5">
             <div className="text-[0.9375rem] font-semibold text-zinc-900 dark:text-zinc-100">{item.title}</div>
             <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{item.description}</div>
             <div className="chip chip-muted mt-4 inline-flex items-center rounded-md border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-semibold text-zinc-700">
