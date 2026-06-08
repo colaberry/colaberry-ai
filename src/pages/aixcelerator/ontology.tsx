@@ -90,6 +90,14 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
   const windowWidth = useWindowWidth();
   const isMobile = windowWidth < 640;
 
+  /** Activate an SVG node via keyboard (Enter / Space), mirroring the click handler. */
+  const keyActivate = (fn: () => void) => (e: { key: string; preventDefault: () => void }) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      fn();
+    }
+  };
+
   /* ── Mobile card layout ── */
   if (isMobile) {
     const typeEntries = (Object.entries(CONTENT_TYPE_META) as [ContentTypeName, typeof CONTENT_TYPE_META[ContentTypeName]][]).filter(([type]) => type in NODE_POSITIONS);
@@ -130,7 +138,7 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
 
   return (
     <div className="overflow-x-auto">
-      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[600px]" style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}>
+      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full min-w-[600px]" style={{ maxHeight: `${svgHeight}px`, fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }} role="group" aria-label="Colaberry AI knowledge graph — cross-type ontology. Interactive diagram of how Agents, Skills, MCP Servers, and Podcasts connect. Press Tab to move between the content-type nodes and Enter to open a node's ontology." focusable="false">
         <rect width={svgWidth} height={svgHeight} rx="12" fill={bg} />
 
         {/* Title */}
@@ -193,10 +201,17 @@ function PlatformDiagram({ typeCounts }: { typeCounts: Record<ContentTypeName, n
           return (
             <g
               key={type}
+              className="ontology-node"
+              role="link"
+              tabIndex={0}
+              aria-label={`${meta.label}${count > 0 ? ` — ${count.toLocaleString()}+ items` : ""} — explore ontology`}
               onMouseEnter={() => setHoveredType(type)}
               onMouseLeave={() => setHoveredType(null)}
+              onFocus={() => setHoveredType(type)}
+              onBlur={() => setHoveredType(null)}
               style={{ cursor: "pointer" }}
               onClick={() => { window.location.href = config[type]; }}
+              onKeyDown={keyActivate(() => { window.location.href = config[type]; })}
             >
               {/* Node circle */}
               <circle

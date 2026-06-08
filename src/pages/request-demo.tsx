@@ -33,10 +33,10 @@ export default function RequestDemo() {
           }}
         />
       </Head>
-      <div className="reveal grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
+      <div className="atlas reveal grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">
         <div className="lg:col-span-7">
         <div className="chip chip-brand inline-flex w-fit items-center gap-2 rounded-full py-1 pl-2 pr-3 text-[0.6875rem] font-semibold uppercase tracking-[0.14em]">
-            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#DC2626] dark:bg-[#F87171]" />
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--atlas-primary)]" />
             Demo request
           </div>
 
@@ -49,12 +49,15 @@ export default function RequestDemo() {
             />
           </div>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
             <Link href="#demo-request-form" className="btn btn-cta">
               Start your request
             </Link>
-            <Link href="/aixcelerator" className="btn btn-secondary">
-              Explore AIXcelerator
+            <Link
+              href="/aixcelerator"
+              className="text-sm font-medium text-zinc-500 underline-offset-4 transition-colors hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
+            >
+              Or explore AIXcelerator first
             </Link>
           </div>
 
@@ -98,7 +101,7 @@ export default function RequestDemo() {
 function Bullet({ children }: { children: string }) {
   return (
     <div className="flex gap-2">
-      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#DC2626] dark:bg-[#F87171]" />
+      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[var(--atlas-primary)]" />
       <span>{children}</span>
     </div>
   );

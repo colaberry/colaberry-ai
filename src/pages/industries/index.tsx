@@ -128,7 +128,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
         ]}
       />
 
-      <section className="reveal section-spacing">
+      <section className="section-spacing">
         <SectionHeader
           kicker="Capabilities"
           title="What each workspace delivers"
@@ -150,7 +150,7 @@ export default function IndustriesIndex({ industryCounts }: IndustriesProps) {
         </div>
       </section>
 
-      <section className="reveal section-spacing">
+      <section className="section-spacing">
         <SectionHeader
           kicker="Verticals"
           title="Industry workspaces"

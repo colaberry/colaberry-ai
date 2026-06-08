@@ -1338,6 +1338,127 @@ button:focus-visible {
   border-radius: 0.375rem;
 }
 
+/* Keyboard focus ring for interactive SVG diagram nodes (ontology / platform graph).
+   SVG <g> outlines render inconsistently, so we style the node's own rect stroke. */
+.ontology-node {
+  outline: none;
+}
+.ontology-node:focus-visible > rect,
+.ontology-node:focus-visible > circle {
+  stroke: #DC2626;
+  stroke-width: 2px;
+}
+.dark .ontology-node:focus-visible > rect,
+.dark .ontology-node:focus-visible > circle {
+  stroke: #F87171;
+}
+
+/* ===========================================================================
+ * WoT / Atlas design system — scoped migration pilot.
+ * Applied only under `.atlas` (currently /request-demo) so every other surface
+ * stays on the existing Inter + coral + zinc system until its own migration.
+ * Tokens: Geist · cyan #06B6D4 primary · teal #00C2A8 secondary · navy #0B1E3D
+ * dark base · flat (no gradients/shadows/glows) · one consistent radius.
+ * ======================================================================== */
+.atlas {
+  --atlas-primary: #06B6D4;        /* cyan — primary accent / CTA — oklch(0.715 0.135 220) */
+  --atlas-primary-hover: #0891B2;  /* cyan-600 */
+  --atlas-primary-active: #0E7490; /* cyan-700 */
+  --atlas-primary-fg: #06283D;     /* navy ink on cyan — AA (~7:1) */
+  --atlas-secondary: #00C2A8;      /* teal — secondary accent — oklch(0.73 0.13 180) */
+  --atlas-ring: rgba(6, 182, 212, 0.45);
+  --atlas-radius: 0.625rem;        /* 10px — one consistent radius, replaces full-pill */
+  font-family: var(--font-geist), Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Primary CTA — cyan, flat (no glow), navy ink for contrast */
+.atlas .btn-cta {
+  background: var(--atlas-primary);
+  color: var(--atlas-primary-fg);
+  border-radius: var(--atlas-radius);
+  box-shadow: none;
+}
+.atlas .btn-cta:hover {
+  background: var(--atlas-primary-hover);
+  color: var(--atlas-primary-fg);
+  box-shadow: none;
+}
+.atlas .btn-cta:active { background: var(--atlas-primary-active); }
+/* Dark needs higher specificity than the global `.dark .btn-cta` (coral) rule */
+.dark .atlas .btn-cta {
+  background: var(--atlas-primary);
+  color: var(--atlas-primary-fg);
+}
+.dark .atlas .btn-cta:hover { background: var(--atlas-primary-hover); }
+.dark .atlas .btn-cta:active { background: var(--atlas-primary-active); }
+
+/* Unify radius on all buttons within the surface — no mixed radii */
+.atlas .btn { border-radius: var(--atlas-radius); }
+
+/* Inputs — token radius + cyan focus ring (replaces coral) */
+.atlas .input-premium { border-radius: var(--atlas-radius); }
+.atlas .input-premium:focus {
+  border-color: var(--atlas-primary);
+  box-shadow: 0 0 0 3px var(--atlas-ring);
+}
+
+/* Kicker chip — cyan-tinted (replaces coral chip-brand) */
+.atlas .chip-brand {
+  border-color: rgba(6, 182, 212, 0.35);
+  background: rgba(6, 182, 212, 0.10);
+  color: #0E7490;
+}
+.dark .atlas .chip-brand {
+  border-color: rgba(6, 182, 212, 0.40);
+  background: rgba(6, 182, 212, 0.14);
+  color: #67E8F9;
+}
+
+/* Flat surfaces; navy-tinted panels in dark for the Atlas surface base */
+.atlas .surface-panel,
+.atlas .detail-section,
+.atlas .card-elevated,
+.atlas .catalog-card { box-shadow: none; }
+.dark .atlas .surface-panel,
+.dark .atlas .detail-section,
+.dark .atlas .card-elevated,
+.dark .atlas .catalog-card {
+  background: #0B1E3D;
+  border-color: rgba(6, 182, 212, 0.15);
+}
+
+/* Consent checkbox + any zinc focus ring → cyan accent within atlas */
+.atlas input[type="checkbox"] { accent-color: var(--atlas-primary); }
+.atlas input[type="checkbox"]:focus,
+.atlas input[type="checkbox"]:focus-visible { --tw-ring-color: var(--atlas-primary); }
+
+/* Geist must beat the global `h1..h6 { font-family: Inter }` rule and the
+   `font-sans` utility so all UI text inside .atlas actually renders in Geist. */
+.atlas h1, .atlas h2, .atlas h3, .atlas h4, .atlas h5, .atlas h6,
+.atlas .font-display,
+.atlas .font-sans {
+  font-family: var(--font-geist), Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Flat hero (Atlas): solid cyan accents — no gradient text/shimmer/glow */
+.atlas .hero-metric-hero-number span {
+  background: none;
+  -webkit-text-fill-color: #22D3EE;
+  color: #22D3EE;
+}
+.atlas .hero-bar-fill { background: rgba(34, 211, 238, 0.85); }
+.atlas .hero-bar-fill::after { display: none; }
+.atlas .hero-bar-row:hover .hero-bar-fill { background: #22D3EE; }
+.atlas .hero-bar-count { color: #67E8F9; }
+.atlas .kicker-chip-dot { background: #22D3EE; }
+/* Static cyan "live" dot — kills the infinite blink (animation-review: no
+   infinite loops) and the coral + glow (Atlas: no red, no glow). */
+.atlas .hero-metric-hero-label::before {
+  background: #22D3EE;
+  box-shadow: none;
+  animation: none;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -2675,6 +2796,24 @@ footer .footer-link:focus-visible {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+  }
+
+  /* Hero entrance + "live" animations resolve to their final state, no motion */
+  .hero-stagger-1,
+  .hero-stagger-2,
+  .hero-stagger-3,
+  .hero-stagger-4,
+  .hero-metric-hero,
+  .hero-breakdown,
+  .hero-metric-hero-label::before {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-bar-fill {
+    animation: none !important;
+    width: var(--bar-width, 50%) !important;
   }
 
   .hero-gradient-overlay,

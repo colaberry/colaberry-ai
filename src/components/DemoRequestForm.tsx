@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   DEFAULT_DEMO_REQUEST_MESSAGE,
@@ -45,6 +45,13 @@ export default function DemoRequestForm({
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const trackingContext = useMemo(() => getTrackingContext(), []);
+  const successRef = useRef<HTMLDivElement>(null);
+
+  // Peak-End: on success, move focus to the confirmation panel so keyboard and
+  // screen-reader users are taken to the outcome instead of a cleared form.
+  useEffect(() => {
+    if (state === "success") successRef.current?.focus();
+  }, [state]);
 
   // P1 — fetch a fresh HMAC-signed timing token on mount. The server
   // requires the token to be at least 5 s old at submit time, so kicking
@@ -168,10 +175,41 @@ export default function DemoRequestForm({
       ? "text-[var(--failure-text)] dark:text-[var(--failure-text)]"
       : "text-zinc-500 dark:text-zinc-400";
 
+  const labelClass = "text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400";
+  const subheadClass = "text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-600 dark:text-zinc-300";
+
   const inputBaseClass = "input-premium mt-2";
 
   const inputErrorClass =
     "input-premium mt-2 !border-[var(--failure-stroke)] focus:!border-[var(--failure-text)] focus:!shadow-[0_0_0_3px_var(--failure-stroke)/30]";
+
+  if (state === "success") {
+    return (
+      <div
+        ref={successRef}
+        tabIndex={-1}
+        role="status"
+        aria-live="polite"
+        className="surface-panel mt-8 p-8 outline-none"
+      >
+        <span className="flex h-11 w-11 items-center justify-center rounded-[var(--atlas-radius,0.625rem)] bg-[rgba(6,182,212,0.12)] text-[var(--atlas-primary,#0891B2)]">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <h3 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">Request received</h3>
+        <p className="mt-1.5 max-w-prose text-sm text-zinc-600 dark:text-zinc-300">
+          {statusMessage || "Thanks — we'll reply within 1-2 business days with a tailored walkthrough."}
+        </p>
+        <Link
+          href="/aixcelerator"
+          className="mt-5 inline-flex text-sm font-semibold text-[var(--atlas-primary,#0891B2)] underline-offset-4 hover:underline"
+        >
+          Explore AIXcelerator while you wait →
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <form
@@ -186,132 +224,146 @@ export default function DemoRequestForm({
       <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
         Tell us about your team and we will prepare a demo that fits your workflows.
       </p>
+      <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+        Fields marked <span className="text-[var(--failure-text)]">*</span> are required.
+      </p>
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-2">
-        <div>
-          <label
-            htmlFor="demo-name"
-            className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400"
-          >
-            Name <span className="text-[var(--failure-text)]" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="demo-name"
-            type="text"
-            name="name"
-            autoComplete="name"
-            required
-            aria-required="true"
-            aria-invalid={touched.name && !!fieldErrors.name}
-            aria-describedby={touched.name && fieldErrors.name ? "demo-name-error" : undefined}
-            value={name}
-            onChange={(event) => {
-              setName(event.target.value);
-              if (touched.name) {
-                setFieldErrors((prev) => ({ ...prev, name: validateName(event.target.value) }));
-              }
-            }}
-            onBlur={() => handleBlur("name")}
-            className={touched.name && fieldErrors.name ? inputErrorClass : inputBaseClass}
-            placeholder="Your name"
-          />
-          {touched.name && fieldErrors.name ? (
-            <p id="demo-name-error" className="mt-1 text-xs text-[var(--failure-text)] dark:text-[var(--failure-text)]" role="alert">
-              {fieldErrors.name}
-            </p>
-          ) : null}
+      {/* About you — the two required fields, chunked on their own (Miller's Law) */}
+      <fieldset className="mt-6 min-w-0 border-0 p-0">
+        <legend className={subheadClass}>About you</legend>
+        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="demo-name" className={labelClass}>
+              Name <span className="text-[var(--failure-text)]" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="demo-name"
+              type="text"
+              name="name"
+              autoComplete="name"
+              required
+              aria-required="true"
+              aria-invalid={touched.name && !!fieldErrors.name}
+              aria-describedby={touched.name && fieldErrors.name ? "demo-name-error" : undefined}
+              value={name}
+              onChange={(event) => {
+                setName(event.target.value);
+                if (touched.name) {
+                  setFieldErrors((prev) => ({ ...prev, name: validateName(event.target.value) }));
+                }
+              }}
+              onBlur={() => handleBlur("name")}
+              className={touched.name && fieldErrors.name ? inputErrorClass : inputBaseClass}
+              placeholder="Your name"
+            />
+            {touched.name && fieldErrors.name ? (
+              <p id="demo-name-error" className="mt-1 text-xs text-[var(--failure-text)] dark:text-[var(--failure-text)]" role="alert">
+                {fieldErrors.name}
+              </p>
+            ) : null}
+          </div>
+
+          <div>
+            <label htmlFor="demo-email" className={labelClass}>
+              Work email <span className="text-[var(--failure-text)]" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="demo-email"
+              type="email"
+              name="email"
+              autoComplete="email"
+              required
+              aria-required="true"
+              aria-invalid={touched.email && !!fieldErrors.email}
+              aria-describedby={touched.email && fieldErrors.email ? "demo-email-error" : undefined}
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                if (touched.email) {
+                  setFieldErrors((prev) => ({ ...prev, email: validateEmail(event.target.value) }));
+                }
+              }}
+              onBlur={() => handleBlur("email")}
+              className={touched.email && fieldErrors.email ? inputErrorClass : inputBaseClass}
+              placeholder="name@company.com"
+            />
+            {touched.email && fieldErrors.email ? (
+              <p id="demo-email-error" className="mt-1 text-xs text-[var(--failure-text)] dark:text-[var(--failure-text)]" role="alert">
+                {fieldErrors.email}
+              </p>
+            ) : null}
+          </div>
         </div>
+      </fieldset>
 
-        <div>
-          <label
-            htmlFor="demo-email"
-            className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400"
-          >
-            Work email <span className="text-[var(--failure-text)]" aria-hidden="true">*</span>
-          </label>
-          <input
-            id="demo-email"
-            type="email"
-            name="email"
-            autoComplete="email"
-            required
-            aria-required="true"
-            aria-invalid={touched.email && !!fieldErrors.email}
-            aria-describedby={touched.email && fieldErrors.email ? "demo-email-error" : undefined}
-            value={email}
-            onChange={(event) => {
-              setEmail(event.target.value);
-              if (touched.email) {
-                setFieldErrors((prev) => ({ ...prev, email: validateEmail(event.target.value) }));
-              }
-            }}
-            onBlur={() => handleBlur("email")}
-            className={touched.email && fieldErrors.email ? inputErrorClass : inputBaseClass}
-            placeholder="name@company.com"
-          />
-          {touched.email && fieldErrors.email ? (
-            <p id="demo-email-error" className="mt-1 text-xs text-[var(--failure-text)] dark:text-[var(--failure-text)]" role="alert">
-              {fieldErrors.email}
-            </p>
-          ) : null}
+      {/* About your team — optional context, chunked separately (Miller's Law) */}
+      <fieldset className="mt-6 min-w-0 border-0 p-0">
+        <legend className={subheadClass}>
+          About your team <span className="font-normal normal-case tracking-normal text-zinc-500 dark:text-zinc-400">(optional)</span>
+        </legend>
+        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="demo-company" className={labelClass}>Company</label>
+            <input
+              id="demo-company"
+              type="text"
+              name="company"
+              autoComplete="organization"
+              value={company}
+              onChange={(event) => setCompany(event.target.value)}
+              className={inputBaseClass}
+              placeholder="Company name"
+            />
+          </div>
+          <div>
+            <label htmlFor="demo-role" className={labelClass}>Role</label>
+            <input
+              id="demo-role"
+              type="text"
+              name="role"
+              autoComplete="organization-title"
+              value={role}
+              onChange={(event) => setRole(event.target.value)}
+              className={inputBaseClass}
+              placeholder="Title or team"
+            />
+          </div>
+          <div>
+            <label htmlFor="demo-team-size" className={labelClass}>Team size</label>
+            <input
+              id="demo-team-size"
+              type="text"
+              name="teamSize"
+              value={teamSize}
+              onChange={(event) => setTeamSize(event.target.value)}
+              className={inputBaseClass}
+              placeholder="e.g. 10-50"
+            />
+          </div>
+          <div>
+            <label htmlFor="demo-timeline" className={labelClass}>Timeline</label>
+            <select
+              id="demo-timeline"
+              name="timeline"
+              value={timeline}
+              onChange={(event) => setTimeline(event.target.value)}
+              className="input-premium mt-2"
+            >
+              <option value="">Select timeline</option>
+              <option value="Immediate">Immediate</option>
+              <option value="30-60 days">30-60 days</option>
+              <option value="This quarter">This quarter</option>
+              <option value="This year">This year</option>
+              <option value="Exploring">Exploring</option>
+            </select>
+          </div>
         </div>
+      </fieldset>
 
-        <label className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-          Company
-          <input
-            type="text"
-            name="company"
-            autoComplete="organization"
-            value={company}
-            onChange={(event) => setCompany(event.target.value)}
-            className={inputBaseClass}
-            placeholder="Company name"
-          />
-        </label>
-        <label className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-          Role
-          <input
-            type="text"
-            name="role"
-            autoComplete="organization-title"
-            value={role}
-            onChange={(event) => setRole(event.target.value)}
-            className={inputBaseClass}
-            placeholder="Title or team"
-          />
-        </label>
-        <label className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-          Team size
-          <input
-            type="text"
-            name="teamSize"
-            value={teamSize}
-            onChange={(event) => setTeamSize(event.target.value)}
-            className={inputBaseClass}
-            placeholder="e.g. 10-50"
-          />
-        </label>
-        <label className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-          Timeline
-          <select
-            name="timeline"
-            value={timeline}
-            onChange={(event) => setTimeline(event.target.value)}
-            className="input-premium mt-2"
-          >
-            <option value="">Select timeline</option>
-            <option value="Immediate">Immediate</option>
-            <option value="30-60 days">30-60 days</option>
-            <option value="This quarter">This quarter</option>
-            <option value="This year">This year</option>
-            <option value="Exploring">Exploring</option>
-          </select>
-        </label>
-      </div>
-
-      <label className="mt-4 block text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-        Notes
+      <div className="mt-6">
+        <label htmlFor="demo-message" className={labelClass}>Notes</label>
         <textarea
+          id="demo-message"
           name="message"
           value={message}
           onChange={(event) => setMessage(event.target.value.slice(0, MESSAGE_MAX_LENGTH))}
@@ -323,12 +375,12 @@ export default function DemoRequestForm({
         />
         <div
           id="demo-message-counter"
-          className="mt-1 text-right text-[11px] font-normal normal-case tracking-normal text-zinc-500 dark:text-zinc-400"
+          className="mt-1 text-right text-[11px] tabular-nums text-zinc-500 dark:text-zinc-400"
           aria-live="polite"
         >
           {message.length.toLocaleString()} / {MESSAGE_MAX_LENGTH.toLocaleString()}
         </div>
-      </label>
+      </div>
 
       <input
         name="website"
