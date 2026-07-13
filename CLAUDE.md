@@ -99,6 +99,25 @@ Adding a new demo = one record in `src/data/demos.ts`. The hub + detail pages pi
 
 Schema.org: hub emits `ItemList` JSON-LD; detail page emits `WebApplication` JSON-LD. Built for AEO-first discovery.
 
+## Global Login (Email Magic-Link Auth)
+
+**Status (Jul 13 2026):** built + verified locally on branch `feat/global-email-login` (based on `upstream/Release-1.0.beta`). Ships **dark** — with no `AUTH_JWT_*` keys the endpoints return 503 / an empty JWKS, so nothing changes until keys are set. Not yet on dev.colaberry.ai.
+
+colaberry.ai is the **global login issuer** for every demo. Passwordless **email magic-link**: enter email → Resend sends a 15-min single-use link → `/auth/verify` mints a 30-day **shared RS256 JWT** (httpOnly session cookie) and captures the email as a **Lead** in Strapi. Each demo (Voice Agent, VTON, MCP gateway) is an **enforcer**: it fetches `/api/auth/jwks.json` and VERIFIES the JWT — no shared secret ever leaves this app. **Lead capture is the #1 goal** (the email IS the lead); the ₹100 free-credit + metering live in the demo (enforcer), never here. See `project_voice-agent-monetization` memory for the full model.
+
+**Lib (`src/lib/auth/`):**
+- `keys.ts` — RS256 keypair + JWKS. Env `AUTH_JWT_PRIVATE_KEY` (PKCS8) / `AUTH_JWT_PUBLIC_KEY` (SPKI), `\n`-escaped for single-line env vars. `kid` = RFC-7638 thumbprint. Generate: `node scripts/gen-auth-keys.mjs >> .env.local`.
+- `jwt.ts` — `signSession`/`verifySession` (email identity, 30d) + `signMagicLink`/`verifyMagicLink` (15m, single-use `nonce`). `iss=colaberry-auth`, `aud=colaberry-demos` — the SAME token format the Voice Agent already verifies (only the subject moved from phone id → email).
+- `emailSend.ts` — magic-link email via **Resend**, else `console` (dev: link printed to the server log). `AUTH_EMAIL_PROVIDER=console` forces console even when `RESEND_API_KEY` is set (use for local testing so no real email is sent).
+- `session.ts` — httpOnly `SameSite=Lax` session cookie (`colaberry_session`) + `resolveSession()` + **in-memory single-use nonce store** (per-instance, mirrors `rate-limit.ts`; a nonce only needs to outlive the 15-min TTL — back with Cloud SQL/Strapi for strict multi-instance prod).
+- `leadStore.ts` — best-effort `POST ${CMS_URL}/api/leads` (bearer `CMS_API_TOKEN`). **Never throws / never blocks sign-in** — a failed write is logged and the user still signs in (they proved the email by clicking the link). Needs the Strapi `Lead` content type in colaberry-ai-cms.
+
+**API (`src/pages/api/auth/`):** `request-link` (POST — per-IP + per-email rate limits + bot-defense layers 1-4, **generic-OK anti-enumeration**, bakes a validated same-site `?redirect=` into the link), `verify` (POST — burns the nonce, sets the cookie, **AWAITs** lead capture so a serverless freeze can't drop the lead), `me` (GET), `logout` (POST), `jwks.json` (GET, 5-min cache). POST-only on verify/logout so email link-prefetchers can't burn a one-shot link or log a user out.
+
+**UI:** `/login` (email → "check your inbox") + `/auth/verify` (POST-on-mount so JS-less prefetchers can't consume the link; redirects to the validated same-site target). Both `noindex`. Zinc + coral, follows the locked theming standard.
+
+**Env:** `AUTH_JWT_PRIVATE_KEY` + `AUTH_JWT_PUBLIC_KEY` (required — absent ⇒ login off); `AUTH_EMAIL_PROVIDER` (`resend`|`console`), `AUTH_EMAIL_FROM`, `RESEND_API_KEY`; `AUTH_APP_ORIGIN` (magic-link base URL, else derived from the request); `AUTH_COOKIE_DOMAIN` (e.g. `.colaberry.ai` for cross-subdomain sessions); `CMS_URL` + `CMS_API_TOKEN` (lead write); `EXTRA_ALLOWED_ORIGIN_HOSTS` (comma-sep — extends the bot-defense origin allowlist; **`dev.colaberry.ai` is now built-in**, which also unblocks all other form POSTs on the dev site).
+
 ## Project Structure
 ```
 src/
