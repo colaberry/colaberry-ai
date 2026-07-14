@@ -1,13 +1,32 @@
-import { useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
+import { readSessionToken, resolveSession } from "../../lib/auth/session";
 
 const VOICE_AGENT_URL =
   process.env.NEXT_PUBLIC_VOICE_AGENT_URL || "http://localhost:3000";
 
-export default function DemoVoice() {
+function originOf(url: string): string {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return "*";
+  }
+}
+const VOICE_ORIGIN = originOf(VOICE_AGENT_URL);
+
+interface DemoVoiceProps {
+  /** The signed-in user's session JWT (from the httpOnly cookie), or null. */
+  initialToken: string | null;
+}
+
+export default function DemoVoice({ initialToken }: DemoVoiceProps) {
+  const router = useRouter();
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const theme = useSyncExternalStore(
@@ -19,6 +38,38 @@ export default function DemoVoice() {
     () => (document.documentElement.classList.contains("dark") ? "dark" : "light") as "light" | "dark",
     () => "dark" as const,
   );
+
+  // Hand the session token down to the voice iframe (targetOrigin-scoped so it
+  // is only ever delivered to the voice app's origin).
+  const postToken = useCallback(() => {
+    const win = iframeRef.current?.contentWindow;
+    if (!win || VOICE_ORIGIN === "*") return;
+    win.postMessage(
+      { source: "cb-parent", type: "auth-token", token: initialToken ?? null },
+      VOICE_ORIGIN,
+    );
+  }, [initialToken]);
+
+  // Answer the voice app's handshake: reply to a token request, and honour a
+  // "login-required" bounce by navigating the TOP window to the global login.
+  useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      if (e.origin !== VOICE_ORIGIN) return;
+      const d = e.data as { source?: string; type?: string; redirect?: unknown } | null;
+      if (!d || d.source !== "cb-voice") return;
+      if (d.type === "auth-request") {
+        postToken();
+      } else if (d.type === "login-required") {
+        const target =
+          typeof d.redirect === "string" && d.redirect.startsWith("/") && !d.redirect.startsWith("//")
+            ? d.redirect
+            : "/demo/voice";
+        void router.push(`/login?redirect=${encodeURIComponent(target)}`);
+      }
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [postToken, router]);
 
   const seoMeta: SeoMeta = {
     title: "Voice Agent Demo | Colaberry AI",
@@ -135,6 +186,7 @@ export default function DemoVoice() {
 
           {!error && (
             <iframe
+              ref={iframeRef}
               src={iframeSrc}
               allow="microphone; autoplay"
               title="Voice Agent Demo"
@@ -145,7 +197,12 @@ export default function DemoVoice() {
                 opacity: loaded ? 1 : 0,
                 transition: "opacity 0.3s ease",
               }}
-              onLoad={() => setLoaded(true)}
+              onLoad={() => {
+                setLoaded(true);
+                // Proactively hand over the token in case the child's
+                // auth-request raced ahead of our listener.
+                postToken();
+              }}
               onError={() => setError(true)}
             />
           )}
@@ -154,3 +211,20 @@ export default function DemoVoice() {
     </Layout>
   );
 }
+
+/**
+ * Read the signed-in user's session JWT server-side (the cookie is httpOnly, so
+ * the client can't) and hand it to the page so it can postMessage it into the
+ * voice iframe. Never cached — the token is per-user.
+ */
+export const getServerSideProps: GetServerSideProps<DemoVoiceProps> = async (ctx) => {
+  ctx.res.setHeader("Cache-Control", "no-store");
+  let initialToken: string | null = null;
+  try {
+    const claims = await resolveSession(ctx.req);
+    if (claims) initialToken = readSessionToken(ctx.req) ?? null;
+  } catch {
+    /* not logged in / auth not configured — anon iframe */
+  }
+  return { props: { initialToken } };
+};

@@ -116,6 +116,8 @@ colaberry.ai is the **global login issuer** for every demo. Passwordless **email
 
 **UI:** `/login` (email → "check your inbox") + `/auth/verify` (POST-on-mount so JS-less prefetchers can't consume the link; redirects to the validated same-site target). Both `noindex`. Zinc + coral, follows the locked theming standard.
 
+**Cross-origin (voice demo):** `/demo/voice` uses `getServerSideProps` to read the session JWT from the httpOnly cookie and postMessages it into the voice iframe (targetOrigin-scoped to `NEXT_PUBLIC_VOICE_AGENT_URL`). The voice app (enforcer) ingests it via its own `POST /api/auth/session` (→ `cb_session` cookie) and bounces direct-Cloud-Run-URL / logged-out visitors to `/login?redirect=…` so the ₹100 gate can't be skipped. Handshake: child `auth-request` / `login-required` ↔ parent `auth-token`; both sides validate the peer origin.
+
 **Env:** `AUTH_JWT_PRIVATE_KEY` + `AUTH_JWT_PUBLIC_KEY` (required — absent ⇒ login off); `AUTH_EMAIL_PROVIDER` (`resend`|`console`), `AUTH_EMAIL_FROM`, `RESEND_API_KEY`; `AUTH_APP_ORIGIN` (magic-link base URL, else derived from the request); `AUTH_COOKIE_DOMAIN` (e.g. `.colaberry.ai` for cross-subdomain sessions); `CMS_URL` + `CMS_API_TOKEN` (lead write); `EXTRA_ALLOWED_ORIGIN_HOSTS` (comma-sep — extends the bot-defense origin allowlist; **`dev.colaberry.ai` is now built-in**, which also unblocks all other form POSTs on the dev site).
 
 ## Project Structure
