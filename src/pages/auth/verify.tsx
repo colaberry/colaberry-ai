@@ -31,15 +31,15 @@ export default function VerifyPage() {
 
   useEffect(() => {
     if (!router.isReady || attempted.current) return;
+    attempted.current = true;
     const token = typeof router.query.token === "string" ? router.query.token : "";
     const redirect = safeRedirect(router.query.redirect);
-    if (!token) {
-      setPhase("error");
-      setMessage("This sign-in link is missing its token. Please request a new one.");
-      return;
-    }
-    attempted.current = true;
     void (async () => {
+      if (!token) {
+        setPhase("error");
+        setMessage("This sign-in link is missing its token. Please request a new one.");
+        return;
+      }
       try {
         const res = await fetch("/api/auth/verify", {
           method: "POST",
