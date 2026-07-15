@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
+import LoginModal from "../../components/LoginModal";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
 import { readSessionToken, resolveSession } from "../../lib/auth/session";
 
@@ -25,10 +25,11 @@ interface DemoVoiceProps {
 }
 
 export default function DemoVoice({ initialToken }: DemoVoiceProps) {
-  const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [loginRedirect, setLoginRedirect] = useState("/demo/voice");
   const theme = useSyncExternalStore(
     (onStoreChange) => {
       const observer = new MutationObserver(onStoreChange);
@@ -50,8 +51,9 @@ export default function DemoVoice({ initialToken }: DemoVoiceProps) {
     );
   }, [initialToken]);
 
-  // Answer the voice app's handshake: reply to a token request, and honour a
-  // "login-required" bounce by navigating the TOP window to the global login.
+  // Answer the voice app's handshake: reply to a token request, and on a
+  // "login-required" signal pop the in-place login modal (instead of bouncing
+  // the whole tab to /login) so the demo context is kept at the ₹100 moment.
   useEffect(() => {
     function onMessage(e: MessageEvent) {
       if (e.origin !== VOICE_ORIGIN) return;
@@ -64,12 +66,13 @@ export default function DemoVoice({ initialToken }: DemoVoiceProps) {
           typeof d.redirect === "string" && d.redirect.startsWith("/") && !d.redirect.startsWith("//")
             ? d.redirect
             : "/demo/voice";
-        void router.push(`/login?redirect=${encodeURIComponent(target)}`);
+        setLoginRedirect(target);
+        setLoginOpen(true);
       }
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [postToken, router]);
+  }, [postToken]);
 
   const seoMeta: SeoMeta = {
     title: "Voice Agent Demo | Colaberry AI",
@@ -208,6 +211,14 @@ export default function DemoVoice({ initialToken }: DemoVoiceProps) {
           )}
         </div>
       </div>
+
+      <LoginModal
+        key={loginOpen ? "login-open" : "login-closed"}
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onAuthenticated={() => window.location.reload()}
+        redirect={loginRedirect}
+      />
     </Layout>
   );
 }
