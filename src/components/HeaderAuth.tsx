@@ -40,9 +40,17 @@ function PersonGlyph() {
 export default function HeaderAuth({
   variant = "desktop",
   onNavigate,
+  onSignIn,
 }: {
   variant?: "desktop" | "mobile";
   onNavigate?: () => void;
+  /**
+   * When provided, the anonymous "Sign in" control opens the in-place login
+   * modal instead of navigating to the /login page. Layout wires this so login
+   * is a popup site-wide; without it the control falls back to the /login link
+   * (keeps HeaderAuth usable standalone + JS-less).
+   */
+  onSignIn?: () => void;
 }) {
   const router = useRouter();
   const [auth, setAuth] = useState<AuthState>({ ready: false, email: null });
@@ -101,6 +109,21 @@ export default function HeaderAuth({
         </div>
       );
     }
+    if (onSignIn) {
+      return (
+        <button
+          type="button"
+          onClick={() => {
+            onSignIn();
+            onNavigate?.();
+          }}
+          className="focus-ring inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-full border border-zinc-200 text-sm font-semibold text-zinc-700 transition hover:border-[#DC2626]/40 hover:text-[#DC2626] dark:border-zinc-700 dark:text-zinc-200"
+        >
+          <PersonGlyph />
+          <span>Sign in</span>
+        </button>
+      );
+    }
     return (
       <Link
         href={loginHref}
@@ -132,6 +155,18 @@ export default function HeaderAuth({
           Sign out
         </button>
       </div>
+    );
+  }
+  if (onSignIn) {
+    return (
+      <button
+        type="button"
+        onClick={onSignIn}
+        className="btn btn-secondary ml-1 h-10 shrink-0 gap-1.5 whitespace-nowrap px-4 text-sm max-[1500px]:h-9 max-[1500px]:px-3 max-[1500px]:text-xs"
+      >
+        <PersonGlyph />
+        <span>Sign in</span>
+      </button>
     );
   }
   return (
