@@ -18,6 +18,7 @@ import { captureUtmContextFromLocation, getTrackingContext } from "../lib/tracki
 import AnimatedSignalBanner from "./AnimatedSignalBanner";
 import SubstackEmbedSignup from "./SubstackEmbedSignup";
 import HeaderAuth from "./HeaderAuth";
+import LoginModal from "./LoginModal";
 import { usePodcastPlayer } from "../contexts/PodcastPlayerContext";
 
 const DemoRequestWizardModal = dynamic(
@@ -653,6 +654,10 @@ export default function Layout({ children }: { children: ReactNode }) {
   const closeMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [allowBackdropClose, setAllowBackdropClose] = useState(true);
   const [demoWizardOpen, setDemoWizardOpen] = useState(false);
+  // Site-wide login popup: the header "Sign in" control (desktop + mobile)
+  // opens this in place instead of navigating to the /login page. The /login
+  // page stays as the magic-link landing + JS-less fallback.
+  const [loginOpen, setLoginOpen] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
   // True when the <footer> element has entered the viewport — used to hide
   // the back-to-top FAB so it doesn't overlap the social icon row + legal
@@ -1355,7 +1360,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 <ThemeIcon isDark={isDarkMode} />
               </button>
             </div>
-            <HeaderAuth />
+            <HeaderAuth onSignIn={() => setLoginOpen(true)} />
             {globalNav.cta ? (
               <Link
                 href={globalNav.cta.href}
@@ -1522,7 +1527,11 @@ export default function Layout({ children }: { children: ReactNode }) {
                 Account
               </div>
               <div className="mt-2">
-                <HeaderAuth variant="mobile" onNavigate={closeMobileMenu} />
+                <HeaderAuth
+                  variant="mobile"
+                  onNavigate={closeMobileMenu}
+                  onSignIn={() => setLoginOpen(true)}
+                />
               </div>
             </div>
 
@@ -2000,6 +2009,22 @@ export default function Layout({ children }: { children: ReactNode }) {
         onClose={() => setDemoWizardOpen(false)}
         sourcePage="header-cta-wizard"
         sourcePath={router.asPath}
+      />
+      {/*
+        Site-wide login popup. The header "Sign in" control opens this in place
+        instead of routing to /login. Keyed so it remounts fresh each open (email
+        field cleared, no stale "check your inbox" state); on sign-in it reloads
+        so HeaderAuth's /api/auth/me flips to the signed-in email. redirect =
+        current path so the emailed magic link returns the user here.
+      */}
+      <LoginModal
+        key={loginOpen ? "login-open" : "login-closed"}
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onAuthenticated={() => window.location.reload()}
+        redirect={router.asPath && router.asPath.startsWith("/") ? router.asPath : "/"}
+        title="Sign in to Colaberry AI"
+        subtitle="Enter your email and we'll send a secure sign-in link — no password needed. It unlocks the interactive demos."
       />
       {/* Back-to-top floating button */}
       <button
