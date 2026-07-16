@@ -74,6 +74,20 @@ export default function DemoVoice({ initialToken }: DemoVoiceProps) {
     return () => window.removeEventListener("message", onMessage);
   }, [postToken]);
 
+  // The single onLoad post can lose the cross-origin race: the voice app's own
+  // React hydration (which attaches its `message` listener) may not be finished
+  // when the iframe fires `load`, so that first token post is dropped and the
+  // demo stays stuck on the anonymous ₹10 taster even though the parent is
+  // signed in. Once the iframe has loaded, re-post the token a few times so its
+  // listener reliably catches one — re-ingesting the same session token is a
+  // no-op. This is the belt to the iframe's own `auth-request` suspenders.
+  useEffect(() => {
+    if (!loaded || VOICE_ORIGIN === "*") return;
+    postToken();
+    const timers = [400, 1000, 2000, 3500].map((ms) => window.setTimeout(postToken, ms));
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [loaded, postToken]);
+
   const seoMeta: SeoMeta = {
     title: "Voice Agent Demo | Colaberry AI",
     description:
