@@ -1,15 +1,35 @@
-import { useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Layout from "../../components/Layout";
+import LoginModal from "../../components/LoginModal";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
+import { readSessionToken, resolveSession } from "../../lib/auth/session";
 
 const VOICE_AGENT_URL =
   process.env.NEXT_PUBLIC_VOICE_AGENT_URL || "http://localhost:3000";
 
-export default function DemoVoice() {
+function originOf(url: string): string {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return "*";
+  }
+}
+const VOICE_ORIGIN = originOf(VOICE_AGENT_URL);
+
+interface DemoVoiceProps {
+  /** The signed-in user's session JWT (from the httpOnly cookie), or null. */
+  initialToken: string | null;
+}
+
+export default function DemoVoice({ initialToken }: DemoVoiceProps) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [loginRedirect, setLoginRedirect] = useState("/demo/voice");
   const theme = useSyncExternalStore(
     (onStoreChange) => {
       const observer = new MutationObserver(onStoreChange);
@@ -19,6 +39,40 @@ export default function DemoVoice() {
     () => (document.documentElement.classList.contains("dark") ? "dark" : "light") as "light" | "dark",
     () => "dark" as const,
   );
+
+  // Hand the session token down to the voice iframe (targetOrigin-scoped so it
+  // is only ever delivered to the voice app's origin).
+  const postToken = useCallback(() => {
+    const win = iframeRef.current?.contentWindow;
+    if (!win || VOICE_ORIGIN === "*") return;
+    win.postMessage(
+      { source: "cb-parent", type: "auth-token", token: initialToken ?? null },
+      VOICE_ORIGIN,
+    );
+  }, [initialToken]);
+
+  // Answer the voice app's handshake: reply to a token request, and on a
+  // "login-required" signal pop the in-place login modal (instead of bouncing
+  // the whole tab to /login) so the demo context is kept at the ₹100 moment.
+  useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      if (e.origin !== VOICE_ORIGIN) return;
+      const d = e.data as { source?: string; type?: string; redirect?: unknown } | null;
+      if (!d || d.source !== "cb-voice") return;
+      if (d.type === "auth-request") {
+        postToken();
+      } else if (d.type === "login-required") {
+        const target =
+          typeof d.redirect === "string" && d.redirect.startsWith("/") && !d.redirect.startsWith("//")
+            ? d.redirect
+            : "/demo/voice";
+        setLoginRedirect(target);
+        setLoginOpen(true);
+      }
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [postToken]);
 
   const seoMeta: SeoMeta = {
     title: "Voice Agent Demo | Colaberry AI",
@@ -59,20 +113,15 @@ export default function DemoVoice() {
       </Head>
 
       {/*
-        Flex column sized to fit precisely between the sticky site header and the
-        main-offset bottom padding. The chrome above the wrapper is taller than
-        var(--site-header-height) alone would suggest because:
-          - the <header> is position:sticky (occupies var(--site-header-height) of layout flow)
-          - <main class="main-offset"> ALSO has padding-top: calc(var(--site-header-height) + 1rem)
-        Together that's 2 × var(--site-header-height) + 1rem above the wrapper.
-        Plus main-offset's padding-bottom of 1.5rem below.
-        Total chrome ≈ 2 × 64 + 16 + 24 = 168px (12rem covers it with a small buffer
-        for any cross-browser / font-size variance in the rendered header height).
-        Title bar is shrink-0; iframe wrapper takes flex-1.
+        Flex column fills exactly the space left by main-offset's padding (1rem top + 1.5rem bottom)
+        plus the fixed site header. Title bar is shrink-0; iframe wrapper takes flex-1.
+        This replaces an earlier `calc(100dvh - header - 72px)` magic-number that did not
+        account for main-offset's padding, causing the iframe bottom (where the
+        "call on phone" button lives) to be clipped below the viewport.
       */}
       <div
         className="flex flex-col"
-        style={{ height: "calc(100dvh - 12rem)" }}
+        style={{ height: "calc(100dvh - var(--site-header-height) - 1rem - 1.5rem)" }}
       >
         {/* Compact title bar — keeps branding without eating viewport */}
         <div className="flex shrink-0 items-center justify-between pb-3 pt-1">
@@ -140,6 +189,7 @@ export default function DemoVoice() {
 
           {!error && (
             <iframe
+              ref={iframeRef}
               src={iframeSrc}
               allow="microphone; autoplay"
               title="Voice Agent Demo"
@@ -150,12 +200,42 @@ export default function DemoVoice() {
                 opacity: loaded ? 1 : 0,
                 transition: "opacity 0.3s ease",
               }}
-              onLoad={() => setLoaded(true)}
+              onLoad={() => {
+                setLoaded(true);
+                // Proactively hand over the token in case the child's
+                // auth-request raced ahead of our listener.
+                postToken();
+              }}
               onError={() => setError(true)}
             />
           )}
         </div>
       </div>
+
+      <LoginModal
+        key={loginOpen ? "login-open" : "login-closed"}
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onAuthenticated={() => window.location.reload()}
+        redirect={loginRedirect}
+      />
     </Layout>
   );
 }
+
+/**
+ * Read the signed-in user's session JWT server-side (the cookie is httpOnly, so
+ * the client can't) and hand it to the page so it can postMessage it into the
+ * voice iframe. Never cached — the token is per-user.
+ */
+export const getServerSideProps: GetServerSideProps<DemoVoiceProps> = async (ctx) => {
+  ctx.res.setHeader("Cache-Control", "no-store");
+  let initialToken: string | null = null;
+  try {
+    const claims = await resolveSession(ctx.req);
+    if (claims) initialToken = readSessionToken(ctx.req) ?? null;
+  } catch {
+    /* not logged in / auth not configured — anon iframe */
+  }
+  return { props: { initialToken } };
+};

@@ -27,15 +27,24 @@ function hashIp(ip: string): string {
  * x-forwarded-for (the one added by the trusted proxy, not client-supplied).
  */
 export function getClientIp(req: NextApiRequest): string {
-  // Cloudflare (production behind CF)
-  const cfIp = req.headers["cf-connecting-ip"];
-  if (cfIp) return (Array.isArray(cfIp) ? cfIp[0] : cfIp).trim();
+  // The ONLY trustworthy client IP is the one the platform's own front end
+  // appends. On Cloud Run (direct *.run.app or behind a Google LB) that is the
+  // LAST hop of x-forwarded-for — client-supplied XFF entries can only be
+  // PREFIXED, never appended past the platform. `cf-connecting-ip` / `x-real-ip`
+  // are NOT set by Cloud Run, so trusting them (as this used to, first) let a
+  // client send `X-Real-IP: <random>` per request and evade the per-IP limits.
+  // Only consult a proxy header when explicitly opted in for that topology.
+  const trusted = (process.env.TRUSTED_IP_HEADER || "xff-last").toLowerCase();
+  if (trusted === "cf-connecting-ip") {
+    const cfIp = req.headers["cf-connecting-ip"];
+    if (cfIp) return (Array.isArray(cfIp) ? cfIp[0] : cfIp).trim();
+  } else if (trusted === "x-real-ip") {
+    const realIp = req.headers["x-real-ip"];
+    if (realIp) return (Array.isArray(realIp) ? realIp[0] : realIp).trim();
+  }
 
-  // Vercel / Cloud Run
-  const realIp = req.headers["x-real-ip"];
-  if (realIp) return (Array.isArray(realIp) ? realIp[0] : realIp).trim();
-
-  // x-forwarded-for — use LAST IP (added by trusted proxy, not client-spoofable)
+  // Default (Cloud Run): x-forwarded-for LAST hop — platform-appended, not
+  // client-spoofable.
   const forwarded = req.headers["x-forwarded-for"];
   const fromHeader = Array.isArray(forwarded) ? forwarded[0] : forwarded;
   if (fromHeader) {
