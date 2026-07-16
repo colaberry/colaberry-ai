@@ -38,9 +38,16 @@ function hasSecret(): boolean {
 const ALLOWED_ORIGIN_HOSTS = new Set<string>([
   "colaberry.ai",
   "www.colaberry.ai",
+  "dev.colaberry.ai",
   "colaberry-ai-prod.run.app",
   "localhost",
   "127.0.0.1",
+  // Ops-extensible without a redeploy (comma-separated hosts). Lets new
+  // preview/dev origins post to forms + the global-login endpoints.
+  ...(process.env.EXTRA_ALLOWED_ORIGIN_HOSTS || "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean),
 ]);
 
 /**
