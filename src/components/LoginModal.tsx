@@ -173,6 +173,7 @@ export default function LoginModal({
                 autoFocus
                 autoComplete="email"
                 inputMode="email"
+                aria-label="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
@@ -190,7 +191,7 @@ export default function LoginModal({
               >
                 {status === "submitting" ? "Sending…" : "Email me a sign-in link"}
               </button>
-              <p className="text-xs leading-relaxed text-zinc-400 dark:text-zinc-500">
+              <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
                 No password is ever stored. You&apos;ll get a one-time sign-in link and occasional product updates.
               </p>
             </form>

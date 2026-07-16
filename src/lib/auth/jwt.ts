@@ -48,6 +48,8 @@ export async function verifySession(token: string): Promise<SessionClaims | null
     const { payload } = await jwtVerify(token, await getPublicKey(), {
       issuer: JWT_ISSUER,
       audience: JWT_AUDIENCE,
+      algorithms: [JWT_ALG],
+      requiredClaims: ["exp"],
     });
     if (payload.purpose !== PURPOSE_SESSION || !payload.sub) return null;
     return { sub: String(payload.sub), email: String(payload.email ?? "") };
@@ -83,6 +85,8 @@ export async function verifyMagicLink(
     const { payload } = await jwtVerify(token, await getPublicKey(), {
       issuer: JWT_ISSUER,
       audience: JWT_AUDIENCE,
+      algorithms: [JWT_ALG],
+      requiredClaims: ["exp"],
     });
     if (payload.purpose !== PURPOSE_MAGIC) return null;
     const email = String(payload.email ?? "").trim().toLowerCase();

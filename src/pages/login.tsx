@@ -17,8 +17,14 @@ import Layout from "../components/Layout";
 type Status = "idle" | "submitting" | "sent" | "error";
 
 function safeRedirect(raw: unknown): string {
-  if (typeof raw !== "string") return "";
-  if (!raw.startsWith("/") || raw.startsWith("//")) return "";
+  if (typeof raw !== "string" || !raw || raw.length > 512) return "";
+  if (!raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/\\")) return "";
+  if (/[\x00-\x1f\\]/.test(raw)) return "";
+  try {
+    if (new URL(raw, "https://colaberry.ai").origin !== "https://colaberry.ai") return "";
+  } catch {
+    return "";
+  }
   return raw;
 }
 
@@ -133,7 +139,7 @@ export default function LoginPage() {
                 {status === "submitting" ? "Sending…" : "Send me a sign-in link"}
               </button>
 
-              <p className="text-xs leading-relaxed text-zinc-400 dark:text-zinc-500">
+              <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
                 By continuing, you agree to receive a one-time sign-in link and occasional product
                 updates from Colaberry. No password is ever stored.
               </p>
