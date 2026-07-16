@@ -49,11 +49,22 @@ function parseBody(req: NextApiRequest): { email?: string; redirect?: string } |
   }
 }
 
-/** Same-site relative paths only — blocks open-redirect + protocol-relative //. */
-function safeRedirect(raw?: string): string | null {
-  if (!raw || typeof raw !== "string") return null;
-  if (!raw.startsWith("/") || raw.startsWith("//")) return null;
-  if (raw.length > 512) return null;
+/**
+ * Same-site relative paths only. Blocks open-redirect via protocol-relative
+ * `//host`, backslash tricks (`/\host` and `/%5Chost` normalize cross-origin
+ * per the WHATWG URL spec), and control chars — then confirms the RESOLVED
+ * origin is same-site as a belt-and-suspenders check. This is the gate that
+ * decides what redirect gets baked into the emailed magic link.
+ */
+function safeRedirect(raw?: unknown): string | null {
+  if (typeof raw !== "string" || !raw || raw.length > 512) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/\\")) return null;
+  if (/[\x00-\x1f\\]/.test(raw)) return null;
+  try {
+    if (new URL(raw, "https://colaberry.ai").origin !== "https://colaberry.ai") return null;
+  } catch {
+    return null;
+  }
   return raw;
 }
 

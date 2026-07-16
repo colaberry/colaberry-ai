@@ -20,15 +20,25 @@ export interface EmailSendResult {
   error?: string;
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function renderHtml(link: string): string {
+  const safeLink = escapeHtml(link);
   return `<!doctype html><html><body style="margin:0;background:#f4f4f5;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px">
     <tr><td align="center">
       <table role="presentation" width="440" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #e4e4e7;border-radius:14px;padding:32px">
         <tr><td style="font-size:18px;font-weight:700;color:#18181b;padding-bottom:8px">Sign in to Colaberry AI</td></tr>
         <tr><td style="font-size:14px;color:#52525b;line-height:1.55;padding-bottom:22px">Click the button below to sign in. This link expires in 15 minutes and can be used once.</td></tr>
-        <tr><td><a href="${link}" style="display:inline-block;background:#DC2626;color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 22px;border-radius:9px">Sign in →</a></td></tr>
-        <tr><td style="font-size:12px;color:#a1a1aa;line-height:1.5;padding-top:22px">If the button doesn't work, paste this link into your browser:<br><span style="color:#71717a;word-break:break-all">${link}</span></td></tr>
+        <tr><td><a href="${safeLink}" style="display:inline-block;background:#DC2626;color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 22px;border-radius:9px">Sign in →</a></td></tr>
+        <tr><td style="font-size:12px;color:#a1a1aa;line-height:1.5;padding-top:22px">If the button doesn't work, paste this link into your browser:<br><span style="color:#71717a;word-break:break-all">${safeLink}</span></td></tr>
         <tr><td style="font-size:12px;color:#a1a1aa;padding-top:18px">If you didn't request this, you can safely ignore this email.</td></tr>
       </table>
     </td></tr>
@@ -40,10 +50,24 @@ function renderText(link: string): string {
 }
 
 export async function sendMagicLinkEmail(email: string, link: string): Promise<EmailSendResult> {
-  if (PROVIDER === "console" || !RESEND_API_KEY) {
-    // eslint-disable-next-line no-console
+  // Console provider is DEV-ONLY. Never print the live magic-link token to logs
+  // in production: Cloud Run stdout is broadly readable, and a logged token can
+  // be replayed to /api/auth/verify within its 15-min TTL to mint a session.
+  if (PROVIDER === "console") {
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "[auth:email] AUTH_EMAIL_PROVIDER=console in production — refusing to log the magic-link token. Set RESEND_API_KEY.",
+      );
+      return { ok: false, provider: "console", error: "console_provider_in_prod" };
+    }
     console.info(`[auth:console] magic link for ${email} -> ${link} (dev only)`);
     return { ok: true, provider: "console" };
+  }
+  // Resend selected but the key is missing → fail loud rather than fall back to
+  // logging the token (the old `|| !RESEND_API_KEY` path did exactly that).
+  if (!RESEND_API_KEY) {
+    console.error("[auth:email] RESEND_API_KEY not set — cannot send magic-link email.");
+    return { ok: false, provider: "none", error: "email_not_configured" };
   }
   try {
     const res = await fetch("https://api.resend.com/emails", {
