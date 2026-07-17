@@ -97,7 +97,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     userAgent: ua,
   });
   if (!lead.ok) {
-    console.warn(`[auth:verify] lead not persisted for ${email}: ${lead.error ?? "unknown"}`);
+    // No email in the log line — Cloud Run stdout is broadly readable and the
+    // address is PII. The lead error is enough to diagnose a persist failure.
+    console.warn(`[auth:verify] lead not persisted: ${lead.error ?? "unknown"}`);
   }
 
   return res.status(200).json({ ok: true, email });

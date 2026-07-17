@@ -49,6 +49,14 @@ export default function LoginModal({
   useEffect(() => {
     onAuthedRef.current = onAuthenticated;
   }, [onAuthenticated]);
+  // Kept in a ref so the dialog effect can depend on [open] alone — both mount
+  // sites pass an inline onClose, and depending on it would tear down + re-run
+  // the whole effect (releasing scroll-lock/inert, bouncing focus) on any host
+  // re-render while the modal is open.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -91,7 +99,7 @@ export default function LoginModal({
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (event.key !== "Tab") return;
@@ -138,7 +146,7 @@ export default function LoginModal({
       window.clearTimeout(focusTimer);
       previousFocusRef.current?.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   // When the form is replaced by "Check your inbox", the focused submit button
   // is unmounted and focus would fall to <body>. Move it to the confirmation
