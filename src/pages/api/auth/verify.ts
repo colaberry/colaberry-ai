@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { checkRateLimit, getClientIp } from "../../../lib/rate-limit";
+import { hasJsonContentType, isAllowedOrigin } from "../../../lib/bot-defense";
 import { authConfigured } from "../../../lib/auth/keys";
 import { signSession, verifyMagicLink } from "../../../lib/auth/jwt";
 import { consumeNonce, setSessionCookie } from "../../../lib/auth/session";
@@ -28,14 +29,13 @@ function hashValue(v: string): string {
   return crypto.createHash("sha256").update(`${LEAD_HASH_SALT}:${v}`).digest("hex").slice(0, 24);
 }
 
+// Require a parsed JSON object. The content-type guard below rejects anything
+// that isn't application/json, so Next has already parsed a valid body into an
+// object by the time we get here — a raw string body is only reachable via the
+// cross-site form path the guard blocks, so there's no string fallback to keep.
 function parseBody(req: NextApiRequest): { token?: string } | null {
-  if (!req.body) return null;
-  if (typeof req.body === "object") return req.body as { token?: string };
-  try {
-    return JSON.parse(req.body) as { token?: string };
-  } catch {
-    return null;
-  }
+  if (req.body && typeof req.body === "object") return req.body as { token?: string };
+  return null;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -44,6 +44,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ ok: false, message: "Method not allowed." });
   }
   res.setHeader("Cache-Control", "no-store");
+
+  // CSRF / session-fixation defense. This endpoint mints the session cookie from
+  // the posted token, so a cross-site request must never reach it — otherwise an
+  // attacker auto-submits a hidden form carrying THEIR magic-link token and fixes
+  // their identity onto the victim's browser. A cross-site HTML form can only send
+  // a url-encoded body and a foreign Origin; requiring application/json forces a
+  // CORS preflight the attacker's origin can't pass, and the Origin/Referer host
+  // must be ours. The real /auth/verify fetch (same-origin, JSON) sails through.
+  if (!hasJsonContentType(req) || !isAllowedOrigin(req)) {
+    return res.status(400).json({ ok: false, message: "Invalid request." });
+  }
 
   if (!authConfigured()) {
     return res.status(503).json({ ok: false, message: "Login is not available right now." });
