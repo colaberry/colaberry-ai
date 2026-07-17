@@ -21,6 +21,7 @@ export const JWT_ISSUER = process.env.AUTH_JWT_ISSUER ?? "colaberry-auth";
 export const JWT_AUDIENCE = process.env.AUTH_JWT_AUDIENCE ?? "colaberry-demos";
 const SESSION_TTL = process.env.AUTH_JWT_TTL ?? "30d";
 const MAGIC_LINK_TTL = process.env.AUTH_MAGIC_LINK_TTL ?? "15m";
+const HANDOFF_TTL = process.env.AUTH_HANDOFF_TTL ?? "120s";
 
 const PURPOSE_SESSION = "session";
 const PURPOSE_MAGIC = "magic_link";
@@ -40,6 +41,26 @@ export async function signSession(claims: SessionClaims): Promise<string> {
     .setAudience(JWT_AUDIENCE)
     .setIssuedAt()
     .setExpirationTime(SESSION_TTL)
+    .sign(await getPrivateKey());
+}
+
+/**
+ * Short-lived session token minted only for the cross-origin iframe handoff on
+ * /demo/voice. Same purpose + audience the demos already verify, so no enforcer
+ * change is needed — but it lives ~2 min instead of 30 days. The demo ingests it
+ * within seconds and mints its own session cookie, so a copy scraped from the
+ * page (e.g. the __NEXT_DATA__ JSON) is near-worthless. The long-lived session
+ * JWT stays in the httpOnly cookie and never reaches page JS.
+ */
+export async function signHandoff(claims: SessionClaims): Promise<string> {
+  const { kid } = await getPublicJwk();
+  return new SignJWT({ email: claims.email, purpose: PURPOSE_SESSION })
+    .setProtectedHeader({ alg: JWT_ALG, kid })
+    .setSubject(claims.sub)
+    .setIssuer(JWT_ISSUER)
+    .setAudience(JWT_AUDIENCE)
+    .setIssuedAt()
+    .setExpirationTime(HANDOFF_TTL)
     .sign(await getPrivateKey());
 }
 
