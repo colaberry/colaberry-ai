@@ -119,7 +119,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }`;
     const sent = await sendMagicLinkEmail(email, link);
     if (!sent.ok) {
-      console.error(`[auth:request-link] send failed for ${email}: ${sent.error ?? "unknown"}`);
+      // No email in the log line — Cloud Run stdout is broadly readable and the
+      // address is PII. The provider error is enough to diagnose a send failure.
+      console.error(`[auth:request-link] send failed: ${sent.error ?? "unknown"}`);
     }
   } catch (e) {
     console.error(`[auth:request-link] error: ${e instanceof Error ? e.message : "unknown"}`);
