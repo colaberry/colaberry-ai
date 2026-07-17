@@ -34,6 +34,14 @@ export default function VerifyPage() {
   const [phase, setPhase] = useState<Phase>("verifying");
   const [message, setMessage] = useState("");
   const attempted = useRef(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // Announce the outcome + move focus to the heading so a screen-reader user
+  // learns the result — especially the common expired/used-link error — instead
+  // of being stranded on the silent "Signing you in…" title.
+  useEffect(() => {
+    if (phase !== "verifying") headingRef.current?.focus();
+  }, [phase]);
 
   useEffect(() => {
     if (!router.isReady || attempted.current) return;
@@ -76,7 +84,12 @@ export default function VerifyPage() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col items-center justify-center py-16 text-center">
+      <div
+        className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col items-center justify-center py-16 text-center"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {phase === "verifying" && (
           <>
             <div
@@ -104,14 +117,18 @@ export default function VerifyPage() {
                 <path d="M20 6 9 17l-5-5" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">You&apos;re signed in</h1>
+            <h1 ref={headingRef} tabIndex={-1} className="text-xl font-bold text-zinc-900 outline-none dark:text-zinc-50">
+              You&apos;re signed in
+            </h1>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Taking you back…</p>
           </>
         )}
 
         {phase === "error" && (
           <>
-            <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">Sign-in link problem</h1>
+            <h1 ref={headingRef} tabIndex={-1} className="text-xl font-bold text-zinc-900 outline-none dark:text-zinc-50">
+              Sign-in link problem
+            </h1>
             <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
               {message}
             </p>

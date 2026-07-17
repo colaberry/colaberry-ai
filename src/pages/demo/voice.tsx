@@ -5,7 +5,8 @@ import Link from "next/link";
 import Layout from "../../components/Layout";
 import LoginModal from "../../components/LoginModal";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
-import { readSessionToken, resolveSession } from "../../lib/auth/session";
+import { resolveSession } from "../../lib/auth/session";
+import { signHandoff } from "../../lib/auth/jwt";
 
 const VOICE_AGENT_URL =
   process.env.NEXT_PUBLIC_VOICE_AGENT_URL || "http://localhost:3000";
@@ -238,16 +239,19 @@ export default function DemoVoice({ initialToken }: DemoVoiceProps) {
 }
 
 /**
- * Read the signed-in user's session JWT server-side (the cookie is httpOnly, so
- * the client can't) and hand it to the page so it can postMessage it into the
- * voice iframe. Never cached — the token is per-user.
+ * Verify the signed-in user's session server-side (the cookie is httpOnly, so
+ * the client can't) and hand the iframe a SHORT-LIVED handoff token — not the
+ * 30-day session JWT. The token is serialized into the page's __NEXT_DATA__, so
+ * anything with a ~2-min life there is near-worthless if scraped; the long-lived
+ * session stays in the httpOnly cookie. The demo ingests this within seconds and
+ * mints its own session. Never cached — the token is per-user.
  */
 export const getServerSideProps: GetServerSideProps<DemoVoiceProps> = async (ctx) => {
   ctx.res.setHeader("Cache-Control", "no-store");
   let initialToken: string | null = null;
   try {
     const claims = await resolveSession(ctx.req);
-    if (claims) initialToken = readSessionToken(ctx.req) ?? null;
+    if (claims) initialToken = await signHandoff(claims);
   } catch {
     /* not logged in / auth not configured — anon iframe */
   }

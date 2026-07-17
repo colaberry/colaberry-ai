@@ -46,7 +46,7 @@ interface StrapiLeadResponse {
 export async function captureLead(input: LeadInput): Promise<LeadResult> {
   if (!isConfigured()) {
      
-    console.info(`[auth:lead] CMS not configured — lead ${input.email} not persisted`);
+    console.info("[auth:lead] CMS not configured — lead not persisted");
     return { ok: false, error: "cms_not_configured" };
   }
 

@@ -1,5 +1,5 @@
 # ── Stage 1: Build ──────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ ENV CMS_API_TOKEN=$CMS_API_TOKEN
 RUN npm run build
 
 # ── Stage 2: Production runtime ────────────────────────────────
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 
 # Create non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
