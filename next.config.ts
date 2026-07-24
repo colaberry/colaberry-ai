@@ -65,6 +65,11 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
+      // Vanity URLs our podcast content cites (colaberry.ai/podcast + /podcasts).
+      // Rewrite (mask), not redirect, so the cited link stays live as-is; the
+      // page's canonical points at /resources/podcasts, so AEO signals still
+      // consolidate to the real URL (same treatment as /podcasts).
+      { source: "/podcast", destination: "/resources/podcasts" },
       { source: "/podcasts", destination: "/resources/podcasts" },
       { source: "/podcast/:slug", destination: "/resources/podcasts/company?slug=:slug" },
       { source: "/resources/podcasts/company/:slug", destination: "/resources/podcasts/company?slug=:slug" },
