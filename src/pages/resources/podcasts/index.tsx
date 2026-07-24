@@ -891,11 +891,6 @@ export const getServerSideProps: GetServerSideProps<PodcastsPageProps> = async (
         totalEpisodes: cmsTotalCount || sorted.length,
         initialHasMore,
       },
-      // ISR: regenerate the catalog + count on a timer so new CMS episodes show
-      // without a redeploy, and the baked count stays close to live. 600s matches
-      // the sibling catalog pages (skills/agents/aixcelerator). Detail pages are
-      // already SSR (getServerSideProps), so those render live per request.
-      revalidate: 600,
     };
   } catch {
     return {
@@ -910,8 +905,6 @@ export const getServerSideProps: GetServerSideProps<PodcastsPageProps> = async (
         totalEpisodes: 0,
         initialHasMore: false,
       },
-      // Retry the CMS fetch sooner after an error build.
-      revalidate: 120,
     };
   }
 };
