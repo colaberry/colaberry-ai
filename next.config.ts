@@ -65,8 +65,18 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
+      // Vanity URLs our podcast content cites (colaberry.ai/podcast + /podcasts).
+      // Rewrite (mask), not redirect, so the cited link stays live as-is; the
+      // page's canonical points at /resources/podcasts, so AEO signals still
+      // consolidate to the real URL (same treatment as /podcasts).
+      { source: "/podcast", destination: "/resources/podcasts" },
       { source: "/podcasts", destination: "/resources/podcasts" },
-      { source: "/podcast/:slug", destination: "/resources/podcasts/company?slug=:slug" },
+      // Episode vanity link (colaberry.ai/podcast/<episode>) → the real episode
+      // detail page. It previously pointed at the /company page, which is keyed
+      // by a COMPANY slug, so an episode slug matched nothing and rendered a
+      // ~54KB fallback instead of the ~520KB episode. Matches the existing
+      // /episodes/:slug redirect target.
+      { source: "/podcast/:slug", destination: "/resources/podcasts/:slug" },
       { source: "/resources/podcasts/company/:slug", destination: "/resources/podcasts/company?slug=:slug" },
       { source: "/articles", destination: "/resources/articles" },
     ];
