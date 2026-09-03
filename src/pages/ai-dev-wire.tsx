@@ -139,18 +139,21 @@ export default function AiDevWirePage() {
       ) : null}
 
       {loading && !data ? (
-        <div className="stagger-grid mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[0, 1, 2].map((i) => (
             <div key={i} className="h-44 animate-pulse rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900" />
           ))}
         </div>
       ) : null}
 
-      {/* Start here — the ranked picks */}
+      {/* Start here — the ranked picks. NOTE: these sections render AFTER the client
+          fetch, so they must NOT use .reveal / .stagger-grid — the site's scroll-reveal
+          only observes elements present at mount, leaving async-added ones stuck at
+          opacity:0 (invisible). Render them plainly visible instead. */}
       {data && data.picks.length > 0 ? (
-        <section className="reveal mt-14">
+        <section className="mt-14">
           <SectionHeader as="h2" size="md" kicker="Start here" title="Today's three" description="Ranked by cross-source corroboration — the same subject surfacing in independent sources is the strongest same-day signal." />
-          <div className="stagger-grid mt-8 grid gap-6 lg:grid-cols-3">
+          <div className="mt-8 grid gap-6 lg:grid-cols-3">
             {data.picks.map((p, i) => (
               <article key={p.url} className="catalog-card flex flex-col gap-3 rounded-2xl border border-zinc-200 p-6 dark:border-zinc-700">
                 <div className="flex items-center justify-between gap-3">
@@ -173,7 +176,7 @@ export default function AiDevWirePage() {
 
       {/* The feeds */}
       {data && sectionsWithCounts.length > 0 ? (
-        <section className="reveal mt-16">
+        <section className="mt-16">
           <SectionHeader as="h2" size="md" kicker="The feeds" title="Every source, browsable" description="The full pull behind today's picks — filter by source." />
           <div className="surface-panel mt-6 flex flex-wrap gap-2 rounded-2xl px-4 py-3">
             <FilterChip active={filter === "all"} onClick={() => setFilter("all")} label="All" count={data.sourceHealth.reduce((n, h) => n + h.count, 0)} />
@@ -189,7 +192,7 @@ export default function AiDevWirePage() {
                   <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">{g.label}</h3>
                   <span className="text-xs uppercase tracking-[0.1em] text-zinc-400 dark:text-zinc-500">{g.note}</span>
                 </div>
-                <div className="stagger-grid grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   {g.items.map((it) => (
                     <article key={it.url} className="catalog-card flex flex-col gap-2 rounded-xl border border-zinc-200 p-5 dark:border-zinc-700">
                       <div className="flex items-center justify-between gap-3">
