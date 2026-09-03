@@ -90,15 +90,22 @@ export default function AiDevWirePage() {
         )}
       </Head>
 
-      {/* Hero */}
-      <div className="reveal">
-        <SectionHeader
-          as="h1"
-          size="xl"
-          kicker="Daily brief · AI Dev Wire"
-          title="What's moving in AI dev today"
-          description="Trending open weights, fresh papers, hot repos and the discussions that matter — pulled every morning from six sources and ranked into a short list of what to look at first."
-        />
+      {/* Hero — rendered statically (no SectionHeader/KineticHeading/.reveal).
+          This page is client-fetched and the site's entrance animations
+          (scroll-reveal + KineticHeading) don't fire here, which left the hero
+          and every section stuck invisible (opacity:0). Plain markup guarantees
+          it renders. */}
+      <div className="flex w-full flex-col items-start gap-5 text-left">
+        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-zinc-200 bg-zinc-100 px-3 py-1 text-label font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
+          <span>Daily brief · AI Dev Wire</span>
+        </div>
+        <h1 className="font-sans text-display-md font-bold text-zinc-900 dark:text-zinc-50 sm:text-display-lg md:text-display-xl lg:text-display-2xl">
+          {"What's vibing in AI dev today"}
+        </h1>
+        <p className="max-w-3xl text-base leading-relaxed text-zinc-500 dark:text-zinc-400 sm:text-lg">
+          Trending open weights, fresh papers, hot repos and the discussions that matter — pulled every morning from six sources and ranked into a short list of what to look at first.
+        </p>
       </div>
 
       {/* Controls */}
@@ -152,7 +159,7 @@ export default function AiDevWirePage() {
           opacity:0 (invisible). Render them plainly visible instead. */}
       {data && data.picks.length > 0 ? (
         <section className="mt-14">
-          <SectionHeader as="h2" size="md" kicker="Start here" title="Today's three" description="Ranked by cross-source corroboration — the same subject surfacing in independent sources is the strongest same-day signal." />
+          <SectionHeader as="h2" size="md" animate={false} kicker="Start here" title="Today's three" description="Ranked by cross-source corroboration — the same subject surfacing in independent sources is the strongest same-day signal." />
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
             {data.picks.map((p, i) => (
               <article key={p.url} className="catalog-card flex flex-col gap-3 rounded-2xl border border-zinc-200 p-6 dark:border-zinc-700">
@@ -177,7 +184,7 @@ export default function AiDevWirePage() {
       {/* The feeds */}
       {data && sectionsWithCounts.length > 0 ? (
         <section className="mt-16">
-          <SectionHeader as="h2" size="md" kicker="The feeds" title="Every source, browsable" description="The full pull behind today's picks — filter by source." />
+          <SectionHeader as="h2" size="md" animate={false} kicker="The feeds" title="Every source, browsable" description="The full pull behind today's picks — filter by source." />
           <div className="surface-panel mt-6 flex flex-wrap gap-2 rounded-2xl px-4 py-3">
             <FilterChip active={filter === "all"} onClick={() => setFilter("all")} label="All" count={data.sourceHealth.reduce((n, h) => n + h.count, 0)} />
             {sectionsWithCounts.map((s) => (
