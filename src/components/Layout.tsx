@@ -53,6 +53,7 @@ const fallbackNavigation: GlobalNavigation = {
       group: "header",
       children: [
         { label: "Podcasts", href: "/resources/podcasts", order: 1 },
+        { label: "AI Dev Wire", href: "/ai-dev-wire", order: 2 },
         { label: "Books & White Papers", href: "/resources/books", order: 3 },
       ],
     },
@@ -463,6 +464,7 @@ function getSidebarIcon(href: string): ReactNode {
   if (p.startsWith("/resources/books")) return <svg {...sidebarIconProps}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" /><line x1="10" y1="2" x2="10" y2="10" /><path d="M10 6l3-2 3 2" /></svg>;
   if (p === "/resources") return <svg {...sidebarIconProps}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>;
   if (p.startsWith("/updates")) return <svg {...sidebarIconProps}><path d="M4 22V4c0-.5.2-1 .6-1.4C5 2.2 5.5 2 6 2h8.5L20 7.5V22z" /><polyline points="14 2 14 8 20 8" /><path d="M8 12h8" /><path d="M8 16h5" /></svg>;
+  if (p.startsWith("/ai-dev-wire")) return <svg {...sidebarIconProps}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>;
   if (p.startsWith("/industries")) return <svg {...sidebarIconProps}><rect x="4" y="2" width="16" height="20" rx="2" /><line x1="9" y1="22" x2="9" y2="12" /><line x1="15" y1="22" x2="15" y2="12" /><line x1="4" y1="12" x2="20" y2="12" /></svg>;
   if (p.startsWith("/aixcelerator/ontology")) return <svg {...sidebarIconProps}><circle cx="12" cy="12" r="3" /><circle cx="5" cy="6" r="2" /><circle cx="19" cy="6" r="2" /><circle cx="5" cy="18" r="2" /><circle cx="19" cy="18" r="2" /><line x1="9.5" y1="10.5" x2="6.5" y2="7.5" /><line x1="14.5" y1="10.5" x2="17.5" y2="7.5" /><line x1="9.5" y1="13.5" x2="6.5" y2="16.5" /><line x1="14.5" y1="13.5" x2="17.5" y2="16.5" /></svg>;
   if (p.startsWith("/aixcelerator/ecosystem")) return <svg {...sidebarIconProps}><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20" /><path d="M12 2a14.5 14.5 0 0 1 0 20" /><line x1="2" y1="12" x2="22" y2="12" /></svg>;
@@ -509,7 +511,7 @@ function buildWorkspaceSections(nav: GlobalNavigation): WorkspaceSection[] {
   ]).filter((link) => normalizePath(link.href) !== "/assistant" && isReleasePath(link.href));
 
   const resourceChildren = (resourcesLink?.children || []).filter((child) =>
-    ["podcasts", "white papers", "articles", "books", "case studies", "resources hub"].includes(
+    ["podcasts", "ai dev wire", "white papers", "articles", "books", "case studies", "resources hub"].includes(
       child.label.trim().toLowerCase()
     )
   );
