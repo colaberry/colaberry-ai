@@ -227,6 +227,7 @@ export default function AiDevWirePage() {
 
       <div className="mt-20">
         <EnterpriseCtaBand
+          animate={false}
           kicker="AI platform"
           title="The whole platform, not just the wire"
           description="AI Dev Wire is one surface of the Colaberry AI platform — explore the agents, MCP servers, and skills catalog built for both people and LLMs."

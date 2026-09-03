@@ -10,6 +10,12 @@ type EnterpriseCtaBandProps = {
   secondaryHref: string;
   secondaryLabel: string;
   className?: string;
+  /**
+   * Set false to skip the scroll-reveal entrance. Needed on client-fetched
+   * pages (e.g. /ai-dev-wire) where the mount-time reveal observer never
+   * observes this band, leaving it stuck at opacity:0. Default true.
+   */
+  animate?: boolean;
 };
 
 /**
@@ -40,10 +46,11 @@ export default function EnterpriseCtaBand({
   secondaryHref,
   secondaryLabel,
   className,
+  animate = true,
 }: EnterpriseCtaBandProps) {
   return (
     <section
-      className={`reveal cta-band-enterprise relative isolate mt-6 overflow-hidden rounded-2xl border border-white/10 p-8 sm:p-12 ${
+      className={`${animate ? "reveal " : ""}cta-band-enterprise relative isolate mt-6 overflow-hidden rounded-2xl border border-white/10 p-8 sm:p-12 ${
         className ?? ""
       }`}
     >
