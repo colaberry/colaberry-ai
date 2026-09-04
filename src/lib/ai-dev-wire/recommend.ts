@@ -22,6 +22,7 @@ each other others some any all both few many much own same too only via per vs v
 const SECTION_LABEL: Record<SectionKey, string> = {
   models: "Hugging Face", repos: "GitHub", hn: "Hacker News",
   blogs: "vendor blogs", papers: "research", arxiv: "research",
+  tutorials: "dev.to", community: "Lobsters", industry: "industry news",
 };
 
 /** Vendors, products and frameworks worth treating as named entities. */
@@ -136,6 +137,11 @@ export function pickRecommendations(sections: Record<SectionKey, WireItem[]>, li
   (sections.hn || []).slice(0, 6).forEach((i) => consider(i, "discussion", 20));
   (sections.repos || []).slice(0, 6).forEach((i) => consider(i, "repo", 22));
   (sections.papers || []).slice(0, 4).forEach((i) => consider(i, "paper", 12));
+  // Newer tiers join the pool at lower base weight: they only reach the top
+  // picks on genuine cross-source corroboration, never by tier alone.
+  (sections.community || []).slice(0, 4).forEach((i) => consider(i, "discussion", 16));
+  (sections.industry || []).slice(0, 4).forEach((i) => consider(i, "news", 14));
+  (sections.tutorials || []).slice(0, 4).forEach((i) => consider(i, "tutorial", 10));
 
   const ranked = pool.sort((a, b) => b.weight - a.weight);
   const seen = new Set<string>();
@@ -177,6 +183,10 @@ function whyLine(i: Recommendation): string {
       return `Fastest-rising AI repo on GitHub today (${i.metric}).`;
     case "discussion":
       return `The argument developers are having right now (${i.metric}).`;
+    case "tutorial":
+      return `A hands-on guide from ${i.source} — something to apply today (${i.metric}).`;
+    case "news":
+      return `Industry signal for the whole org, via ${i.source}.`;
     default:
       return `Highest-signal research item today (${i.metric}).`;
   }

@@ -174,6 +174,7 @@ export const FEEDS: [url: string, name: string][] = [
   ["https://huggingface.co/blog/feed.xml", "HF Blog"],
   ["https://aws.amazon.com/blogs/machine-learning/feed/", "AWS ML"],
   ["https://engineering.fb.com/feed/", "Meta Engineering"],
+  ["https://blog.cloudflare.com/tag/ai/rss/", "Cloudflare"],
 ];
 async function blogs(): Promise<WireItem[]> {
   const cutoff = now() - 7 * DAY;
@@ -201,6 +202,83 @@ async function arxiv(): Promise<WireItem[]> {
     .map((p) => ({ ...p, summary: clip(p.summary, 200), url: p.url.replace("http://", "https://") }));
 }
 
+// 7. dev.to — practitioner tutorials & how-tos. Helps every developer *apply*
+// AI, not just track the frontier. Free JSON API; deduped across tags.
+interface DevToArticle {
+  title: string; url: string; description?: string;
+  positive_reactions_count?: number; comments_count?: number; published_at?: string;
+}
+async function devto(): Promise<WireItem[]> {
+  const tags = ["ai", "machinelearning", "llm"];
+  const cutoff = now() - 30 * DAY; // tutorials keep longer than news
+  const settled = await Promise.allSettled(
+    tags.map((t) => getJson<DevToArticle[]>(`https://dev.to/api/articles?tag=${t}&top=7&per_page=20`))
+  );
+  const seen = new Set<string>();
+  return settled
+    .flatMap((s) => (s.status === "fulfilled" ? s.value : []))
+    .filter((a) => a.title && a.url && !seen.has(a.url) && (seen.add(a.url), true))
+    .map((a): WireItem => ({
+      title: strip(a.title),
+      url: a.url,
+      summary: clip(strip(a.description || ""), 190),
+      metric: `${a.positive_reactions_count || 0} reactions · ${a.comments_count || 0} comments`,
+      score: a.positive_reactions_count || 0,
+      source: "dev.to",
+      ts: tsOf(a.published_at),
+    }))
+    .filter((i) => (i.ts ? i.ts > cutoff : true) && isDevRelevant(i.title, i.summary))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10);
+}
+
+// 8. Lobsters — a high-signal developer community (HN-like), filtered to its AI
+// tag: the practitioner discourse layer beyond HN. Free JSON.
+interface LobstersStory {
+  title?: string; url?: string; score?: number; comment_count?: number;
+  created_at?: string; comments_url?: string;
+}
+async function lobsters(): Promise<WireItem[]> {
+  const cutoff = now() - 5 * DAY;
+  const rows = await getJson<LobstersStory[]>("https://lobste.rs/t/ai.json");
+  return rows
+    .map((s): WireItem => ({
+      title: strip(s.title || ""),
+      url: s.url || s.comments_url || "",
+      discussUrl: s.comments_url,
+      metric: `${s.score || 0} pts · ${s.comment_count || 0} comments`,
+      score: s.score || 0,
+      source: "Lobsters",
+      ts: tsOf(s.created_at),
+    }))
+    .filter((i) => i.title && i.url && (i.ts ? i.ts > cutoff : true) && isRelevant(i.title, ""))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8);
+}
+
+// 9. Industry — AI business/adoption news for the whole organization, not just
+// developers. AI-category feeds; gated on AI-topic only (no dev-angle needed).
+const INDUSTRY_FEEDS: [url: string, name: string][] = [
+  ["https://techcrunch.com/category/artificial-intelligence/feed/", "TechCrunch"],
+  ["https://www.technologyreview.com/topic/artificial-intelligence/feed/", "MIT Tech Review"],
+  ["https://arstechnica.com/ai/feed/", "Ars Technica"],
+];
+async function industry(): Promise<WireItem[]> {
+  const cutoff = now() - 4 * DAY;
+  const settled = await Promise.allSettled(
+    INDUSTRY_FEEDS.map(async ([url, name]) => parseFeed(await getText(url), name))
+  );
+  return settled
+    .flatMap((s) => (s.status === "fulfilled" ? s.value : []))
+    .filter((i) => i.ts !== null && i.ts > cutoff && isRelevant(i.title, i.summary))
+    .sort((a, b) => (b.ts || 0) - (a.ts || 0))
+    .slice(0, 8)
+    .map((i): WireItem => ({
+      ...i,
+      metric: i.ts ? new Date(i.ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "",
+    }));
+}
+
 /** The source registry — the one place the set of sources is declared. */
 export const SOURCES: SourceAdapter[] = [
   { id: "hf-models", key: "models", label: "Hugging Face", fetch: hfModels },
@@ -209,4 +287,7 @@ export const SOURCES: SourceAdapter[] = [
   { id: "github-trending", key: "repos", label: "GitHub Trending", fetch: ghTrending },
   { id: "blogs", key: "blogs", label: "Vendor & practitioner blogs", fetch: blogs },
   { id: "arxiv", key: "arxiv", label: "arXiv cs.CL/cs.SE", fetch: arxiv },
+  { id: "devto", key: "tutorials", label: "dev.to", fetch: devto },
+  { id: "lobsters", key: "community", label: "Lobsters", fetch: lobsters },
+  { id: "industry", key: "industry", label: "Industry news", fetch: industry },
 ];
