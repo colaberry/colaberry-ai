@@ -11,11 +11,15 @@ const SECTION_META: { key: SectionKey; label: string; note: string }[] = [
   { key: "blogs", label: "Releases", note: "Vendor & practitioner blogs" },
   { key: "repos", label: "Repos", note: "GitHub trending" },
   { key: "hn", label: "Discussions", note: "Hacker News" },
+  { key: "community", label: "Community", note: "Lobsters · AI" },
+  { key: "tutorials", label: "Tutorials", note: "dev.to · how-tos" },
   { key: "papers", label: "Papers", note: "HF Daily Papers" },
   { key: "arxiv", label: "arXiv", note: "cs.CL / cs.SE" },
+  { key: "industry", label: "Industry", note: "TechCrunch · MIT · Ars Technica" },
 ];
 const KIND_LABEL: Record<Recommendation["kind"], string> = {
-  release: "Release", model: "Model", repo: "Repo", discussion: "Discussion", paper: "Paper",
+  release: "Release", model: "Model", repo: "Repo", discussion: "Discussion",
+  paper: "Paper", tutorial: "Tutorial", news: "Industry",
 };
 
 function RefreshIcon({ spinning }: { spinning: boolean }) {

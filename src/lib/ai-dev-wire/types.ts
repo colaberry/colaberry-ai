@@ -7,9 +7,11 @@
  * number of sources grow from six to N without the core changing.
  */
 
-export type SectionKey = "models" | "papers" | "hn" | "repos" | "blogs" | "arxiv";
+export type SectionKey =
+  | "models" | "papers" | "hn" | "repos" | "blogs" | "arxiv"
+  | "tutorials" | "community" | "industry";
 
-export type WireKind = "model" | "paper" | "repo" | "discussion" | "release";
+export type WireKind = "model" | "paper" | "repo" | "discussion" | "release" | "tutorial" | "news";
 
 /** The normalized item every source produces. */
 export interface WireItem {

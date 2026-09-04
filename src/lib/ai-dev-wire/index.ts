@@ -12,6 +12,7 @@ import { pickRecommendations } from "./recommend";
 
 const emptySections = (): Record<SectionKey, WireItem[]> => ({
   models: [], papers: [], hn: [], repos: [], blogs: [], arxiv: [],
+  tutorials: [], community: [], industry: [],
 });
 
 async function runPipeline(): Promise<WirePayload> {
