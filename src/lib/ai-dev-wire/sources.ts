@@ -42,6 +42,9 @@ const strip = (s = ""): string =>
     .replace(/&#(\d+);/g, (_, n: string) => String.fromCharCode(+n))
     .replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
     .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;/g, " ")
+    // Second tag pass: some feeds entity-encode their HTML (Atom type="html"),
+    // so real tags only appear AFTER the &lt;/&gt; decode above. Strip again.
+    .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ").trim();
 const clip = (s = "", n = 190): string => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
 const tsOf = (raw: string | undefined | null): number | null => {
