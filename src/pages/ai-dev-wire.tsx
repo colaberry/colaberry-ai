@@ -1,9 +1,11 @@
+import type { GetStaticProps, InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "../components/Layout";
 import SectionHeader from "../components/SectionHeader";
 import EnterpriseCtaBand from "../components/EnterpriseCtaBand";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../lib/seo";
+import { SOURCES } from "../lib/ai-dev-wire/sources";
 import type { Recommendation, SectionKey, WireItem, WirePayload } from "../lib/ai-dev-wire/types";
 
 const SECTION_META: { key: SectionKey; label: string; note: string }[] = [
@@ -42,11 +44,26 @@ function updatedLabel(iso: string): string {
   return d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" });
 }
 
-export default function AiDevWirePage() {
+const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+
+function countWord(n: number): string {
+  return NUMBER_WORDS[n] ?? String(n);
+}
+
+type Props = { sourceCount: number };
+
+// The source count is read from the adapter registry at build time so the
+// copy can't drift when sources are added or removed. SOURCES is only used
+// here, so Next strips it (and the adapters' fetch code) from the client bundle.
+export const getStaticProps: GetStaticProps<Props> = async () => ({
+  props: { sourceCount: SOURCES.length },
+});
+
+export default function AiDevWirePage({ sourceCount }: InferGetStaticPropsType<typeof getStaticProps>) {
+  const sources = countWord(sourceCount);
   const seoMeta: SeoMeta = {
     title: "AI Dev Wire | Colaberry AI",
-    description:
-      "The developer slice of AI, every morning — trending models, papers, repos and the discussions that matter, with a ranked pick of what to look at first.",
+    description: `Daily brief for AI engineering teams: new models, research, open-source releases and developer discussion from ${sources} public sources, ranked by corroboration.`,
     canonical: buildCanonical("/ai-dev-wire"),
   };
 
@@ -108,7 +125,7 @@ export default function AiDevWirePage() {
           {"What's vibing in AI dev today"}
         </h1>
         <p className="max-w-3xl text-base leading-relaxed text-zinc-500 dark:text-zinc-400 sm:text-lg">
-          Trending open weights, fresh papers, hot repos and the discussions that matter — pulled every morning from six sources and ranked into a short list of what to look at first.
+          A daily intelligence brief for AI engineering teams — new models, research, open-source releases and developer discussion from {sources} public sources, ranked by cross-source corroboration so you know what to evaluate first.
         </p>
       </div>
 
