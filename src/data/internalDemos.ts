@@ -115,12 +115,12 @@ export const internalDemos: InternalDemoConfig[] = [
     ],
   },
 
-  // The four below are behind their own logins and have no repo we can read,
-  // so what is recorded here is limited to two things that can actually be
-  // checked: what each app says about itself on its sign-in screen, and what
-  // its deployment reveals (hosting, server headers, framework fingerprints in
-  // the served bundles). `features` and `metrics` stay empty rather than
-  // invented — the demo owners should supply what each tool actually does.
+  // The four below are written from their source repos (karunswaroop/palnies,
+  // Ulteig-Transimission-New, doorAndWindowsPoC @ working, mep-tender-copilot)
+  // and cross-checked against what each deployment actually serves. Figures
+  // quoted as metrics come from those repos; nothing here is inferred from the
+  // product name. Palnies states no numbers, so it carries no metrics rather
+  // than invented ones.
   {
     slug: "palni-osp-reviewer",
     launchNote:
@@ -129,23 +129,71 @@ export const internalDemos: InternalDemoConfig[] = [
     category: "Telecom · Design review",
     tagline: "Automated feedback on outside-plant telecom design PDFs.",
     summary:
-      "Built with PALNIES. The app presents itself as automated feedback for telecom design PDFs: outside-plant (OSP) plan and profile drawings go in, and the reviewer returns feedback on them without an engineer reading every sheet by hand. What it checks and how it reports findings still needs to come from the demo owner — the app is behind its own sign-in.",
+      "Palnies' OSP Plan/Profile Automated Reviewer. It reads outside-plant telecom design PDFs and returns the pass a senior reviewer would otherwise make sheet by sheet: structured validation against the review areas, a bill of materials pulled from the drawings, classification, and a detailed violation report. Scanned sheets are handled through OCR as well as native PDFs, and each job runs asynchronously with live progress rather than a blocking upload.",
     launchUrl: "https://palni-491501.web.app",
     status: "live",
+    features: [
+      {
+        title: "Reviewer-style feedback sheets",
+        description:
+          "Validates the design against the review areas and writes violations up in detail, rather than returning a single pass/fail score.",
+      },
+      {
+        title: "Bill of materials extraction",
+        description:
+          "Pulls the BOM out of the drawing set alongside the review, so the count comes from the same read as the feedback.",
+      },
+      {
+        title: "Scanned sheets, not just native PDFs",
+        description:
+          "Text, images and tables come out via PyMuPDF and pdfplumber, with Tesseract OCR and OpenCV covering sheets that are scans.",
+      },
+      {
+        title: "Claude does the judgement pass",
+        description:
+          "Extraction is deterministic; the review itself runs through Anthropic's Claude against the defined review areas.",
+      },
+      {
+        title: "Live job pipeline",
+        description:
+          "Submissions process asynchronously with progress reported as the run proceeds, so long documents don't block the browser.",
+      },
+      {
+        title: "Admin dashboard",
+        description:
+          "Every job, user activity, violation trends and downloadable outputs in one view for whoever is running the pilot.",
+      },
+      {
+        title: "Accounts with an audit trail",
+        description:
+          "Firebase sign-in with per-user API keys, user/admin roles, and audit logging of who ran what.",
+      },
+    ],
     metrics: [],
-    features: [],
     techStack: [
       {
-        label: "React single-page app",
-        role: "Browser client, bundled with Vite and served as static assets",
+        label: "FastAPI (Python 3.11)",
+        role: "Backend API and the review pipeline",
       },
       {
-        label: "Firebase Hosting",
-        role: "Serves the app at palni-491501.web.app",
+        label: "React · Vite · TypeScript · Tailwind",
+        role: "Browser client, served as static assets from Firebase Hosting",
       },
       {
-        label: "Firebase",
-        role: "Backend services and the sign-in, which is restricted to partner domains including colaberry.com",
+        label: "PostgreSQL · SQLAlchemy · Alembic",
+        role: "Persists jobs, reviews and activity so they survive container restarts",
+      },
+      {
+        label: "Anthropic Claude",
+        role: "The review engine behind the feedback and classification",
+      },
+      {
+        label: "PyMuPDF · pdfplumber · Tesseract · OpenCV",
+        role: "PDF parsing and OCR for scanned drawing sheets",
+      },
+      {
+        label: "Firebase Authentication",
+        role: "Sign-in, restricted to partner domains including colaberry.com",
       },
     ],
   },
@@ -157,15 +205,46 @@ export const internalDemos: InternalDemoConfig[] = [
     category: "Energy · Transmission lines",
     tagline: "Pulls structured data out of transmission-line PDFs.",
     summary:
-      "Built for Ulteig, the engineering firm, around transmission-line work. It takes transmission-line PDFs — drawing sets and specifications — and pulls the content out as structured data instead of leaving engineers to transcribe it. Which fields it extracts, and how results come back out, still needs to come from the demo owner — the app is behind its own sign-in.",
+      "Table extraction and visualisation for transmission-line technical drawings, built for Ulteig. It reads the drawing packages page by page, pulls every table out as structured data, and computes a bill of materials from them — work that otherwise means transcribing hardware counts off dozens of sheets by hand. Results come back as CSV for spreadsheets and JSON for anything downstream, with a browser viewer for working through what was found.",
     launchUrl: "https://transmission-pdf-extractor-78489655591.us-central1.run.app",
     status: "live",
-    metrics: [],
-    features: [],
+    features: [
+      {
+        title: "Table extraction from technical drawings",
+        description:
+          "Pulls the tabular content out of transmission-line PDFs, including the dense multi-column tables these drawing sets carry.",
+      },
+      {
+        title: "Bill of materials calculation",
+        description:
+          "Builds a BOM from the extracted tables, tracking the distinct hardware components across a package.",
+      },
+      {
+        title: "CSV and JSON output",
+        description:
+          "CSV for spreadsheet analysis and JSON for programmatic use, so the extraction feeds either a person or a downstream system.",
+      },
+      {
+        title: "Interactive viewer",
+        description:
+          "A browser interface for browsing and managing what was extracted, rather than handing back a file and hoping it is right.",
+      },
+      {
+        title: "Multiple drawing packages",
+        description:
+          "Handles several packages (EX1, EX2, EX3) side by side, each with its own extraction and BOM.",
+      },
+    ],
+    metrics: [
+      { value: "200+", label: "Pages processed" },
+      { value: "100+", label: "Tables extracted" },
+      { value: "40+", label: "Hardware items tracked" },
+      { value: "3", label: "Drawing packages" },
+    ],
     techStack: [
       {
-        label: "Streamlit",
-        role: "The whole interface — upload, run, and review extraction results in one Python app",
+        label: "Streamlit (Python)",
+        role: "The whole interface — run the extraction and browse results in one app",
       },
       {
         label: "Google Cloud Run (us-central1)",
@@ -185,12 +264,55 @@ export const internalDemos: InternalDemoConfig[] = [
     category: "Manufacturing · Document AI",
     tagline: "Extracts door and window detail from construction document sets.",
     summary:
-      "Built for Jeld-Wen, the door and window manufacturer. It reads construction document sets and pulls out the door and window detail, the schedules and specifications that would otherwise be picked out by hand. Not reachable yet: the Cloud Run service still requires Google authentication, so it answers 401 rather than opening, and nothing more can be confirmed about it until that changes.",
+      "A window and door schedule extractor for architectural PDF drawings, built for Jeld-Wen. Beyond reading the schedule out of a drawing, it fills in what the drawing leaves implied: it finds the \"EQ\" (equal) markings that stand in for real dimensions, works out the boundaries they refer to, and writes the actual figures back onto the sheet as dimension arrows. It also identifies window types from the hardware terminology and symbols used, and annotates sill heights. Output is an annotated PDF, not just a table.",
     launchUrl: "https://door-window-extractor-78489655591.us-central1.run.app",
     status: "coming-soon",
-    metrics: [],
-    features: [],
+    features: [
+      {
+        title: "EQ dimensions resolved and drawn in",
+        description:
+          'Finds every "EQ" marking, detects the door or window boundary it applies to, computes the real dimension (3\'-0" from a 6\'-0" total) and draws it back onto the PDF with proper arrows — including grouping the pair on double doors.',
+      },
+      {
+        title: "Window type detection",
+        description:
+          "Identifies the window type from the hardware terminology and symbols on the drawing, then labels it in place rather than leaving the reader to infer it.",
+      },
+      {
+        title: "Sill height annotation",
+        description:
+          "Annotates sill heights (above finished floor) alongside the schedule data.",
+      },
+      {
+        title: "Multi-agent extraction pipeline",
+        description:
+          "Separate agents read the PDF, extract the schedule tables, normalise them into a standard shape, and write the annotated output — each step inspectable on its own.",
+      },
+      {
+        title: "Annotated PDF as the deliverable",
+        description:
+          "The result is the original drawing with the findings written onto it, so it can go straight back into a review rather than being cross-referenced against a spreadsheet.",
+      },
+    ],
+    metrics: [
+      { value: "62/62", label: "Unit tests passing" },
+      { value: "~0.27s", label: "EQ dimension pass" },
+      { value: "~2s", label: "Window type detection" },
+      { value: "401", label: "Blocked — needs opening up" },
+    ],
     techStack: [
+      {
+        label: "LangGraph · LangChain",
+        role: "Orchestrates the reader, table-extractor, formatter and annotator agents",
+      },
+      {
+        label: "Flask (Python)",
+        role: "Web app with live status while a drawing is processed",
+      },
+      {
+        label: "pdfplumber · PyMuPDF · camelot · tabula",
+        role: "Table and geometry extraction from architectural PDFs; reportlab writes the annotations",
+      },
       {
         label: "Google Cloud Run (us-central1)",
         role: "Hosting. Currently deployed with authentication required, so browser visits get a 401",
@@ -205,19 +327,73 @@ export const internalDemos: InternalDemoConfig[] = [
     category: "Construction · Tendering",
     tagline: "Copilot for mechanical, electrical and plumbing tender packages.",
     summary:
-      "A copilot for MEP tendering — the mechanical, electrical and plumbing scope of a construction bid, where the work is reading a tender package and pricing it. The sign-in offers to open a prepared demo package, so it is set up to be walked through rather than needing a live tender. What the copilot does with that package still needs to come from the demo owner.",
+      "Reads an MEP tender package end to end and turns what it finds wrong into cited questions for an engineer. Tendering the mechanical, electrical and plumbing scope means reconciling drawings, BOQs, specifications and schedules that rarely agree; the copilot does that reading and reports each discrepancy with the evidence behind it. It runs on one real, anonymized package — a 32-floor residential tower — so it can be walked through without a live tender. Its stance throughout is that a finding is a question, never an instruction: review actions are an append-only trail, and \"not found in this package\" is treated as a valid answer rather than a gap to fill with a guess.",
     launchUrl: "https://mep-tender-copilot-v6neh3v75q-uc.a.run.app",
     status: "live",
-    metrics: [],
-    features: [],
+    features: [
+      {
+        title: "Cross-document contradiction check",
+        description:
+          "Surfaces where the package disagrees with itself — a DG rating stated several ways, a fire BOQ that stops at floor 26 of 32, template text left standing from another job.",
+      },
+      {
+        title: "BOQ audit with withdrawn flags",
+        description:
+          "Normalises roughly 2,000 BOQ lines and raises flags — then shows the flags it withdrew and why, so the reviewer sees the reasoning rather than a filtered list. Queries export as CSV for the consultant.",
+      },
+      {
+        title: "Takeoff reconciled against the BOQ",
+        description:
+          "Counts and lengths taken from the DWG layers, per floor, reconciled to the BOQ, with revision-to-revision diffs and reviewer exclusions carried through.",
+      },
+      {
+        title: "Cited spec Q&A that declines",
+        description:
+          "Answers specification questions with the citation attached, and says the package has no answer when it does not — rather than producing a plausible one.",
+      },
+      {
+        title: "Consultant calculations re-performed",
+        description:
+          "Re-runs the consultant's own calculations and reports agrees, differs, or cannot verify — with cost drilled down to the source cell.",
+      },
+      {
+        title: "Drawings vs BOQ by system and size",
+        description:
+          "Whole-building reconciliation that also states where the drawings simply do not label enough to give a per-size answer.",
+      },
+      {
+        title: "CAD quality checks",
+        description:
+          "Typed-over dimensions against drawn lengths, entities hidden in the CAD, and how much of each DWG the converter actually read.",
+      },
+      {
+        title: "Accuracy measured, not asserted",
+        description:
+          "Every run scores its extraction against a hand-read golden set and lists each miss, so the number comes from evidence rather than a claim.",
+      },
+    ],
+    metrics: [
+      { value: "₹21.3 Cr", label: "MEP scope in the demo package" },
+      { value: "84 files", label: "36 drawings · 32 workbooks · 16 docs" },
+      { value: "~2,000", label: "BOQ lines normalised" },
+      { value: "32 floors", label: "Residential tower" },
+    ],
     techStack: [
       {
-        label: "Next.js",
-        role: "Application framework for the copilot UI, built with Turbopack",
+        label: "Next.js (Turbopack)",
+        role: "The copilot interface — every finding opens the evidence behind it",
+      },
+      {
+        label: "Python API",
+        role: "Ingestion and analysis pipeline over drawings, BOQs, specs and schedules",
+      },
+      {
+        label: "libredwg (dwg2dxf)",
+        role: "Converts the DWG drawings so layers, blocks and entities can be read",
       },
       {
         label: "Google Cloud Run (us-central1)",
-        role: "Hosting, behind the app's own email/password sign-in",
+        role: "Hosting — web and API as one origin, behind the app's own passcode gate",
       },
     ],
   },
