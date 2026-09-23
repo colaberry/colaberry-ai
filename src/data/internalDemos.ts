@@ -47,8 +47,6 @@ export const internalDemos: InternalDemoConfig[] = [
     launchUrl: AIXFREIGHT_DEMO_URL,
     status: "live",
     lastUpdated: "2026-09-23",
-    architectureDocHref:
-      "https://github.com/karunswaroop/ShipCES_EmailParsing/blob/main/shipces_django/docs/AIXFREIGHT_UI_DOCUMENTATION.md",
     metrics: [
       { value: "85–95%", label: "Extraction confidence" },
       { value: "5–10 min", label: "Manual entry saved per RFQ" },

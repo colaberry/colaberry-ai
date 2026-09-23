@@ -69,7 +69,7 @@ export default function InternalDemoPage({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:border-zinc-600 dark:hover:bg-zinc-900"
             >
-              UI documentation (private repo)
+              UI documentation
             </a>
           ) : null}
           {demo.lastUpdated ? (
