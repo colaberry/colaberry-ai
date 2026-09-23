@@ -1,12 +1,53 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import SectionHeader from "../../components/SectionHeader";
 import EnterpriseCtaBand from "../../components/EnterpriseCtaBand";
 import { seoTags, canonicalUrl as buildCanonical, type SeoMeta } from "../../lib/seo";
 import { demos, type DemoConfig } from "../../data/demos";
 
+/**
+ * Card shape returned by /api/demos/internal. Declared here rather than
+ * imported from the API route so no server-only module is reachable from this
+ * client component. Keep in sync with `InternalDemoCard` in
+ * `pages/api/demos/internal.ts`.
+ */
+interface InternalDemoCardData {
+  slug: string;
+  title: string;
+  category: string;
+  tagline: string;
+  status: string;
+}
+
 export default function DemoHub() {
+  /**
+   * Staff-only demos are fetched after mount instead of being bundled: this
+   * page is statically generated and public, so anything imported here would
+   * ship to everyone. The endpoint returns an empty list unless the caller is
+   * a signed-in Colaberry staff member, so for everyone else this section
+   * simply never appears — and the public HTML, JSON-LD and JS bundle contain
+   * no trace of it.
+   */
+  const [internalDemoCards, setInternalDemoCards] = useState<InternalDemoCardData[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/demos/internal", { credentials: "same-origin" })
+      .then((res) => (res.ok ? res.json() : { demos: [] }))
+      .then((data: { demos?: InternalDemoCardData[] }) => {
+        if (active && Array.isArray(data?.demos)) setInternalDemoCards(data.demos);
+      })
+      .catch(() => {
+        // Signed out, offline, or the endpoint is unavailable — the section
+        // stays hidden, which is the correct default.
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const seoMeta: SeoMeta = {
     title: "Live Demos | Colaberry AI",
     description:
@@ -70,6 +111,35 @@ export default function DemoHub() {
         ))}
       </div>
 
+      {internalDemoCards.length > 0 ? (
+        <section className="mt-16 border-t border-zinc-200 pt-12 dark:border-zinc-700">
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+              Internal demos
+            </h2>
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#DC2626] px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#DC2626] dark:border-[#F87171] dark:text-[#F87171]"
+              title="Visible only to signed-in Colaberry staff"
+            >
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-[#DC2626] dark:bg-[#F87171]"
+                aria-hidden="true"
+              />
+              Colaberry staff only
+            </span>
+          </div>
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+            Client and pre-release demos, visible because you are signed in with a Colaberry
+            account. Not listed publicly.
+          </p>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {internalDemoCards.map((demo) => (
+              <InternalDemoCard key={demo.slug} demo={demo} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <EnterpriseCtaBand
         kicker="AI platform"
         title="Ready to transform your workflows?"
@@ -131,5 +201,30 @@ function DemoCard({ demo }: { demo: DemoConfig }) {
     <div className="catalog-card flex flex-col gap-4 rounded-2xl border border-zinc-200 p-6 opacity-60 dark:border-zinc-700">
       {inner}
     </div>
+  );
+}
+
+function InternalDemoCard({ demo }: { demo: InternalDemoCardData }) {
+  return (
+    <Link
+      href={`/demo/internal/${demo.slug}`}
+      className="catalog-card group flex flex-col gap-4 rounded-2xl border border-zinc-200 p-6 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-600"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
+            {demo.category}
+          </span>
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{demo.title}</h3>
+        </div>
+        <span className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full border border-[#DC2626] px-2.5 py-0.5 text-xs font-medium text-[#DC2626] dark:border-[#F87171] dark:text-[#F87171]">
+          Internal
+        </span>
+      </div>
+      <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{demo.tagline}</p>
+      <span className="mt-auto text-sm font-medium text-[#DC2626] dark:text-[#F87171]">
+        View demo details &rarr;
+      </span>
+    </Link>
   );
 }
