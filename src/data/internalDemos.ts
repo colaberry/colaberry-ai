@@ -114,4 +114,72 @@ export const internalDemos: InternalDemoConfig[] = [
       },
     ],
   },
+
+  // The four below are registered from their public sign-in screens only.
+  // Each app is behind its own login, so metrics/features/techStack are left
+  // empty rather than guessed — fill them in from the demo owners.
+  {
+    slug: "palni-osp-reviewer",
+    launchNote:
+      "Has its own sign-in. Accounts are restricted to @palni.com, @palnies.com, @smartbots.ai and @colaberry.com, so a Colaberry address should work.",
+    title: "OSP Plan/Profile Reviewer",
+    category: "Telecom · Design review",
+    tagline: "Automated feedback on outside-plant telecom design PDFs.",
+    summary:
+      "Built with PALNIES. Reviews outside-plant (OSP) telecom design drawings and returns automated feedback on the submitted PDFs. Capability detail still to come from the demo owner — the app sits behind its own sign-in.",
+    launchUrl: "https://palni-491501.web.app",
+    status: "live",
+    metrics: [],
+    features: [],
+    techStack: [],
+  },
+  {
+    slug: "ulteig-transmission-extractor",
+    launchNote:
+      "Has its own email/password sign-in. The first load can take around 15 seconds while the container cold-starts.",
+    title: "Transmission PDF Extractor",
+    category: "Energy · Transmission lines",
+    tagline: "Pulls structured data out of transmission-line PDFs.",
+    summary:
+      "Built for Ulteig. Extracts structured data from transmission-line document sets. Runs as a Streamlit app on Cloud Run. Capability detail still to come from the demo owner — the app sits behind its own sign-in.",
+    launchUrl: "https://transmission-pdf-extractor-78489655591.us-central1.run.app",
+    status: "live",
+    metrics: [],
+    features: [],
+    techStack: [],
+  },
+  {
+    // Listed but not launchable: Cloud Run still requires Google
+    // authentication on this service, so a browser visit returns 401 for
+    // everyone. Flip to "live" once it is redeployed with
+    // --allow-unauthenticated, or put behind IAP with staff access.
+    slug: "jeldwen-door-window-extractor",
+    launchNote:
+      "Not open yet — the service returns 401 to browser visitors because Cloud Run still requires Google authentication.",
+    title: "Door & Window Extractor",
+    category: "Manufacturing · Document AI",
+    tagline: "Extracts door and window detail from construction document sets.",
+    summary:
+      "Built for Jeld-Wen. Extracts door and window information out of construction documents. Not reachable yet: the Cloud Run service is still set to require authentication, so it answers 401 instead of opening.",
+    launchUrl: "https://door-window-extractor-78489655591.us-central1.run.app",
+    status: "coming-soon",
+    metrics: [],
+    features: [],
+    techStack: [],
+  },
+  {
+    slug: "mep-tender-copilot",
+    launchNote:
+      'Has its own email/password sign-in — the screen reads "Sign in to open the demo package".',
+    title: "MEP Tender Copilot",
+    category: "Construction · Tendering",
+    tagline: "Copilot for mechanical, electrical and plumbing tender packages.",
+    summary:
+      "A copilot for MEP (mechanical, electrical, plumbing) tendering. Capability detail still to come from the demo owner — the app sits behind its own sign-in.",
+    launchUrl: "https://mep-tender-copilot-v6neh3v75q-uc.a.run.app",
+    status: "live",
+    metrics: [],
+    features: [],
+    techStack: [],
+  },
 ];

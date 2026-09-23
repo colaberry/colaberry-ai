@@ -17,6 +17,8 @@ export default function InternalDemoPage({
   demo,
   launchHost,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const isLive = demo.status === "live";
+
   return (
     <Layout>
       <Head>
@@ -53,15 +55,24 @@ export default function InternalDemoPage({
         />
 
         <div className="flex flex-wrap items-center gap-3">
-          <a
-            href={demo.launchUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-[#DC2626] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-          >
-            Launch demo
-            <span aria-hidden="true">&#8599;</span>
-          </a>
+          {/* Only offer the launch link when the target actually opens. A
+              "coming-soon" demo is listed for visibility but must not hand
+              anyone a link that errors. */}
+          {isLive ? (
+            <a
+              href={demo.launchUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-[#DC2626] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              Launch demo
+              <span aria-hidden="true">&#8599;</span>
+            </a>
+          ) : (
+            <span className="inline-flex items-center gap-2 rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+              Not available yet
+            </span>
+          )}
           {demo.architectureDocHref ? (
             <a
               href={demo.architectureDocHref}
@@ -83,8 +94,10 @@ export default function InternalDemoPage({
             props — never as literals here, which would compile into this
             route's public client chunk. */}
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Opens <span className="font-medium text-zinc-700 dark:text-zinc-300">{launchHost}</span> in a
-          new tab.{demo.launchNote ? ` ${demo.launchNote}` : ""}
+          {isLive ? "Opens " : "Hosted at "}
+          <span className="font-medium text-zinc-700 dark:text-zinc-300">{launchHost}</span>
+          {isLive ? " in a new tab." : "."}
+          {demo.launchNote ? ` ${demo.launchNote}` : ""}
         </p>
       </div>
 
@@ -103,31 +116,33 @@ export default function InternalDemoPage({
         </div>
       ) : null}
 
-      <section className="reveal mt-16">
-        <SectionHeader
-          as="h2"
-          size="lg"
-          kicker="What you can do"
-          title="Core capabilities"
-          description="What the dashboard does once you launch it."
-          animate={false}
-        />
-        <div className="stagger-grid mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {demo.features.map((feature) => (
-            <div
-              key={feature.title}
-              className="catalog-card flex flex-col gap-3 rounded-2xl border border-zinc-200 p-6 dark:border-zinc-700"
-            >
-              <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
-                {feature.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {demo.features.length > 0 ? (
+        <section className="reveal mt-16">
+          <SectionHeader
+            as="h2"
+            size="lg"
+            kicker="What you can do"
+            title="Core capabilities"
+            description="What this demo does once you launch it."
+            animate={false}
+          />
+          <div className="stagger-grid mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {demo.features.map((feature) => (
+              <div
+                key={feature.title}
+                className="catalog-card flex flex-col gap-3 rounded-2xl border border-zinc-200 p-6 dark:border-zinc-700"
+              >
+                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
+                  {feature.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {demo.techStack.length > 0 ? (
         <section className="reveal mt-16">
