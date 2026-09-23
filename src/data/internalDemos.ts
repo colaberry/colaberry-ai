@@ -115,9 +115,12 @@ export const internalDemos: InternalDemoConfig[] = [
     ],
   },
 
-  // The four below are registered from their public sign-in screens only.
-  // Each app is behind its own login, so metrics/features/techStack are left
-  // empty rather than guessed — fill them in from the demo owners.
+  // The four below are behind their own logins and have no repo we can read,
+  // so what is recorded here is limited to two things that can actually be
+  // checked: what each app says about itself on its sign-in screen, and what
+  // its deployment reveals (hosting, server headers, framework fingerprints in
+  // the served bundles). `features` and `metrics` stay empty rather than
+  // invented — the demo owners should supply what each tool actually does.
   {
     slug: "palni-osp-reviewer",
     launchNote:
@@ -126,12 +129,25 @@ export const internalDemos: InternalDemoConfig[] = [
     category: "Telecom · Design review",
     tagline: "Automated feedback on outside-plant telecom design PDFs.",
     summary:
-      "Built with PALNIES. Reviews outside-plant (OSP) telecom design drawings and returns automated feedback on the submitted PDFs. Capability detail still to come from the demo owner — the app sits behind its own sign-in.",
+      "Built with PALNIES. The app presents itself as automated feedback for telecom design PDFs: outside-plant (OSP) plan and profile drawings go in, and the reviewer returns feedback on them without an engineer reading every sheet by hand. What it checks and how it reports findings still needs to come from the demo owner — the app is behind its own sign-in.",
     launchUrl: "https://palni-491501.web.app",
     status: "live",
     metrics: [],
     features: [],
-    techStack: [],
+    techStack: [
+      {
+        label: "React single-page app",
+        role: "Browser client, bundled with Vite and served as static assets",
+      },
+      {
+        label: "Firebase Hosting",
+        role: "Serves the app at palni-491501.web.app",
+      },
+      {
+        label: "Firebase",
+        role: "Backend services and the sign-in, which is restricted to partner domains including colaberry.com",
+      },
+    ],
   },
   {
     slug: "ulteig-transmission-extractor",
@@ -141,12 +157,21 @@ export const internalDemos: InternalDemoConfig[] = [
     category: "Energy · Transmission lines",
     tagline: "Pulls structured data out of transmission-line PDFs.",
     summary:
-      "Built for Ulteig. Extracts structured data from transmission-line document sets. Runs as a Streamlit app on Cloud Run. Capability detail still to come from the demo owner — the app sits behind its own sign-in.",
+      "Built for Ulteig, the engineering firm, around transmission-line work. It takes transmission-line PDFs — drawing sets and specifications — and pulls the content out as structured data instead of leaving engineers to transcribe it. Which fields it extracts, and how results come back out, still needs to come from the demo owner — the app is behind its own sign-in.",
     launchUrl: "https://transmission-pdf-extractor-78489655591.us-central1.run.app",
     status: "live",
     metrics: [],
     features: [],
-    techStack: [],
+    techStack: [
+      {
+        label: "Streamlit",
+        role: "The whole interface — upload, run, and review extraction results in one Python app",
+      },
+      {
+        label: "Google Cloud Run (us-central1)",
+        role: "Hosting. Scales to zero, which is why the first open takes roughly 15 seconds",
+      },
+    ],
   },
   {
     // Listed but not launchable: Cloud Run still requires Google
@@ -160,12 +185,17 @@ export const internalDemos: InternalDemoConfig[] = [
     category: "Manufacturing · Document AI",
     tagline: "Extracts door and window detail from construction document sets.",
     summary:
-      "Built for Jeld-Wen. Extracts door and window information out of construction documents. Not reachable yet: the Cloud Run service is still set to require authentication, so it answers 401 instead of opening.",
+      "Built for Jeld-Wen, the door and window manufacturer. It reads construction document sets and pulls out the door and window detail, the schedules and specifications that would otherwise be picked out by hand. Not reachable yet: the Cloud Run service still requires Google authentication, so it answers 401 rather than opening, and nothing more can be confirmed about it until that changes.",
     launchUrl: "https://door-window-extractor-78489655591.us-central1.run.app",
     status: "coming-soon",
     metrics: [],
     features: [],
-    techStack: [],
+    techStack: [
+      {
+        label: "Google Cloud Run (us-central1)",
+        role: "Hosting. Currently deployed with authentication required, so browser visits get a 401",
+      },
+    ],
   },
   {
     slug: "mep-tender-copilot",
@@ -175,11 +205,20 @@ export const internalDemos: InternalDemoConfig[] = [
     category: "Construction · Tendering",
     tagline: "Copilot for mechanical, electrical and plumbing tender packages.",
     summary:
-      "A copilot for MEP (mechanical, electrical, plumbing) tendering. Capability detail still to come from the demo owner — the app sits behind its own sign-in.",
+      "A copilot for MEP tendering — the mechanical, electrical and plumbing scope of a construction bid, where the work is reading a tender package and pricing it. The sign-in offers to open a prepared demo package, so it is set up to be walked through rather than needing a live tender. What the copilot does with that package still needs to come from the demo owner.",
     launchUrl: "https://mep-tender-copilot-v6neh3v75q-uc.a.run.app",
     status: "live",
     metrics: [],
     features: [],
-    techStack: [],
+    techStack: [
+      {
+        label: "Next.js",
+        role: "Application framework for the copilot UI, built with Turbopack",
+      },
+      {
+        label: "Google Cloud Run (us-central1)",
+        role: "Hosting, behind the app's own email/password sign-in",
+      },
+    ],
   },
 ];
