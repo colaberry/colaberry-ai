@@ -217,9 +217,16 @@ function InternalDemoCard({ demo }: { demo: InternalDemoCardData }) {
           </span>
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{demo.title}</h3>
         </div>
-        <span className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full border border-[#DC2626] px-2.5 py-0.5 text-xs font-medium text-[#DC2626] dark:border-[#F87171] dark:text-[#F87171]">
-          Internal
-        </span>
+        <div className="flex flex-shrink-0 flex-col items-end gap-1.5">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#DC2626] px-2.5 py-0.5 text-xs font-medium text-[#DC2626] dark:border-[#F87171] dark:text-[#F87171]">
+            Internal
+          </span>
+          {demo.status !== "live" ? (
+            <span className="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+              Coming soon
+            </span>
+          ) : null}
+        </div>
       </div>
       <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{demo.tagline}</p>
       <span className="mt-auto text-sm font-medium text-[#DC2626] dark:text-[#F87171]">
